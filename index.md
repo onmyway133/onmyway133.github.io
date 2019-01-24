@@ -24,3 +24,8 @@
 # What Is This - Reverse Image Search
 
 <a href="https://itunes.apple.com/us/app/what-is-this-reverse-image-search/id1271235439?mt=8" style="display:inline-block;overflow:hidden;background:url(https://linkmaker.itunes.apple.com/en-us/badge-lrg.svg?releaseDate=2017-08-15&kind=iossoftware&bubble=ios_apps) no-repeat;width:135px;height:40px;"></a>
+
+# [Simulator](https://github.com/onmyway133/Simulator)
+
+<script src="https://gumroad.com/js/gumroad-embed.js"></script>
+<div class="gumroad-product-embed" data-gumroad-product-id="SixPL"><a href="https://gumroad.com/l/SixPL">Loading...</a></div>
