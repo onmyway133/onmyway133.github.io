@@ -1,6 +1,6 @@
 # Support my work
 
- ❤️💛💚💙💜 Money can't buy happiness, but you can buy my apps, and that's pretty close ❤️💛💚💙💜
+Most of my apps are [open source](https://github.com/onmyway133). Consider buying to support my work 🤘
 
 # [Finder Frame](https://github.com/onmyway133/FinderFrame)
 
