@@ -34,3 +34,8 @@ Most of my apps are [open source](https://github.com/onmyway133). Consider buyin
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
 <div class="gumroad-product-embed" data-gumroad-product-id="iNQFs"><a href="https://gumroad.com/l/iNQFs">Loading...</a></div>
+
+# [Finder Go](https://github.com/onmyway133/FinderGo)
+
+<script src="https://gumroad.com/js/gumroad-embed.js"></script>
+<div class="gumroad-product-embed" data-gumroad-product-id="BNnzC"><a href="https://gumroad.com/l/BNnzC">Loading...</a></div>
