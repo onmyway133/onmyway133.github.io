@@ -44,3 +44,6 @@ Most of my apps are [open source](https://github.com/onmyway133). Consider buyin
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
 <div class="gumroad-product-embed" data-gumroad-product-id="eXiul"><a href="https://gumroad.com/l/eXiul">Loading...</a></div>
+
+# Learn Talks
+Awesome conference and meetup talks http://learntalks.com/
