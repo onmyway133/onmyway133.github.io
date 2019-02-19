@@ -12,6 +12,11 @@ Most of my apps are [open source](https://github.com/onmyway133). Consider buyin
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
 <div class="gumroad-product-embed" data-gumroad-product-id="rwTsv"><a href="https://gumroad.com/l/rwTsv">Loading...</a></div>
 
+# [Lyrics](https://github.com/onmyway133/Lyrics)
+
+<script src="https://gumroad.com/js/gumroad-embed.js"></script>
+<div class="gumroad-product-embed" data-gumroad-product-id="YjJG"><a href="https://gumroad.com/l/YjJG">Loading...</a></div>
+
 # [Finder Frame](https://github.com/onmyway133/FinderFrame)
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
