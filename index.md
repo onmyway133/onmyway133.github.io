@@ -2,6 +2,11 @@
 
 Most of my apps are [open source](https://github.com/onmyway133). Consider buying to support my work 🤘
 
+# [Push Notifications](https://github.com/onmyway133/PushNotifications/blob/master/README.md)
+
+<script src="https://gumroad.com/js/gumroad-embed.js"></script>
+<div class="gumroad-product-embed" data-gumroad-product-id="rsjU"><a href="https://gumroad.com/l/rsjU">Loading...</a></div>
+
 # [Icon Generator](https://github.com/onmyway133/IconGenerator/blob/master/README.md)
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
