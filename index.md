@@ -2,6 +2,11 @@
 
 Most of my apps are [open source](https://github.com/onmyway133). Consider buying to support my work 🤘
 
+# [Icon Generator](https://github.com/onmyway133/IconGenerator/blob/master/README.md)
+
+<script src="https://gumroad.com/js/gumroad-embed.js"></script>
+<div class="gumroad-product-embed" data-gumroad-product-id="rwTsv"><a href="https://gumroad.com/l/rwTsv">Loading...</a></div>
+
 # [Finder Frame](https://github.com/onmyway133/FinderFrame)
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
