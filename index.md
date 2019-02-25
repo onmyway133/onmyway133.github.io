@@ -2,6 +2,11 @@
 
 Most of my apps are [open source](https://github.com/onmyway133). Consider buying to support my work 🤘
 
+# Emoji Quick Search
+
+<script src="https://gumroad.com/js/gumroad-embed.js"></script>
+<div class="gumroad-product-embed" data-gumroad-product-id="jkZE"><a href="https://gumroad.com/l/jkZE">Loading...</a></div>
+
 # [Push Notifications](https://github.com/onmyway133/PushNotifications/blob/master/README.md)
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
