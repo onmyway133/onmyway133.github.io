@@ -2,12 +2,12 @@
 
 Most of my apps are [open source](https://github.com/onmyway133) 🤘
 
-# Keep Mac Awake
+# [Keep Mac Awake](https://gum.co/fAQFY)
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
 <div class="gumroad-product-embed" data-gumroad-product-id="fAQFY"><a href="https://gumroad.com/l/fAQFY">Loading...</a></div>
 
-# Find My Ip
+# [Find My Ip](https://gum.co/EFihL)
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
 <div class="gumroad-product-embed" data-gumroad-product-id="EFihL"><a href="https://gumroad.com/l/EFihL">Loading...</a></div>
@@ -17,12 +17,12 @@ Most of my apps are [open source](https://github.com/onmyway133) 🤘
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
 <div class="gumroad-product-embed" data-gumroad-product-id="eXiul"><a href="https://gumroad.com/l/eXiul">Loading...</a></div>
 
-# Video Downloader
+# [Video Downloader](https://gum.co/ZIFZ)
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
 <div class="gumroad-product-embed" data-gumroad-product-id="ZIFZ"><a href="https://gumroad.com/l/ZIFZ">Loading...</a></div>
 
-# Emoji Quick Search
+# [Emoji Quick Search](https://gum.co/jkZE)
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
 <div class="gumroad-product-embed" data-gumroad-product-id="jkZE"><a href="https://gumroad.com/l/jkZE">Loading...</a></div>
