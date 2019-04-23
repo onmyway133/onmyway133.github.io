@@ -2,6 +2,11 @@
 
 Most of my apps are [open source](https://github.com/onmyway133) 🤘
 
+# Keep Mac Awake
+
+<script src="https://gumroad.com/js/gumroad-embed.js"></script>
+<div class="gumroad-product-embed" data-gumroad-product-id="fAQFY"><a href="https://gumroad.com/l/fAQFY">Loading...</a></div>
+
 # Find My Ip
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
