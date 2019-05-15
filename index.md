@@ -3,6 +3,7 @@
 Most of my apps are [open source](https://github.com/onmyway133) 🤘
 
 # [Almighty](https://gum.co/lbZCs)
+[https://www.producthunt.com/posts/almighty](https://www.producthunt.com/posts/almighty)
 
 <script src="https://gumroad.com/js/gumroad-embed.js"></script>
 <div class="gumroad-product-embed" data-gumroad-product-id="lbZCs"><a href="https://gumroad.com/l/lbZCs">Loading...</a></div>
