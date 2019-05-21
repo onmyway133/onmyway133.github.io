@@ -1,5 +1,3 @@
-# Apps
-
 Most of my apps are [open source](https://github.com/onmyway133) 🤘
 
 # [Almighty](https://gum.co/lbZCs)
