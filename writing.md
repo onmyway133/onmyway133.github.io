@@ -1,2 +1,5 @@
-Writing
---
+---
+layout: default
+title: Writing
+description:
+---
