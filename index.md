@@ -1,4 +1,4 @@
-Most of my apps are [open source](https://github.com/onmyway133) 🤘
+Most of my apps are [open source](./opensource.html) 🤘
 
 # [Almighty](https://gum.co/lbZCs)
 [https://www.producthunt.com/posts/almighty](https://www.producthunt.com/posts/almighty)
