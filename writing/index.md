@@ -3,10 +3,8 @@ title: Writing
 description:
 ---
 
-Here are my posts on [GitHub blog](https://github.com/onmyway133/blog). For more, visit [Writing](https://github.com/onmyway133/blog/issues/165)
+Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). For more, visit [Writing](https://github.com/onmyway133/blog/issues/165)
 
-- How to resize image using imagemagick [#202](https://github.com/onmyway133/blog/issues/202)
-- How to fix mismatched deployment between app and test target in Xcode [#204](https://github.com/onmyway133/blog/issues/204)
 - Configuration closure in Swift [#2](https://github.com/onmyway133/blog/issues/2)
 - Primary key in Realm [#4](https://github.com/onmyway133/blog/issues/4)
 - Check before you commit [#7](https://github.com/onmyway133/blog/issues/7)
@@ -51,6 +49,8 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog). For more
 - How to resolve deep json object in Dart [#198](https://github.com/onmyway133/blog/issues/198)
 - How to check file under Library in macOS [#200](https://github.com/onmyway133/blog/issues/200)
 - How to use shared AppGroup UserDefaults in macOS and Xcode extension [#201](https://github.com/onmyway133/blog/issues/201)
+- How to resize image using imagemagick [#202](https://github.com/onmyway133/blog/issues/202)
+- How to fix mismatched deployment between app and test target in Xcode [#204](https://github.com/onmyway133/blog/issues/204)
 - How to launch app at start up in macOS [#205](https://github.com/onmyway133/blog/issues/205)
 - How to handle when menu is about to open in macOS [#206](https://github.com/onmyway133/blog/issues/206)
 - How to build with xcodebuild and automatic code signing [#207](https://github.com/onmyway133/blog/issues/207)
