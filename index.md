@@ -1,10 +1,3 @@
----
-title: Home
-description:
----
-
-## Bio
-
 - [Ohayou](https://github.com/onmyway133/blog/issues/1) 👋
 
 ## Working
