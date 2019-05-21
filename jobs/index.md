@@ -3,4 +3,4 @@ title: Jobs
 description:
 ---
 
-<iframe src="https://twitter.com/i/moments/808947827506352132" frameborder="0" allowfullscreen style="width:1000px;height:800px;"></iframe>
+<a class="twitter-moment" href="https://twitter.com/i/moments/808947827506352132?ref_src=twsrc%5Etfw">Jobs Moment</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
