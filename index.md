@@ -1,109 +1,56 @@
-Most of my apps are [open source](./opensource.html) 🤘
+## Bio
 
-# [Almighty](https://gum.co/lbZCs)
-[https://www.producthunt.com/posts/almighty](https://www.producthunt.com/posts/almighty)
+- Ohayou https://github.com/onmyway133/blog/issues/1 👋
 
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="lbZCs"><a href="https://gumroad.com/l/lbZCs">Loading...</a></div>
+## Working
 
-# [Keep Mac Awake](https://gum.co/fAQFY)
-[https://www.producthunt.com/posts/keep-mac-awake](https://www.producthunt.com/posts/keep-mac-awake)
+- Apps https://onmyway133.github.io/ ❤️
+- GitHub https://github.com/onmyway133  🚀
+- Cocoapods https://cocoapods.org/owners/3739 ☔️ (45k apps touched, 3.4m downloads)
+- Stackoverflow https://stackoverflow.com/users/1418457/onmyway133 🤘 (8.4m people reached, 370+ answers)
+- Open source https://github.com/onmyway133/blog/issues/5 🔥🔥🔥🔥🔥 (160+ repo)
+- Gumroad https://gumroad.com/onmyway133 🤠❤️ (18k+ views)
+- Product Hunt https://www.producthunt.com/@onmyway133/made 🕺
 
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="fAQFY"><a href="https://gumroad.com/l/fAQFY">Loading...</a></div>
+## Writing
 
-# [Find My Ip](https://gum.co/EFihL)
-[https://www.producthunt.com/posts/find-my-ip](https://www.producthunt.com/posts/find-my-ip)
+- Medium https://medium.com/fantageek 🏄 (1.7k followers, 85k monthly views)
+- Articles https://github.com/onmyway133/blog/issues/165 🏄🏄🏄🏄🏄 (170+ articles) 
+- Dev https://dev.to/onmyway133 👨‍💻 (56k views)
+- GitHub https://github.com/onmyway133/blog/issues 🥁 (5k monthly views)
 
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="EFihL"><a href="https://gumroad.com/l/EFihL">Loading...</a></div>
+## Speaking
 
-# [Xcode Way](https://github.com/onmyway133/XcodeWay/blob/master/README.md)
-[https://www.producthunt.com/posts/xcodeway](https://www.producthunt.com/posts/xcodeway)
+- Talks https://github.com/onmyway133/blog/issues/111 👨‍🎤
+- SpeakerDeck https://speakerdeck.com/onmyway133 👨‍🎤
 
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="eXiul"><a href="https://gumroad.com/l/eXiul">Loading...</a></div>
+## Activity
 
-# [Video Downloader](https://gum.co/ZIFZ)
-[https://www.producthunt.com/posts/video-downloader-2](https://www.producthunt.com/posts/video-downloader-2)
+- Twitter https://twitter.com/onmyway133 🐦
+- Story https://stackoverflow.com/users/story/1418457 😇
+- Client projects https://docs.google.com/document/d/1SCeyVgxN34tsHgWlktLL3NlwiDG6CvV3Cpqo1x1AUvw :apple:
+- Side projects https://github.com/onmyway133/blog/issues/166 😎
+- Achievements https://github.com/onmyway133/blog/issues/167 🏆
+-  
+- 500px https://500px.com/onmyway133 
+- Linkedin https://www.linkedin.com/in/onmyway133/ 🙄
+- Reading list https://github.com/onmyway133/blog/issues/78 📚
+- Archives https://github.com/onmyway133/archives 🍵
+- Website http://www.fantageek.com/ ⛺️
 
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="ZIFZ"><a href="https://gumroad.com/l/ZIFZ">Loading...</a></div>
+## Curation
 
-# [Emoji Quick Search](https://gum.co/jkZE)
-[https://www.producthunt.com/posts/emoji-quick-search](https://www.producthunt.com/posts/emoji-quick-search)
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="jkZE"><a href="https://gumroad.com/l/jkZE">Loading...</a></div>
-
-# [Push Notifications](https://github.com/onmyway133/PushNotifications/blob/master/README.md)
-https://www.producthunt.com/posts/pushnotifications
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="rsjU"><a href="https://gumroad.com/l/rsjU">Loading...</a></div>
-
-# [Icon Generator](https://github.com/onmyway133/IconGenerator/blob/master/README.md)
-[https://www.producthunt.com/posts/icongenerator](https://www.producthunt.com/posts/icongenerator)
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="rwTsv"><a href="https://gumroad.com/l/rwTsv">Loading...</a></div>
-
-# [Lyrics](https://github.com/onmyway133/Lyrics)
-[https://www.producthunt.com/posts/lyrics](https://www.producthunt.com/posts/lyrics)
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="YjJG"><a href="https://gumroad.com/l/YjJG">Loading...</a></div>
-
-# [Sketch Action](https://github.com/onmyway133/Sketch-Action/blob/master/README.md)
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="TDvkh"><a href="https://gumroad.com/l/TDvkh">Loading...</a></div>
-
-# [Finder Frame](https://github.com/onmyway133/FinderFrame)
-[https://www.producthunt.com/posts/finder-frame](https://www.producthunt.com/posts/finder-frame)
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="prnm" data-outbound-embed="true"><a href="https://gumroad.com/l/prnm">Loading...</a></div>
-
-# [Gif Capture](https://github.com/onmyway133/GifCapture)
-[https://www.producthunt.com/posts/gifcapture](https://www.producthunt.com/posts/gifcapture)
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="dNrD"><a href="https://gumroad.com/l/dNrD">Loading...</a></div>
-
-# [Address Generator](https://github.com/onmyway133/AddressGenerator)
-[https://www.producthunt.com/posts/address-generator](https://www.producthunt.com/posts/address-generator)
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="ixSBCP"><a href="https://gumroad.com/l/ixSBCP">Loading...</a></div>
-
-# Ease - Relax with gentle sound
-
-<a href="https://itunes.apple.com/us/app/ease-relax-with-gentle-sound/id1047250647?mt=8" style="display:inline-block;overflow:hidden;background:url(https://linkmaker.itunes.apple.com/en-us/badge-lrg.svg?releaseDate=2015-10-26&kind=iossoftware&bubble=ios_apps) no-repeat;width:135px;height:40px;"></a>
-
-# What Is This - Reverse Image Search
-
-<a href="https://itunes.apple.com/us/app/what-is-this-reverse-image-search/id1271235439?mt=8" style="display:inline-block;overflow:hidden;background:url(https://linkmaker.itunes.apple.com/en-us/badge-lrg.svg?releaseDate=2017-08-15&kind=iossoftware&bubble=ios_apps) no-repeat;width:135px;height:40px;"></a>
-
-# [Simulator](https://github.com/onmyway133/Simulator)
-[https://www.producthunt.com/posts/simulator](https://www.producthunt.com/posts/simulator)
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="SixPL"><a href="https://gumroad.com/l/SixPL">Loading...</a></div>
-
-# [Youtube Downloader](https://github.com/onmyway133/YoutubeDownloader)
-[https://www.producthunt.com/posts/youtube-downloader](https://www.producthunt.com/posts/youtube-downloader)
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="iNQFs"><a href="https://gumroad.com/l/iNQFs">Loading...</a></div>
-
-# [Finder Go](https://github.com/onmyway133/FinderGo)
-[https://www.producthunt.com/posts/finder-go](https://www.producthunt.com/posts/finder-go)
-
-<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-<div class="gumroad-product-embed" data-gumroad-product-id="BNnzC"><a href="https://gumroad.com/l/BNnzC">Loading...</a></div>
-
-# Learn Talks
-[https://www.producthunt.com/posts/learn-talks](https://www.producthunt.com/posts/learn-talks)
-
-Awesome conference and meetup talks [http://learntalks.com/](http://learntalks.com/)
+- [fantastic-android-animation](https://github.com/onmyway133/fantastic-android-animation) 💦 A collection of Android animation repos
+- [fantastic-android-architecture](https://github.com/onmyway133/fantastic-android-architecture) 🏰 Better ways to structure Android apps
+- [fantastic-ios-animation](https://github.com/onmyway133/fantastic-ios-animation) ☔️ A collection of iOS animation repos
+- [fantastic-ios-architecture](https://github.com/onmyway133/fantastic-ios-architecture) 🏯 Better ways to structure iOS apps
+- [fantastic-machine-learning](https://github.com/onmyway133/fantastic-machine-learning) 🎰 A curated list of machine learning resources, preferably in Swift
+- [fantastic-conference-videos](https://github.com/onmyway133/fantastic-conference-videos) 🎸 Conference videos
+- https://medium.com/fantageek/best-resources-for-software-engineering-77a5b8f7280c
+- https://codeburst.io/learning-voip-rtp-and-sip-aka-awesome-pjsip-2035fa02cf88
+- https://hackernoon.com/do-you-know-these-interesting-programming-languages-features-1fab3fcb2118
+- https://medium.com/fantageek/improving-communication-welcome-to-basic-63b7fd1423f3
+- https://hackernoon.com/20-recommended-utility-apps-for-macos-in-2018-ea494b4db72b
+- https://medium.com/fantageek/awesome-resources-to-get-started-in-learning-blockchain-and-cryptocurrency-1f341402c222
+- https://medium.com/flawless-app-stories/useful-git-commands-for-everyday-use-e1a4de64037d
+- https://medium.com/hyperoslo/best-places-to-learn-ios-development-85ebebe890cf
