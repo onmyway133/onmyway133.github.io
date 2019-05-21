@@ -1,4 +1,4 @@
-# Support my work
+# Apps
 
 Most of my apps are [open source](https://github.com/onmyway133) 🤘
 
