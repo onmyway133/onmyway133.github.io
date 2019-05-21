@@ -1,2 +1,5 @@
-More
---
+---
+layout: default
+title: More
+description:
+---
