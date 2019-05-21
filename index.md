@@ -1,3 +1,8 @@
+---
+title: Home
+description:
+---
+
 ## Bio
 
 - [Ohayou](https://github.com/onmyway133/blog/issues/1) 👋
@@ -44,7 +49,7 @@
 - [fantastic-machine-learning](https://github.com/onmyway133/fantastic-machine-learning) 🎰 A curated list of machine learning resources, preferably in Swift
 - [fantastic-conference-videos](https://github.com/onmyway133/fantastic-conference-videos) 🎸 Conference videos
 - [Best resources for software engineering](https://medium.com/fantageek/best-resources-for-software-engineering-77a5b8f7280c)
-- [https://codeburst.io/learning-voip-rtp-and-sip-aka-awesome-pjsip-2035fa02cf88](https://codeburst.io/learning-voip-rtp-and-sip-aka-awesome-pjsip-2035fa02cf88)
+- [Learning VoIP, RTP and SIP (aka awesome pjsip)](https://codeburst.io/learning-voip-rtp-and-sip-aka-awesome-pjsip-2035fa02cf88)
 - [Getting to know some pragmatic programming language featu](https://hackernoon.com/do-you-know-these-interesting-programming-languages-features-1fab3fcb2118)
 - [20 recommended utility apps for macOS in 2018](https://hackernoon.com/20-recommended-utility-apps-for-macos-in-2018-ea494b4db72b)
 - [Awesome resources to get started in learning blockchain and cryptocurrency](https://medium.com/fantageek/awesome-resources-to-get-started-in-learning-blockchain-and-cryptocurrency-1f341402c222)
