@@ -23,7 +23,7 @@
 
 - [Twitter](https://twitter.com/onmyway133) 🐦
 - [Story](https://stackoverflow.com/users/story/1418457)  😇
-- [Client projects](https://docs.google.com/document/d/1SCeyVgxN34tsHgWlktLL3NlwiDG6CvV3Cpqo1x1AUvw)  :apple:
+- [Client projects](https://docs.google.com/document/d/1SCeyVgxN34tsHgWlktLL3NlwiDG6CvV3Cpqo1x1AUvw) 🍎
 - [Side projects](https://github.com/onmyway133/blog/issues/166)  😎
 - [Achievements](https://github.com/onmyway133/blog/issues/167) 🏆
 -  
