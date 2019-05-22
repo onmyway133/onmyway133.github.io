@@ -12,6 +12,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to hack iOS apps [#19](https://github.com/onmyway133/blog/issues/19)
 - How to create a piano using iOS 9 Auto Layout [#22](https://github.com/onmyway133/blog/issues/22)
 - How to debug Auto Layout [#23](https://github.com/onmyway133/blog/issues/23)
+- How to run UITests with map view in iOS [#45](https://github.com/onmyway133/blog/issues/45)
 - Favorite WWDC 2017 sessions [#56](https://github.com/onmyway133/blog/issues/56)
 - JSON Codable in Swift 4 [#63](https://github.com/onmyway133/blog/issues/63)
 - How to debug iOS apps [#95](https://github.com/onmyway133/blog/issues/95)
