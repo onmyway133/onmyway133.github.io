@@ -48,6 +48,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to cache CocoaPods [#196](https://github.com/onmyway133/blog/issues/196)
 - How to generate grpc protobuf files [#197](https://github.com/onmyway133/blog/issues/197)
 - How to resolve deep json object in Dart [#198](https://github.com/onmyway133/blog/issues/198)
+- How to parse json in Go [#199](https://github.com/onmyway133/blog/issues/199)
 - How to check file under Library in macOS [#200](https://github.com/onmyway133/blog/issues/200)
 - How to use shared AppGroup UserDefaults in macOS and Xcode extension [#201](https://github.com/onmyway133/blog/issues/201)
 - How to resize image using imagemagick [#202](https://github.com/onmyway133/blog/issues/202)
