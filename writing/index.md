@@ -7,6 +7,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 
 - Hello world, again [#1](https://github.com/onmyway133/blog/issues/1)
 - Configuration closure in Swift [#2](https://github.com/onmyway133/blog/issues/2)
+- How to take an app from a private framework in macOS [#3](https://github.com/onmyway133/blog/issues/3)
 - Primary key in Realm [#4](https://github.com/onmyway133/blog/issues/4)
 - Check before you commit [#7](https://github.com/onmyway133/blog/issues/7)
 - How to execute an action only once in Swift [#10](https://github.com/onmyway133/blog/issues/10)
@@ -45,6 +46,9 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to call function inside Apple Script [#88](https://github.com/onmyway133/blog/issues/88)
 - How to debug iOS apps [#95](https://github.com/onmyway133/blog/issues/95)
 - Diff algorithm [#99](https://github.com/onmyway133/blog/issues/99)
+- How to use custom UINavigationBar in iOS [#102](https://github.com/onmyway133/blog/issues/102)
+- How to make simple Binding in MVVM in iOS [#103](https://github.com/onmyway133/blog/issues/103)
+- How to make generic extension with associatedtype protocol in Swift [#104](https://github.com/onmyway133/blog/issues/104)
 - Please reconsidering your choice of libraries [#105](https://github.com/onmyway133/blog/issues/105)
 - Coordinator and FlowController [#106](https://github.com/onmyway133/blog/issues/106)
 - Communication between Fragment and Activity [#108](https://github.com/onmyway133/blog/issues/108)
