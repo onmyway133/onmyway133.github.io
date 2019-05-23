@@ -62,6 +62,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to use Timer in Swift [#212](https://github.com/onmyway133/blog/issues/212)
 - How to update NSMenuItem while NSMenu is showing in macOS [#213](https://github.com/onmyway133/blog/issues/213)
 - How to map from Swift 5 Resul to RxSwift PublishSubject [#214](https://github.com/onmyway133/blog/issues/214)
+- How to use Sonarqube in Swift projects [#216](https://github.com/onmyway133/blog/issues/216)
 - How to test PublishSubject in RxSwift [#218](https://github.com/onmyway133/blog/issues/218)
 - How to use Stripe and Apple Pay in iOS [#219](https://github.com/onmyway133/blog/issues/219)
 - How to run simple http server in Go [#220](https://github.com/onmyway133/blog/issues/220)
