@@ -98,3 +98,4 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to overlay view on another view in React Native [#254](https://github.com/onmyway133/blog/issues/254)
 - Open Source Stories: From Cachable to Generic Storage in Cache [#255](https://github.com/onmyway133/blog/issues/255)
 - How to structure your project and manage static resources in React Native [#256](https://github.com/onmyway133/blog/issues/256)
+- How to setup Android projects [#257](https://github.com/onmyway133/blog/issues/257)
