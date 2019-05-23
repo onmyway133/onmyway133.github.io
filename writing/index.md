@@ -119,4 +119,21 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - Get to know different JavaScript environments in React Native [#266](https://github.com/onmyway133/blog/issues/266)
 - How to convert your Xcode plugins to Xcode extensions [#267](https://github.com/onmyway133/blog/issues/267)
 - How to add app icons and splash screens to a React Native app in staging and production [#268](https://github.com/onmyway133/blog/issues/268)
-- 
+- Introducing Learn Talks — Awesome conference and meetup talks
+ [#269](https://github.com/onmyway133/blog/issues/269)
+- Getting to know some pragmatic programming language features
+ [#270](https://github.com/onmyway133/blog/issues/270)
+- How to make tag selection view in React Native [#271](https://github.com/onmyway133/blog/issues/271)
+- Next to first, next to nothing [#272](https://github.com/onmyway133/blog/issues/272)
+- How to run Android apps in Bitrise [#273](https://github.com/onmyway133/blog/issues/273)
+- 20 recommended utility apps for macOS [#274](https://github.com/onmyway133/blog/issues/274)
+- How to make Unity games in pure C# [#275](https://github.com/onmyway133/blog/issues/275)
+- How to set up ESLint and EditorConfig in React Native projects [#276](https://github.com/onmyway133/blog/issues/276)
+- How to use Bitrise CI for React Native apps [#277](https://github.com/onmyway133/blog/issues/277)
+- Best places to learn iOS development [#278](https://github.com/onmyway133/blog/issues/278)
+- What is create-react-native-app [#279](https://github.com/onmyway133/blog/issues/279)
+- How to fix wrong status bar orientation in iOS [#280](https://github.com/onmyway133/blog/issues/280)
+- How to use One Dark theme and Fira Code font for IDEs [#281](https://github.com/onmyway133/blog/issues/281)
+- How to get activity name through HKWorkoutActivityType in HealthKit [#282](https://github.com/onmyway133/blog/issues/282)
+- How to deal with CSS responsiveness in Wordpress [#283](https://github.com/onmyway133/blog/issues/283)
+- Learning VoIP, RTP and SIP (aka awesome pjsip) [#284](https://github.com/onmyway133/blog/issues/284)
