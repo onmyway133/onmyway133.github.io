@@ -69,7 +69,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to select cluster annotation in MapKit [#182](https://github.com/onmyway133/blog/issues/182)
 - How to zoom in double in MapKit [#183](https://github.com/onmyway133/blog/issues/183)
 - How to fix SSLPeerUnverifiedException in Android [#184](https://github.com/onmyway133/blog/issues/184)
-- Curry in Swift and Javascript [#185[(https://github.com/onmyway133/blog/issues/185)
+- Curry in Swift and Javascript [#185](https://github.com/onmyway133/blog/issues/185)
 - How to get Google account photo in Flutter [#187](https://github.com/onmyway133/blog/issues/187)
 - How to fix ApiException: 10 in Flutter for Android [#188](https://github.com/onmyway133/blog/issues/188)
 - How to handle file picker in React [#190](https://github.com/onmyway133/blog/issues/190)
