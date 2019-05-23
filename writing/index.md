@@ -5,6 +5,7 @@ description:
 
 Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). For more, visit [Writing](https://github.com/onmyway133/blog/issues/165)
 
+- Hello world, again [#1](https://github.com/onmyway133/blog/issues/1)
 - Configuration closure in Swift [#2](https://github.com/onmyway133/blog/issues/2)
 - Primary key in Realm [#4](https://github.com/onmyway133/blog/issues/4)
 - Check before you commit [#7](https://github.com/onmyway133/blog/issues/7)
@@ -12,9 +13,11 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to hack iOS apps [#19](https://github.com/onmyway133/blog/issues/19)
 - How to create a piano using iOS 9 Auto Layout [#22](https://github.com/onmyway133/blog/issues/22)
 - How to debug Auto Layout [#23](https://github.com/onmyway133/blog/issues/23)
+- Disingenuousness [#31](https://github.com/onmyway133/blog/issues/31)
 - How to run UITests with map view in iOS [#45](https://github.com/onmyway133/blog/issues/45)
 - Favorite WWDC 2017 sessions [#56](https://github.com/onmyway133/blog/issues/56)
 - JSON Codable in Swift 4 [#63](https://github.com/onmyway133/blog/issues/63)
+- How to call function inside Apple Script [#88](https://github.com/onmyway133/blog/issues/88)
 - How to debug iOS apps [#95](https://github.com/onmyway133/blog/issues/95)
 - Diff algorithm [#99](https://github.com/onmyway133/blog/issues/99)
 - Please reconsidering your choice of libraries [#105](https://github.com/onmyway133/blog/issues/105)
@@ -109,3 +112,6 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to dismiss keyboard with react-navigation in React Native apps [#263](https://github.com/onmyway133/blog/issues/263)
 - How to Make Linear Gradient View with Bridging in React Native [#264](https://github.com/onmyway133/blog/issues/264)
 - How to deploy React Native apps to Bitrise, Fabric, CircleCI [#265](https://github.com/onmyway133/blog/issues/265)
+- Get to know different JavaScript environments in React Native [#266](https://github.com/onmyway133/blog/issues/266)
+- How to convert your Xcode plugins to Xcode extensions [#267](https://github.com/onmyway133/blog/issues/267)
+- How to add app icons and splash screens to a React Native app in staging and production [#268](https://github.com/onmyway133/blog/issues/268)
