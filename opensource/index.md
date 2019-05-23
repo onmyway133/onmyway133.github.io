@@ -41,6 +41,7 @@ Here are open source projects I make and contribute
 - [Cheers](https://github.com/onmyway133/Cheers) 🎊 Fancy confetti effects in Swift
 - [Upstream](https://github.com/onmyway133/Upstream) ⛲️ Adapted Data Source in Swift and a little bit more
 - [RoughSwift](https://github.com/onmyway133/RoughSwift) 🎃Create hand-drawn, sketchy, comic shape in Swift 🚀 🚀 
+- [EasyClosure](https://github.com/onmyway133/EasyClosure) 🍩 Unified communication patterns with easy closure in Swift
 
 Contributions to [hyperoslo](https://github.com/hyperoslo)
 
