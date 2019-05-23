@@ -86,6 +86,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to generate QR code in AppKit [#140](https://github.com/onmyway133/blog/issues/140)
 - How to deal with animation in UITests in iOS [#143](https://github.com/onmyway133/blog/issues/143)
 - How to use standalone UINavigationBar in iOS [#144](https://github.com/onmyway133/blog/issues/144)
+- How to fix Uncaught Error Cannot find module react [#145](https://github.com/onmyway133/blog/issues/145)
 - Some Windows Phone 7 development tips [#156](https://github.com/onmyway133/blog/issues/156)
 - How to fix MethodError - undefined method real_path with CocoaPods? [#170](https://github.com/onmyway133/blog/issues/170)
 - How to load top level view from xib in macOS [#171](https://github.com/onmyway133/blog/issues/171)
