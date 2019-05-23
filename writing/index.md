@@ -68,6 +68,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to use Input and output container in Swift [#87](https://github.com/onmyway133/blog/issues/87)
 - How to call function inside Apple Script [#88](https://github.com/onmyway133/blog/issues/88)
 - How to debug iOS apps [#95](https://github.com/onmyway133/blog/issues/95)
+- How to use safeAreaLayoutGuide in iOS 10 [#98](https://github.com/onmyway133/blog/issues/98)
 - Diff algorithm [#99](https://github.com/onmyway133/blog/issues/99)
 - How to use custom UINavigationBar in iOS [#102](https://github.com/onmyway133/blog/issues/102)
 - How to make simple Binding in MVVM in iOS [#103](https://github.com/onmyway133/blog/issues/103)
