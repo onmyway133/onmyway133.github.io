@@ -3,6 +3,8 @@ title: Open Source
 description:
 ---
 
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
 Here are open source projects I make and contribute
 
 ## Swift
@@ -22,7 +24,7 @@ Here are open source projects I make and contribute
 - [GitHub.swift](https://github.com/onmyway133/Github.swift) :octocat: Unofficial GitHub API client in Swift
 - [Border](https://github.com/onmyway133/Border) 📐 Make border for all views
 - [Paramount](https://github.com/onmyway133/Paramount) 🗼 Like Flipboard FLEX, but allows custom action
-- [Anchors](https://github.com/onmyway133/Anchors) ⚓️ Declarative, extensible, powerful Auto Layout for iOS and macOS 🚀 🚀 
+- [Anchors](https://github.com/onmyway133/Anchors) ⚓️ Declarative, extensible, powerful Auto Layout for iOS and macOS 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/Anchors" data-size="large" data-show-count="true" aria-label="Star onmyway133/Anchors on GitHub">Star</a>
 - [EasyClosure](https://github.com/onmyway133/EasyClosure) 🍩 Unified communication with easy closure in Swift
 - [Resolver](https://github.com/onmyway133/Resolver) 🎊 A simple resolver in Swift
 - [Then](https://github.com/onmyway133/Then) 🏃 Promise A+ in Swift
@@ -32,16 +34,18 @@ Here are open source projects I make and contribute
 - [ComputerScienceSwift](https://github.com/onmyway133/ComputerScienceSwift) 👨‍💻 Practice computer science in Swift
 - [ParticlePlayground](https://github.com/onmyway133/ParticlePlayground) 🎊 A Swift playground to play with CAEmitterLayer
 - [GifMagic](https://github.com/onmyway133/GifMagic) 💈 Gif maker and extractor in Swift
-- [DeepDiff](https://github.com/onmyway133/DeepDiff) 🦀 Diff in Swift 🚀 🚀 🚀 
+- [DeepDiff](https://github.com/onmyway133/DeepDiff) 🦀 Diff in Swift 🚀 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/DeepDiff" data-size="large" data-show-count="true" aria-label="Star onmyway133/DeepDiff on GitHub">Star</a>
 - [RxLifeCycle](https://github.com/onmyway133/RxLifeCycle) 🐹 Easy life cycle observation
 - [CollectionUpdateExample](https://github.com/onmyway133/CollectionUpdateExample) 🛶 Demo batch update in UITableView and UICollectionView
 - [UsingPlayground](https://github.com/onmyway133/UsingPlayground) 👶 Demo how to use Playground
 - [SwiftSnippets](https://github.com/onmyway133/SwiftSnippets) 🍮 A collection of Swift snippets to be used in Xcode
-- [Dropdowns](https://github.com/onmyway133/Dropdowns) 💧 Dropdown in Swift
+- [Dropdowns](https://github.com/onmyway133/Dropdowns) 💧 Dropdown in Swift <a class="github-button" href="https://github.com/onmyway133/dropdowns" data-size="large" data-show-count="true" aria-label="Star onmyway133/dropdowns on GitHub">Star</a>
+
 - [Cheers](https://github.com/onmyway133/Cheers) 🎊 Fancy confetti effects in Swift
 - [Upstream](https://github.com/onmyway133/Upstream) ⛲️ Adapted Data Source in Swift and a little bit more
-- [RoughSwift](https://github.com/onmyway133/RoughSwift) 🎃Create hand-drawn, sketchy, comic shape in Swift 🚀 🚀 
+- [RoughSwift](https://github.com/onmyway133/RoughSwift) 🎃Create hand-drawn, sketchy, comic shape in Swift 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/roughswift" data-size="large" data-show-count="true" aria-label="Star onmyway133/roughswift on GitHub">Star</a>
 - [EasyClosure](https://github.com/onmyway133/EasyClosure) 🍩 Unified communication patterns with easy closure in Swift
+- [EasyStash](https://github.com/onmyway133/EasyStash) 🗳Easy data persistence in Swift
 
 Contributions to [hyperoslo](https://github.com/hyperoslo)
 

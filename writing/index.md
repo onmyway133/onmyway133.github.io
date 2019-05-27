@@ -200,4 +200,5 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to use Gradle Kotlin DSL in Android [#285](https://github.com/onmyway133/blog/issues/285)
 - Favorite posts [#286](https://github.com/onmyway133/blog/issues/286)
 - Understanding socket and port in TCP [#287](https://github.com/onmyway133/blog/issues/287)
-- 
+- How to add indicator under tab bar buttons in iOS [#288](https://github.com/onmyway133/blog/issues/288)
+- How to capture screenshot of element in Chrome [#289](https://github.com/onmyway133/blog/issues/289)
