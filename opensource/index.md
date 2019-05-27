@@ -24,7 +24,7 @@ Here are open source projects I make and contribute
 - [GitHub.swift](https://github.com/onmyway133/Github.swift) :octocat: Unofficial GitHub API client in Swift
 - [Border](https://github.com/onmyway133/Border) 📐 Make border for all views
 - [Paramount](https://github.com/onmyway133/Paramount) 🗼 Like Flipboard FLEX, but allows custom action
-- [Anchors](https://github.com/onmyway133/Anchors) ⚓️ Declarative, extensible, powerful Auto Layout for iOS and macOS 🚀 🚀 
+- [Anchors](https://github.com/onmyway133/Anchors) ⚓️ Declarative, extensible, powerful Auto Layout for iOS and macOS 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/Anchors" data-size="large" data-show-count="true" aria-label="Star onmyway133/Anchors on GitHub">Star</a>
 - [EasyClosure](https://github.com/onmyway133/EasyClosure) 🍩 Unified communication with easy closure in Swift
 - [Resolver](https://github.com/onmyway133/Resolver) 🎊 A simple resolver in Swift
 - [Then](https://github.com/onmyway133/Then) 🏃 Promise A+ in Swift
@@ -34,7 +34,7 @@ Here are open source projects I make and contribute
 - [ComputerScienceSwift](https://github.com/onmyway133/ComputerScienceSwift) 👨‍💻 Practice computer science in Swift
 - [ParticlePlayground](https://github.com/onmyway133/ParticlePlayground) 🎊 A Swift playground to play with CAEmitterLayer
 - [GifMagic](https://github.com/onmyway133/GifMagic) 💈 Gif maker and extractor in Swift
-- [DeepDiff](https://github.com/onmyway133/DeepDiff) 🦀 Diff in Swift 🚀 🚀 🚀 
+- [DeepDiff](https://github.com/onmyway133/DeepDiff) 🦀 Diff in Swift 🚀 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/DeepDiff" data-size="large" data-show-count="true" aria-label="Star onmyway133/DeepDiff on GitHub">Star</a>
 - [RxLifeCycle](https://github.com/onmyway133/RxLifeCycle) 🐹 Easy life cycle observation
 - [CollectionUpdateExample](https://github.com/onmyway133/CollectionUpdateExample) 🛶 Demo batch update in UITableView and UICollectionView
 - [UsingPlayground](https://github.com/onmyway133/UsingPlayground) 👶 Demo how to use Playground
