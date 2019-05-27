@@ -9,15 +9,15 @@ Here are open source projects I make and contribute
 
 ## Swift
 
-- [Snowflake](https://github.com/onmyway133/Snowflake) ❄️ SVG in Swift 🚀 🚀 
+- [Snowflake](https://github.com/onmyway133/Snowflake) ❄️ SVG in Swift 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/Snowflake" data-size="large" data-show-count="true" aria-label="Star onmyway133/Snowflake on GitHub">Star</a> 
 - [Omnia](https://github.com/onmyway133/Omnia) 🗿 Everything your projects need to know
-- [Scale](https://github.com/onmyway133/Scale) 🎏 Unit converter in Swift
-- [Smile](https://github.com/onmyway133/Smile) 😄 Emoji in Swift
-- [Arcane](https://github.com/onmyway133/Arcane) 🔱 CommonCrypto in Swift, and more
-- [SwiftHash](https://github.com/onmyway133/SwiftHash) 🍕 MD5 in pure Swift 🚀 🚀 
+- [Scale](https://github.com/onmyway133/Scale) 🎏 Unit converter in Swift <a class="github-button" href="https://github.com/onmyway133/Scale" data-size="large" data-show-count="true" aria-label="Star onmyway133/Scale on GitHub">Star</a>
+- [Smile](https://github.com/onmyway133/Smile) 😄 Emoji in Swift <a class="github-button" href="https://github.com/onmyway133/Smile" data-size="large" data-show-count="true" aria-label="Star onmyway133/Smile on GitHub">Star</a>
+- [Arcane](https://github.com/onmyway133/Arcane) 🔱 CommonCrypto in Swift, and more <a class="github-button" href="https://github.com/onmyway133/Arcane" data-size="large" data-show-count="true" aria-label="Star onmyway133/Arcane on GitHub">Star</a>
+- [SwiftHash](https://github.com/onmyway133/SwiftHash) 🍕 MD5 in pure Swift 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/SwiftHash" data-size="large" data-show-count="true" aria-label="Star onmyway133/SwiftHash on GitHub">Star</a>
 - [Farge](https://github.com/onmyway133/Farge) 🎈Tell the name of hex color
 - [Reindeers](https://github.com/onmyway133/Reindeers) ❄️ XML and HTML parser in Swift
-- [ISO8601](https://github.com/onmyway133/ISO8601) 🎗 Super lightweight ISO8601 Date Formatter in Swift
+- [ISO8601](https://github.com/onmyway133/ISO8601) 🎗 Super lightweight ISO8601 Date Formatter in Swift <a class="github-button" href="https://github.com/onmyway133/ISO8601" data-size="large" data-show-count="true" aria-label="Star onmyway133/ISO8601 on GitHub">Star</a>
 - [Dust](https://github.com/onmyway133/Dust) 🚀 Unofficial, simple push notification
 - [Runtime-Headers](https://github.com/onmyway133/Runtime-Headers) 💿 iOS, macOS runtime headers
 - [Wave](https://github.com/onmyway133/Wave) 🌊 Declarative chainable animations in Swift
@@ -25,10 +25,10 @@ Here are open source projects I make and contribute
 - [Border](https://github.com/onmyway133/Border) 📐 Make border for all views
 - [Paramount](https://github.com/onmyway133/Paramount) 🗼 Like Flipboard FLEX, but allows custom action
 - [Anchors](https://github.com/onmyway133/Anchors) ⚓️ Declarative, extensible, powerful Auto Layout for iOS and macOS 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/Anchors" data-size="large" data-show-count="true" aria-label="Star onmyway133/Anchors on GitHub">Star</a>
-- [EasyClosure](https://github.com/onmyway133/EasyClosure) 🍩 Unified communication with easy closure in Swift
+- [EasyClosure](https://github.com/onmyway133/EasyClosure) 🍩 Unified communication with easy closure in Swift <a class="github-button" href="https://github.com/onmyway133/EasyClosure" data-size="large" data-show-count="true" aria-label="Star onmyway133/EasyClosure on GitHub">Star</a>
 - [Resolver](https://github.com/onmyway133/Resolver) 🎊 A simple resolver in Swift
 - [Then](https://github.com/onmyway133/Then) 🏃 Promise A+ in Swift
-- [Themes](https://github.com/onmyway133/Themes) 👕 Theme management in Swift
+- [Themes](https://github.com/onmyway133/Themes) 👕 Theme management in Swift <a class="github-button" href="https://github.com/onmyway133/Themes" data-size="large" data-show-count="true" aria-label="Star onmyway133/Themes on GitHub">Star</a>
 - [TestTarget](https://github.com/onmyway133/TestTarget) 🐳 Notes on configuring test targets
 - [Trackers](https://github.com/onmyway133/Trackers) 🕵️ Trackers in Swift
 - [ComputerScienceSwift](https://github.com/onmyway133/ComputerScienceSwift) 👨‍💻 Practice computer science in Swift
@@ -40,11 +40,9 @@ Here are open source projects I make and contribute
 - [UsingPlayground](https://github.com/onmyway133/UsingPlayground) 👶 Demo how to use Playground
 - [SwiftSnippets](https://github.com/onmyway133/SwiftSnippets) 🍮 A collection of Swift snippets to be used in Xcode
 - [Dropdowns](https://github.com/onmyway133/Dropdowns) 💧 Dropdown in Swift <a class="github-button" href="https://github.com/onmyway133/dropdowns" data-size="large" data-show-count="true" aria-label="Star onmyway133/dropdowns on GitHub">Star</a>
-
-- [Cheers](https://github.com/onmyway133/Cheers) 🎊 Fancy confetti effects in Swift
+- [Cheers](https://github.com/onmyway133/Cheers) 🎊 Fancy confetti effects in Swift <a class="github-button" href="https://github.com/onmyway133/Cheers" data-size="large" data-show-count="true" aria-label="Star onmyway133/Cheers on GitHub">Star</a>
 - [Upstream](https://github.com/onmyway133/Upstream) ⛲️ Adapted Data Source in Swift and a little bit more
 - [RoughSwift](https://github.com/onmyway133/RoughSwift) 🎃Create hand-drawn, sketchy, comic shape in Swift 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/roughswift" data-size="large" data-show-count="true" aria-label="Star onmyway133/roughswift on GitHub">Star</a>
-- [EasyClosure](https://github.com/onmyway133/EasyClosure) 🍩 Unified communication patterns with easy closure in Swift
 - [EasyStash](https://github.com/onmyway133/EasyStash) 🗳Easy data persistence in Swift
 
 Contributions to [hyperoslo](https://github.com/hyperoslo)
@@ -93,7 +91,7 @@ Contributions to [BlindAssist](https://github.com/BlindAssist)
 
 ## Xcode extension
 
-- [XcodeWay](https://github.com/onmyway133/XcodeWay) ⛵️ An Xcode Source Editor Extension that makes navigating to many places easier 🚀 🚀 🚀 
+- [XcodeWay](https://github.com/onmyway133/XcodeWay) ⛵️ An Xcode Source Editor Extension that makes navigating to many places easier 🚀 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/XcodeWay" data-size="large" data-show-count="true" aria-label="Star onmyway133/XcodeWay on GitHub">Star</a>
 - [XcodeColorSense2](https://github.com/onmyway133/XcodeColorSense2) 🎈 An Xcode source editor extension that makes working with color easier
 
 ## iOS app
@@ -107,8 +105,8 @@ Contributions to [BlindAssist](https://github.com/BlindAssist)
 
 ## macOS app
 
-- [GifCapture](https://github.com/onmyway133/GifCapture) 🏇 Gif capture app for macOS
-- [FinderGo](https://github.com/onmyway133/FinderGo) 🐢 Open terminal quickly from Finder
+- [GifCapture](https://github.com/onmyway133/GifCapture) 🏇 Gif capture app for macOS <a class="github-button" href="https://github.com/onmyway133/GifCapture" data-size="large" data-show-count="true" aria-label="Star onmyway133/GifCapture on GitHub">Star</a>
+- [FinderGo](https://github.com/onmyway133/FinderGo) 🐢 Open terminal quickly from Finder <a class="github-button" href="https://github.com/onmyway133/FinderGo" data-size="large" data-show-count="true" aria-label="Star onmyway133/FinderGo on GitHub">Star</a>
 - [YoutubeDownloader](https://github.com/onmyway133/YoutubeDownloader) 🐧 Youtube downloader for macOS
 - [Simulator](https://github.com/onmyway133/Simulator) 📱 Navigate to your app folders quickly
 - [FinderFrame](https://github.com/onmyway133/FinderFrame) 🖼  Create Finder style image and gif
@@ -117,8 +115,8 @@ Contributions to [BlindAssist](https://github.com/BlindAssist)
 ## Electron
 
 - [Lyrics](https://github.com/onmyway133/Lyrics) 📻 An electron app to show the lyrics of the currently playing song
-- [PushNotifications](https://github.com/onmyway133/PushNotifications) 🐉 A macOS app to test push notifications 🚀 🚀 
-- [IconGenerator](https://github.com/onmyway133/IconGenerator) 🍱 A macOS app to generate app icons🚀 🚀 
+- [PushNotifications](https://github.com/onmyway133/PushNotifications) 🐉 A macOS app to test push notifications 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/PushNotifications" data-size="large" data-show-count="true" aria-label="Star onmyway133/PushNotifications on GitHub">Star</a>
+- [IconGenerator](https://github.com/onmyway133/IconGenerator) 🍱 A macOS app to generate app icons 🚀 🚀 <a class="github-button" href="https://github.com/onmyway133/IconGenerator" data-size="large" data-show-count="true" aria-label="Star onmyway133/IconGenerator on GitHub">Star</a>
 
 ## Javascript
 
