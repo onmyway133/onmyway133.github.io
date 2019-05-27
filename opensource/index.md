@@ -39,9 +39,7 @@ Here are open source projects I make and contribute
 - [CollectionUpdateExample](https://github.com/onmyway133/CollectionUpdateExample) 🛶 Demo batch update in UITableView and UICollectionView
 - [UsingPlayground](https://github.com/onmyway133/UsingPlayground) 👶 Demo how to use Playground
 - [SwiftSnippets](https://github.com/onmyway133/SwiftSnippets) 🍮 A collection of Swift snippets to be used in Xcode
-- [Dropdowns](https://github.com/onmyway133/Dropdowns) 💧 Dropdown in Swift
-
-<a class="github-button" href="https://github.com/onmyway133/dropdowns" data-size="large" data-show-count="true" aria-label="Star onmyway133/dropdowns on GitHub">Star</a>
+- [Dropdowns](https://github.com/onmyway133/Dropdowns) 💧 Dropdown in Swift <a class="github-button" href="https://github.com/onmyway133/dropdowns" data-size="large" data-show-count="true" aria-label="Star onmyway133/dropdowns on GitHub">Star</a>
 
 - [Cheers](https://github.com/onmyway133/Cheers) 🎊 Fancy confetti effects in Swift
 - [Upstream](https://github.com/onmyway133/Upstream) ⛲️ Adapted Data Source in Swift and a little bit more
