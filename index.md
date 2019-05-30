@@ -16,7 +16,6 @@
 
 ## Speaking
 
-- [Talks](https://github.com/onmyway133/blog/issues/111)  👨‍🎤
 - [SpeakerDeck](https://speakerdeck.com/onmyway133) 👨‍🎤
 
 ## Activity
