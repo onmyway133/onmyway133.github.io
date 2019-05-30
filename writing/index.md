@@ -74,10 +74,10 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to make simple Binding in MVVM in iOS [#103](https://github.com/onmyway133/blog/issues/103)
 - How to make generic extension with associatedtype protocol in Swift [#104](https://github.com/onmyway133/blog/issues/104)
 - Please reconsidering your choice of libraries [#105](https://github.com/onmyway133/blog/issues/105)
-- Coordinator and FlowController [#106](https://github.com/onmyway133/blog/issues/106) :star::star:
-- Communication between Fragment and Activity [#108](https://github.com/onmyway133/blog/issues/108) :star:
-- URL Routing with Compass [#110](https://github.com/onmyway133/blog/issues/110) :star:
-- Collection Update [#119](https://github.com/onmyway133/blog/issues/119) :star:
+- Coordinator and FlowController [#106](https://github.com/onmyway133/blog/issues/106) ⭐️⭐️
+- Communication between Fragment and Activity [#108](https://github.com/onmyway133/blog/issues/108) ⭐️
+- URL Routing with Compass [#110](https://github.com/onmyway133/blog/issues/110) ⭐️
+- Collection Update [#119](https://github.com/onmyway133/blog/issues/119) ⭐️
 - A taste of MVVM and Reactive paradigm [#120](https://github.com/onmyway133/blog/issues/120)
 - Understanding suspend function in Kotlin Coroutine in Android [#123](https://github.com/onmyway133/blog/issues/123)
 - How to prevent UIVisualEffectView crash [#124](https://github.com/onmyway133/blog/issues/124)
@@ -147,7 +147,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to shake NSView in macOS [#233](https://github.com/onmyway133/blog/issues/233)
 - How to manage license key for macOS apps [#234](https://github.com/onmyway133/blog/issues/234)
 - How to login to GitHub using SSH [#235](https://github.com/onmyway133/blog/issues/235)
-- How to use Xcode 10 Xcode Server [#236](https://github.com/onmyway133/blog/issues/236)
+- How to use Xcode 10 Xcode Server [#236](https://github.com/onmyway133/blog/issues/236) ⭐️
 - How to fix UITargetAppPath should be provided in iOS tests [#237](https://github.com/onmyway133/blog/issues/237)
 - How to work around app damaged warning in macOS [#238](https://github.com/onmyway133/blog/issues/238)
 - Useful git commands for everyday use! [#239](https://github.com/onmyway133/blog/issues/239)
@@ -156,7 +156,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to show full screen window programmatically in macOS [#242](https://github.com/onmyway133/blog/issues/242)
 - How to get running window informations in macOS [#243](https://github.com/onmyway133/blog/issues/243)
 - How to scale image in NSButton in AppKit [#244](https://github.com/onmyway133/blog/issues/244)
-- Favorite WWDC 2018 sessions [#245](https://github.com/onmyway133/blog/issues/245) :star:
+- Favorite WWDC 2018 sessions [#245](https://github.com/onmyway133/blog/issues/245) ⭐️
 - How to enable black mode in Google Maps in iOS [#246](https://github.com/onmyway133/blog/issues/246)
 - Useful commands for iOS development [#247](https://github.com/onmyway133/blog/issues/247)
 - How to use remote theme for GitHub Pages [#248](https://github.com/onmyway133/blog/issues/248)
@@ -166,20 +166,20 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to remove Cartography in iOS [#252](https://github.com/onmyway133/blog/issues/252)
 - How to make UIButton tap event observable with RxSwift in iOS [#253](https://github.com/onmyway133/blog/issues/253)
 - How to overlay view on another view in React Native [#254](https://github.com/onmyway133/blog/issues/254)
-- Open Source Stories: From Cachable to Generic Storage in Cache [#255](https://github.com/onmyway133/blog/issues/255)
-- How to structure your project and manage static resources in React Native [#256](https://github.com/onmyway133/blog/issues/256)
+- Open Source Stories: From Cachable to Generic Storage in Cache [#255](https://github.com/onmyway133/blog/issues/255) ⭐️
+- How to structure your project and manage static resources in React Native [#256](https://github.com/onmyway133/blog/issues/256) ⭐️⭐️
 - How to setup Android projects [#257](https://github.com/onmyway133/blog/issues/257)
 - Learn iOS best practices by building a simple recipes app [#258](https://github.com/onmyway133/blog/issues/258)
 - How to position element at the bottom of the screen using Flexbox in React Native [#259](https://github.com/onmyway133/blog/issues/259)
 - How to use Firebase SDK with Firestore for React Native [#260](https://github.com/onmyway133/blog/issues/260)
 - How to use Facebook SDK for login in React Native [#261](https://github.com/onmyway133/blog/issues/261)
-- How to handle Background App Refresh with HealthKit in React Native [#262](https://github.com/onmyway133/blog/issues/262)
+- How to handle Background App Refresh with HealthKit in React Native [#262](https://github.com/onmyway133/blog/issues/262) ⭐️
 - How to dismiss keyboard with react-navigation in React Native apps [#263](https://github.com/onmyway133/blog/issues/263)
 - How to Make Linear Gradient View with Bridging in React Native [#264](https://github.com/onmyway133/blog/issues/264)
 - How to deploy React Native apps to Bitrise, Fabric, CircleCI [#265](https://github.com/onmyway133/blog/issues/265)
 - Get to know different JavaScript environments in React Native [#266](https://github.com/onmyway133/blog/issues/266)
 - How to convert your Xcode plugins to Xcode extensions [#267](https://github.com/onmyway133/blog/issues/267)
-- How to add app icons and splash screens to a React Native app in staging and production [#268](https://github.com/onmyway133/blog/issues/268) :star:
+- How to add app icons and splash screens to a React Native app in staging and production [#268](https://github.com/onmyway133/blog/issues/268) ⭐️
 - Introducing Learn Talks — Awesome conference and meetup talks
  [#269](https://github.com/onmyway133/blog/issues/269)
 - Getting to know some pragmatic programming language features
@@ -187,7 +187,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to make tag selection view in React Native [#271](https://github.com/onmyway133/blog/issues/271)
 - Next to first, next to nothing [#272](https://github.com/onmyway133/blog/issues/272)
 - How to run Android apps in Bitrise [#273](https://github.com/onmyway133/blog/issues/273)
-- 20 recommended utility apps for macOS [#274](https://github.com/onmyway133/blog/issues/274) :star:
+- 20 recommended utility apps for macOS [#274](https://github.com/onmyway133/blog/issues/274) ⭐️
 - How to make Unity games in pure C# [#275](https://github.com/onmyway133/blog/issues/275)
 - How to set up ESLint and EditorConfig in React Native projects [#276](https://github.com/onmyway133/blog/issues/276)
 - How to use Bitrise CI for React Native apps [#277](https://github.com/onmyway133/blog/issues/277)
@@ -197,7 +197,7 @@ Here are my posts on [GitHub blog](https://github.com/onmyway133/blog/issues). F
 - How to use One Dark theme and Fira Code font for IDEs [#281](https://github.com/onmyway133/blog/issues/281)
 - How to get activity name through HKWorkoutActivityType in HealthKit [#282](https://github.com/onmyway133/blog/issues/282)
 - How to deal with CSS responsiveness in Wordpress [#283](https://github.com/onmyway133/blog/issues/283)
-- Learning VoIP, RTP and SIP (aka awesome pjsip) [#284](https://github.com/onmyway133/blog/issues/284) :star::star:
+- Learning VoIP, RTP and SIP (aka awesome pjsip) [#284](https://github.com/onmyway133/blog/issues/284) ⭐️⭐️
 - How to use Gradle Kotlin DSL in Android [#285](https://github.com/onmyway133/blog/issues/285)
 - Favorite posts [#286](https://github.com/onmyway133/blog/issues/286)
 - Understanding socket and port in TCP [#287](https://github.com/onmyway133/blog/issues/287)
