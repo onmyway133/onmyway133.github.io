@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang=en>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Issue #304 If you do VoIP applications, especially with open sources like pjsip, you may encounter kamalio and rtpproxy to serve SIP requests. Due to limitation of NAT traversals, rtpproxy is needed t">
+<meta name="keywords" content="ios, android,javascript, react">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Support IP handover in rtpproxy for VoIP applications">
+<meta property="og:url" content="https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/index.html">
+<meta property="og:site_name" content="onmyway133">
+<meta property="og:description" content="Issue #304 If you do VoIP applications, especially with open sources like pjsip, you may encounter kamalio and rtpproxy to serve SIP requests. Due to limitation of NAT traversals, rtpproxy is needed t">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-06-12T19:34:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Support IP handover in rtpproxy for VoIP applications">
+<meta name="twitter:description" content="Issue #304 If you do VoIP applications, especially with open sources like pjsip, you may encounter kamalio and rtpproxy to serve SIP requests. Due to limitation of NAT traversals, rtpproxy is needed t">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/icons96.jpeg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/icons96.jpeg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/icons96.jpeg">
+          
+        
+    
+    <!-- title -->
+    <title>Support IP handover in rtpproxy for VoIP applications</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/Favorite-WWDC-2019-sessions/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/How-to-test-drive-view-in-iOS/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&text=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&title=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&is_video=false&description=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Support IP handover in rtpproxy for VoIP applications&body=Check out this article: https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&title=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&title=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&title=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&title=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&name=Support IP handover in rtpproxy for VoIP applications&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Support IP handover in rtpproxy for VoIP applications
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">onmyway133</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-06-12T19:33:28.000Z" itemprop="datePublished">2019-06-12</time>
+        
+        (Updated: <time datetime="2019-06-12T19:34:26.000Z" itemprop="dateModified">2019-06-12</time>)
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/304" target="_blank" rel="noopener">#304</a></strong></p>
+<p>If you do <a href="https://github.com/onmyway133/blog/issues/284" target="_blank" rel="noopener">VoIP applications</a>, especially with open sources like pjsip, you may encounter <a href="https://www.kamailio.org/w/" target="_blank" rel="noopener">kamalio</a> and <a href="http://www.rtpproxy.org/" target="_blank" rel="noopener">rtpproxy</a> to serve SIP requests. Due to limitation of NAT traversals, rtpproxy is needed to work around NAT. All SIP handshake requests go through a proxy server, but rtpproxy can also relay voice, video or any RTP stream of data. When I played with rtpproxy, it was before version <a href="http://www.rtpproxy.org/post/v2release/" target="_blank" rel="noopener">2.0</a> and I need to handle IP handover. This refers to the scenario when user switches between different network, for example from Wifi to 4G and they get new IP. Normally this means ending in the SIP call, but the expectation is that we can retry and continue the call if possible for users.</p>
+<p>That’s why I forked rtpproxy and add IP handover support. You can check the GitHub repo at <a href="https://github.com/onmyway133/rtpproxy" target="_blank" rel="noopener">rtpproxy</a>.</p>
+<p>Use src_cnt to track the number of consecutive packets from different address. When this number exceeds THRESHOLD (10 for RTP and 2 for RTCP), I switch to this new address</p>
+<p>This way</p>
+<ul>
+<li><p>Client can ALWAYS change IP when he switches from 3G to Wifi, or from this Wifi hotspot to another</p>
+</li>
+<li><p>There’s no chance for attack, unless attacker sends &gt; 10 (RTP THRESHOLD) packets in 20ms (supposed my client sends packets every 20ms)</p>
+</li>
+</ul>
+<p>This idea is borrowed from <a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__CONFIG.htm" target="_blank" rel="noopener">http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__CONFIG.htm</a></p>
+<p>There is a macro PJMEDIA_RTP_NAT_PROBATION_CNT. Basically, it is</p>
+<blockquote>
+<p><em>“See if source address of RTP packet is different than the configured address, and switch RTP remote address to source packet address after several consecutive packets have been received.”</em></p>
+</blockquote>
+<p>Mobile clients now change IP frequently, from these hotspots to those. So if rtpproxy can support this feature, it would be nicer.</p>
+<p>Take a look at <a href="https://github.com/onmyway133/rtpproxy/blob/master/rtpp_session.h" target="_blank" rel="noopener">https://github.com/onmyway133/rtpproxy/blob/master/rtpp_session.h</a></p>
+<pre><code>// IP Handover Count how many consecutive different packets are received, 0 is for callee, 1 is for caller    unsigned int src_count[2];</code></pre><p>And how it actions in <a href="https://github.com/onmyway133/rtpproxy/blob/master/main.c" target="_blank" rel="noopener">https://github.com/onmyway133/rtpproxy/blob/master/main.c</a></p>
+<pre><code>static void
+rxmit_packets(struct cfg *cf, struct rtpp_session *sp, int ridx,
+  double dtime)
+{
+    int ndrain, i, port;
+    struct rtp_packet *packet = NULL;
+
+/* Repeat since we may have several packets queued on the same socket */
+    for (ndrain = 0; ndrain &lt; 5; ndrain++) {
+ if (packet != NULL)
+     rtp_packet_free(packet);
+
+packet = rtp_recv(sp-&gt;fds[ridx]);
+ if (packet == NULL)
+     break;
+ packet-&gt;laddr = sp-&gt;laddr[ridx];
+ packet-&gt;rport = sp-&gt;ports[ridx];
+ packet-&gt;rtime = dtime;
+
+i = 0;
+ // IP Handover do not need canupdate
+ // Use src_count
+ if (sp-&gt;addr[ridx] != NULL) {
+     /* Check that the packet is authentic, drop if it isn&apos;t */
+     if (sp-&gt;asymmetric[ridx] == 0) {
+  /*
+  if (memcmp(sp-&gt;addr[ridx], &amp;packet-&gt;raddr, packet-&gt;rlen) != 0) {
+      if (sp-&gt;canupdate[ridx] == 0) {
+   //
+   // Continue, since there could be good packets in
+   // queue.
+   //
+   continue;
+      }
+
+      // Signal that an address has to be updated
+      rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover Set i 1st ridx %d&quot;,ridx);
+      i = 1;
+  } else if (sp-&gt;canupdate[ridx] != 0 &amp;&amp;
+    sp-&gt;last_update[ridx] != 0 &amp;&amp;
+    dtime - sp-&gt;last_update[ridx] &gt; UPDATE_WINDOW) 
+  {
+      sp-&gt;canupdate[ridx] = 0;
+      rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover Set canupdate to 0 1st ridx %d&quot;,ridx);
+  }
+  */
+
+  if (memcmp(sp-&gt;addr[ridx], &amp;packet-&gt;raddr, packet-&gt;rlen) == 0) { 
+   sp-&gt;src_count[ridx] = 0;
+  } 
+  else {
+   sp-&gt;src_count[ridx]++;
+   // IP Handover RTCP packet sends at larger interval, so must use smaller THRESHOLD
+   // Check to see if port is odd or even
+   if(sp-&gt;ports[ridx] % 2 == 0) {
+    if(sp-&gt;src_count[ridx] &gt;= 10) {
+     i = 1;
+    } 
+   }
+   else {
+    if(sp-&gt;src_count[ridx] &gt;= 2) {
+     i = 1;
+    }
+   }
+
+  }
+
+} else {
+  /*
+   * For asymmetric clients don&apos;t check
+   * source port since it may be different.
+   */
+  rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover We are in asymmetric ridx %d&quot;,ridx);
+  if (!ishostseq(sp-&gt;addr[ridx], sstosa(&amp;packet-&gt;raddr)))
+      /*
+       * Continue, since there could be good packets in
+       * queue.
+       */
+      continue;
+     }
+     sp-&gt;pcount[ridx]++;
+ } else {
+     sp-&gt;pcount[ridx]++;
+     sp-&gt;addr[ridx] = malloc(packet-&gt;rlen);
+     if (sp-&gt;addr[ridx] == NULL) {
+  sp-&gt;pcount[3]++;
+  rtpp_log_write(RTPP_LOG_ERR, sp-&gt;log,
+    &quot;can&apos;t allocate memory for remote address - &quot;
+    &quot;removing session&quot;);
+  remove_session(cf, GET_RTP(sp));
+  /* Break, sp is invalid now */
+  break;
+     }
+     /* Signal that an address have to be updated. */
+     rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover Set i 2nd ridx %d&quot;,ridx); 
+     i = 1;
+ }
+
+/*
+  * Update recorded address if it&apos;s necessary. Set &quot;untrusted address&quot;
+  * flag in the session state, so that possible future address updates
+  * from that client won&apos;t get address changed immediately to some
+  * bogus one.
+  */
+ if (i != 0) {
+     sp-&gt;untrusted_addr[ridx] = 1;
+     memcpy(sp-&gt;addr[ridx], &amp;packet-&gt;raddr, packet-&gt;rlen);
+
+     // IP Handover Do not use canupdate
+     // After update, reset src_count
+     /*
+     if (sp-&gt;prev_addr[ridx] == NULL || memcmp(sp-&gt;prev_addr[ridx],
+       &amp;packet-&gt;raddr, packet-&gt;rlen) != 0) 
+     {
+         sp-&gt;canupdate[ridx] = 0;
+  if(sp-&gt;prev_addr[ridx] == NULL)
+  {
+     rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover prev_addr NULL ridx %d&quot;,ridx); 
+  }
+  rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover Set canupdate to 0 2nd ridx %d&quot;,ridx);
+     }
+     */
+
+sp-&gt;src_count[ridx] = 0;
+
+port = ntohs(satosin(&amp;packet-&gt;raddr)-&gt;sin_port);
+
+rtpp_log_write(RTPP_LOG_INFO, sp-&gt;log,
+       &quot;%s&apos;s address filled in: %s:%d (%s)&quot;,
+       (ridx == 0) ? &quot;callee&quot; : &quot;caller&quot;,
+       addr2char(sstosa(&amp;packet-&gt;raddr)), port,
+       (sp-&gt;rtp == NULL) ? &quot;RTP&quot; : &quot;RTCP&quot;);
+
+/*
+      * Check if we have updated RTP while RTCP is still
+      * empty or contains address that differs from one we
+      * used when updating RTP. Try to guess RTCP if so,
+      * should be handy for non-NAT&apos;ed clients, and some
+      * NATed as well.
+      */
+     if (sp-&gt;rtcp != NULL &amp;&amp; (sp-&gt;rtcp-&gt;addr[ridx] == NULL ||
+       !ishostseq(sp-&gt;rtcp-&gt;addr[ridx], sstosa(&amp;packet-&gt;raddr)))) {
+  if (sp-&gt;rtcp-&gt;addr[ridx] == NULL) {
+      sp-&gt;rtcp-&gt;addr[ridx] = malloc(packet-&gt;rlen);
+      if (sp-&gt;rtcp-&gt;addr[ridx] == NULL) {
+   sp-&gt;pcount[3]++;
+   rtpp_log_write(RTPP_LOG_ERR, sp-&gt;log,
+     &quot;can&apos;t allocate memory for remote address - &quot;
+     &quot;removing session&quot;);
+   remove_session(cf, sp);
+   /* Break, sp is invalid now */
+   break;
+      }
+  }
+  memcpy(sp-&gt;rtcp-&gt;addr[ridx], &amp;packet-&gt;raddr, packet-&gt;rlen);
+  satosin(sp-&gt;rtcp-&gt;addr[ridx])-&gt;sin_port = htons(port + 1);
+  /* Use guessed value as the only true one for asymmetric clients */
+  sp-&gt;rtcp-&gt;canupdate[ridx] = NOT(sp-&gt;rtcp-&gt;asymmetric[ridx]);
+  rtpp_log_write(RTPP_LOG_INFO, sp-&gt;log, &quot;guessing RTCP port &quot;
+    &quot;for %s to be %d&quot;,
+    (ridx == 0) ? &quot;callee&quot; : &quot;caller&quot;, port + 1);
+     }
+ }
+
+if (sp-&gt;resizers[ridx].output_nsamples &gt; 0)
+     rtp_resizer_enqueue(&amp;sp-&gt;resizers[ridx], &amp;packet);
+ if (packet != NULL)
+     send_packet(cf, sp, ridx, packet);
+    }
+
+if (packet != NULL)
+ rtp_packet_free(packet);
+}</code></pre><p>Here are some useful resources that I read</p>
+<ul>
+<li><a href="http://stackoverflow.com/questions/18200089/how-does-rtpproxy-handle-handover" target="_blank" rel="noopener">http://stackoverflow.com/questions/18200089/how-does-rtpproxy-handle-handover</a></li>
+<li><a href="http://lists.sip-router.org/pipermail/sr-users/2008-March/062795.html" target="_blank" rel="noopener">http://lists.sip-router.org/pipermail/sr-users/2008-March/062795.html</a></li>
+<li><a href="http://sourceforge.net/p/sippy/rtpproxy/ci/c71201d897ee7c5620d88bb7d56412cd9dc3362a/tree//main.c?diff=5d030295ce90f2f6ff292b0d65bae1d4318db02a" target="_blank" rel="noopener">http://sourceforge.net/p/sippy/rtpproxy/ci/c71201d897ee7c5620d88bb7d56412cd9dc3362a/tree//main.c?diff=5d030295ce90f2f6ff292b0d65bae1d4318db02a</a></li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&text=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&title=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&is_video=false&description=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Support IP handover in rtpproxy for VoIP applications&body=Check out this article: https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&title=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&title=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&title=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&title=Support IP handover in rtpproxy for VoIP applications"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/Support-IP-handover-in-rtpproxy-for-VoIP-applications/&name=Support IP handover in rtpproxy for VoIP applications&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Khoa Pham
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-40119591-5', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
