@@ -6,18 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="Issue #10There is time we want to execute an action only once. We can surely introduce a flag, but it will be nicer if we abstract that out using composition. Then we have 12345678910111213class Once">
+    <meta name="description" content="Issue #10 There is time we want to execute an action only once. We can surely introduce a flag, but it will be nicer if we abstract that out using composition. Then we have 12345678910111213class Once">
 <meta name="keywords" content="swift">
 <meta property="og:type" content="article">
 <meta property="og:title" content="How to execute an action only once in Swift">
 <meta property="og:url" content="https://onmyway133.github.io/How-to-execute-an-action-only-once-in-Swift/index.html">
 <meta property="og:site_name" content="onmyway133">
-<meta property="og:description" content="Issue #10There is time we want to execute an action only once. We can surely introduce a flag, but it will be nicer if we abstract that out using composition. Then we have 12345678910111213class Once">
+<meta property="og:description" content="Issue #10 There is time we want to execute an action only once. We can surely introduce a flag, but it will be nicer if we abstract that out using composition. Then we have 12345678910111213class Once">
 <meta property="og:locale" content="en">
 <meta property="og:updated_time" content="2019-08-09T10:29:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to execute an action only once in Swift">
-<meta name="twitter:description" content="Issue #10There is time we want to execute an action only once. We can surely introduce a flag, but it will be nicer if we abstract that out using composition. Then we have 12345678910111213class Once">
+<meta name="twitter:description" content="Issue #10 There is time we want to execute an action only once. We can surely introduce a flag, but it will be nicer if we abstract that out using composition. Then we have 12345678910111213class Once">
     
     
         
@@ -103,7 +103,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-10"><span class="toc-number">1.</span> <span class="toc-text">Issue #10</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Usage"><span class="toc-number">2.</span> <span class="toc-text">Usage</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Usage"><span class="toc-number">1.</span> <span class="toc-text">Usage</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -147,7 +147,8 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h2 id="Issue-10"><a href="#Issue-10" class="headerlink" title="Issue #10"></a><strong>Issue <a href="https://github.com/onmyway133/blog/issues/10" target="_blank" rel="noopener">#10</a></strong></h2><p>There is time we want to execute an action only once. We can surely introduce a flag, but it will be nicer if we abstract that out using composition. Then we have</p>
+    <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/10" target="_blank" rel="noopener">#10</a></strong></p>
+<p>There is time we want to execute an action only once. We can surely introduce a flag, but it will be nicer if we abstract that out using composition. Then we have</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Once</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> already: <span class="type">Bool</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(@noescape block: <span class="params">()</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">    <span class="keyword">guard</span> !already <span class="keyword">else</span> &#123; </span><br><span class="line">      <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    block()</span><br><span class="line">    already = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ViewController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> once = <span class="type">Once</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidAppear</span><span class="params">(animated: Bool)</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewDidAppear(animated)</span><br><span class="line"></span><br><span class="line">    once.run &#123;</span><br><span class="line">      cameraMan.setup()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -178,7 +179,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-10"><span class="toc-number">1.</span> <span class="toc-text">Issue #10</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Usage"><span class="toc-number">2.</span> <span class="toc-text">Usage</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Usage"><span class="toc-number">1.</span> <span class="toc-text">Usage</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">

@@ -6,18 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="Issue #83As of swift 4 migration, we updated Cache to fully take advantage of Codable. It works for most cases, as we should usually declare our entity as typed safe object instead of array or json di">
+    <meta name="description" content="Issue #83 As of swift 4 migration, we updated Cache to fully take advantage of Codable. It works for most cases, as we should usually declare our entity as typed safe object instead of array or json d">
 <meta name="keywords" content="ios, android,javascript, react">
 <meta property="og:type" content="article">
 <meta property="og:title" content="How to migrate Codable object in Swift">
 <meta property="og:url" content="https://onmyway133.github.io/How-to-migrate-Codable-object-in-Swift/index.html">
 <meta property="og:site_name" content="onmyway133">
-<meta property="og:description" content="Issue #83As of swift 4 migration, we updated Cache to fully take advantage of Codable. It works for most cases, as we should usually declare our entity as typed safe object instead of array or json di">
+<meta property="og:description" content="Issue #83 As of swift 4 migration, we updated Cache to fully take advantage of Codable. It works for most cases, as we should usually declare our entity as typed safe object instead of array or json d">
 <meta property="og:locale" content="en">
 <meta property="og:updated_time" content="2019-05-23T17:05:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to migrate Codable object in Swift">
-<meta name="twitter:description" content="Issue #83As of swift 4 migration, we updated Cache to fully take advantage of Codable. It works for most cases, as we should usually declare our entity as typed safe object instead of array or json di">
+<meta name="twitter:description" content="Issue #83 As of swift 4 migration, we updated Cache to fully take advantage of Codable. It works for most cases, as we should usually declare our entity as typed safe object instead of array or json d">
     
     
         
@@ -103,7 +103,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-83"><span class="toc-number">1.</span> <span class="toc-text">Issue #83</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Class-name-change"><span class="toc-number">1.1.</span> <span class="toc-text">Class name change</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Property-change"><span class="toc-number">1.2.</span> <span class="toc-text">Property change</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Class-name-change"><span class="toc-number">1.</span> <span class="toc-text">Class name change</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Property-change"><span class="toc-number">2.</span> <span class="toc-text">Property change</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -142,7 +142,8 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h2 id="Issue-83"><a href="#Issue-83" class="headerlink" title="Issue #83"></a><strong>Issue <a href="https://github.com/onmyway133/blog/issues/83" target="_blank" rel="noopener">#83</a></strong></h2><p>As of swift 4 migration, we updated <a href="https://github.com/hyperoslo/Cache" target="_blank" rel="noopener">Cache</a> to fully take advantage of Codable. It works for most cases, as we should usually declare our entity as typed safe object instead of array or json dictionary. And by conforming to <code>Codable</code>, it is easily encoded and decoded to and from json data. And persisting them to <code>Cache</code> is as easy as eating cookie.</p>
+    <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/83" target="_blank" rel="noopener">#83</a></strong></p>
+<p>As of swift 4 migration, we updated <a href="https://github.com/hyperoslo/Cache" target="_blank" rel="noopener">Cache</a> to fully take advantage of Codable. It works for most cases, as we should usually declare our entity as typed safe object instead of array or json dictionary. And by conforming to <code>Codable</code>, it is easily encoded and decoded to and from json data. And persisting them to <code>Cache</code> is as easy as eating cookie.</p>
 <p>The other day, I saw someone asking on how to migrate if the model changes <a href="https://github.com/hyperoslo/Cache/issues/153" target="_blank" rel="noopener">https://github.com/hyperoslo/Cache/issues/153</a>, and he likes the way <code>Realm</code> does <a href="https://realm.io/docs/swift/latest/#migrations" target="_blank" rel="noopener">https://realm.io/docs/swift/latest/#migrations</a></p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="type">Realm</span>.<span class="type">Configuration</span>.defaultConfiguration = <span class="type">Realm</span>.<span class="type">Configuration</span>(</span><br><span class="line">  schemaVersion: <span class="number">1</span>,</span><br><span class="line">  migrationBlock: &#123; migration, oldSchemaVersion <span class="keyword">in</span></span><br><span class="line">      <span class="keyword">if</span> (oldSchemaVersion &lt; <span class="number">1</span>) &#123;</span><br><span class="line">          <span class="comment">// The enumerateObjects(ofType:_:) method iterates</span></span><br><span class="line">          <span class="comment">// over every Person object stored in the Realm file</span></span><br><span class="line">          migration.enumerateObjects(ofType: <span class="type">Person</span>.className()) &#123; oldObject, newObject <span class="keyword">in</span></span><br><span class="line">              <span class="comment">// combine name fields into a single field</span></span><br><span class="line">              <span class="keyword">let</span> firstName = oldObject![<span class="string">"firstName"</span>] <span class="keyword">as</span>! <span class="type">String</span></span><br><span class="line">              <span class="keyword">let</span> lastName = oldObject![<span class="string">"lastName"</span>] <span class="keyword">as</span>! <span class="type">String</span></span><br><span class="line">              newObject![<span class="string">"fullName"</span>] = <span class="string">"\(firstName) \(lastName)"</span></span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
 
@@ -178,7 +179,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-83"><span class="toc-number">1.</span> <span class="toc-text">Issue #83</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Class-name-change"><span class="toc-number">1.1.</span> <span class="toc-text">Class name change</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Property-change"><span class="toc-number">1.2.</span> <span class="toc-text">Property change</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Class-name-change"><span class="toc-number">1.</span> <span class="toc-text">Class name change</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Property-change"><span class="toc-number">2.</span> <span class="toc-text">Property change</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
