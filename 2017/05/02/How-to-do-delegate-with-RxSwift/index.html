@@ -6,18 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="Issue #12—We can use DelegateProxy and DelegateProxyType to make beautiful delegate with RxSwift. But in some other cases, we can just create a custom class with PublishSubject. This is how we can mak">
+    <meta name="description" content="Issue #12We can use DelegateProxy and DelegateProxyType to make beautiful delegate with RxSwift. But in some other cases, we can just create a custom class with PublishSubject. This is how we can make">
 <meta name="keywords" content="ios, android,javascript, react">
 <meta property="og:type" content="article">
 <meta property="og:title" content="How to do delegate with RxSwift">
 <meta property="og:url" content="http://yoursite.com/2017/05/02/How-to-do-delegate-with-RxSwift/index.html">
 <meta property="og:site_name" content="onmyway133">
-<meta property="og:description" content="Issue #12—We can use DelegateProxy and DelegateProxyType to make beautiful delegate with RxSwift. But in some other cases, we can just create a custom class with PublishSubject. This is how we can mak">
+<meta property="og:description" content="Issue #12We can use DelegateProxy and DelegateProxyType to make beautiful delegate with RxSwift. But in some other cases, we can just create a custom class with PublishSubject. This is how we can make">
 <meta property="og:locale" content="en">
 <meta property="og:updated_time" content="2019-05-23T16:37:35.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to do delegate with RxSwift">
-<meta name="twitter:description" content="Issue #12—We can use DelegateProxy and DelegateProxyType to make beautiful delegate with RxSwift. But in some other cases, we can just create a custom class with PublishSubject. This is how we can mak">
+<meta name="twitter:description" content="Issue #12We can use DelegateProxy and DelegateProxyType to make beautiful delegate with RxSwift. But in some other cases, we can just create a custom class with PublishSubject. This is how we can make">
     
     
         
@@ -103,7 +103,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Usage"><span class="toc-number">1.</span> <span class="toc-text">Usage</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-12"><span class="toc-number">1.</span> <span class="toc-text">Issue #12</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Usage"><span class="toc-number">2.</span> <span class="toc-text">Usage</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -142,7 +142,7 @@
   
 
   <div class="content" itemprop="articleBody">
-    <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/12" target="_blank" rel="noopener">#12</a></strong>—We can use <code>DelegateProxy</code> and <code>DelegateProxyType</code> to make beautiful delegate with RxSwift. But in some other cases, we can just create a custom class with <code>PublishSubject</code>.</p>
+    <h2 id="Issue-12"><a href="#Issue-12" class="headerlink" title="Issue #12"></a><strong>Issue <a href="https://github.com/onmyway133/blog/issues/12" target="_blank" rel="noopener">#12</a></strong></h2><p>We can use <code>DelegateProxy</code> and <code>DelegateProxyType</code> to make beautiful delegate with RxSwift. But in some other cases, we can just create a custom class with <code>PublishSubject</code>.</p>
 <p>This is how we can make <code>rx</code> out of <code>UIApplication</code> life cycle events</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LifeCycle</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> didEnterBackground = <span class="type">PublishSubject</span>&lt;<span class="type">Void</span>&gt;()</span><br><span class="line">  <span class="keyword">let</span> willEnterForeground  = <span class="type">PublishSubject</span>&lt;<span class="type">Void</span>&gt;()</span><br><span class="line">  <span class="keyword">let</span> didBecomeActive = <span class="type">PublishSubject</span>&lt;<span class="type">Void</span>&gt;()</span><br><span class="line">  <span class="keyword">let</span> willResignActive = <span class="type">PublishSubject</span>&lt;<span class="type">Void</span>&gt;()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> center = <span class="type">NotificationCenter</span>.<span class="keyword">default</span></span><br><span class="line">    <span class="keyword">let</span> app = <span class="type">UIApplication</span>.shared</span><br><span class="line"></span><br><span class="line">    center.addObserver(forName: <span class="type">Notification</span>.<span class="type">Name</span>.<span class="type">UIApplicationDidEnterBackground</span>,</span><br><span class="line">                       object: app, queue: .main, using: &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">      <span class="keyword">self</span>?.didEnterBackground.onNext(())</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    center.addObserver(forName: <span class="type">Notification</span>.<span class="type">Name</span>.<span class="type">UIApplicationWillEnterForeground</span>,</span><br><span class="line">                       object: app, queue: .main, using: &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">      <span class="keyword">self</span>?.willEnterForeground.onNext(())</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    center.addObserver(forName: <span class="type">Notification</span>.<span class="type">Name</span>.<span class="type">UIApplicationDidBecomeActive</span>,</span><br><span class="line">                       object: app, queue: .main, using: &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">      <span class="keyword">self</span>?.didBecomeActive.onNext(())</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    center.addObserver(forName: <span class="type">Notification</span>.<span class="type">Name</span>.<span class="type">UIApplicationWillResignActive</span>,</span><br><span class="line">                       object: app, queue: .main, using: &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">      <span class="keyword">self</span>?.willResignActive.onNext(())</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -171,7 +171,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Usage"><span class="toc-number">1.</span> <span class="toc-text">Usage</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-12"><span class="toc-number">1.</span> <span class="toc-text">Issue #12</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Usage"><span class="toc-number">2.</span> <span class="toc-text">Usage</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
