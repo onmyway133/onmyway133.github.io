@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang=en>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Issue #377 OneSignal is an alternative for Parse for push notifications but the sdk has many extra stuff and assumptions and lots of swizzling. We can just use Rest to make API calls. From https://git">
+<meta name="keywords" content="swift,iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to manage OneSignal push notification in iOS">
+<meta property="og:url" content="https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/index.html">
+<meta property="og:site_name" content="onmyway133">
+<meta property="og:description" content="Issue #377 OneSignal is an alternative for Parse for push notifications but the sdk has many extra stuff and assumptions and lots of swizzling. We can just use Rest to make API calls. From https://git">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-08-27T11:31:33.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to manage OneSignal push notification in iOS">
+<meta name="twitter:description" content="Issue #377 OneSignal is an alternative for Parse for push notifications but the sdk has many extra stuff and assumptions and lots of swizzling. We can just use Rest to make API calls. From https://git">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/icons96.jpeg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/icons96.jpeg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/icons96.jpeg">
+          
+        
+    
+    <!-- title -->
+    <title>How to manage OneSignal push notification in iOS</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/How-to-show-generic-list-in-Fragment-in-Android/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/How-to-do-throttle-and-debounce-using-DispatchWorkItem-in-Swift/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&text=How to manage OneSignal push notification in iOS"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&title=How to manage OneSignal push notification in iOS"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&is_video=false&description=How to manage OneSignal push notification in iOS"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How to manage OneSignal push notification in iOS&body=Check out this article: https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&title=How to manage OneSignal push notification in iOS"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&title=How to manage OneSignal push notification in iOS"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&title=How to manage OneSignal push notification in iOS"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&title=How to manage OneSignal push notification in iOS"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&name=How to manage OneSignal push notification in iOS&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        How to manage OneSignal push notification in iOS
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">onmyway133</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-08-27T11:29:44.000Z" itemprop="datePublished">2019-08-27</time>
+        
+        (Updated: <time datetime="2019-08-27T11:31:33.000Z" itemprop="dateModified">2019-08-27</time>)
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/iOS/">iOS</a>, <a class="tag-link" href="/tags/swift/">swift</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/377" target="_blank" rel="noopener">#377</a></strong></p>
+<p><a href="https://onesignal.com/" target="_blank" rel="noopener">OneSignal</a> is an alternative for Parse for push notifications but the sdk has many extra stuff and assumptions and lots of swizzling.</p>
+<p>We can just use Rest to make API calls. From <a href="https://github.com/onmyway133/Dust" target="_blank" rel="noopener">https://github.com/onmyway133/Dust</a></p>
+<p>Every official push notification SDK can do many things</p>
+<ul>
+<li>Register device token. This is crucial for the notification to get from your backend -&gt; APNS -&gt; device</li>
+<li>Manage player id, user id, arn, …This is used to associate with device token</li>
+<li>Manager tag, topic, subscription, segments, …This is used to group a set of device tokens</li>
+<li>Do swizzling, update your application badge number, change your user notification settings, … without your knowing about that</li>
+<li>Some other fancy stuffs</li>
+<li>Dust does only one thing, which is push notification handling. The rest is under your control</li>
+</ul>
+<p>OneSignal</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">  <span class="type">OneSignal</span>.appID = <span class="string">""</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData)</span></span> &#123;</span><br><span class="line">  <span class="type">OneSignal</span>.handleDeviceToken(deviceToken)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here is the implementation</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Utils</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">parse</span><span class="params">(deviceToken data: NSData)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> buffer = <span class="type">UnsafePointer</span>&lt;<span class="type">CChar</span>&gt;(data.bytes)</span><br><span class="line">    <span class="keyword">var</span> string = <span class="string">""</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..&lt;data.length &#123;</span><br><span class="line">      string += <span class="type">String</span>(format: <span class="string">"%02.2hhx"</span>, arguments: [buffer[i]])</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> string</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">deviceModel</span><span class="params">()</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> systemInfo = utsname()</span><br><span class="line">    uname(&amp;systemInfo)</span><br><span class="line">    <span class="keyword">var</span> v = systemInfo.machine</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> deviceModel = <span class="string">""</span></span><br><span class="line">    <span class="keyword">let</span> <span class="number">_</span> = <span class="built_in">withUnsafePointer</span>(&amp;v) &#123;</span><br><span class="line">      deviceModel = <span class="type">String</span>(<span class="type">UTF8String</span>: <span class="type">UnsafePointer</span>($<span class="number">0</span>)) ?? <span class="string">""</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> deviceModel</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">systemVersion</span><span class="params">()</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> version = <span class="type">NSProcessInfo</span>.processInfo().operatingSystemVersion</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">"\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">language</span><span class="params">()</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">NSLocale</span>.preferredLanguages().first!</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">timezone</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">NSTimeZone</span>.localTimeZone().secondsFromGMT</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">soundFiles</span><span class="params">()</span></span> -&gt; [<span class="type">String</span>] &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> resourcePath = <span class="type">NSBundle</span>.mainBundle().resourcePath</span><br><span class="line">      <span class="keyword">else</span> &#123; <span class="keyword">return</span> [] &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> files = <span class="keyword">try</span>? <span class="type">NSFileManager</span>.defaultManager()</span><br><span class="line">      .contentsOfDirectoryAtPath(resourcePath)</span><br><span class="line">      .<span class="built_in">filter</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> $<span class="number">0</span>.hasSuffix(<span class="string">".wav"</span>) || $<span class="number">0</span>.hasSuffix(<span class="string">".mp3"</span>)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> files ?? []</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">versionNumber</span><span class="params">()</span></span> -&gt; <span class="type">String?</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">NSBundle</span>.mainBundle().infoDictionary?[<span class="string">"CFBundleShortVersionString"</span>] <span class="keyword">as</span>? <span class="type">String</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">buildNumber</span><span class="params">()</span></span> -&gt; <span class="type">String?</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">NSBundle</span>.mainBundle().infoDictionary?[<span class="string">"CFBundleVersionString"</span>] <span class="keyword">as</span>? <span class="type">String</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">netType</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">    <span class="comment">// Reachability</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">UserDefaults</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">Key</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> playerID: <span class="type">String</span> = <span class="string">"Dust-OneSignal-Player-ID-Key"</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> deviceToken: <span class="type">String</span> = <span class="string">"Dust-OneSignal-Device-Token-Key"</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> subscribed: <span class="type">String</span> = <span class="string">"Dust-OneSignal-Disable-Subscribed-Key"</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">var</span> playerID: <span class="type">String?</span> &#123;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="type">NSUserDefaults</span>.standardUserDefaults().stringForKey(<span class="type">Key</span>.playerID)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">set</span> &#123;</span><br><span class="line">      <span class="type">NSUserDefaults</span>.standardUserDefaults().setObject(newValue, forKey: <span class="type">Key</span>.playerID)</span><br><span class="line">      <span class="type">NSUserDefaults</span>.standardUserDefaults().synchronize()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">var</span> deviceToken: <span class="type">String?</span> &#123;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="type">NSUserDefaults</span>.standardUserDefaults().stringForKey(<span class="type">Key</span>.deviceToken)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">set</span> &#123;</span><br><span class="line">      <span class="type">NSUserDefaults</span>.standardUserDefaults().setObject(newValue, forKey: <span class="type">Key</span>.deviceToken)</span><br><span class="line">      <span class="type">NSUserDefaults</span>.standardUserDefaults().synchronize()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">var</span> subscribed: <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="type">NSUserDefaults</span>.standardUserDefaults().boolForKey(<span class="type">Key</span>.subscribed)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">set</span> &#123;</span><br><span class="line">      <span class="type">NSUserDefaults</span>.standardUserDefaults().setBool(newValue, forKey: <span class="type">Key</span>.subscribed)</span><br><span class="line">      <span class="type">NSUserDefaults</span>.standardUserDefaults().synchronize()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">import</span> Alamofire</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">OneSignal</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">var</span> appID: <span class="type">String</span> = <span class="string">""</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">let</span> version = <span class="string">"020115"</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">let</span> baseURL = <span class="type">NSURL</span>(string: <span class="string">"https://onesignal.com/api/v1"</span>)!</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">enum</span> <span class="title">NotificationType</span>: <span class="title">Int</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> subscribed = <span class="number">7</span></span><br><span class="line">    <span class="keyword">case</span> unsubscribed = -<span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">value</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="type">UserDefaults</span>.subscribed</span><br><span class="line">        ? <span class="type">NotificationType</span>.subscribed.rawValue : <span class="type">NotificationType</span>.unsubscribed.rawValue</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">enum</span> <span class="title">Provisioning</span>: <span class="title">Int</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> development = <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">(appID appID: String)</span></span> &#123;</span><br><span class="line">    <span class="type">NSUserDefaults</span>.standardUserDefaults().registerDefaults([</span><br><span class="line">      <span class="type">UserDefaults</span>.<span class="type">Key</span>.subscribed: <span class="literal">true</span></span><br><span class="line">    ])</span><br><span class="line"></span><br><span class="line">    <span class="type">OneSignal</span>.appID = appID</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">registerOrUpdateSession</span><span class="params">(completion: <span class="params">(<span class="params">(String?)</span></span></span></span> -&gt; <span class="type">Void</span>)? = <span class="literal">nil</span>) &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> bundleID = <span class="type">NSBundle</span>.mainBundle().bundleIdentifier,</span><br><span class="line">      <span class="keyword">let</span> deviceToken = <span class="type">UserDefaults</span>.deviceToken</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> params: [<span class="type">String</span>: <span class="type">AnyObject</span>] = [</span><br><span class="line">      <span class="string">"app_id"</span> : appID,</span><br><span class="line">      <span class="string">"device_model"</span> : <span class="type">Utils</span>.deviceModel(),</span><br><span class="line">      <span class="string">"device_os"</span> : <span class="type">Utils</span>.systemVersion(),</span><br><span class="line">      <span class="string">"language"</span> : <span class="type">Utils</span>.language(),</span><br><span class="line">      <span class="string">"timezone"</span> : <span class="type">NSNumber</span>(integer: <span class="type">Utils</span>.timezone()),</span><br><span class="line">      <span class="string">"device_type"</span> : <span class="type">NSNumber</span>(integer : <span class="number">0</span>),</span><br><span class="line">      <span class="string">"sounds"</span> : <span class="type">Utils</span>.soundFiles(),</span><br><span class="line">      <span class="string">"sdk"</span> : version,</span><br><span class="line">      <span class="string">"identifier"</span> : deviceToken,</span><br><span class="line">      <span class="string">"net_type"</span> : <span class="type">NSNumber</span>(integer: <span class="type">Utils</span>.netType()),</span><br><span class="line">      <span class="string">"rooted"</span>: <span class="type">NSNumber</span>(bool: <span class="literal">false</span>),</span><br><span class="line">      <span class="string">"as_id"</span>: <span class="string">"OptedOut"</span>,</span><br><span class="line">      <span class="string">"sdk_type"</span>: <span class="string">"native"</span>,</span><br><span class="line">      <span class="string">"ios_bundle"</span>: bundleID,</span><br><span class="line">      <span class="string">"game_version"</span>: <span class="type">Utils</span>.versionNumber() ?? <span class="string">""</span>,</span><br><span class="line">      <span class="string">"notification_types"</span>: <span class="type">NotificationType</span>.value(),</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    #<span class="keyword">if</span> <span class="type">DEBUG</span></span><br><span class="line">      params[<span class="string">"test_type"</span>] = <span class="type">Provisioning</span>.development.rawValue</span><br><span class="line">    #endif</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> url: <span class="type">NSURL</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> playerID = <span class="type">UserDefaults</span>.playerID &#123;</span><br><span class="line">      url = baseURL.<span class="type">URLByAppendingPathComponent</span>(<span class="string">"players/\(playerID)/on_session"</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      url = baseURL.<span class="type">URLByAppendingPathComponent</span>(<span class="string">"players"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">Alamofire</span></span><br><span class="line">    .request(.<span class="type">POST</span>, url, parameters: params)</span><br><span class="line">    .responseJSON &#123; response <span class="keyword">in</span></span><br><span class="line">      <span class="keyword">guard</span> <span class="keyword">let</span> json = response.result.value <span class="keyword">as</span>? [<span class="type">String</span>: <span class="type">AnyObject</span>]</span><br><span class="line">      <span class="keyword">else</span> &#123;</span><br><span class="line">        completion?(<span class="literal">nil</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> <span class="keyword">let</span> id = json[<span class="string">"id"</span>] <span class="keyword">as</span>? <span class="type">String</span> &#123;</span><br><span class="line">        <span class="type">UserDefaults</span>.playerID = id</span><br><span class="line">        completion?(id)</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">let</span> value = json[<span class="string">"success"</span>] <span class="keyword">as</span>? <span class="type">Int</span>,</span><br><span class="line">        playerID = <span class="type">UserDefaults</span>.playerID <span class="keyword">where</span> value == <span class="number">1</span> &#123;</span><br><span class="line">        completion?(playerID)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        completion?(<span class="literal">nil</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">handle</span><span class="params">(deviceToken data: NSData)</span></span> &#123;</span><br><span class="line">    <span class="type">UserDefaults</span>.deviceToken = <span class="type">Utils</span>.parse(deviceToken: data)</span><br><span class="line">    registerOrUpdateSession()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">update</span><span class="params">(subscription subscribed: Bool)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> playerID = <span class="type">UserDefaults</span>.playerID <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line">    <span class="type">UserDefaults</span>.subscribed = subscribed</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> url = baseURL.<span class="type">URLByAppendingPathComponent</span>(<span class="string">"players/\(playerID)"</span>)</span><br><span class="line">    <span class="keyword">let</span> params: [<span class="type">String</span>: <span class="type">AnyObject</span>] = [</span><br><span class="line">      <span class="string">"app_id"</span>: appID,</span><br><span class="line">      <span class="string">"notification_types"</span>: <span class="type">NotificationType</span>.value()</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    <span class="type">Alamofire</span></span><br><span class="line">    .request(.<span class="type">PUT</span>, url, parameters: params)</span><br><span class="line">    .responseJSON &#123; response <span class="keyword">in</span></span><br><span class="line">      <span class="built_in">print</span>(response)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">update</span><span class="params">(badge <span class="built_in">count</span>: Int)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> playerID = <span class="type">UserDefaults</span>.playerID <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> url = baseURL.<span class="type">URLByAppendingPathComponent</span>(<span class="string">"players/\(playerID)"</span>)</span><br><span class="line">    <span class="keyword">let</span> params: [<span class="type">String</span>: <span class="type">AnyObject</span>] = [</span><br><span class="line">      <span class="string">"app_id"</span>: appID,</span><br><span class="line">      <span class="string">"badge_count"</span>: <span class="built_in">count</span></span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    <span class="type">Alamofire</span></span><br><span class="line">      .request(.<span class="type">PUT</span>, url, parameters: params)</span><br><span class="line">      .responseJSON &#123; response <span class="keyword">in</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">getPlayerID</span><span class="params">(completion: String -&gt; Void)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> playerID = <span class="type">UserDefaults</span>.playerID &#123;</span><br><span class="line">      completion(playerID)</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    registerOrUpdateSession &#123; playerID <span class="keyword">in</span></span><br><span class="line">      <span class="keyword">if</span> <span class="keyword">let</span> playerID = playerID &#123;</span><br><span class="line">        completion(playerID)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&text=How to manage OneSignal push notification in iOS"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&title=How to manage OneSignal push notification in iOS"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&is_video=false&description=How to manage OneSignal push notification in iOS"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How to manage OneSignal push notification in iOS&body=Check out this article: https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&title=How to manage OneSignal push notification in iOS"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&title=How to manage OneSignal push notification in iOS"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&title=How to manage OneSignal push notification in iOS"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&title=How to manage OneSignal push notification in iOS"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/How-to-manage-OneSignal-push-notification-in-iOS/&name=How to manage OneSignal push notification in iOS&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Khoa Pham
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-40119591-5', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
