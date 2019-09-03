@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang=en>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Issue #92—Today I was upgrading Keychain to swift 4, and take this opportunity to fix the test. The tests pass on macOS, but on iOS, I get -25300 error for 1var status = SecItemCopyMatching(query as C">
+<meta name="keywords" content="ios, android,javascript, react">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Testing keychain in iOS">
+<meta property="og:url" content="http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/index.html">
+<meta property="og:site_name" content="onmyway133">
+<meta property="og:description" content="Issue #92—Today I was upgrading Keychain to swift 4, and take this opportunity to fix the test. The tests pass on macOS, but on iOS, I get -25300 error for 1var status = SecItemCopyMatching(query as C">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://user-images.githubusercontent.com/2284279/31816541-059750f6-b591-11e7-9348-4119d07e57ca.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/2284279/31816756-ce3155c0-b591-11e7-916e-8ebc06e9a847.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/2284279/31816646-68d8c7c6-b591-11e7-8ae8-e04d52e41e09.png">
+<meta property="og:updated_time" content="2017-11-17T07:27:35.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Testing keychain in iOS">
+<meta name="twitter:description" content="Issue #92—Today I was upgrading Keychain to swift 4, and take this opportunity to fix the test. The tests pass on macOS, but on iOS, I get -25300 error for 1var status = SecItemCopyMatching(query as C">
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/2284279/31816541-059750f6-b591-11e7-9348-4119d07e57ca.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Testing keychain in iOS</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2017/10/20/Indenting-Swift-code/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2017/10/19/Designing-for-iPhone-X/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&text=Testing keychain in iOS"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&title=Testing keychain in iOS"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&is_video=false&description=Testing keychain in iOS"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Testing keychain in iOS&body=Check out this article: http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&title=Testing keychain in iOS"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&title=Testing keychain in iOS"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&title=Testing keychain in iOS"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&title=Testing keychain in iOS"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&name=Testing keychain in iOS&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Testing keychain in iOS
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">onmyway133</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-10-20T08:23:25.000Z" itemprop="datePublished">2017-10-20</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/92" target="_blank" rel="noopener">#92</a></strong>—Today I was upgrading <a href="https://github.com/hyperoslo/Keychains" target="_blank" rel="noopener">Keychain</a> to swift 4, and take this opportunity to fix the test. The tests pass on macOS, but on iOS, I get <code>-25300</code> error for</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> status = <span class="type">SecItemCopyMatching</span>(query <span class="keyword">as</span> <span class="type">CFDictionary</span>, <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure>
+
+<p>It is because there is no Keychain entitlement for test target. But this is a framework, how can I add entitlement 🤔 The solution is to use a <a href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/05-running_tests.html" target="_blank" rel="noopener">Test Host</a> to host the <code>XCTest</code> tests. See my <a href="https://github.com/hyperoslo/Keychains/pull/14" target="_blank" rel="noopener">pull request</a></p>
+<p><strong>Create test host target</strong></p>
+<p><img src="https://user-images.githubusercontent.com/2284279/31816541-059750f6-b591-11e7-9348-4119d07e57ca.png" alt="target"></p>
+<p>First create an iOS app to act as a test host, you can name it <code>TestHost_iOS</code></p>
+<p><strong>Enable Keychain capability</strong></p>
+<p>Then enable Keychain capability to let Xcode automatically create an entitlement file for you. Note that you can just enter the <code>Keychain group</code>. You don’t need go to <code>Apple Developer dashboard</code> to configure anything </p>
+<p><img src="https://user-images.githubusercontent.com/2284279/31816756-ce3155c0-b591-11e7-916e-8ebc06e9a847.png" alt="keychain"></p>
+<p><strong>Specify Test Host</strong></p>
+<p>Then in you test target, specify <code>Test Host</code> by using <code>$(BUILT_PRODUCTS_DIR)/TestHost_iOS.app/TestHost_iOS</code></p>
+<p><img src="https://user-images.githubusercontent.com/2284279/31816646-68d8c7c6-b591-11e7-8ae8-e04d52e41e09.png" alt="test host"></p>
+<p>Now run your test again, it should pass 🎉 </p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&text=Testing keychain in iOS"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&title=Testing keychain in iOS"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&is_video=false&description=Testing keychain in iOS"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Testing keychain in iOS&body=Check out this article: http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&title=Testing keychain in iOS"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&title=Testing keychain in iOS"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&title=Testing keychain in iOS"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&title=Testing keychain in iOS"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/10/20/Testing-keychain-in-iOS/&name=Testing keychain in iOS&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Khoa Pham
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
