@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang=en>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Issue #59TL;DR: Don’t use nativeScale and nativeBounds, unless you’re doing some very low level stuff What is point and pixelFrom https://developer.apple.com/library/content/documentation/2DDrawing/Co">
+<meta name="keywords" content="ios, android,javascript, react">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pixel and point">
+<meta property="og:url" content="https://onmyway133.github.io/Pixel-and-point/index.html">
+<meta property="og:site_name" content="onmyway133">
+<meta property="og:description" content="Issue #59TL;DR: Don’t use nativeScale and nativeBounds, unless you’re doing some very low level stuff What is point and pixelFrom https://developer.apple.com/library/content/documentation/2DDrawing/Co">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-06-16T09:28:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Pixel and point">
+<meta name="twitter:description" content="Issue #59TL;DR: Don’t use nativeScale and nativeBounds, unless you’re doing some very low level stuff What is point and pixelFrom https://developer.apple.com/library/content/documentation/2DDrawing/Co">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Pixel and point</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/How-to-deal-with-windows-1252-encoding-in-Node/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/Optional-of-optional-in-Swift/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/Pixel-and-point/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/Pixel-and-point/&text=Pixel and point"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/Pixel-and-point/&title=Pixel and point"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/Pixel-and-point/&is_video=false&description=Pixel and point"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Pixel and point&body=Check out this article: https://onmyway133.github.io/Pixel-and-point/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/Pixel-and-point/&title=Pixel and point"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/Pixel-and-point/&title=Pixel and point"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/Pixel-and-point/&title=Pixel and point"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/Pixel-and-point/&title=Pixel and point"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/Pixel-and-point/&name=Pixel and point&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-59"><span class="toc-number">1.</span> <span class="toc-text">Issue #59</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-point-and-pixel"><span class="toc-number">1.1.</span> <span class="toc-text">What is point and pixel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-about-scale-and-nativeScale"><span class="toc-number">1.2.</span> <span class="toc-text">How about scale and nativeScale</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-scale-factor-and-display-mode"><span class="toc-number">1.3.</span> <span class="toc-text">The scale factor and display mode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Simulator-vs-device"><span class="toc-number">1.4.</span> <span class="toc-text">Simulator vs device</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Pixel and point
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">onmyway133</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-06-16T09:13:15.000Z" itemprop="datePublished">2017-06-16</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="Issue-59"><a href="#Issue-59" class="headerlink" title="Issue #59"></a><strong>Issue <a href="https://github.com/onmyway133/blog/issues/59" target="_blank" rel="noopener">#59</a></strong></h2><p>TL;DR: Don’t use <code>nativeScale</code> and <code>nativeBounds</code>, unless you’re doing some very low level stuff</p>
+<h3 id="What-is-point-and-pixel"><a href="#What-is-point-and-pixel" class="headerlink" title="What is point and pixel"></a>What is point and pixel</h3><p>From <a href="https://developer.apple.com/library/content/documentation/2DDrawing/Conceptual/DrawingPrintingiOS/GraphicsDrawingOverview/GraphicsDrawingOverview.html" target="_blank" rel="noopener">https://developer.apple.com/library/content/documentation/2DDrawing/Conceptual/DrawingPrintingiOS/GraphicsDrawingOverview/GraphicsDrawingOverview.html</a></p>
+<blockquote>
+<p>In iOS there is a distinction between the coordinates you specify in your drawing code and the pixels of the underlying device</p>
+</blockquote>
+<blockquote>
+<p>The purpose of using points (and the logical coordinate system) is to provide a consistent size of output that is device independent. For most purposes, the actual size of a point is irrelevant. The goal of points is to provide a relatively consistent scale that you can use in your code to specify the size and position of views and rendered content</p>
+</blockquote>
+<blockquote>
+<p>On a standard-resolution screen, the scale factor is typically 1.0. On a high-resolution screen, the scale factor is typically 2.0</p>
+</blockquote>
+<h3 id="How-about-scale-and-nativeScale"><a href="#How-about-scale-and-nativeScale" class="headerlink" title="How about scale and nativeScale"></a>How about <code>scale</code> and <code>nativeScale</code></h3><p>From <a href="https://developer.apple.com/documentation/uikit/uiscreen" target="_blank" rel="noopener">https://developer.apple.com/documentation/uikit/uiscreen</a></p>
+<ul>
+<li>var bounds: CGRect: The bounding rectangle of the screen, measured in <strong>points</strong>.</li>
+<li>var nativeBounds: CGRect: The bounding rectangle of the physical screen, measured in <strong>pixels</strong>.</li>
+<li>var scale: CGFloat: The natural scale factor associated with the <strong>screen</strong>.</li>
+<li>var nativeScale: CGFloat: The native scale factor for the <strong>physical screen</strong>.</li>
+</ul>
+<h3 id="The-scale-factor-and-display-mode"><a href="#The-scale-factor-and-display-mode" class="headerlink" title="The scale factor and display mode"></a>The scale factor and display mode</h3><p>See this for a whole list of devices and their scale factors <a href="https://www.paintcodeapp.com/news/ultimate-guide-to-iphone-resolutions" target="_blank" rel="noopener">https://www.paintcodeapp.com/news/ultimate-guide-to-iphone-resolutions</a></p>
+<p>The iPhone 6 and 6+ introduced <strong>display mode</strong> <a href="https://www.cnet.com/how-to/explaining-display-zoom-on-iphone-6-and-6-plus/" target="_blank" rel="noopener">https://www.cnet.com/how-to/explaining-display-zoom-on-iphone-6-and-6-plus/</a></p>
+<p>You can see that currently the iPhone 6+, 6s+, 7+ phones have scale factor of 2.88 in zoomed mode, and 2.6 in standard mode</p>
+<p>You can also see that in zoomed mode, iPhone 6 has the same <strong>logical size</strong> as the iPhone 5</p>
+<h3 id="Simulator-vs-device"><a href="#Simulator-vs-device" class="headerlink" title="Simulator vs device"></a>Simulator vs device</h3><p>This is to show you the differences in <code>nativeScale</code> in simulators and devices in <strong>zoomed mode</strong>, hence differences in <code>nativeBounds</code>.</p>
+<p>iPhone 6+ simulator</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">(lldb) po <span class="type">UIScreen</span>.main.scale</span><br><span class="line"><span class="number">3.0</span></span><br><span class="line"></span><br><span class="line">(lldb) po <span class="type">UIScreen</span>.main.bounds</span><br><span class="line">▿ (<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">414.0</span>, <span class="number">736.0</span>)</span><br><span class="line">  ▿ origin : (<span class="number">0.0</span>, <span class="number">0.0</span>)</span><br><span class="line">    - x : <span class="number">0.0</span></span><br><span class="line">    - y : <span class="number">0.0</span></span><br><span class="line">  ▿ size : (<span class="number">414.0</span>, <span class="number">736.0</span>)</span><br><span class="line">    - width : <span class="number">414.0</span></span><br><span class="line">    - height : <span class="number">736.0</span></span><br><span class="line"></span><br><span class="line">(lldb) po <span class="type">UIScreen</span>.main.nativeScale</span><br><span class="line"><span class="number">3.0</span></span><br><span class="line"></span><br><span class="line">(lldb) po <span class="type">UIScreen</span>.main.nativeBounds</span><br><span class="line">▿ (<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1242.0</span>, <span class="number">2208.0</span>)</span><br><span class="line">  ▿ origin : (<span class="number">0.0</span>, <span class="number">0.0</span>)</span><br><span class="line">    - x : <span class="number">0.0</span></span><br><span class="line">    - y : <span class="number">0.0</span></span><br><span class="line">  ▿ size : (<span class="number">1242.0</span>, <span class="number">2208.0</span>)</span><br><span class="line">    - width : <span class="number">1242.0</span></span><br><span class="line">    - height : <span class="number">2208.0</span></span><br></pre></td></tr></table></figure>
+
+<p>iPhone 6+ device</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">(lldb) po <span class="type">UIScreen</span>.main.scale</span><br><span class="line"><span class="number">3.0</span></span><br><span class="line"></span><br><span class="line">(lldb) po <span class="type">UIScreen</span>.main.bounds</span><br><span class="line">▿ (<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">375.0</span>, <span class="number">667.0</span>)</span><br><span class="line">  ▿ origin : (<span class="number">0.0</span>, <span class="number">0.0</span>)</span><br><span class="line">    - x : <span class="number">0.0</span></span><br><span class="line">    - y : <span class="number">0.0</span></span><br><span class="line">  ▿ size : (<span class="number">375.0</span>, <span class="number">667.0</span>)</span><br><span class="line">    - width : <span class="number">375.0</span></span><br><span class="line">    - height : <span class="number">667.0</span></span><br><span class="line"></span><br><span class="line">(lldb) po <span class="type">UIScreen</span>.main.nativeScale</span><br><span class="line"><span class="number">2.88</span></span><br><span class="line"></span><br><span class="line">(lldb) po <span class="type">UIScreen</span>.main.nativeBounds</span><br><span class="line">▿ (<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1080.0</span>, <span class="number">1920.0</span>)</span><br><span class="line">  ▿ origin : (<span class="number">0.0</span>, <span class="number">0.0</span>)</span><br><span class="line">    - x : <span class="number">0.0</span></span><br><span class="line">    - y : <span class="number">0.0</span></span><br><span class="line">  ▿ size : (<span class="number">1080.0</span>, <span class="number">1920.0</span>)</span><br><span class="line">    - width : <span class="number">1080.0</span></span><br><span class="line">    - height : <span class="number">1920.0</span></span><br></pre></td></tr></table></figure>
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-59"><span class="toc-number">1.</span> <span class="toc-text">Issue #59</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-point-and-pixel"><span class="toc-number">1.1.</span> <span class="toc-text">What is point and pixel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-about-scale-and-nativeScale"><span class="toc-number">1.2.</span> <span class="toc-text">How about scale and nativeScale</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-scale-factor-and-display-mode"><span class="toc-number">1.3.</span> <span class="toc-text">The scale factor and display mode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Simulator-vs-device"><span class="toc-number">1.4.</span> <span class="toc-text">Simulator vs device</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/Pixel-and-point/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/Pixel-and-point/&text=Pixel and point"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/Pixel-and-point/&title=Pixel and point"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/Pixel-and-point/&is_video=false&description=Pixel and point"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Pixel and point&body=Check out this article: https://onmyway133.github.io/Pixel-and-point/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/Pixel-and-point/&title=Pixel and point"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/Pixel-and-point/&title=Pixel and point"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/Pixel-and-point/&title=Pixel and point"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/Pixel-and-point/&title=Pixel and point"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/Pixel-and-point/&name=Pixel and point&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Khoa Pham
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

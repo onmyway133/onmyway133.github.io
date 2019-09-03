@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang=en>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Issue #81Today I am about to integrate a library that does not support Cocoapods yet. It would be cumbersome to do it manually, because you have to configure xcconfig, framework search path, assets, a">
+<meta name="keywords" content="ios, android,javascript, react">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to integrate library via custom podspec">
+<meta property="og:url" content="https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/index.html">
+<meta property="og:site_name" content="onmyway133">
+<meta property="og:description" content="Issue #81Today I am about to integrate a library that does not support Cocoapods yet. It would be cumbersome to do it manually, because you have to configure xcconfig, framework search path, assets, a">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-05-23T17:05:17.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to integrate library via custom podspec">
+<meta name="twitter:description" content="Issue #81Today I am about to integrate a library that does not support Cocoapods yet. It would be cumbersome to do it manually, because you have to configure xcconfig, framework search path, assets, a">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>How to integrate library via custom podspec</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/How-to-handle-alert-in-UITests-in-iOS/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/How-to-handle-Swift-version-with-Cocoapods/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&text=How to integrate library via custom podspec"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&title=How to integrate library via custom podspec"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&is_video=false&description=How to integrate library via custom podspec"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How to integrate library via custom podspec&body=Check out this article: https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&title=How to integrate library via custom podspec"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&title=How to integrate library via custom podspec"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&title=How to integrate library via custom podspec"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&title=How to integrate library via custom podspec"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&name=How to integrate library via custom podspec&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-81"><span class="toc-number">1.</span> <span class="toc-text">Issue #81</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        How to integrate library via custom podspec
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">onmyway133</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-09-29T07:24:57.000Z" itemprop="datePublished">2017-09-29</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="Issue-81"><a href="#Issue-81" class="headerlink" title="Issue #81"></a><strong>Issue <a href="https://github.com/onmyway133/blog/issues/81" target="_blank" rel="noopener">#81</a></strong></h2><p>Today I am about to integrate a library that does not support Cocoapods yet. It would be cumbersome to do it manually, because you have to configure <code>xcconfig</code>, <code>framework search path</code>, <code>assets</code>, and these steps are not well documented.</p>
+<p>You can do this with custom podspec. In my case, I need to install <a href="https://bitbucket.org/fluxloop/pinch.installpackage/wiki/Home" target="_blank" rel="noopener">PinchSDK</a>. First, declare a <code>PinchSDK.podspec</code> in your project folder.</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Pod::Spec.new <span class="keyword">do</span> <span class="params">|s|</span></span><br><span class="line">  s.name             = <span class="string">"PinchSDK"</span></span><br><span class="line">  s.version          = <span class="string">"1.9.14"</span></span><br><span class="line">  s.summary          = <span class="string">"Pinch samler dessuten inn data hver gang en mobilapplikasjon oppdager en Pinch-beacon."</span></span><br><span class="line">  s.homepage         = <span class="string">"https://bitbucket.org/fluxloop/pinch.installpackage"</span></span><br><span class="line">  s.source           = &#123; <span class="symbol">:http</span> =&gt; <span class="string">"https://bitbucket.org/fluxloop/pinch.installpackage/raw/master/iOS/PinchSDK.zip"</span> &#125;</span><br><span class="line">  s.authors = <span class="string">'Fluxloop'</span></span><br><span class="line">  s.license = &#123; <span class="symbol">type:</span> <span class="string">'MIT'</span> &#125;</span><br><span class="line">  s.platform     = <span class="symbol">:ios</span>, <span class="string">'8.0'</span></span><br><span class="line">  s.requires_arc = <span class="literal">true</span></span><br><span class="line">  s.resource = <span class="string">'PinchSDK/Pinch.bundle'</span></span><br><span class="line">  s.vendored_frameworks = <span class="string">'PinchSDK/PinchLibrary.framework'</span></span><br><span class="line">  s.xcconfig = &#123; <span class="string">'OTHER_LDFLAGS'</span>: <span class="string">'-ObjC'</span> &#125;</span><br><span class="line">  s.public_header_files = <span class="string">'PinchSDK/PinchLibrary.framework/Headers/PinchLibrary.h'</span></span><br><span class="line">  s.source_files = <span class="string">'PinchSDK/PinchLibrary.framework/Headers/PinchLibrary.h'</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>Then, in your <code>Podfile</code>, you can point to this <code>podspec</code></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pod <span class="string">'PinchSDK'</span>, <span class="symbol">podspec:</span> <span class="string">'PinchSDK.podspec'</span></span><br></pre></td></tr></table></figure>
+
+<p>Finally, since this PinchSDK uses <code>objc</code>, you need to declare it in your <code>bridging header</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;PinchLibrary/PinchLibrary.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>Now, just <code>pod install</code> and you’re done 🎉 </p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-81"><span class="toc-number">1.</span> <span class="toc-text">Issue #81</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&text=How to integrate library via custom podspec"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&title=How to integrate library via custom podspec"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&is_video=false&description=How to integrate library via custom podspec"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How to integrate library via custom podspec&body=Check out this article: https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&title=How to integrate library via custom podspec"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&title=How to integrate library via custom podspec"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&title=How to integrate library via custom podspec"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&title=How to integrate library via custom podspec"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/How-to-integrate-library-via-custom-podspec/&name=How to integrate library via custom podspec&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Khoa Pham
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
