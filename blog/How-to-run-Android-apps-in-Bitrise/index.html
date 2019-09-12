@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang=en>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Issue #273 Original post https://hackernoon.com/using-bitrise-ci-for-android-apps-fa9c48e301d8  CI, short for Continuous Integration, is a good practice to move fast and confidently where code is inte">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to run Android apps in Bitrise">
+<meta property="og:url" content="https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/index.html">
+<meta property="og:site_name" content="onmyway133">
+<meta property="og:description" content="Issue #273 Original post https://hackernoon.com/using-bitrise-ci-for-android-apps-fa9c48e301d8  CI, short for Continuous Integration, is a good practice to move fast and confidently where code is inte">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/2882/1*uJGkaQ0EvmDIM_T3ZTmuZw.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/2836/1*z9eotS_Dyetx4ubtjWsnjg.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/2000/1*MsojdXPWw9WMzVa8SuOtDA.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/2076/1*WDmvpUHp23a-jBjWVfN00Q.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/2254/1*xUOPh2zy6V6hMPPty_PMXg.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/2000/1*HMeW8VGqC6OWRizl0cC5BQ.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/2782/1*oHUZoX-rdiqXjTV9SFFcKA.png">
+<meta property="og:updated_time" content="2019-09-12T07:11:49.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to run Android apps in Bitrise">
+<meta name="twitter:description" content="Issue #273 Original post https://hackernoon.com/using-bitrise-ci-for-android-apps-fa9c48e301d8  CI, short for Continuous Integration, is a good practice to move fast and confidently where code is inte">
+<meta name="twitter:image" content="https://cdn-images-1.medium.com/max/2882/1*uJGkaQ0EvmDIM_T3ZTmuZw.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=16">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=192" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=180">
+          
+        
+    
+    <!-- title -->
+    <title>How to run Android apps in Bitrise</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/blog/20-recommended-utility-apps-for-macOS/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/blog/How-to-make-tag-selection-view-in-React-Native/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&text=How to run Android apps in Bitrise"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&title=How to run Android apps in Bitrise"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&is_video=false&description=How to run Android apps in Bitrise"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How to run Android apps in Bitrise&body=Check out this article: https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&title=How to run Android apps in Bitrise"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&title=How to run Android apps in Bitrise"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&title=How to run Android apps in Bitrise"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&title=How to run Android apps in Bitrise"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&name=How to run Android apps in Bitrise&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Variant-to-build"><span class="toc-number">1.</span> <span class="toc-text">Variant to build</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bump-version-code-automatically"><span class="toc-number">2.</span> <span class="toc-text">Bump version code automatically</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Deploy-to-Fabric"><span class="toc-number">3.</span> <span class="toc-text">Deploy to Fabric</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Add-Fabric-plugin"><span class="toc-number">3.1.</span> <span class="toc-text">Add Fabric plugin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-command"><span class="toc-number">3.2.</span> <span class="toc-text">Deploy command</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Manage-tester-group"><span class="toc-number">3.3.</span> <span class="toc-text">Manage tester group</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Gradle-Run-step"><span class="toc-number">3.4.</span> <span class="toc-text">Gradle Run step</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Where-to-go-from-here"><span class="toc-number">4.</span> <span class="toc-text">Where to go from here</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        How to run Android apps in Bitrise
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">onmyway133</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-05-23T16:18:19.000Z" itemprop="datePublished">2019-05-23</time>
+        
+        (Updated: <time datetime="2019-09-12T07:11:49.000Z" itemprop="dateModified">2019-09-12</time>)
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/android/">android</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/273" target="_blank" rel="noopener">#273</a></strong></p>
+<p>Original post <a href="https://hackernoon.com/using-bitrise-ci-for-android-apps-fa9c48e301d8" target="_blank" rel="noopener">https://hackernoon.com/using-bitrise-ci-for-android-apps-fa9c48e301d8</a></p>
+<hr>
+<p>CI, short for Continuous Integration, is a good practice to move fast and confidently where code is integrated into shared repository many times a day. The ability to have pull requests get built, tested and release builds get distributed to testers allows team to verify automated build and identify problems quickly.</p>
+<p>I ‘ve been using <a href="https://www.buddybuild.com/" target="_blank" rel="noopener">BuddyBuild</a> for both iOS and Android apps and were very happy with it. The experience from creating new apps and deploying build is awesome. It works so well that <a href="https://www.buddybuild.com/blog/buddybuild-is-now-part-of-apple" target="_blank" rel="noopener">Apple acquired it</a>, which then lead to the fact that Android apps are no longer supported and new customers can’t register.</p>
+<p>We are one of <a href="https://github.com/GitHawkApp/GitHawk/issues/1330" target="_blank" rel="noopener">those</a> <a href="https://stackoverflow.com/questions/48085134/alternative-to-buddy-build" target="_blank" rel="noopener">who</a> are looking for new alternatives. We’ve been using TravisCI, CircleCI and Jenkins to deploy to Fabric. There is also <a href="https://www.jetbrains.com/teamcity/" target="_blank" rel="noopener">TeamCity</a> that is promising. But after a quick survey with friends and people, <a href="https://www.bitrise.io/" target="_blank" rel="noopener">Bitrise</a> is the most recommended. So maybe I should try that.</p>
+<p>The thing I like about Bitrise is its wide range support of workflow. They are just scripts that execute certain actions, and most of them are <a href="https://github.com/bitrise-io/" target="_blank" rel="noopener">open source</a>. There’s also yml config file, but all things can be done using web interface, so I don’t need to look into pages of documentation just to get the configuration right.</p>
+<p>This post is not a promote for Bitrise, it is just about trying and adapting to new things. There is no eternal thing in tech, things come ad go fast. Below are some of the lessons I learn after using Bitrise, hope you find them useful.</p>
+<h2 id="Variant-to-build"><a href="#Variant-to-build" class="headerlink" title="Variant to build"></a>Variant to build</h2><p>There is no Android Build step in the default ‘primary’ workflow, as primary is generally used for testing the code for every push. There is an Android Build step in the deploy workflow and the app gets built by running this workflow. However, I like to have the Android Build step in my primary workflow, so I added it there.</p>
+<p>Usually I want app module and stagingRelease build variant as we need to deploy staging builds to internal testers.</p>
+<p><img src="https://cdn-images-1.medium.com/max/2882/1*uJGkaQ0EvmDIM_T3ZTmuZw.png" alt></p>
+<p>If you go to Bitrise.yml tab you can see that the configuration file has been updated. This is very handy. I’ve used some other CI services and I needed to lookup their documentation on how to make this yml work.</p>
+<p><img src="https://cdn-images-1.medium.com/max/2836/1*z9eotS_Dyetx4ubtjWsnjg.png" alt></p>
+<h2 id="Bump-version-code-automatically"><a href="#Bump-version-code-automatically" class="headerlink" title="Bump version code automatically"></a>Bump version code automatically</h2><p>I’ve used some other CI services before and the app version code surely does not start from 0. So it makes sense that Bitrise can auto bump version code from the current number. There are some predefined steps in Workflow but they don’t serve my need</p>
+<p><img src="https://cdn-images-1.medium.com/max/2000/1*MsojdXPWw9WMzVa8SuOtDA.png" alt></p>
+<p>For the Set Android Manifest Version code and name step, the source code is <a href="https://github.com/jamesmontemagno/steps-set-android-manifest-versions/blob/master/step.sh" target="_blank" rel="noopener">here</a> so I understand what it does. It works by modify AndroidManifest.xml file using sed . This article <a href="https://blog.bitrise.io/adjust-your-build-numbers" target="_blank" rel="noopener">Adjust your build number</a> is not clear enough.</p>
+<p><img src="https://cdn-images-1.medium.com/max/2076/1*WDmvpUHp23a-jBjWVfN00Q.png" alt></p>
+<pre><code>sed -i.bak “s/android:versionCode=”\”${VERSIONCODE}\””/android:versionCode=”\”${CONFIG_new_version_code}\””/” ${manifest_file}</code></pre><p>In our projects, the versionCode is from an environment variable BUILD_NUMBER in Jenkins, so we need look up the same thing in <a href="https://devcenter.bitrise.io/faq/available-environment-variables/" target="_blank" rel="noopener">Available Environment Variables</a>, and it is BITRISE_BUILD_NUMBER , which is a build number of the build on bitrise.io.</p>
+<p>This is how versionCode looks like in build.gradle</p>
+<pre><code>versionCode (System.*getenv*(&quot;BITRISE_BUILD_NUMBER&quot;) as Integer ?: System.*getenv*(&quot;BUILD_NUMBER&quot;) as Integer ?: 243)</code></pre><p>243 is the current version code of this project, so let’s go to app’s Settings and change Your next build number will be</p>
+<p><img src="https://cdn-images-1.medium.com/max/2254/1*xUOPh2zy6V6hMPPty_PMXg.png" alt></p>
+<h2 id="Deploy-to-Fabric"><a href="#Deploy-to-Fabric" class="headerlink" title="Deploy to Fabric"></a>Deploy to Fabric</h2><p>I hope Bitrise has its own Crash reporting tool. For now I use Crashlytics in <a href="https://fabric.io/home" target="_blank" rel="noopener">Fabric</a>. And despite that Bitrise can distribute builds to testers, I still need to cross deploy to Fabric for historial reasons.</p>
+<p>There is only script <a href="https://github.com/bitrise-io/steps-fabric-crashlytics-beta-deploy" target="_blank" rel="noopener">steps-fabric-crashlytics-beta-deploy</a> to deploy IPA file for iOS apps, so we need something for Android. Fortunately I can use the Fabric plugin for gradle.</p>
+<h3 id="Add-Fabric-plugin"><a href="#Add-Fabric-plugin" class="headerlink" title="Add Fabric plugin"></a>Add Fabric plugin</h3><p>Follow <a href="https://fabric.io/kits/android/crashlytics/install" target="_blank" rel="noopener">Install Crashlytics via Gradle</a> to add Fabric plugin. Basically you need to add these dependencies to your app ‘s build.gradle</p>
+<pre><code>buildscript {
+    repositories {
+        google()
+        maven { url &apos;https://maven.fabric.io/public&apos; }
+    }
+
+    dependencies {
+        classpath &apos;io.fabric.tools:gradle:1.+&apos;
+    }
+}
+
+apply plugin: &apos;io.fabric&apos;
+
+dependencies {
+    compile(&apos;com.crashlytics.sdk.android:crashlytics:2.9.4@aar&apos;) {
+        transitive = true;
+    }
+}</code></pre><p>and API credentials in Manifest file</p>
+<pre><code>&lt;meta-data
+ android:name=”io.fabric.ApiKey”
+ android:value=”67ffdb78ce9cd50af8404c244fa25df01ea2b5bc”
+ /&gt;</code></pre><h3 id="Deploy-command"><a href="#Deploy-command" class="headerlink" title="Deploy command"></a>Deploy command</h3><p>Modern Android Studio usually includes a gradlew execution file in the root of your project. Run ./gradlew tasks for the list of tasks that you app can perform, look for Build tasks that start with assemble . Read more <a href="https://developer.android.com/studio/build/building-cmdline" target="_blank" rel="noopener">Build your app from the command line</a></p>
+<blockquote>
+<p>You can execute all the build tasks available to your Android project using the <a href="https://docs.gradle.org/current/userguide/gradle_wrapper.html" target="_blank" rel="noopener">Gradle wrapper</a> command line tool. It’s available as a batch file for Windows (gradlew.bat) and a shell script for Linux and Mac (gradlew.sh), and it’s accessible from the root of each project you create with Android Studio.</p>
+</blockquote>
+<p>For me, I want to deploy staging release build variant, so I run. Check that the build is on Fabric.</p>
+<pre><code>./gradlew assembleStagingRelease crashlyticsUploadDistributionStagingRelease</code></pre><h3 id="Manage-tester-group"><a href="#Manage-tester-group" class="headerlink" title="Manage tester group"></a>Manage tester group</h3><p>Go to your app on Fabric.io and create group of testers. Note that alias that is generated for the group</p>
+<p><img src="https://cdn-images-1.medium.com/max/2000/1*HMeW8VGqC6OWRizl0cC5BQ.png" alt></p>
+<p>Go to your app’s build.gradle and add ext.betaDistributionGroupAliases=’my-internal-testers’ to your desired productFlavors or buildTypes . For me I add to staging under productFlavors</p>
+<pre><code>productFlavors {
+   staging {
+     // …
+     ext.betaDistributionGroupAliases=’hyper-internal-testers-1&apos;
+   }
+   production {
+     // …
+   }
+}</code></pre><p>Now that the command is run correctly, let’s add that to Bitrise</p>
+<h3 id="Gradle-Run-step"><a href="#Gradle-Run-step" class="headerlink" title="Gradle Run step"></a>Gradle Run step</h3><p>Go to Workflow tab and add a Gradle Run step and place it below Deploy to Bitrise.io step.</p>
+<p><img src="https://cdn-images-1.medium.com/max/2782/1*oHUZoX-rdiqXjTV9SFFcKA.png" alt></p>
+<p>Expand Config, and add assembleStagingRelease crashlyticsUploadDistributionStagingRelease to Gradle task to run .</p>
+<p>Now start a new build in Bitrise manually or trigger new build by making pull request, you can see that the version code is increased for every build, crossed build gets deployed to Fabric to your defined tester groups.</p>
+<p>As an alternative, you can also use <a href="https://github.com/bitrise-io/steps-fabric-crashlytics-beta-deploy" target="_blank" rel="noopener">Fabric/Crashlytics deployer</a>, just update config with your apps key and secret found in <a href="https://fabric.io/settings" target="_blank" rel="noopener">settings</a>.</p>
+<h2 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h2><p>I hope those tips are useful to you. Here are some more links to help you explore further</p>
+<ul>
+<li><p><a href="https://medium.com/@bitrise/convert-old-android-workflows-and-configure-new-steps-based-on-the-old-gradle-tasks-on-bitrise-51a1adbfe78d" target="_blank" rel="noopener">Convert old Android workflows and configure new steps based on the old Gradle tasks on Bitrise</a></p>
+</li>
+<li><p><a href="https://stackoverflow.com/questions/11245144/replace-whole-line-containing-a-string-using-sed" target="_blank" rel="noopener">Replace whole line containing a string using Sed</a></p>
+</li>
+<li><p><a href="https://github.com/GitHawkApp/GitHawk/issues/1330" target="_blank" rel="noopener">Alternatives to Buddybuild?</a></p>
+</li>
+<li><p><a href="https://engineering.udacity.com/simplifying-app-distribution-with-beta-by-crashlytics-6c8c24f4ab02" target="_blank" rel="noopener">Simplifying Android app distribution with Beta by Crashlytics</a></p>
+</li>
+<li><p><a href="https://fabric.io/downloads/android-studio" target="_blank" rel="noopener">Fabric app for Android Studio</a></p>
+</li>
+<li><p><a href="https://stackoverflow.com/questions/27383732/crashlytics-distribution-for-app-with-multiple-flavors" target="_blank" rel="noopener">Crashlytics distribution for app with multiple flavors</a></p>
+</li>
+<li><p><a href="https://www.tutorialspoint.com/gradle/gradle_plugins.htm" target="_blank" rel="noopener">Gradle plugins</a></p>
+</li>
+<li><p><a href="https://blog.danlew.net/2015/02/20/setting-up-a-new-app-in-crashlytics-without-the-plugin/" target="_blank" rel="noopener">Setting up a new app in Crashlytics without the IDE plugin</a></p>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Variant-to-build"><span class="toc-number">1.</span> <span class="toc-text">Variant to build</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bump-version-code-automatically"><span class="toc-number">2.</span> <span class="toc-text">Bump version code automatically</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Deploy-to-Fabric"><span class="toc-number">3.</span> <span class="toc-text">Deploy to Fabric</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Add-Fabric-plugin"><span class="toc-number">3.1.</span> <span class="toc-text">Add Fabric plugin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-command"><span class="toc-number">3.2.</span> <span class="toc-text">Deploy command</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Manage-tester-group"><span class="toc-number">3.3.</span> <span class="toc-text">Manage tester group</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Gradle-Run-step"><span class="toc-number">3.4.</span> <span class="toc-text">Gradle Run step</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Where-to-go-from-here"><span class="toc-number">4.</span> <span class="toc-text">Where to go from here</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&text=How to run Android apps in Bitrise"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&title=How to run Android apps in Bitrise"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&is_video=false&description=How to run Android apps in Bitrise"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How to run Android apps in Bitrise&body=Check out this article: https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&title=How to run Android apps in Bitrise"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&title=How to run Android apps in Bitrise"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&title=How to run Android apps in Bitrise"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&title=How to run Android apps in Bitrise"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/blog/How-to-run-Android-apps-in-Bitrise/&name=How to run Android apps in Bitrise&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Khoa Pham
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-40119591-5', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

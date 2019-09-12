@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang=en>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Issue #287 When digging into the world of TCP, I get many terminologies I don’t know any misconceptions. But with the help of those geeks on SO, the problems were demystified. Now it’s time to sum up">
+<meta name="keywords" content="tech">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Understanding socket and port in TCP">
+<meta property="og:url" content="https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/index.html">
+<meta property="og:site_name" content="onmyway133">
+<meta property="og:description" content="Issue #287 When digging into the world of TCP, I get many terminologies I don’t know any misconceptions. But with the help of those geeks on SO, the problems were demystified. Now it’s time to sum up">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-09-12T07:09:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Understanding socket and port in TCP">
+<meta name="twitter:description" content="Issue #287 When digging into the world of TCP, I get many terminologies I don’t know any misconceptions. But with the help of those geeks on SO, the problems were demystified. Now it’s time to sum up">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=16">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=192" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=180">
+          
+        
+    
+    <!-- title -->
+    <title>Understanding socket and port in TCP</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/blog/How-to-add-indicator-under-tab-bar-buttons-in-iOS/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/blog/How-to-deal-with-CSS-responsiveness-in-Wordpress/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&text=Understanding socket and port in TCP"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&title=Understanding socket and port in TCP"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&is_video=false&description=Understanding socket and port in TCP"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Understanding socket and port in TCP&body=Check out this article: https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&title=Understanding socket and port in TCP"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&title=Understanding socket and port in TCP"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&title=Understanding socket and port in TCP"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&title=Understanding socket and port in TCP"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&name=Understanding socket and port in TCP&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#What-defines-a-unique-connection"><span class="toc-number">1.</span> <span class="toc-text">What defines a unique connection ?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Does-TCP-listen-on-one-port-and-talk-on-another-port"><span class="toc-number">2.</span> <span class="toc-text">Does TCP listen on one port and talk on another port ?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-is-the-maximum-number-of-concurrent-TCP-connections-that-a-server-can-handle-in-theory"><span class="toc-number">3.</span> <span class="toc-text">What is the maximum number of concurrent TCP connections that a server can handle, in theory ?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Concurrent-connection-request-vs-Concurrent-open-connection"><span class="toc-number">4.</span> <span class="toc-text">Concurrent connection request vs Concurrent open connection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-connection-is-rejected-after-successful-TCP-handshake"><span class="toc-number">5.</span> <span class="toc-text">Why connection is rejected after successful TCP handshake ?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-are-active-and-passive-socket"><span class="toc-number">6.</span> <span class="toc-text">What are active and passive socket ?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Where-to-go-from-here"><span class="toc-number">7.</span> <span class="toc-text">Where to go from here</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Understanding socket and port in TCP
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">onmyway133</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-05-25T14:12:06.000Z" itemprop="datePublished">2019-05-25</time>
+        
+        (Updated: <time datetime="2019-09-12T07:09:56.000Z" itemprop="dateModified">2019-09-12</time>)
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/tech/">tech</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/287" target="_blank" rel="noopener">#287</a></strong></p>
+<p>When digging into the world of TCP, I get many terminologies I don’t know any misconceptions. But with the help of those geeks on SO, the problems were demystified. Now it’s time to sum up and share with others :D</p>
+<h2 id="What-defines-a-unique-connection"><a href="#What-defines-a-unique-connection" class="headerlink" title="What defines a unique connection ?"></a>What defines a unique connection ?</h2><p>There are 5 elements that identify a connection. They call them 5-tuple</p>
+<ol>
+<li><p>Protocol. This is often omitted as it is understood that we are talking about TCP, which leaves 4.</p>
+</li>
+<li><p>Source IP address.</p>
+</li>
+<li><p>Source port.</p>
+</li>
+<li><p>Target P address.</p>
+</li>
+<li><p>Target port.</p>
+</li>
+</ol>
+<h2 id="Does-TCP-listen-on-one-port-and-talk-on-another-port"><a href="#Does-TCP-listen-on-one-port-and-talk-on-another-port" class="headerlink" title="Does TCP listen on one port and talk on another port ?"></a>Does TCP listen on one port and talk on another port ?</h2><p>No. This is a common misconception. TCP listens on 1 port and talk on that same port. If clients make multiple TCP connection to server. It’s the client OS that must generate different random source ports, so that server can see them as unique connections</p>
+<h2 id="What-is-the-maximum-number-of-concurrent-TCP-connections-that-a-server-can-handle-in-theory"><a href="#What-is-the-maximum-number-of-concurrent-TCP-connections-that-a-server-can-handle-in-theory" class="headerlink" title="What is the maximum number of concurrent TCP connections that a server can handle, in theory ?"></a>What is the maximum number of concurrent TCP connections that a server can handle, in theory ?</h2><p>A single listening port can accept more than one connection simultaneously.There is a ‘64K’ limit that is often cited, but that is per client per server port, and needs clarifying.</p>
+<p>If a client has many connections to the same port on the same destination, then three of those fields will be the same — only source_port varies to differentiate the different connections. Ports are 16-bit numbers, therefore the maximum number of connections any given client can have to any given host port is 64K.</p>
+<p>However, multiple clients can each have up to 64K connections to some server’s port, and if the server has multiple ports or either is multi-homed then you can multiply that further</p>
+<p>So the real limit is file descriptors. Each individual socket connection is given a file descriptor, so the limit is really the number of file descriptors that the system has been configured to allow and resources to handle. The maximum limit is typically up over 300K, but is configurable e.g. with sysctl</p>
+<h2 id="Concurrent-connection-request-vs-Concurrent-open-connection"><a href="#Concurrent-connection-request-vs-Concurrent-open-connection" class="headerlink" title="Concurrent connection request vs Concurrent open connection"></a>Concurrent connection request vs Concurrent open connection</h2><p>When clients want to make TCP connection with server, this request will be queued in server ‘s backlog queue. This backlog queue size is small (about 5–10), and this size limits the number of concurrent connection requests. However, server quickly pick connection request from that queue and accept it. Connection request which is accepted are called open connection. The number of concurrent open connections is limited by server ‘s resources allocated for file descriptor.</p>
+<h2 id="Why-connection-is-rejected-after-successful-TCP-handshake"><a href="#Why-connection-is-rejected-after-successful-TCP-handshake" class="headerlink" title="Why connection is rejected after successful TCP handshake ?"></a>Why connection is rejected after successful TCP handshake ?</h2><p>It’s normal. When server receive connection request from client (by receiving SYN), it will then response with SYN, ACK, hence cause successful TCP handshake. But this request are stills in backlog queue.</p>
+<p>But, if the application process exceeds the limit of max file descriptors it can use, then when server calls accept, then it realizes that there are no file descriptors available to be the allocated for the socket and fails the accept call and the TCP connection sending a FIN to other side</p>
+<h2 id="What-are-active-and-passive-socket"><a href="#What-are-active-and-passive-socket" class="headerlink" title="What are active and passive socket ?"></a>What are active and passive socket ?</h2><p>Sockets come in two primary flavors. An active socket is con­nect­ed to a remote active socket via an open data con­nec­tion… A passive socket is not con­nect­ed, but rather awaits an in­com­ing con­nec­tion, which will spawn a new active socket once a con­nec­tion is es­tab­lished</p>
+<p>Each port can have a single passive socket binded to it, await­ing in­com­ing con­nec­tions, and mul­ti­ple active sockets, each cor­re­spond­ing to an open con­nec­tion on the port. It’s as if the factory worker is waiting for new mes­sages to arrive (he rep­re­sents the passive socket), and when one message arrives from a new sender, he ini­ti­ates a cor­re­spon­dence (a con­nec­tion) with them by del­e­gat­ing someone else (an active socket) to ac­tu­al­ly read the packet and respond back to the sender if nec­es­sary. This permits the factory worker to be free to receive new packets</p>
+<h2 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h2><p>Here are some more links to help you explore further</p>
+<ul>
+<li><a href="http://stackoverflow.com/questions/152457/what-is-the-difference-between-a-port-and-a-socket" target="_blank" rel="noopener">What is the difference between a port and a socket?</a></li>
+<li><a href="http://stackoverflow.com/questions/4696812/passive-and-active-sockets" target="_blank" rel="noopener">Passive and active sockets</a></li>
+<li><a href="http://stackoverflow.com/questions/3870260/why-will-a-tcp-server-send-a-fin-immediately-after-accepting-a-connection" target="_blank" rel="noopener">Why will a TCP Server send a FIN immediately after accepting a connection?</a></li>
+<li><a href="http://stackoverflow.com/questions/2332741/what-is-the-theoretical-maximum-number-of-open-tcp-connections-that-a-modern-lin" target="_blank" rel="noopener">What is the theoretical maximum number of open TCP connections that a modern Linux box can have</a></li>
+<li><a href="http://stackoverflow.com/questions/114874/socket-listen-backlog-parameter-how-to-determine-this-value" target="_blank" rel="noopener">socket listen backlog parameter, how to determine this value?</a></li>
+<li><a href="http://stackoverflow.com/questions/4253454/question-about-listening-and-backlog-for-sockets" target="_blank" rel="noopener">Question about listening and backlog for sockets</a></li>
+<li><a href="http://stackoverflow.com/questions/1752219/rejecting-a-tcp-connection-before-its-being-accepted" target="_blank" rel="noopener">Rejecting a TCP connection before it’s being accepted?</a></li>
+<li><a href="http://stackoverflow.com/questions/6590181/best-way-to-generate-million-tcp-connection" target="_blank" rel="noopener">Best way to generate million tcp connection</a></li>
+<li><a href="http://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser" target="_blank" rel="noopener">Max parallel http connections in a browser?</a></li>
+<li><a href="http://stackoverflow.com/questions/2831434/how-to-retain-one-million-simultaneous-tcp-connections" target="_blank" rel="noopener">How to retain one million simultaneous TCP connections?</a></li>
+<li><a href="http://stackoverflow.com/questions/7735618/tcp-rst-packet-details" target="_blank" rel="noopener">TCP RST packet details</a></li>
+<li><a href="http://stackoverflow.com/questions/15761436/how-many-tuples-are-there-in-a-connection" target="_blank" rel="noopener">How many tuples are there in a connection?</a></li>
+<li><a href="http://stackoverflow.com/questions/15761776/does-tcp-use-another-port-for-sending-data" target="_blank" rel="noopener">Does TCP use another port for sending data?</a></li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#What-defines-a-unique-connection"><span class="toc-number">1.</span> <span class="toc-text">What defines a unique connection ?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Does-TCP-listen-on-one-port-and-talk-on-another-port"><span class="toc-number">2.</span> <span class="toc-text">Does TCP listen on one port and talk on another port ?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-is-the-maximum-number-of-concurrent-TCP-connections-that-a-server-can-handle-in-theory"><span class="toc-number">3.</span> <span class="toc-text">What is the maximum number of concurrent TCP connections that a server can handle, in theory ?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Concurrent-connection-request-vs-Concurrent-open-connection"><span class="toc-number">4.</span> <span class="toc-text">Concurrent connection request vs Concurrent open connection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-connection-is-rejected-after-successful-TCP-handshake"><span class="toc-number">5.</span> <span class="toc-text">Why connection is rejected after successful TCP handshake ?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-are-active-and-passive-socket"><span class="toc-number">6.</span> <span class="toc-text">What are active and passive socket ?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Where-to-go-from-here"><span class="toc-number">7.</span> <span class="toc-text">Where to go from here</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&text=Understanding socket and port in TCP"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&title=Understanding socket and port in TCP"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&is_video=false&description=Understanding socket and port in TCP"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Understanding socket and port in TCP&body=Check out this article: https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&title=Understanding socket and port in TCP"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&title=Understanding socket and port in TCP"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&title=Understanding socket and port in TCP"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&title=Understanding socket and port in TCP"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/blog/Understanding-socket-and-port-in-TCP/&name=Understanding socket and port in TCP&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Khoa Pham
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-40119591-5', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
