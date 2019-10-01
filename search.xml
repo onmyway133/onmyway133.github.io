@@ -4,6 +4,69 @@
   
     
     <entry>
+      <title>How to show context menu from NSButton in macOS</title>
+      <link href="/blog/How-to-show-context-menu-from-NSButton-in-macOS/"/>
+      <url>/blog/How-to-show-context-menu-from-NSButton-in-macOS/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/435" target="_blank" rel="noopener">#435</a></strong></p><p>Use <code>NSMenu</code> and <code>popUp</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showQuitMenu</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> menu = <span class="type">NSMenu</span>()</span><br><span class="line">    <span class="keyword">let</span> aboutItem = <span class="type">NSMenuItem</span>(</span><br><span class="line">        title: <span class="string">"About"</span>,</span><br><span class="line">        action: #selector(onAboutTouched(<span class="number">_</span>:)),</span><br><span class="line">        keyEquivalent: <span class="string">""</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> quitItem = <span class="type">NSMenuItem</span>(</span><br><span class="line">        title: <span class="string">"Quit Hacker Pad"</span>,</span><br><span class="line">        action: #selector(onQuitTouched(<span class="number">_</span>:)),</span><br><span class="line">        keyEquivalent: <span class="string">""</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    aboutItem.target = <span class="keyword">self</span></span><br><span class="line">    quitItem.target = <span class="keyword">self</span></span><br><span class="line"></span><br><span class="line">    menu.addItem(aboutItem)</span><br><span class="line">    menu.addItem(quitItem)</span><br><span class="line"></span><br><span class="line">    menu.popUp(</span><br><span class="line">        positioning: aboutItem,</span><br><span class="line">        at: bottomView.quitButton.frame.origin,</span><br><span class="line">        <span class="keyword">in</span>: bottomView</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Use <a href="https://github.com/onmyway133/Omnia" target="_blank" rel="noopener">Omnia</a></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> menuHandler = <span class="type">MenuHandler</span>()</span><br><span class="line">menuHandler.add(title: <span class="string">"About"</span>, action: &#123;</span><br><span class="line">    <span class="type">NSWorkspace</span>.shared.<span class="keyword">open</span>(<span class="type">URL</span>(string: <span class="string">"https://onmyway133.github.io/"</span>)!)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">menuHandler.add(title: <span class="string">"Quit Hacker Pad"</span>, action: &#123;</span><br><span class="line">    <span class="type">NSApp</span>.terminate(<span class="literal">nil</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">menuHandler.show(from: <span class="keyword">self</span>.bottomView.gearButton, <span class="keyword">in</span>: <span class="keyword">self</span>.bottomView)</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> macOS </tag>
+            
+            <tag> swift </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>How to handle UICollectionView reloadData with selected index path</title>
+      <link href="/blog/How-to-handle-UICollectionView-reloadData-with-selected-index-path/"/>
+      <url>/blog/How-to-handle-UICollectionView-reloadData-with-selected-index-path/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/434" target="_blank" rel="noopener">#434</a></strong></p><p>When calling <code>collectionView.reloadData()</code>, selected indexpath stays the same, but be aware that order of data may have changed</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> selectedData = ...</span><br><span class="line"><span class="keyword">let</span> indexPathForSelectedData = ...</span><br><span class="line"></span><br><span class="line">collectionView.scrollToItem(</span><br><span class="line">    at: indexPathForSelectedData,</span><br><span class="line">    at: .centeredHorizontally,</span><br><span class="line">    animated: <span class="literal">false</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> swift </tag>
+            
+            <tag> iOS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>How to make checked NSButton in AppKit</title>
+      <link href="/blog/How-to-make-checked-NSButton-in-AppKit/"/>
+      <url>/blog/How-to-make-checked-NSButton-in-AppKit/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/433" target="_blank" rel="noopener">#433</a></strong></p><ul><li>Use <a href="https://github.com/onmyway133/Omnia" target="_blank" rel="noopener">Omnia</a> for convenient <code>style</code> and <code>isOn</code> property</li></ul><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> checkButton = <span class="type">NSButton</span>(checkboxWithTitle: <span class="string">""</span>, target: <span class="literal">nil</span>, action: <span class="literal">nil</span>)</span><br><span class="line">checkButton.stylePlain(title: <span class="string">"Autosave"</span>, color: <span class="type">R</span>.color.text, font: <span class="type">R</span>.font.text)</span><br><span class="line">checkButton.isOn = <span class="literal">true</span></span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> macOS </tag>
+            
+            <tag> swift </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>How to save files in sandboxed macOS app</title>
       <link href="/blog/How-to-save-files-in-sandboxed-macOS-app/"/>
       <url>/blog/How-to-save-files-in-sandboxed-macOS-app/</url>
@@ -220,9 +283,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -241,9 +304,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -386,9 +449,9 @@
             
             <tag> macOS </tag>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -426,9 +489,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -447,9 +510,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -636,9 +699,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
             <tag> testing </tag>
             
@@ -777,9 +840,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1127,9 +1190,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1148,9 +1211,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1169,9 +1232,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1190,9 +1253,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1211,9 +1274,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1251,9 +1314,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1312,9 +1375,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1375,9 +1438,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1396,9 +1459,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1436,9 +1499,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1558,9 +1621,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1678,9 +1741,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1739,9 +1802,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1760,9 +1823,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1781,9 +1844,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1802,9 +1865,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1922,9 +1985,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1985,9 +2048,9 @@
             
             <tag> macOS </tag>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2006,9 +2069,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2090,9 +2153,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2113,9 +2176,9 @@
             
             <tag> macOS </tag>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2159,9 +2222,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2180,9 +2243,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2201,9 +2264,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2327,9 +2390,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2382,9 +2445,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2450,15 +2513,15 @@
       <link href="/blog/How-to-get-cell-at-center-during-scroll-in-UICollectionView/"/>
       <url>/blog/How-to-get-cell-at-center-during-scroll-in-UICollectionView/</url>
       
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/311" target="_blank" rel="noopener">#311</a></strong></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">HorizontalUsersViewController</span>: <span class="title">UIScrollViewDelegate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">scrollViewDidEndDecelerating</span><span class="params">(<span class="number">_</span> scrollView: UIScrollView)</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> point = view.convert(collectionView.center, to: collectionView)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span></span><br><span class="line">            <span class="keyword">let</span> indexPath = collectionView.indexPathForItem(at: point),</span><br><span class="line">            indexPath.item &lt; users.<span class="built_in">count</span></span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> user = users[indexPath.item]</span><br><span class="line">        delegate?.didScrollTo(user)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/311" target="_blank" rel="noopener">#311</a></strong></p><p>See Omnia <a href="https://github.com/onmyway133/Omnia/blob/master/Sources/iOS/UICollectionView.swift#L30" target="_blank" rel="noopener">https://github.com/onmyway133/Omnia/blob/master/Sources/iOS/UICollectionView.swift#L30</a></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">HorizontalUsersViewController</span>: <span class="title">UIScrollViewDelegate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">scrollViewDidEndDecelerating</span><span class="params">(<span class="number">_</span> scrollView: UIScrollView)</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> point = view.convert(collectionView.center, to: collectionView)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span></span><br><span class="line">            <span class="keyword">let</span> indexPath = collectionView.indexPathForItem(at: point),</span><br><span class="line">            indexPath.item &lt; users.<span class="built_in">count</span></span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> user = users[indexPath.item]</span><br><span class="line">        delegate?.didScrollTo(user)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       
       
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2477,9 +2540,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2498,9 +2561,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2538,9 +2601,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2610,9 +2673,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2631,9 +2694,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2652,9 +2715,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2734,9 +2797,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3050,9 +3113,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3071,9 +3134,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3247,9 +3310,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3775,9 +3838,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3879,9 +3942,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -4046,9 +4109,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -4182,9 +4245,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -4391,9 +4454,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -4452,9 +4515,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -4570,9 +4633,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -5367,9 +5430,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -5479,9 +5542,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -5638,9 +5701,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -5706,9 +5769,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
