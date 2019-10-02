@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang=en>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Issue #438 StoryboardIn Storyboard, NSTextField has an Action option that specify whether Send onSend on Enter only` should be the default behaviour.  CodeIn code, NSTextFieldDelegate notifies wheneve">
+<meta name="keywords" content="macOS,swift">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to handle NSTextField change in macOS">
+<meta property="og:url" content="https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/index.html">
+<meta property="og:site_name" content="onmyway133">
+<meta property="og:description" content="Issue #438 StoryboardIn Storyboard, NSTextField has an Action option that specify whether Send onSend on Enter only` should be the default behaviour.  CodeIn code, NSTextFieldDelegate notifies wheneve">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://user-images.githubusercontent.com/2284279/66045014-217d8100-e523-11e9-8e78-a7f835490245.png">
+<meta property="og:updated_time" content="2019-10-02T10:47:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to handle NSTextField change in macOS">
+<meta name="twitter:description" content="Issue #438 StoryboardIn Storyboard, NSTextField has an Action option that specify whether Send onSend on Enter only` should be the default behaviour.  CodeIn code, NSTextFieldDelegate notifies wheneve">
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/2284279/66045014-217d8100-e523-11e9-8e78-a7f835490245.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=16">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=192" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=180">
+          
+        
+    
+    <!-- title -->
+    <title>How to handle NSTextField change in macOS</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/blog/How-to-add-section-header-to-NSCollectionView-in-macOS/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&text=How to handle NSTextField change in macOS"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&title=How to handle NSTextField change in macOS"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&is_video=false&description=How to handle NSTextField change in macOS"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How to handle NSTextField change in macOS&body=Check out this article: https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&title=How to handle NSTextField change in macOS"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&title=How to handle NSTextField change in macOS"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&title=How to handle NSTextField change in macOS"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&title=How to handle NSTextField change in macOS"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&name=How to handle NSTextField change in macOS&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Storyboard"><span class="toc-number">1.</span> <span class="toc-text">Storyboard</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Code"><span class="toc-number">2.</span> <span class="toc-text">Code</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Use-EasyClosure"><span class="toc-number">3.</span> <span class="toc-text">Use EasyClosure</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        How to handle NSTextField change in macOS
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">onmyway133</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-10-02T10:47:06.000Z" itemprop="datePublished">2019-10-02</time>
+        
+        (Updated: <time datetime="2019-10-02T10:47:12.000Z" itemprop="dateModified">2019-10-02</time>)
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/macOS/">macOS</a>, <a class="tag-link" href="/tags/swift/">swift</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/438" target="_blank" rel="noopener">#438</a></strong></p>
+<h2 id="Storyboard"><a href="#Storyboard" class="headerlink" title="Storyboard"></a>Storyboard</h2><p>In Storyboard, <code>NSTextField</code> has an Action option that specify whether <code>Send on</code>Send on Enter only` should be the default behaviour.</p>
+<p><img src="https://user-images.githubusercontent.com/2284279/66045014-217d8100-e523-11e9-8e78-a7f835490245.png" alt="textfield"></p>
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><p>In code, <code>NSTextFieldDelegate</code> notifies whenever text field value changes, and <code>target action</code> notifies when Enter key is pressed</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Cocoa</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ViewController</span>: <span class="title">NSViewController</span>, <span class="title">NSTextFieldDelegate</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@IBOutlet</span> <span class="keyword">weak</span> <span class="keyword">var</span> textField: <span class="type">NSTextField!</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line">        </span><br><span class="line">        textField.delegate = <span class="keyword">self</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">controlTextDidChange</span><span class="params">(<span class="number">_</span> obj: Notification)</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> textField = obj.object <span class="keyword">as</span>! <span class="type">NSTextField</span></span><br><span class="line">        <span class="built_in">print</span>(textField.stringValue)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Use-EasyClosure"><a href="#Use-EasyClosure" class="headerlink" title="Use EasyClosure"></a>Use EasyClosure</h2><p>If we use <a href="https://github.com/onmyway133/EasyClosure" target="_blank" rel="noopener">EasyClosure</a> then this is easy</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> textField: <span class="type">NSTextField</span> = </span><br><span class="line"></span><br><span class="line">textField.on.action &#123; string <span class="keyword">in</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"User has pressed enter \(string)"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">textField.on.change &#123; string <span class="keyword">in</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"Text field value has changed"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Storyboard"><span class="toc-number">1.</span> <span class="toc-text">Storyboard</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Code"><span class="toc-number">2.</span> <span class="toc-text">Code</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Use-EasyClosure"><span class="toc-number">3.</span> <span class="toc-text">Use EasyClosure</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&text=How to handle NSTextField change in macOS"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&title=How to handle NSTextField change in macOS"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&is_video=false&description=How to handle NSTextField change in macOS"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How to handle NSTextField change in macOS&body=Check out this article: https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&title=How to handle NSTextField change in macOS"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&title=How to handle NSTextField change in macOS"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&title=How to handle NSTextField change in macOS"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&title=How to handle NSTextField change in macOS"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/blog/How-to-handle-NSTextField-change-in-macOS/&name=How to handle NSTextField change in macOS&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Khoa Pham
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-40119591-5', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
