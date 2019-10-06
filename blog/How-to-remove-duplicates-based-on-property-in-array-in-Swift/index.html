@@ -6,18 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="Issue #441 Make object conform to Equatable and Hashable and use Set to eliminate duplications 1234567891011121314struct App: Equatable, Hashable &amp;#123;    static func == (lhs: App, rhs: App) -&amp;gt; Bo">
+    <meta name="description" content="Issue #441 Make object conform to Equatable and Hashable and use Set to eliminate duplications. Set loses order so we need to sort after uniquing 12345678910111213struct App: Equatable, Hashable &amp;#123">
 <meta name="keywords" content="swift">
 <meta property="og:type" content="article">
 <meta property="og:title" content="How to remove duplicates based on property in array in Swift">
 <meta property="og:url" content="https://onmyway133.github.io/blog/How-to-remove-duplicates-based-on-property-in-array-in-Swift/index.html">
 <meta property="og:site_name" content="onmyway133">
-<meta property="og:description" content="Issue #441 Make object conform to Equatable and Hashable and use Set to eliminate duplications 1234567891011121314struct App: Equatable, Hashable &amp;#123;    static func == (lhs: App, rhs: App) -&amp;gt; Bo">
+<meta property="og:description" content="Issue #441 Make object conform to Equatable and Hashable and use Set to eliminate duplications. Set loses order so we need to sort after uniquing 12345678910111213struct App: Equatable, Hashable &amp;#123">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-10-03T09:59:05.000Z">
+<meta property="og:updated_time" content="2019-10-03T10:18:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to remove duplicates based on property in array in Swift">
-<meta name="twitter:description" content="Issue #441 Make object conform to Equatable and Hashable and use Set to eliminate duplications 1234567891011121314struct App: Equatable, Hashable &amp;#123;    static func == (lhs: App, rhs: App) -&amp;gt; Bo">
+<meta name="twitter:description" content="Issue #441 Make object conform to Equatable and Hashable and use Set to eliminate duplications. Set loses order so we need to sort after uniquing 12345678910111213struct App: Equatable, Hashable &amp;#123">
     
     
         
@@ -87,6 +87,8 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" href="/blog/How-to-center-NSWindow-in-screen/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
         
         <li><a class="icon" href="/blog/How-to-get-url-of-app-on-the-iOS-AppStore/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
@@ -141,7 +143,7 @@
       
         <time datetime="2019-10-03T09:59:05.000Z" itemprop="datePublished">2019-10-03</time>
         
-        (Updated: <time datetime="2019-10-03T09:59:05.000Z" itemprop="dateModified">2019-10-03</time>)
+        (Updated: <time datetime="2019-10-03T10:18:18.000Z" itemprop="dateModified">2019-10-03</time>)
         
       
     </div>
@@ -162,8 +164,8 @@
 
   <div class="content" itemprop="articleBody">
     <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/441" target="_blank" rel="noopener">#441</a></strong></p>
-<p>Make object conform to <code>Equatable</code> and <code>Hashable</code> and use <code>Set</code> to eliminate duplications</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">App</span>: <span class="title">Equatable</span>, <span class="title">Hashable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> == <span class="params">(lhs: App, rhs: App)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> lhs.name == rhs.name &amp;&amp; lhs.bundleId == rhs.bundleId</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">hash</span><span class="params">(into hasher: <span class="keyword">inout</span> Hasher)</span></span> &#123;</span><br><span class="line">        hasher.combine(name)</span><br><span class="line">        hasher.combine(bundleId)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> sortedApps = unsortedApps.sorted(by: &#123; $<span class="number">0</span>.name.lowercased() &lt; $<span class="number">1</span>.name.lowercased() &#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> apps = <span class="type">Array</span>(<span class="type">Set</span>(sortedApps))</span><br></pre></td></tr></table></figure>
+<p>Make object conform to <code>Equatable</code> and <code>Hashable</code> and use <code>Set</code> to eliminate duplications. <code>Set</code> loses order so we need to sort after uniquing</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">App</span>: <span class="title">Equatable</span>, <span class="title">Hashable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> == <span class="params">(lhs: App, rhs: App)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> lhs.name == rhs.name &amp;&amp; lhs.bundleId == rhs.bundleId</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">hash</span><span class="params">(into hasher: <span class="keyword">inout</span> Hasher)</span></span> &#123;</span><br><span class="line">        hasher.combine(name)</span><br><span class="line">        hasher.combine(bundleId)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> uniqueApps = <span class="type">Array</span>(<span class="type">Set</span>(unsortedApps))</span><br><span class="line"><span class="keyword">let</span> apps = uniqueApps.sorted(by: &#123; $<span class="number">0</span>.name.lowercased() &lt; $<span class="number">1</span>.name.lowercased() &#125;)</span><br></pre></td></tr></table></figure>
   </div>
 </article>
 
