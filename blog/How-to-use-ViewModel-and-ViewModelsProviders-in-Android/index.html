@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang=en>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Issue #363 ViewModels a simple examplehttps://medium.com/androiddevelopers/viewmodels-a-simple-example-ed5ac416317e  Rotating a device is one of a few configuration changes that an app can go through">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use ViewModel and ViewModelsProviders in Android">
+<meta property="og:url" content="https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/index.html">
+<meta property="og:site_name" content="onmyway133">
+<meta property="og:description" content="Issue #363 ViewModels a simple examplehttps://medium.com/androiddevelopers/viewmodels-a-simple-example-ed5ac416317e  Rotating a device is one of a few configuration changes that an app can go through">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://miro.medium.com/max/1044/1*3Kr2-5HE0TLZ4eqq8UQCkQ.png">
+<meta property="og:updated_time" content="2019-08-20T03:39:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to use ViewModel and ViewModelsProviders in Android">
+<meta name="twitter:description" content="Issue #363 ViewModels a simple examplehttps://medium.com/androiddevelopers/viewmodels-a-simple-example-ed5ac416317e  Rotating a device is one of a few configuration changes that an app can go through">
+<meta name="twitter:image" content="https://miro.medium.com/max/1044/1*3Kr2-5HE0TLZ4eqq8UQCkQ.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=16">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=192" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/16bebb36e0e28572a316ba0450e190d1?s=180">
+          
+        
+    
+    <!-- title -->
+    <title>How to use ViewModel and ViewModelsProviders in Android</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/blog/How-to-use-AppFlowController-in-iOS/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/blog/How-to-declare-UIGestureRecognizer-in-iOS/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&text=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&title=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&is_video=false&description=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How to use ViewModel and ViewModelsProviders in Android&body=Check out this article: https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&title=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&title=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&title=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&title=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&name=How to use ViewModel and ViewModelsProviders in Android&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ViewModels-a-simple-example"><span class="toc-number">1.</span> <span class="toc-text">ViewModels a simple example</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dive-deep-into-Android’s-ViewModel-—-Android-Architecture-Components"><span class="toc-number">2.</span> <span class="toc-text">Dive deep into Android’s ViewModel — Android Architecture Components</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HolderFragment"><span class="toc-number">2.1.</span> <span class="toc-text">HolderFragment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Who-owns-the-HolderFragment"><span class="toc-number">2.2.</span> <span class="toc-text">Who owns the HolderFragment?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-does-HolderFragment-retains-the-state"><span class="toc-number">2.3.</span> <span class="toc-text">How does HolderFragment retains the state ?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Retrieving-ViewModel-instance"><span class="toc-number">2.4.</span> <span class="toc-text">Retrieving ViewModel instance</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        How to use ViewModel and ViewModelsProviders in Android
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">onmyway133</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-08-20T02:56:29.000Z" itemprop="datePublished">2019-08-20</time>
+        
+        (Updated: <time datetime="2019-08-20T03:39:32.000Z" itemprop="dateModified">2019-08-20</time>)
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/android/">android</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/363" target="_blank" rel="noopener">#363</a></strong></p>
+<h2 id="ViewModels-a-simple-example"><a href="#ViewModels-a-simple-example" class="headerlink" title="ViewModels a simple example"></a>ViewModels a simple example</h2><p><a href="https://medium.com/androiddevelopers/viewmodels-a-simple-example-ed5ac416317e" target="_blank" rel="noopener">https://medium.com/androiddevelopers/viewmodels-a-simple-example-ed5ac416317e</a></p>
+<blockquote>
+<p>Rotating a device is one of a few configuration changes that an app can go through during its lifetime, including keyboard availability and changing the device’s language. All of these configuration changes cause the Activity to be torn down and recreated</p>
+</blockquote>
+<blockquote>
+<p>The ViewModel class is designed to hold and manage UI-related data in a life-cycle conscious way. This allows data to survive configuration changes such as screen rotations.</p>
+</blockquote>
+<blockquote>
+<p>The ViewModel exists from when the you first request a ViewModel (usually in the onCreate the Activity) until the Activity is finished and destroyed. onCreate may be called several times during the life of an Activity, such as when the app is rotated, but the ViewModel survives throughout.</p>
+</blockquote>
+<p><img src="https://miro.medium.com/max/1044/1*3Kr2-5HE0TLZ4eqq8UQCkQ.png" alt></p>
+<blockquote>
+<p>Storing an Application context in a ViewModel is okay because an Application context is tied to the Application lifecycle. This is different from an Activity context, which is tied to the Activity lifecycle. In fact, if you need an Application context, you should extend AndroidViewModel which is simply a ViewModel that includes an Application reference.</p>
+</blockquote>
+<blockquote>
+<p>The first time the ViewModelProviders.of method is called by MainActivity, it creates a new ViewModel instance. When this method is called again, which happens whenever onCreate is called, it will return the pre-existing ViewModel associated with the specific Court-Counter MainActivity</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ViewModelProviders.of(&lt;THIS ARGUMENT&gt;).get(ScoreViewModel.class);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>This allows you to have an app that opens a lot of different instances of the same Activity or Fragment, but with different ViewModel information</p>
+</blockquote>
+<h2 id="Dive-deep-into-Android’s-ViewModel-—-Android-Architecture-Components"><a href="#Dive-deep-into-Android’s-ViewModel-—-Android-Architecture-Components" class="headerlink" title="Dive deep into Android’s ViewModel — Android Architecture Components"></a>Dive deep into Android’s ViewModel — Android Architecture Components</h2><p><a href="https://android.jlelse.eu/dive-deep-into-androids-viewmodel-android-architecture-components-e0a7ded26f70" target="_blank" rel="noopener">https://android.jlelse.eu/dive-deep-into-androids-viewmodel-android-architecture-components-e0a7ded26f70</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Utilities methods for &#123;<span class="doctag">@link</span> ViewModelStore&#125; class.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewModelProviders</span> </span>&#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Creates a &#123;<span class="doctag">@link</span> ViewModelProvider&#125;, which retains ViewModels while a scope of given Activity</span></span><br><span class="line"><span class="comment">     * is alive. More detailed explanation is in &#123;<span class="doctag">@link</span> ViewModel&#125;.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * It uses &#123;<span class="doctag">@link</span> ViewModelProvider.AndroidViewModelFactory&#125; to instantiate new ViewModels.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> activity an activity, in whose scope ViewModels should be retained</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> a ViewModelProvider instance</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ViewModelProvider <span class="title">of</span><span class="params">(@NonNull FragmentActivity activity)</span> </span>&#123;</span><br><span class="line">        ViewModelProvider.AndroidViewModelFactory factory =</span><br><span class="line">                ViewModelProvider.AndroidViewModelFactory.getInstance(</span><br><span class="line">                        checkApplication(activity));</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ViewModelProvider(ViewModelStores.of(activity), factory);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>It seems like ViewModelProviders.of is just a factory of ViewModelProvider, which depends upon ViewModelFactory and a ViewModelStore.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MyViewModelFactory factory = <span class="keyword">new</span> MyViewModelFactory(data1, data2);</span><br><span class="line">ViewModelProviders.of(<span class="keyword">this</span>, factory).get(MyViewModel.class);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewModelStore</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> HashMap&lt;String, ViewModel&gt; mMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="HolderFragment"><a href="#HolderFragment" class="headerlink" title="HolderFragment"></a>HolderFragment</h3><blockquote>
+<p>HolderFragment is a regular Android Headless Fragment. It is the scope where all ViewModels inside the ViewModelStore will live.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HolderFragment</span> <span class="keyword">extends</span> <span class="title">Fragment</span> <span class="keyword">implements</span> <span class="title">ViewModelStoreOwner</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> HolderFragmentManager sHolderFragmentManager = <span class="keyword">new</span> HolderFragmentManager();</span><br><span class="line">    <span class="keyword">private</span> ViewModelStore mViewModelStore = <span class="keyword">new</span> ViewModelStore();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">HolderFragmentManager</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;Activity, HolderFragment&gt; mNotCommittedActivityHolders = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> Map&lt;Fragment, HolderFragment&gt; mNotCommittedFragmentHolders = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Who-owns-the-HolderFragment"><a href="#Who-owns-the-HolderFragment" class="headerlink" title="Who owns the HolderFragment?"></a>Who owns the HolderFragment?</h3><blockquote>
+<p>The HolderFragment has an inner static class named HolderFragmentManager. The HolderFragmentManager creates and manages HolderFragment instances.<br>After creating the instances it associates them with an Activity or Fragment.</p>
+</blockquote>
+<blockquote>
+<p>The whole process is done using the methods holderFragmentFor(Activity) and holderFragmentFor(Fragment).</p>
+</blockquote>
+<h3 id="How-does-HolderFragment-retains-the-state"><a href="#How-does-HolderFragment-retains-the-state" class="headerlink" title="How does HolderFragment retains the state ?"></a>How does HolderFragment retains the state ?</h3><blockquote>
+<p>By setting retain instance to true and not providing a view, the HolderFragment becomes essentially a headless Fragment that is retained for as long as the Activity is not destroyed.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HolderFragment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   setRetainInstance(<span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>void setRetainInstance (boolean retain)</code></p>
+<blockquote>
+<p>Control whether a fragment instance is retained across Activity re-creation (such as from a configuration change). This can only be used with fragments not in the back stack. If set, the fragment lifecycle will be slightly different when an activity is recreated:</p>
+</blockquote>
+<h3 id="Retrieving-ViewModel-instance"><a href="#Retrieving-ViewModel-instance" class="headerlink" title="Retrieving ViewModel instance"></a>Retrieving ViewModel instance</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get(MyViewModel.class)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>It tries to retrieve a MyViewModel instance from the store. If none is there, it uses the factory to create it and then stores it into HashMap&lt;String, ViewModel&gt;. In order to retrieve the already created ViewModel, it generates a key from the class qualified name.</p>
+</blockquote>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ViewModels-a-simple-example"><span class="toc-number">1.</span> <span class="toc-text">ViewModels a simple example</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dive-deep-into-Android’s-ViewModel-—-Android-Architecture-Components"><span class="toc-number">2.</span> <span class="toc-text">Dive deep into Android’s ViewModel — Android Architecture Components</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HolderFragment"><span class="toc-number">2.1.</span> <span class="toc-text">HolderFragment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Who-owns-the-HolderFragment"><span class="toc-number">2.2.</span> <span class="toc-text">Who owns the HolderFragment?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-does-HolderFragment-retains-the-state"><span class="toc-number">2.3.</span> <span class="toc-text">How does HolderFragment retains the state ?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Retrieving-ViewModel-instance"><span class="toc-number">2.4.</span> <span class="toc-text">Retrieving ViewModel instance</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&text=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&title=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&is_video=false&description=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How to use ViewModel and ViewModelsProviders in Android&body=Check out this article: https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&title=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&title=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&title=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&title=How to use ViewModel and ViewModelsProviders in Android"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://onmyway133.github.io/blog/How-to-use-ViewModel-and-ViewModelsProviders-in-Android/&name=How to use ViewModel and ViewModelsProviders in Android&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Khoa Pham
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/writing/">Writing</a></li>
+         
+          <li><a href="/speaking/">Speaking</a></li>
+         
+          <li><a href="/opensource/">Open Source</a></li>
+         
+          <li><a href="/projects/">Projects</a></li>
+         
+          <li><a href="/news/">News</a></li>
+         
+          <li><a href="/gumroad/">Gumroad</a></li>
+         
+          <li><a href="/jobs/">Jobs</a></li>
+         
+          <li><a href="/atom.xml">RSS</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-40119591-5', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
