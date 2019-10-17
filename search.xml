@@ -4,6 +4,27 @@
   
     
     <entry>
+      <title>How to reload data without using onAppear in SwiftUI in watchOS</title>
+      <link href="/blog/How-to-reload-data-without-using-onAppear-in-SwiftUI-in-watchOS/"/>
+      <url>/blog/How-to-reload-data-without-using-onAppear-in-SwiftUI-in-watchOS/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/468" target="_blank" rel="noopener">#468</a></strong></p><p>From <a href="https://developer.apple.com/documentation/swiftui/text/3276931-onappear" target="_blank" rel="noopener">onAppeear</a></p><blockquote><p>Adds an action to perform when the view appears.</p></blockquote><p>In theory, this should be triggered every time this view appears. But in practice, it is only called when it is pushed on navigation stack, not when we return to it.</p><p>So if user goes to a bookmark in a bookmark list, unbookmark an item and go back to the bookmark list, <code>onAppear</code> is not called again and the list is not updated.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">BookmarksView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> service: <span class="type">Service</span></span><br><span class="line">    @<span class="type">State</span> <span class="keyword">var</span> items: [<span class="type">AnyItem</span>]</span><br><span class="line">    @<span class="type">EnvironmentObject</span> <span class="keyword">var</span> storeContainer: <span class="type">StoreContainer</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">List</span>(items)  &#123; item <span class="keyword">in</span></span><br><span class="line">            makeItemRow(item: item)</span><br><span class="line">                .padding([.top, .bottom], <span class="number">4</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .onAppear(perform: &#123;</span><br><span class="line">            <span class="keyword">self</span>.items = storeContainer.bookmarks(service: service).<span class="built_in">map</span>(&#123; <span class="type">AnyItem</span>(item: $<span class="number">0</span>) &#125;)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>So instead of relying on UI state, we should rely on data state, by listening to <code>onReceive</code> and update our local <code>@State</code> </p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">BookmarksView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> service: <span class="type">Service</span></span><br><span class="line">    @<span class="type">State</span> <span class="keyword">var</span> items: [<span class="type">AnyItem</span>]</span><br><span class="line">    @<span class="type">EnvironmentObject</span> <span class="keyword">var</span> storeContainer: <span class="type">StoreContainer</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">List</span>(items)  &#123; item <span class="keyword">in</span></span><br><span class="line">            makeItemRow(item: item)</span><br><span class="line">                .padding([.top, .bottom], <span class="number">4</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .onAppear(perform: &#123;</span><br><span class="line">            <span class="keyword">self</span>.reload()</span><br><span class="line">        &#125;)</span><br><span class="line">        .onReceive(storeContainer.objectWillChange, perform: &#123; <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">self</span>.reload()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">reload</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.items = storeContainer.bookmarks(service: service).<span class="built_in">map</span>(&#123; <span class="type">AnyItem</span>(item: $<span class="number">0</span>) &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> watchOS </tag>
+            
+            <tag> swiftUI </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>How to use EnvironmentObject in SwiftUI for watchOS</title>
       <link href="/blog/How-to-use-EnvironmentObject-in-SwiftUI-for-watchOS/"/>
       <url>/blog/How-to-use-EnvironmentObject-in-SwiftUI-for-watchOS/</url>
@@ -94,9 +115,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -115,9 +136,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -136,9 +157,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -157,9 +178,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -239,9 +260,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -260,9 +281,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -319,9 +340,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -485,9 +506,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -689,9 +710,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -937,9 +958,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -958,9 +979,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1103,9 +1124,9 @@
             
             <tag> macOS </tag>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1143,9 +1164,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1164,9 +1185,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1353,9 +1374,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
             <tag> testing </tag>
             
@@ -1494,9 +1515,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1844,9 +1865,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1865,9 +1886,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1886,9 +1907,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1907,9 +1928,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1928,9 +1949,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -1968,9 +1989,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2029,9 +2050,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2092,9 +2113,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2113,9 +2134,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2153,9 +2174,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2275,9 +2296,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2395,9 +2416,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2456,9 +2477,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2477,9 +2498,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2498,9 +2519,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2519,9 +2540,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2639,9 +2660,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2702,9 +2723,9 @@
             
             <tag> macOS </tag>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2723,9 +2744,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2807,9 +2828,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2830,9 +2851,9 @@
             
             <tag> macOS </tag>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2876,9 +2897,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2897,9 +2918,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -2918,9 +2939,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3044,9 +3065,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3099,9 +3120,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3173,9 +3194,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3194,9 +3215,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3215,9 +3236,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3255,9 +3276,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3327,9 +3348,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3348,9 +3369,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3369,9 +3390,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3451,9 +3472,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3767,9 +3788,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3788,9 +3809,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -3964,9 +3985,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -4492,9 +4513,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -4596,9 +4617,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -4670,9 +4691,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -4771,9 +4792,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -4907,9 +4928,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -5116,9 +5137,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -5177,9 +5198,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -5295,9 +5316,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -6092,9 +6113,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -6204,9 +6225,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -6363,9 +6384,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -6431,9 +6452,9 @@
       
         <tags>
             
-            <tag> iOS </tag>
-            
             <tag> swift </tag>
+            
+            <tag> iOS </tag>
             
         </tags>
       
