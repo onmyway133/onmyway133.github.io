@@ -4,6 +4,48 @@
   
     
     <entry>
+      <title>How to use EnvironmentObject in SwiftUI for watchOS</title>
+      <link href="/blog/How-to-use-EnvironmentObject-in-SwiftUI-for-watchOS/"/>
+      <url>/blog/How-to-use-EnvironmentObject-in-SwiftUI-for-watchOS/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/467" target="_blank" rel="noopener">#467</a></strong></p><p>Declare top dependencies in ExtensionDelegate</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExtensionDelegate</span>: <span class="title">NSObject</span>, <span class="title">WKExtensionDelegate</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> storeContainer = <span class="type">StoreContainer</span>()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">applicationDidEnterBackground</span><span class="params">()</span></span> &#123;</span><br><span class="line">        storeContainer.save()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Reference that in <code>HostingController</code>. Note that we need to change from generic <code>MainView</code> to <code>WKHostingController&lt;AnyView&gt;</code> as <code>environmentObject</code> returns <code>View</code> protocol</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HostingController</span>: <span class="title">WKHostingController</span>&lt;<span class="title">AnyView</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> storeContainer: <span class="type">StoreContainer!</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">awake</span><span class="params">(withContext context: <span class="keyword">Any</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.awake(withContext: context)</span><br><span class="line">        <span class="keyword">self</span>.storeContainer = (<span class="type">WKExtension</span>.shared().delegate <span class="keyword">as</span>! <span class="type">ExtensionDelegate</span>).storeContainer</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> body: <span class="type">AnyView</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">AnyView</span>(<span class="type">MainView</span>()</span><br><span class="line">            .environmentObject(storeContainer)</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>In theory, the environment object will be propagated down the view hierarchy, but in practice it throws error. So a workaround now is to just pass that environment object down manually</p><blockquote><p>Fatal error: No ObservableObject of type SomeType found<br>A View.environmentObject(_:) for StoreContainer.Type may be missing as an ancestor of this view</p></blockquote><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MainView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">EnvironmentObject</span> <span class="keyword">var</span> storeContainer: <span class="type">StoreContainer</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            <span class="type">List</span>(services.<span class="built_in">map</span>(&#123; <span class="type">AnyService</span>($<span class="number">0</span>) &#125;)) &#123; anyService <span class="keyword">in</span></span><br><span class="line">                <span class="type">NavigationLink</span>(destination:</span><br><span class="line">                    <span class="type">ItemsView</span>(service: anyService.service)</span><br><span class="line">                        .navigationBarTitle(anyService.service.name)</span><br><span class="line">                        .onDisappear(perform: &#123;</span><br><span class="line">                            anyService.service.requestCancellable?.cancel()</span><br><span class="line">                        &#125;)</span><br><span class="line">                        .environmentObject(storeContainer)</span><br><span class="line">                ) &#123;</span><br><span class="line">                    <span class="type">HStack</span> &#123;</span><br><span class="line">                        <span class="type">Image</span>(anyService.service.name)</span><br><span class="line">                            .resizable()</span><br><span class="line">                            .frame(width: <span class="number">30</span>, height: <span class="number">30</span>, alignment: .leading)</span><br><span class="line">                        <span class="type">Text</span>(anyService.service.name)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;.listStyle(<span class="type">CarouselListStyle</span>())</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> watchOS </tag>
+            
+            <tag> swiftUI </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>How to structure classes</title>
+      <link href="/blog/How-to-structure-classes/"/>
+      <url>/blog/How-to-structure-classes/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/466" target="_blank" rel="noopener">#466</a></strong></p><p>iOS</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">View Controller -&gt; View Model | Logic Handler -&gt; Data Handler -&gt; Repo</span><br></pre></td></tr></table></figure><p>Android</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Activity -&gt; Fragment -&gt; View Model | Logic Handler -&gt; Data Handler -&gt; Repo</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> android </tag>
+            
+            <tag> iOS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>How to make generic store for Codable in Swift</title>
       <link href="/blog/How-to-make-generic-store-for-Codable-in-Swift/"/>
       <url>/blog/How-to-make-generic-store-for-Codable-in-Swift/</url>
@@ -52,9 +94,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -73,9 +115,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -94,9 +136,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -115,9 +157,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -197,9 +239,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -218,9 +260,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -277,9 +319,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -443,9 +485,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -647,9 +689,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -895,9 +937,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -916,9 +958,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1061,9 +1103,9 @@
             
             <tag> macOS </tag>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1101,9 +1143,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1122,9 +1164,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1311,9 +1353,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
             <tag> testing </tag>
             
@@ -1452,9 +1494,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1802,9 +1844,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1823,9 +1865,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1844,9 +1886,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1865,9 +1907,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1886,9 +1928,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1926,9 +1968,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1987,9 +2029,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2050,9 +2092,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2071,9 +2113,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2111,9 +2153,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2233,9 +2275,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2353,9 +2395,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2414,9 +2456,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2435,9 +2477,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2456,9 +2498,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2477,9 +2519,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2597,9 +2639,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2660,9 +2702,9 @@
             
             <tag> macOS </tag>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2681,9 +2723,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2765,9 +2807,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2788,9 +2830,9 @@
             
             <tag> macOS </tag>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2834,9 +2876,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2855,9 +2897,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2876,9 +2918,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3002,9 +3044,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3057,9 +3099,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3131,9 +3173,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3152,9 +3194,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3173,9 +3215,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3213,9 +3255,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3285,9 +3327,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3306,9 +3348,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3327,9 +3369,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3409,9 +3451,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3725,9 +3767,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3746,9 +3788,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3922,9 +3964,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4450,9 +4492,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4554,9 +4596,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4628,9 +4670,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4729,9 +4771,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4865,9 +4907,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5074,9 +5116,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5135,9 +5177,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5253,9 +5295,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -6050,9 +6092,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -6162,9 +6204,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -6321,9 +6363,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -6389,9 +6431,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
