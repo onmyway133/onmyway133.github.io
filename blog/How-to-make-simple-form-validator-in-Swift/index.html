@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="onmyway133">
 <meta property="og:description" content="Issue #328 Sometimes we want to validate forms with many fields, for example name, phone, email, and with different rules. If validation fails, we show error message. We can make simple Validator and">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-06-25T12:23:23.000Z">
+<meta property="og:updated_time" content="2019-10-18T09:03:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to make simple form validator in Swift">
 <meta name="twitter:description" content="Issue #328 Sometimes we want to validate forms with many fields, for example name, phone, email, and with different rules. If validation fails, we show error message. We can make simple Validator and">
@@ -117,7 +117,7 @@
 
     </div>
     <div id="toc">
-      
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#allSatisfy"><span class="toc-number">1.</span> <span class="toc-text">allSatisfy</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -143,7 +143,7 @@
       
         <time datetime="2019-06-25T12:05:08.000Z" itemprop="datePublished">2019-06-25</time>
         
-        (Updated: <time datetime="2019-06-25T12:23:23.000Z" itemprop="dateModified">2019-06-25</time>)
+        (Updated: <time datetime="2019-10-18T09:03:53.000Z" itemprop="dateModified">2019-10-18</time>)
         
       
     </div>
@@ -173,6 +173,12 @@
 
 <p>Then a few tests to make sure it works</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ValidatorTests</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> validator = <span class="type">Validator</span>()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testEmpty</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="type">XCTAssertNil</span>(validator.validate(text: <span class="string">"a"</span>, with: [.notEmpty]))</span><br><span class="line">        <span class="type">XCTAssertNotNil</span>(validator.validate(text: <span class="string">""</span>, with: [.notEmpty]))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testEmail</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="type">XCTAssertNil</span>(validator.validate(text: <span class="string">"onmyway133@gmail.com"</span>, with: [.validEmail]))</span><br><span class="line">        <span class="type">XCTAssertNotNil</span>(validator.validate(text: <span class="string">"onmyway133"</span>, with: [.validEmail]))</span><br><span class="line">        <span class="type">XCTAssertNotNil</span>(validator.validate(text: <span class="string">"onmyway133.com"</span>, with: [.validEmail]))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testCountryCode</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="type">XCTAssertNil</span>(validator.validate(text: <span class="string">"+47 11 222 333"</span>, with: [.countryCode]))</span><br><span class="line">        <span class="type">XCTAssertNotNil</span>(validator.validate(text: <span class="string">"11 222 333"</span>, with: [.countryCode]))</span><br><span class="line">        <span class="type">XCTAssertNotNil</span>(validator.validate(text: <span class="string">"47 11 222 333"</span>, with: [.countryCode]))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="allSatisfy"><a href="#allSatisfy" class="headerlink" title="allSatisfy"></a>allSatisfy</h2><p>To check if all rules are ok, we can use reduce</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(text: String, with rules: [Rule])</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> rules.allSatisfy(&#123; $<span class="number">0</span>.check(text).isOk &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Or more concisely, use <code>allSatisfy</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(text: String, with rules: [Rule])</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> rules.allSatisfy(&#123; $<span class="number">0</span>.check(text).isOk &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
   </div>
 </article>
 
@@ -211,7 +217,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#allSatisfy"><span class="toc-number">1.</span> <span class="toc-text">allSatisfy</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
