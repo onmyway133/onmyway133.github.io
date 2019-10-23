@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="onmyway133">
 <meta property="og:description" content="Issue #472 Build error viewUse convenient code from Omnia To make view height dynamic, pin UILabel to edges and center 12345678910111213141516171819202122232425262728293031323334353637383940414243impo">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-10-21T11:33:50.000Z">
+<meta property="og:updated_time" content="2019-10-23T11:53:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to show error message like Snack Bar in iOS">
 <meta name="twitter:description" content="Issue #472 Build error viewUse convenient code from Omnia To make view height dynamic, pin UILabel to edges and center 12345678910111213141516171819202122232425262728293031323334353637383940414243impo">
@@ -117,7 +117,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Build-error-view"><span class="toc-number">1.</span> <span class="toc-text">Build error view</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Show-and-hide"><span class="toc-number">2.</span> <span class="toc-text">Show and hide</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Handle-keyboard"><span class="toc-number">3.</span> <span class="toc-text">Handle keyboard</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Build-error-view"><span class="toc-number">1.</span> <span class="toc-text">Build error view</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Show-and-hide"><span class="toc-number">2.</span> <span class="toc-text">Show and hide</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Handle-keyboard"><span class="toc-number">3.</span> <span class="toc-text">Handle keyboard</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView-animation-completion"><span class="toc-number">4.</span> <span class="toc-text">UIView animation completion</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -143,7 +143,7 @@
       
         <time datetime="2019-10-21T08:55:27.000Z" itemprop="datePublished">2019-10-21</time>
         
-        (Updated: <time datetime="2019-10-21T11:33:50.000Z" itemprop="dateModified">2019-10-21</time>)
+        (Updated: <time datetime="2019-10-23T11:53:15.000Z" itemprop="dateModified">2019-10-23</time>)
         
       
     </div>
@@ -173,6 +173,14 @@
 
 <h2 id="Handle-keyboard"><a href="#Handle-keyboard" class="headerlink" title="Handle keyboard"></a>Handle keyboard</h2><p>If we add this error message on UIView in ViewController and we use <a href="https://onmyway133.github.io/blog/How-to-handle-keyboard-for-UITextField-in-scrolling-UIStackView-in-iOS/">KeyboardHandler</a> to scroll the entire view, then this snack bar will move up as well</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ErrorMessageHandler</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> errorMessageView = <span class="type">ErrorMessageView</span>()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> view = <span class="type">UIView</span>()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> bottomOffset: <span class="type">CGFloat</span> = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">on</span><span class="params">(view: UIView, bottomOffset: CGFloat)</span></span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.view = view</span><br><span class="line">        <span class="keyword">self</span>.bottomOffset = bottomOffset</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="UIView-animation-completion"><a href="#UIView-animation-completion" class="headerlink" title="UIView animation completion"></a>UIView animation completion</h2><p>One tricky thing is that if we call <code>hide</code> and then <code>show</code> immediately, the completion of <code>hide</code> will be called after and then remove the view.</p>
+<p>When we start animation again, the previous animation is not finished, so we need to check</p>
+<p>Read <a href="https://developer.apple.com/documentation/uikit/uiview/1622451-animate" target="_blank" rel="noopener">UIView.animate</a></p>
+<blockquote>
+<p>completion<br>A block object to be executed when the animation sequence ends. This block has no return value and takes a single Boolean argument that indicates whether or not the animations actually finished before the completion handler was called. If the duration of the animation is 0, this block is performed at the beginning of the next run loop cycle. This parameter may be NULL.</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">toggle</span><span class="params">(shows: Bool)</span></span> &#123;</span><br><span class="line">    <span class="keyword">self</span>.errorMessageView.alpha = shows ? <span class="number">0</span> : <span class="number">1.0</span></span><br><span class="line">    <span class="type">UIView</span>.animate(withDuration: <span class="number">0.25</span>, delay: <span class="number">0</span>, options: .curveEaseInOut, animations: &#123;</span><br><span class="line">        <span class="keyword">self</span>.errorMessageView.alpha = shows ? <span class="number">1.0</span> : <span class="number">0</span></span><br><span class="line">    &#125;, completion: &#123; finished <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">if</span> shows &#123;</span><br><span class="line">            <span class="keyword">self</span>.view.bringSubviewToFront(<span class="keyword">self</span>.errorMessageView)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> finished &#123;</span><br><span class="line">            <span class="keyword">self</span>.errorMessageView.removeFromSuperview()</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// No op</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
   </div>
 </article>
 
@@ -211,7 +219,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Build-error-view"><span class="toc-number">1.</span> <span class="toc-text">Build error view</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Show-and-hide"><span class="toc-number">2.</span> <span class="toc-text">Show and hide</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Handle-keyboard"><span class="toc-number">3.</span> <span class="toc-text">Handle keyboard</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Build-error-view"><span class="toc-number">1.</span> <span class="toc-text">Build error view</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Show-and-hide"><span class="toc-number">2.</span> <span class="toc-text">Show and hide</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Handle-keyboard"><span class="toc-number">3.</span> <span class="toc-text">Handle keyboard</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView-animation-completion"><span class="toc-number">4.</span> <span class="toc-text">UIView animation completion</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
