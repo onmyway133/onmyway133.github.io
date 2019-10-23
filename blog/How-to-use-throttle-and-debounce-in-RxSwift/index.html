@@ -16,7 +16,7 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://user-images.githubusercontent.com/2284279/65225775-fe37e800-dac5-11e9-8d07-864d80a25ead.png">
 <meta property="og:image" content="https://user-images.githubusercontent.com/2284279/65225784-0132d880-dac6-11e9-85fe-891a5b316115.png">
-<meta property="og:updated_time" content="2019-09-19T06:16:48.000Z">
+<meta property="og:updated_time" content="2019-10-23T11:22:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to use throttle and debounce in RxSwift">
 <meta name="twitter:description" content="Issue #426 throttlehttps://rxmarbles.com/#throttle    Returns an Observable that emits the first and the latest item emitted by the source Observable during sequential time windows of a specified dura">
@@ -146,7 +146,7 @@
       
         <time datetime="2019-09-19T06:13:56.000Z" itemprop="datePublished">2019-09-19</time>
         
-        (Updated: <time datetime="2019-09-19T06:16:48.000Z" itemprop="dateModified">2019-09-19</time>)
+        (Updated: <time datetime="2019-10-23T11:22:55.000Z" itemprop="dateModified">2019-10-23</time>)
         
       
     </div>
@@ -176,6 +176,9 @@
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.throttle(.milliseconds(<span class="number">500</span>), scheduler: <span class="type">MainScheduler</span>.instance)</span><br></pre></td></tr></table></figure>
 
 <p>In a time window, only the first item gets emitted</p>
+<p>For example, when failure, we show error message but don’t want to show error messages consecutively. We can use throttle to discard consecutive errors.</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">viewModel.fetchBooksFail</span><br><span class="line">     .observeOn(<span class="type">MainScheduler</span>.instance)</span><br><span class="line">     .throttle(.seconds(<span class="number">2</span>), scheduler: <span class="type">MainScheduler</span>.instance)</span><br></pre></td></tr></table></figure>
+
 <h2 id="debounce"><a href="#debounce" class="headerlink" title="debounce"></a>debounce</h2><p><a href="https://rxmarbles.com/#debounce" target="_blank" rel="noopener">https://rxmarbles.com/#debounce</a></p>
 <img width="838" alt="debounce" src="https://user-images.githubusercontent.com/2284279/65225784-0132d880-dac6-11e9-85fe-891a5b316115.png">
 
@@ -185,7 +188,8 @@
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.debounce(.milliseconds(<span class="number">500</span>), scheduler: <span class="type">MainScheduler</span>.instance)</span><br></pre></td></tr></table></figure>
 
 <p>If an element is about to get emitted, wait for a time window to see if there are other elements emitted. If yes, start the waiting again.</p>
-
+<p>For example, when receiving data, we may need to wait for the final data if there are many data events emitted consecutively</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">viewModel.fetchBooks</span><br><span class="line">    .<span class="built_in">filter</span>(&#123; !$<span class="number">0</span>.isEmpty &#125;)</span><br><span class="line">    .debounce(.milliseconds(<span class="number">500</span>), scheduler: <span class="type">MainScheduler</span>.instance)</span><br></pre></td></tr></table></figure>
   </div>
 </article>
 
