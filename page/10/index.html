@@ -179,6 +179,190 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-Learning-from-Open-Source-Generic-Factory"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Learning-from-Open-Source-Generic-Factory/">Learning from Open Source  Generic Factory</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Learning-from-Open-Source-Generic-Factory/" class="article-date">
+	  <time datetime="2018-01-26T12:40:28.000Z" itemprop="datePublished">January 26, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/148" target="_blank" rel="noopener">#148</a></strong></p>
+<p>From <a href="https://github.com/devxoul/Pure/blob/master/Sources/Pure/FactoryModule.swift" target="_blank" rel="noopener">https://github.com/devxoul/Pure/blob/master/Sources/Pure/FactoryModule.swift</a></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">FactoryModule</span>: <span class="title">Module</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// A factory for `Self`.</span></span><br><span class="line">  <span class="keyword">associatedtype</span> <span class="type">Factory</span> = <span class="type">Pure</span>.<span class="type">Factory</span>&lt;<span class="type">Self</span>&gt;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// Creates an instance of a module with a dependency and a payload.</span></span><br><span class="line">  <span class="keyword">init</span>(dependency: <span class="type">Dependency</span>, payload: <span class="type">Payload</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>From <a href="https://github.com/devxoul/Pure/blob/master/Sources/Pure/Factory.swift" target="_blank" rel="noopener">https://github.com/devxoul/Pure/blob/master/Sources/Pure/Factory.swift</a></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Factory</span>&lt;<span class="title">Module</span>: <span class="title">FactoryModule</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> dependencyClosure: () -&gt; <span class="type">Module</span>.<span class="type">Dependency</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/// A static dependency of a module.</span></span><br><span class="line">  <span class="keyword">open</span> <span class="keyword">var</span> dependency: <span class="type">Module</span>.<span class="type">Dependency</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>.dependencyClosure()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// Creates an instance of `Factory`.</span></span><br><span class="line">  <span class="comment">///</span></span><br><span class="line">  <span class="comment">/// - parameter dependency: A static dependency which should be resolved in a composition root.</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">init</span>(dependency: <span class="meta">@autoclosure</span> @escaping () -&gt; <span class="type">Module</span>.<span class="type">Dependency</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.dependencyClosure = dependency</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// Creates an instance of a module with a runtime parameter.</span></span><br><span class="line">  <span class="comment">///</span></span><br><span class="line">  <span class="comment">/// - parameter payload: A runtime parameter which is required to construct a module.</span></span><br><span class="line">  <span class="keyword">open</span> <span class="function"><span class="keyword">func</span> <span class="title">create</span><span class="params">(payload: Module.Payload)</span></span> -&gt; <span class="type">Module</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Module</span>.<span class="keyword">init</span>(dependency: <span class="keyword">self</span>.dependency, payload: payload)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>From <a href="https://github.com/devxoul/Pure/blob/master/Tests/PureTests/PureSpec.swift#L72" target="_blank" rel="noopener">https://github.com/devxoul/Pure/blob/master/Tests/PureTests/PureSpec.swift#L72</a></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> factory = <span class="type">FactoryFixture</span>&lt;<span class="type">Dependency</span>, <span class="type">Payload</span>&gt;.<span class="type">Factory</span>(dependency: .<span class="keyword">init</span>(</span><br><span class="line">  networking: <span class="string">"Networking A"</span></span><br><span class="line">))</span><br><span class="line"><span class="keyword">let</span> instance = factory.create(payload: .<span class="keyword">init</span>(id: <span class="number">100</span>))</span><br><span class="line">expect(instance.dependency.networking) == <span class="string">"Networking A"</span></span><br><span class="line">expect(instance.payload.id) == <span class="number">100</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Using-camelCase-for-abbreviations"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Using-camelCase-for-abbreviations/">Using camelCase for abbreviations</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Using-camelCase-for-abbreviations/" class="article-date">
+	  <time datetime="2018-01-26T12:02:44.000Z" itemprop="datePublished">January 26, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/147" target="_blank" rel="noopener">#147</a></strong></p>
+<p>Each language and platform has its own coding style guide. This goes true when it comes to abbreviations. I’ve had some debates about whether to use <code>JSON</code>  or <code>Json</code>, <code>URL</code> or <code>Url</code>, <code>HTTP</code> or <code>Http</code>. </p>
+<p>I personally prefer camelCase, so I’m very happy to see that Kotlin is on my side. See <a href="https://android.github.io/kotlin-guides/style.html#camel-case" target="_blank" rel="noopener">Kotlin Style guide</a>, I think this guide should be applied in other languages, such as Swift 😛 </p>
+<blockquote>
+<p>Sometimes there is more than one reasonable way to convert an English phrase into camel case, such as when acronyms or unusual constructs like “IPv6” or “iOS” are present. To improve predictability, use the following scheme.</p>
+</blockquote>
+<blockquote>
+<p>Beginning with the prose form of the name:</p>
+</blockquote>
+<blockquote>
+<ol>
+<li>Convert the phrase to plain ASCII and remove any apostrophes. For example, “Müller’s algorithm” might become “Muellers algorithm”.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>Divide this result into words, splitting on spaces and any remaining punctuation (typically hyphens).</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>Recommended: if any word already has a conventional camel-case appearance in common usage, split this into its constituent parts (e.g., “AdWords” becomes “ad words”). Note that a word such as “iOS” is not really in camel case per se; it defies any convention, so this recommendation does not apply.</p>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>Now lowercase everything (including acronyms), then uppercase only the first character of:</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>…each word, to yield pascal case, or</p>
+</blockquote>
+<blockquote>
+<p>…each word except the first, to yield camel case</p>
+</blockquote>
+<blockquote>
+<ol start="4">
+<li>Finally, join all the words into a single identifier.</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>Note that the casing of the original words is almost entirely disregarded.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Prose form</th>
+<th>Correct</th>
+<th>Incorrect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“XML Http Request”</td>
+<td>XmlHttpRequest</td>
+<td>XMLHTTPRequest</td>
+</tr>
+<tr>
+<td>“new customer ID”</td>
+<td>newCustomerId</td>
+<td>newCustomerID</td>
+</tr>
+<tr>
+<td>“inner stopwatch”</td>
+<td>innerStopwatch</td>
+<td>innerStopWatch</td>
+</tr>
+<tr>
+<td>“supports IPv6 on iOS”</td>
+<td>supportsIpv6OnIos</td>
+<td>supportsIPv6OnIOS</td>
+</tr>
+<tr>
+<td>“YouTube importer”</td>
+<td>YouTubeImporterYoutubeImporter*</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>About <code>iOS</code> or <code>IOS</code>, I think I would go with <code>IOS</code>. I think <a href="https://facebook.github.io/react-native/docs/navigation.html#navigatorios" target="_blank" rel="noopener">React Native</a> thinks so too</p>
+<blockquote>
+<p>NavigatorIOS looks and feels just like UINavigationController, because it is actually built on top of it.</p>
+</blockquote>
+<h3 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h3><ul>
+<li><a href="https://softwareengineering.stackexchange.com/questions/186277/should-the-variable-be-named-id-or-id" target="_blank" rel="noopener">https://softwareengineering.stackexchange.com/questions/186277/should-the-variable-be-named-id-or-id</a></li>
+<li><a href="https://swift.org/documentation/api-design-guidelines/#promote-clear-usage" target="_blank" rel="noopener">https://swift.org/documentation/api-design-guidelines/#promote-clear-usage</a></li>
+<li><a href="https://github.com/raywenderlich/swift-style-guide#naming" target="_blank" rel="noopener">https://github.com/raywenderlich/swift-style-guide#naming</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Learning-sine"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -2250,279 +2434,6 @@ signal.map { value in
     
 
   
-    <article id="post-URL-Routing-with-Compass"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/URL-Routing-with-Compass/">URL Routing with Compass</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/URL-Routing-with-Compass/" class="article-date">
-	  <time datetime="2017-11-27T15:20:15.000Z" itemprop="datePublished">November 27, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/110" target="_blank" rel="noopener">#110</a></strong></p>
-<p>Medium version <a href="https://medium.com/@onmyway133/url-routing-with-compass-d59c0061e7e2" target="_blank" rel="noopener">https://medium.com/@onmyway133/url-routing-with-compass-d59c0061e7e2</a></p>
-<hr>
-<p>Apps often have many screens, and <code>UIViewController</code> works well as the basis for a screen, together with presentation and navigation APIs. Things are fine until you get lost in the forest of flows, and code becomes hard to maintain. </p>
-<p>One way to avoid this is the <code>central URL routing</code> approach. Think of it as a network router that handles and resolves all routing requests. This way, the code becomes declarative and decoupled, so that the list component does not need to know what it’s presenting. URL routing also makes logging and tracking easy along with ease of handling external requests such as deep linking. </p>
-<p>There are various frameworks that perform URL routing. In this tutorial you’ll use <a href="https://github.com/hyperoslo/Compass" target="_blank" rel="noopener">Compass</a> for its simplicity. You’ll refactor an existing app, which is a simplified Instagram app named <code>PhotoFeed</code>. When you’ve finished this tutorial, you’ll know how to declare and use routers with Compass and handle deep linking. </p>
-<h1 id="Getting-Started"><a href="#Getting-Started" class="headerlink" title="Getting Started"></a>Getting Started</h1><p>Download the <a href="https://github.com/onmyway133/PhotoFeed/tree/start" target="_blank" rel="noopener">starter project</a> and unzip it. Go to the <code>PhotoFeed</code> folder and run <code>pod install</code> to install the particular dependencies for this project. Open <code>PhotoFeed.xcworkspace</code> and run the project. Tap <code>Login</code> to go to the Instagram login page and enter your Instagram credentials, then have a look around the app. </p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33277373-a808bf8a-d398-11e7-9b27-9ddc4549ffdc.png" alt="artboard"></p>
-<p>The main app is made of a <code>UITabBarController</code> that shows the feed, the currently logged-in user profile and a menu. This is a typical <code>Model View Controller</code> project where <code>UIViewController</code> handles <code>Cell</code> delegates and takes responsibility for the navigation. For simplicity, all view controllers inherit from <code>TableController</code> and <code>CollectionController</code> that know how to manage list of a particular model and cell. All models conform to the new Swift 4 <code>Codable</code> protocol.</p>
-<h2 id="Registering-Your-App-on-Instagram"><a href="#Registering-Your-App-on-Instagram" class="headerlink" title="Registering Your App on Instagram"></a>Registering Your App on Instagram</h2><p>In order to use the Instagram API, you’ll need to register your app at <a href="https://www.instagram.com/developer/" target="_blank" rel="noopener">Instagram Developer</a>. After obtaining your <em>client id</em>, switch back to the project. Go to <code>APIClient.swift</code> and modify your <code>clientId</code>. </p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33277396-b40a3bec-d398-11e7-9f1d-3033870e0738.png" alt="artboard 2"></p>
-<p><strong>Note</strong>: The project comes with a default app with limited permissions. The app can’t access following or follower APIs, and you can only see your own posts and comments</p>
-<h1 id="Compass-101"><a href="#Compass-101" class="headerlink" title="Compass 101"></a>Compass 101</h1><p>The concept of Compass is very simple: you have a set of routes and central place for handling these routes. Think of a route as a navigation request to a specific screen within the app. The idea behind URL routing is borrowed from the modern web server. When user enters a URL into the browser, such as <code>https://flawlessapp.io/category/ios</code>, that request is sent from the browser to the web server. The server parses the URL and returns the requested content, such as HTML or JSON. Most web server frameworks have URL routing support, including <a href="https://expressjs.com/en/guide/routing.html" target="_blank" rel="noopener">ASP.NET</a>, <a href="https://expressjs.com/en/guide/routing.html" target="_blank" rel="noopener">Express.js</a>, and others. For example, here is how you handle a URL route in express.js:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.get(<span class="string">'/api/category/:categoryTag'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> page = getCategoryPageFor(req.params.categoryTag)</span><br><span class="line">  res.send(page)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<p>Users or apps request a specific URL that express an intent about what should be returned or displayed. But instead of returning web pages, Compass constructs screens in terms of <code>UIViewController</code> and presents them.</p>
-<h2 id="Route-Patterns"><a href="#Route-Patterns" class="headerlink" title="Route Patterns"></a>Route Patterns</h2><p>This is how you declare a routing schema in Compass:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Navigator</span>.routes = [<span class="string">"profile:&#123;userId&#125;"</span>, <span class="string">"post:&#123;postId&#125;"</span>, <span class="string">"logout"</span>]</span><br></pre></td></tr></table></figure>
-
-<p>This is simply as array of patterns you register on the <code>Navigator</code>. This is the central place where you define all your routes. Since they are in one place, all your navigations are kept in one place and can easily be understood. Looking at the example above, <code>{userId}, {postId}</code> are placeholders that will be resolved to actual parameters. For example with <code>post:BYOkwgXnwr3</code>, you get <code>userId</code> of <code>BYOkwgXnwr3</code>. Compass also performs pattern matching, in that <code>post:BYOkwgXnwr3</code> matches <code>post:{postId}</code>, not <code>comment:{postId}</code>, <code>blogpost:{postId}</code>, …This will become to make sense in following sections. </p>
-<h2 id="The-Navigator"><a href="#The-Navigator" class="headerlink" title="The Navigator"></a>The Navigator</h2><p>The <code>Navigator</code> is a the central place for routes registration, navigating and handling.</p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33277861-1855fa40-d39a-11e7-8449-0d10608d2501.png" alt="artboard 3"></p>
-<p> The next step is to trigger a routing request. You can do that via the <code>Navigator</code>. For example, this is how you do  in the feed to request opening a specific post:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Navigator</span>.navigate(urn: <span class="string">"post:BYOkwgXnwr3"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>Compass uses the user-friendly <code>urn</code>, short for <a href="https://no.wikipedia.org/wiki/Uniform_Resource_Name" target="_blank" rel="noopener">Uniform Resource Name</a> to make itwork seamlessly with <a href="https://en.wikipedia.org/wiki/Mobile_deep_linking" target="_blank" rel="noopener">Deep Linking</a>. This <code>urn</code> matches the routing schema <code>post:{postId}</code>. Compass uses <code>{param}</code> as the special token to identifier the parameter and <code>:</code> as the delimiter. You can change the delimiter to something else by configuring <code>Navigator.delimiter</code>. You have learned how to register routes and navigate in Compass. Next, you will learn how to customize the handling code to your need.</p>
-<h2 id="Location"><a href="#Location" class="headerlink" title="Location"></a>Location</h2><p><code>Navigator</code> parses and works with <code>Location</code> under the hood. Given the <code>URN</code> of <code>post:BYOkwgXnwr3</code>, you get a <code>Location</code> where <code>path</code> is the route pattern, and <code>arguments</code> contain the resolved parameters.</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">path = <span class="string">"post:&#123;postId&#125;"</span></span><br><span class="line">arguments = [</span><br><span class="line">  <span class="string">"postId"</span>: <span class="string">"BYOkwgXnwr3"</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<p>To actually perform the navigation, you assign a closure that takes a <code>Location</code> to <code>Navigator.handle</code>.</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Navigator</span>.handle = &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] location <span class="keyword">in</span></span><br><span class="line">  <span class="keyword">guard</span> <span class="keyword">let</span> `<span class="keyword">self</span>` = <span class="keyword">self</span> <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> arguments = location.arguments</span><br><span class="line"></span><br><span class="line">  <span class="keyword">switch</span> location.path &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"post:&#123;postId&#125;"</span>:</span><br><span class="line">      <span class="keyword">let</span> postController = <span class="type">PostController</span>(postId: postID)</span><br><span class="line">      <span class="keyword">self</span>.rootController.pushViewController(postController, animated: <span class="literal">true</span>)</span><br><span class="line">    <span class="keyword">default</span>: </span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The <code>let</code>self<code>= self</code> dance is to ensure <code>self</code> isn’t released by the time this closure is executed. If it is released, the routing it’s about to perform is likely invalid, and you return without doing anything instead. You should typically do the above  in the components that own the root controller, such as <code>AppDelegate</code> as seen above.  That’s the basic of Compass. Astute readers may have noticed that it does not scale, as the number of <code>switch</code> statements will grow as the number of routes and endpoints increase in your app. This is where the <code>Routable</code> protocol comes in.  Anything conforming to <code>Routable</code> knows how to handle a specific route. Apps may have many modular sections, and each section may have a set of routes. Compass handles these scenario by using a composite <code>Routable</code> named <code>Router</code> that groups them . You can have a router for a pre-login module, a post-login module, premium features module, and so on. </p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33277894-2eff78de-d39a-11e7-8554-bf064b621921.png" alt="untitled 2 2017-08-30 09-53-58"></p>
-<p>In the next section, you’ll change PhotoFeed to use <code>Router</code> and <code>Routable</code>.</p>
-<h1 id="Router-to-the-Rescue"><a href="#Router-to-the-Rescue" class="headerlink" title="Router to the Rescue"></a>Router to the Rescue</h1><p>The first step is to include Compass in your project. Using <code>CocoaPods</code>, this is an easy task. Edit the <code>Podfile</code> with the project and type <code>pod &#39;Compass&#39;, &#39;~&gt; 5.0&#39;</code> just before the <code>end</code> statement. Then open Terminal and execute the following:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pod install</span><br></pre></td></tr></table></figure>
-
-<p>The version of Compass used in this tutorial is <code>5.1.0</code>.</p>
-<h2 id="Registering-a-Router"><a href="#Registering-a-Router" class="headerlink" title="Registering a Router"></a>Registering a Router</h2><p><img src="https://user-images.githubusercontent.com/2284279/33277916-3da628f6-d39a-11e7-9652-b45ea4a935fd.png" alt="untitled 2 2017-08-30 10-04-50"></p>
-<p>To start, you’ll create a simple router to handle all post-login routes. Open <em>AppDelegate.swift</em>, and import Compass at the top of the file:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Compass</span><br></pre></td></tr></table></figure>
-
-<p>Next, add the following router declaration under the <code>var mainController: MainController?</code> declaration:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> postLoginRouter = <span class="type">Router</span>()</span><br></pre></td></tr></table></figure>
-
-<p>Then declare a function called <code>setupRouting</code>, you ‘ll do this in an extension to separate the routing setup from the main code in <code>AppDelegate</code>. </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">AppDelegate</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">setupRouting</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// [1] Register scheme</span></span><br><span class="line">    <span class="type">Navigator</span>.scheme = <span class="string">"photofeed"</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// [2] Configure routes for Router</span></span><br><span class="line">    postLoginRouter.routes = [:]</span><br><span class="line"></span><br><span class="line">    <span class="comment">// [3] Register routes you 'd like to support</span></span><br><span class="line">    <span class="type">Navigator</span>.routes = <span class="type">Array</span>(postLoginRouter.routes.keys)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// [4] Do the handling</span></span><br><span class="line">    <span class="type">Navigator</span>.handle = &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] location <span class="keyword">in</span></span><br><span class="line">      <span class="keyword">guard</span> <span class="keyword">let</span> selectedController = <span class="keyword">self</span>?.mainController?.selectedViewController <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// [5] Choose the current visible controller</span></span><br><span class="line">      <span class="keyword">let</span> currentController = (selectedController <span class="keyword">as</span>? <span class="type">UINavigationController</span>)?.topViewController</span><br><span class="line">        ?? selectedController</span><br><span class="line"></span><br><span class="line">      <span class="comment">// [6] Navigate</span></span><br><span class="line">      <span class="keyword">self</span>?.postLoginRouter.navigate(to: location, from: currentController)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Here’s what you do in the above method:</p>
-<ol>
-<li>Declare a scheme for Compass to work. This is your application URL scheme. This shines when you wish to support deep linking .</li>
-<li>Register all the routes in your app. <code>Router</code> accepts a mapping of route and <code>Routable</code> conformers. This is empty for now, but you will add several routes in a moment.</li>
-<li>A <code>Navigator</code> can manage multiple routers. In this case, you only register one router.</li>
-<li>This is where you supply the handling closure. <code>Navigator</code> uses this to handle a resolved location request.</li>
-<li>Screens in one modular section originate from one root or parent view controller. In order to show something from the route, you should try to push or present it from the selected most-visible view controller. In this project, the root is a <code>UITabBarController</code>, so you try to get the top controller from the current selected navigation. The selection of <code>current controller</code> depends on the module and your app use cases, so Compass let you decide it.  If you use the side menu drawer, then you can just change the selected view controller.</li>
-<li>Finally, since <code>Router</code> is a composite <code>Routable</code>, you dispatch to it the <code>Location</code>.</li>
-</ol>
-<p><img src="https://user-images.githubusercontent.com/2284279/33277961-531e6342-d39a-11e7-9199-158a469a3709.png" alt="main storyboard 2017-08-30 10-37-16"></p>
-<p>Finally, you need to call this newly added function. Add the following line right above <code>window?.makeKeyAndVisible()</code>:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setupRouting()</span><br></pre></td></tr></table></figure>
-
-<p>Build and run. Nothing seems to work yet! To make things happen, you’ll need to add all the route handlers. You’ll do this in the next section.</p>
-<h2 id="Implementing-the-Route-Handlers"><a href="#Implementing-the-Route-Handlers" class="headerlink" title="Implementing the Route Handlers"></a>Implementing the Route Handlers</h2><p>First, create a new file and name it <code>Routers.swift</code>. This is where you’ll declare all of your route handlers. At the beginning of the file, add <code>import Compass</code>. Compass declares a simple protocol — <code>Routable</code> — that decides what to do with a given <code>Location</code> request from a <code>Current Controller</code>. If a request can’t be handled, it will throw with <code>RouteError</code>. Its implementation looks like this: </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Routable</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">navigate</span><span class="params">(to location: Location, from currentController: CurrentController)</span></span> <span class="keyword">throws</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>It’s an incredibly simple protocol. Any routes you create only need to implement that single method. Now create your first handler to deal with user info request. </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">UserRoute</span>: <span class="title">Routable</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">navigate</span><span class="params">(to location: Location, from currentController: CurrentController)</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="comment">// [1] Examine arguments</span></span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> userId = location.arguments[<span class="string">"userId"</span>] <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// [2] Create the controller</span></span><br><span class="line">    <span class="keyword">let</span> controller = <span class="type">UIStoryboard</span>(name: <span class="string">"Main"</span>, bundle: <span class="literal">nil</span>).instantiateViewController(withIdentifier: <span class="string">"UserController"</span>) <span class="keyword">as</span>! <span class="type">UserController</span></span><br><span class="line">    controller.userId = userId</span><br><span class="line">    currentController.navigationController?.pushViewController(controller, animated: <span class="literal">true</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>This is called when you touch the post author on the feed. Here’s what’s happening:</p>
-<ol>
-<li><code>UserRoute</code> deals with <code>user:{userId} urn</code>, so <code>location.arguments[&quot;userId&quot;]</code> should contain the correct <code>userId</code> to inject into <code>UserController</code>.</li>
-<li>This app uses storyboards to make the UI, so get the correct view controller based on its identifier. Remember tha <code>currentController</code> is the current visible controller in the navigation stack. So you ask for its <code>UINavigationController</code> to push a new view controller.</li>
-</ol>
-<p>Right below this router, add one more route for the screen shown when the user wants to see who likes a particular post:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">LikesRoute</span>: <span class="title">Routable</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">navigate</span><span class="params">(to location: Location, from currentController: CurrentController)</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> mediaId = location.arguments[<span class="string">"mediaId"</span>] <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> controller = <span class="type">UIStoryboard</span>(name: <span class="string">"Main"</span>, bundle: <span class="literal">nil</span>).instantiateViewController(withIdentifier: <span class="string">"LikesController"</span>) <span class="keyword">as</span>! <span class="type">LikesController</span></span><br><span class="line">    controller.mediaId = mediaId</span><br><span class="line">    currentController.navigationController?.pushViewController(controller, animated: <span class="literal">true</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="The-remaining-Route"><a href="#The-remaining-Route" class="headerlink" title="The remaining Route"></a>The remaining Route</h3><p>Now it’s your turn to write the other route handlers: <code>CommentsRoute, FollowingRoute, FollowerRoute</code>. See if you can figure it out first, you can find the solution below. Here’s what you should have:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">CommentsRoute</span>: <span class="title">Routable</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">navigate</span><span class="params">(to location: Location, from currentController: CurrentController)</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> mediaId = location.arguments[<span class="string">"mediaId"</span>] <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> controller = <span class="type">UIStoryboard</span>(name: <span class="string">"Main"</span>, bundle: <span class="literal">nil</span>).instantiateViewController(withIdentifier: <span class="string">"CommentsController"</span>) <span class="keyword">as</span>! <span class="type">CommentsController</span></span><br><span class="line">    controller.mediaId = mediaId</span><br><span class="line">    currentController.navigationController?.pushViewController(controller, animated: <span class="literal">true</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">FollowingRoute</span>: <span class="title">Routable</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">navigate</span><span class="params">(to location: Location, from currentController: CurrentController)</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> userId = location.arguments[<span class="string">"userId"</span>] <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> controller = <span class="type">UIStoryboard</span>(name: <span class="string">"Main"</span>, bundle: <span class="literal">nil</span>).instantiateViewController(withIdentifier: <span class="string">"FollowingController"</span>) <span class="keyword">as</span>! <span class="type">FollowingController</span></span><br><span class="line">    controller.userId = userId</span><br><span class="line">    currentController.navigationController?.pushViewController(controller, animated: <span class="literal">true</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">FollowerRoute</span>: <span class="title">Routable</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">navigate</span><span class="params">(to location: Location, from currentController: CurrentController)</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> userId = location.arguments[<span class="string">"userId"</span>] <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> controller = <span class="type">UIStoryboard</span>(name: <span class="string">"Main"</span>, bundle: <span class="literal">nil</span>).instantiateViewController(withIdentifier: <span class="string">"FollowerController"</span>) <span class="keyword">as</span>! <span class="type">FollowerController</span></span><br><span class="line">    controller.userId = userId</span><br><span class="line">    currentController.navigationController?.pushViewController(controller, animated: <span class="literal">true</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="The-LogoutRoute"><a href="#The-LogoutRoute" class="headerlink" title="The LogoutRoute"></a>The LogoutRoute</h3><p>There is one more route to add: the one you’ll use for logout. <code>LogoutRoute</code> is quite tricky, as it usually involves changing the current root view controller. Who knows this better than the app delegate? Open <em>AppDelegate.swift</em> and add the following code at the very bottom:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">LogoutRoute</span>: <span class="title">Routable</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">navigate</span><span class="params">(to location: Location, from currentController: CurrentController)</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="type">APIClient</span>.shared.accessToken = <span class="literal">nil</span></span><br><span class="line">    (<span class="type">UIApplication</span>.shared.delegate <span class="keyword">as</span>! <span class="type">AppDelegate</span>).showLogin()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Now that you’ve implemented all of the route handlers, you will have to tell <code>Navigator</code> which route is used for which URN. Still in <em>AppDelegate.swift</em>, find <code>postLoginRouter.routes = [:]</code> and replace it with the following:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">postLoginRouter.routes = [</span><br><span class="line">  <span class="string">"user:&#123;userId&#125;"</span>: <span class="type">UserRoute</span>(),</span><br><span class="line">  <span class="string">"comments:&#123;mediaId&#125;"</span>: <span class="type">CommentsRoute</span>(),</span><br><span class="line">  <span class="string">"likes:&#123;mediaId&#125;"</span>: <span class="type">LikesRoute</span>(),</span><br><span class="line">  <span class="string">"following:&#123;userId&#125;"</span>: <span class="type">FollowingRoute</span>(),</span><br><span class="line">  <span class="string">"follower:&#123;userId&#125;"</span>: <span class="type">FollowerRoute</span>(),</span><br><span class="line">  <span class="string">"logout"</span>: <span class="type">LogoutRoute</span>()</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<p>Build the app and everything should compile. Now all that’s left is to actually <em>all</em> all of the code you’ve written!</p>
-<h2 id="Refactoring-Time"><a href="#Refactoring-Time" class="headerlink" title="Refactoring Time"></a>Refactoring Time</h2><p>It’s time to refactor all the code in <code>UIViewController</code> by replacing all the navigation code with your new routing instructions. Start by freeing the <code>FeedController</code> from the unnecessary tasks of navigation. Open <em>FeedController.swift</em> and add the following import to the top of the file:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Compass</span><br></pre></td></tr></table></figure>
-
-<p>Next, look for <code>// MARK: - MediaCellDelegate</code> and replace the three <code>MediaCell</code> delegate methods with the following:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mediaCell</span><span class="params">(<span class="number">_</span> cell: MediaCell, didViewLikes mediaId: String)</span></span> &#123;</span><br><span class="line">  <span class="keyword">try</span>? <span class="type">Navigator</span>.navigate(urn: <span class="string">"likes:\(mediaId)"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mediaCell</span><span class="params">(<span class="number">_</span> cell: MediaCell, didViewComments mediaId: String)</span></span> &#123;</span><br><span class="line">  <span class="keyword">try</span>? <span class="type">Navigator</span>.navigate(urn: <span class="string">"comments:\(mediaId)"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mediaCell</span><span class="params">(<span class="number">_</span> cell: MediaCell, didSelectUserName userId: String)</span></span> &#123;</span><br><span class="line">  <span class="keyword">try</span>? <span class="type">Navigator</span>.navigate(urn: <span class="string">"user:\(userId)"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>For these three cases, you simply want to navigate to another screen. Therefore, all you need to do is tell the <code>Navigator</code> where you want to go. For simplicity, you use <code>try?</code> to deal with any code that throws. Build and run the app. Search for your favorite post in the feed, and tap on the author, the post comments or likes to go to the target screen. The app behaves the same as it did before, but the code is now clean and declarative. Now do the same with <em>UserController.swift</em>. Add the following import to the top of the file:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Compass</span><br></pre></td></tr></table></figure>
-
-<p>Replace the code after <code>// MARK: - UserViewDelegate</code> with the following:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">userView</span><span class="params">(<span class="number">_</span> view: UserView, didViewFollower userId: String)</span></span> &#123;</span><br><span class="line">  <span class="keyword">try</span>? <span class="type">Navigator</span>.navigate(urn: <span class="string">"follower:\(userId)"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">userView</span><span class="params">(<span class="number">_</span> view: UserView, didViewFollowing userId: String)</span></span> &#123;</span><br><span class="line">  <span class="keyword">try</span>? <span class="type">Navigator</span>.navigate(urn: <span class="string">"following:\(userId)"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Your task now is to refactor with the last route <code>LogoutRoute</code>. Open <em>MenuController.swift</em> and add the following to the top:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Compass</span><br></pre></td></tr></table></figure>
-
-<p>Remove the <code>logout</code> method altogether. Find the following:</p>
-<figure class="highlight plain"><figcaption><span>indexPath.section </span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">  logout()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>…and replace it with:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> indexPath.section == <span class="type">Section</span>.account.rawValue, indexPath.row == <span class="number">0</span> &#123;</span><br><span class="line">  <span class="keyword">try</span>? <span class="type">Navigator</span>.navigate(urn: <span class="string">"logout"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Build and run the app, navigate to the menu and tap <em>Logout</em>. You should be taken to the login screen.</p>
-<h1 id="Handling-Deep-Linking"><a href="#Handling-Deep-Linking" class="headerlink" title="Handling Deep Linking"></a>Handling Deep Linking</h1><p><a href="https://en.wikipedia.org/wiki/Mobile_deep_linking" target="_blank" rel="noopener">Deep linking</a> allows your apps to be opened via a predefined URN. The system identifies each app via its <a href="https://developer.apple.com/library/content/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Inter-AppCommunication/Inter-AppCommunication.html" target="_blank" rel="noopener">URL scheme</a>. For web pages, the scheme is usually <code>http</code>, <code>https</code>. For <em>Instagram</em> it is, quite handily, <code>instagram</code>. Use cases for this are inter-app navigation and app advertisements. For examples, the Messenger app uses this to open the user profile in the Facebook app, and Twitter uses this to open the App Store to install another app from an advertisement. In order for user to be redirected back to PhotoFeed, you need to specify a custom URL scheme for your app. Remember where you declared <code>Navigator.scheme = &quot;photofeed&quot;</code>? PhotoFeed just so happens to conform to this URL scheme, so deep links already worked — and you didn’t even know it! Build and run the app, then switch to Safari. Type <code>photofeed://</code> in the address bar, then tap Go. That will trigger your app to open. The app opens, but PhotoFeed doesn’t parse any parameters in the URL to go anywhere useful. Time to change that! Your app responds to the URL scheme opening by implementing a <code>UIApplicationDelegate</code> method. Add the following after <code>setupRouting</code> in <code>AppDelegate.swift</code>:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(<span class="number">_</span> app: UIApplication, <span class="keyword">open</span> url: URL, options: [UIApplicationOpenURLOptionsKey : <span class="keyword">Any</span>] = [:])</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">  <span class="keyword">try</span>? <span class="type">Navigator</span>.navigate(url: url)</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>Navigator</code> parses and handles this for you. Build and run again. Go to Safari app, type <code>photofeed://user:self</code> and tap Go. Photofeed will open and show the currently logged in users’ profile. Because you already had <code>UserRoute</code>, the requested URL was handled gracefully. Your app may already be presenting a particular screen when a routing request comes, but you’ve anticipated this by resetting the navigation controller or presentation stack to show the requested screen. This simple solution works for most cases. Again, it’s recommended you pick the topmost visible view controller as the current controller in <code>Navigator.handle</code>.</p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33277990-709ae7c4-d39a-11e7-99b2-27acb7a1c5d0.png" alt="artboard 5"></p>
-<p>Deep linking is usually considered external navigation, in that the routing requests come from outside your app. Thanks to the central routing system that you developed, the code to handle external and internal routing requests is very much the same and involves no code duplication at all.</p>
-<h1 id="Routing-with-Push-Notifications"><a href="#Routing-with-Push-Notifications" class="headerlink" title="Routing with Push Notifications"></a>Routing with Push Notifications</h1><p>Push notifications help engage users with your app. You may have received messages like “Hey, checkout today ‘s most popular stories” on <em>Medium</em>, “Your friend has a birthday today” on Facebook, … and when you tap those banners, you are taken straight to that particular screen. How cool is that? This is achievable with your URL routing approach. Imagine users tapping a push notification banner saying “You’re a celebrity on PhotoFeed — check out your profile now!” and being sent directly to their profile screen. To accomplish this, you simply have to embed the URN info into the push payload and handle that in your app.</p>
-<h2 id="Setting-up"><a href="#Setting-up" class="headerlink" title="Setting up"></a>Setting up</h2><p>To start, you’ll need to specify your bundle ID. Go to <code>Target Settings\General</code> to change your bundle ID as push notification requires a unique bundle ID to work. Your project uses <code>com.fantageek.PhotoFeed</code> by default.</p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33278026-8e1fe01a-d39a-11e7-982f-854ab7056aca.png" alt="step1_bundleid"> </p>
-<p>Next, you’ll need to register your <em>App ID</em>. Go to <a href="https://developer.apple.com/account/ios/certificate" target="_blank" rel="noopener">Member Center</a> and register your App ID. Remember your <em>Team ID</em>, as you will need it in the final step. Also tick the <em>Push Notification</em> checkbox under <em>Application Services</em>. </p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33278038-94947866-d39a-11e7-9386-8fffcd5bf9cf.png" alt="step1_appid"></p>
-<p>Now you’ll need to generate your <em>Authentication Key</em>. Apple provides <a href="https://developer.apple.com/news/?id=09222016a" target="_blank" rel="noopener">Token Authentication</a> as a new authentication mechanism for push notifications. The token is easy to generate, works for all your apps, and mostly, it never expires. Still in <a href="https://developer.apple.com/account/ios/authkey/" target="_blank" rel="noopener">Member Center</a>, create a new <em>Key</em> and download it as a <code>.p8</code> file. Remember your <em>Key ID</em> as you will need it in the final step. </p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33278050-9bb3ccc8-d39a-11e7-99b8-076138e5b559.png" alt="step2_key"></p>
-<p>Next up: enabling push notification capability. Back in Xcode, go to <code>Target Settings\Capabilities</code> and enable <em>Push Notifications</em>, which will add <code>PhotoFeed.entitlements</code> to your project. </p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33278054-a21dde8c-d39a-11e7-907b-b1ec620050b4.png" alt="step3_capability"></p>
-<p>The next step is to register for push notifications. Open <code>MainController.swift</code> and add the following import to the top of <em>MainController.swift</em>:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UserNotifications</span><br></pre></td></tr></table></figure>
-
-<p>You want to enable push notification only after login, so <code>MainController</code> is the perfect place. <a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a> is recommended for app targeting iOS 10 and above.</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">  <span class="comment">// [1] Register to get device token for remote notifications</span></span><br><span class="line">  <span class="type">UIApplication</span>.shared.registerForRemoteNotifications()</span><br><span class="line"></span><br><span class="line">  <span class="comment">// [2] Register to handle push notification UI</span></span><br><span class="line">  <span class="keyword">let</span> options: <span class="type">UNAuthorizationOptions</span> = [.alert, .sound, .badge]</span><br><span class="line">  <span class="type">UNUserNotificationCenter</span>.current().requestAuthorization(options: options) &#123; (granted, error) <span class="keyword">in</span></span><br><span class="line">    <span class="built_in">print</span>(error <span class="keyword">as</span> <span class="type">Any</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The permission dialog is shown once, so make sure you accept it. It’s time to handle the device token. Open <code>AppDelegate.swift</code>, and add the following to the end of <code>extension AppDelegate</code>:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(<span class="number">_</span> application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)</span></span> &#123;</span><br><span class="line">  <span class="comment">// [1] Parse to token string</span></span><br><span class="line">  <span class="keyword">let</span> token = deviceToken.<span class="built_in">map</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">String</span>(format: <span class="string">"%02.2hhx"</span>, $<span class="number">0</span>)</span><br><span class="line">  &#125;.joined()</span><br><span class="line"></span><br><span class="line">  <span class="comment">// [2] Log it</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">"Your device token is \(token)"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>This is where you get device token if your app successfully connects to APNs. Normally, you would send this device token to the backend so they can organize , but in this tutorial we just log it. It is required in the tool to be able to target a particular device.</p>
-<h2 id="Handling-payload"><a href="#Handling-payload" class="headerlink" title="Handling payload"></a>Handling payload</h2><p>Open <code>AppDelegate.swift</code> and add the following to th end of <code>extension AppDelegate</code>:</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(<span class="number">_</span> application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : <span class="keyword">Any</span>], fetchCompletionHandler completionHandler: @escaping <span class="params">(UIBackgroundFetchResult)</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">  <span class="comment">// [1] Always call the completion handler</span></span><br><span class="line">  <span class="keyword">defer</span> &#123;</span><br><span class="line">    completionHandler(.newData)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// [2] Convert into JSON dictionary</span></span><br><span class="line">  <span class="keyword">guard</span> <span class="keyword">let</span> json = userInfo <span class="keyword">as</span>? [<span class="type">String</span>: <span class="type">Any</span>] <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// [3] Parse to aps</span></span><br><span class="line">  <span class="keyword">guard</span> <span class="keyword">let</span> aps = json[<span class="string">"aps"</span>] <span class="keyword">as</span>? [<span class="type">String</span>: <span class="type">Any</span>] <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// [4] Parse to urn</span></span><br><span class="line">  <span class="keyword">guard</span> <span class="keyword">let</span> urn = aps[<span class="string">"urn"</span>] <span class="keyword">as</span>? <span class="type">String</span> <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span>? <span class="type">Navigator</span>.navigate(urn: urn)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>This method is called when your app receives push notification payload and is running. The above code is relatively straightforward: it first tries to parse the <code>urn</code> information from the payload, then tells <code>Navigator</code> to do the job . Build and run the app on the device, since push notifications won’t work on the simulator. Log in to the app if prompted. Once on the main screen, grant push notification permissions to the app in order to receive alerts. You should see the <code>device token</code> logged to your Xcode console. </p>
-<div align="center">
-<img src="https://user-images.githubusercontent.com/2284279/33278064-abbe6592-d39a-11e7-81cd-b3affc3ee4b6.PNG" height="500">
-</div>
-
-<h2 id="Testing-Push-Notifications"><a href="#Testing-Push-Notifications" class="headerlink" title="Testing Push Notifications"></a>Testing Push Notifications</h2><p>In this tutorial, you’ll use a tool called <a href="https://github.com/onmyway133/PushNotifications" target="_blank" rel="noopener">PushNotifications</a> to help you easily create push notifications for your app. Download the tool <code>PushNotifications</code> from <a href="https://github.com/onmyway133/PushNotifications/releases" target="_blank" rel="noopener">here</a>. This tool sends payloads directly to APNs.</p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33278070-b3094632-d39a-11e7-81f6-62f1ed04130b.png" alt="step4_test"></p>
-<p>Choose <code>iOS\Token</code> to use <code>Token Authentication</code>, you get that by creating and downloading your <code>Key</code> from <a href="https://developer.apple.com/account/ios/authkey/" target="_blank" rel="noopener">Certificates, Identifiers &amp; Profiles</a>. Browse for the <code>.p8</code> auth key file that you downloaded earlier. Enter <code>Team ID</code>, you can check it by going to <a href="https://developer.apple.com/account/#/membership" target="_blank" rel="noopener">Membership Details</a> Enter <code>Key ID</code>, this is the ID associated with the <code>Key</code> from the first step. Enter <code>Bundle ID</code> and <code>device token</code>. Paste the following into as. It is a traditional payload associated with the URN.</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   <span class="attr">"aps"</span>:&#123;</span><br><span class="line">      <span class="attr">"alert"</span>:<span class="string">"You become a celebrity on PhotoFeed, checkout your profile now"</span>,</span><br><span class="line">      <span class="attr">"urn"</span>: <span class="string">"user:self"</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Since you’re debugging with Xcode, select <code>Sandbox</code> as environment.</p>
-<div align="center">
-<img src="https://user-images.githubusercontent.com/2284279/33278079-baef3ece-d39a-11e7-8818-56b54ed01a1d.PNG" height="500">
-</div>
-
-
-<p>Tap <code>Send</code> now. If your app is in the background, an alert will appear. Tapping it will take you to your app and show you your user profile. Bravo! You just implemented deep linking in push notification, thanks again to the URL routing.</p>
-<h1 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h1><p>Here is the <a href="https://github.com/onmyway133/PhotoFeed/tree/finish" target="_blank" rel="noopener">final project</a> with all the code from this tutorial. You now understand central routing patterns, have mastered Compass and even refactored a real-world app. However, there is no silver bullet that works well for all apps. You need to understand your requirements and adjust accordingly. If you want to learn more about other navigation patterns, here are a few suggestions: </p>
-<ul>
-<li><a href="http://khanlou.com/2015/10/coordinators-redux/" target="_blank" rel="noopener">Coordinator</a></li>
-<li><a href="http://albertodebortoli.com/blog/2014/09/03/flow-controllers-on-ios-for-a-better-navigation-control/" target="_blank" rel="noopener">Flow controller</a></li>
-<li><a href="https://www.objc.io/issues/13-architecture/viper/" target="_blank" rel="noopener">Routing in VIPER</a></li>
-</ul>
-<p>Remember, it’s not only about the code, but also about the user experience that your app provides. So please make sure you conform to the guidelines <a href="https://developer.apple.com/ios/human-interface-guidelines/interaction/navigation" target="_blank" rel="noopener">Navigation in Human Interface Guidelines iOS</a>.</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-BuddyBuild-and-gradle.properties"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/BuddyBuild-and-gradle.properties/">BuddyBuild and gradle.properties</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/BuddyBuild-and-gradle.properties/" class="article-date">
-	  <time datetime="2017-11-23T09:37:59.000Z" itemprop="datePublished">November 23, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/109" target="_blank" rel="noopener">#109</a></strong></p>
-<p>People advise against storing keys inside <code>build.gradles</code>. We should store them on 1Password and populate our <code>gradle.properties</code>, so don’t track this file in git. Here is <code>.gitignore</code> file</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">*.iml</span><br><span class="line"></span><br><span class="line">/build</span><br><span class="line">/gradle.properties</span><br><span class="line">/local.properties</span><br><span class="line"></span><br><span class="line">.gradle</span><br><span class="line">.idea</span><br></pre></td></tr></table></figure>
-
-<p>There are several ways to help <code>BuddyBuild</code> know about our <code>gradle.properties</code></p>
-<h2 id="1-Using-Environment-variables"><a href="#1-Using-Environment-variables" class="headerlink" title="1. Using Environment variables"></a>1. Using Environment variables</h2><p>But when configuring the project on <code>BuddyBuild</code>, it complains about key not found. The solution is to use <code>Environment variables</code></p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33169496-36f92542-d045-11e7-8435-9a1f5d5dd24d.png" alt="key"></p>
-<p>Then in your <code>build.gradle</code>, you can </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buildConfigField &apos;String&apos;, &apos;MY_KEY&apos;, System.getenv(&quot;MY_KEY&quot;) ?: MY_KEY</span><br></pre></td></tr></table></figure>
-
-<p>This is because gradle does not know about environment variables. The <code>System.getenv(&quot;MY_KEY&quot;)</code> is for BuddyBuild, and the default <code>MY_KEY</code> is for <code>gradle.properties</code>. </p>
-<p>Next is to remove this duplication. We can use Groovy <a href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/Binding.html" target="_blank" rel="noopener">Binding</a>. <code>build.gradle</code> does the import <code>import groovy.lang.Binding</code> automatically for us</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">String environmentKey(variable) &#123;</span><br><span class="line">    <span class="keyword">for</span> (Object <span class="string">var :</span> binding.variables) &#123;</span><br><span class="line">        <span class="keyword">if</span> (var.value == variable) &#123;</span><br><span class="line">            <span class="keyword">return</span> System.getenv(var.key) ?: variable</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">""</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buildConfigField &apos;String&apos;, &apos;MY_KEY&apos;, environmentKey(MY_KEY)</span><br></pre></td></tr></table></figure>
-
-<h2 id="2-Using-Secured-File-👍"><a href="#2-Using-Secured-File-👍" class="headerlink" title="2. Using Secured File 👍"></a>2. Using Secured File 👍</h2><p>BuddyBuild allows us to define Secured File, here we can upload our <code>gradle.properties</code></p>
-<p><img src="https://user-images.githubusercontent.com/2284279/33172691-69e83392-d051-11e7-87a9-6c1afc4b544e.png" alt="secure files"></p>
-<p>And we can use <a href="https://docs.buddybuild.com/builds/custom_build_steps.html#prebuild" target="_blank" rel="noopener">Prebuild script</a> to copy this secured file to our project. BuddyBuild suggests using <code>buddybuild_prebuild.sh</code> but then build fails in <code>Build file &#39;/tmp/sandbox/workspace/app/build.gradle&#39;</code></p>
-<p>So, create a script called <code>buddybuild_postclone.sh</code></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"></span><br><span class="line">cp <span class="variable">$BUDDYBUILD_SECURE_FILES</span>/gradle.properties <span class="variable">$BUDDYBUILD_WORKSPACE</span>/gradle.properties</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2627,6 +2538,18 @@ signal.map { value in
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-edit-hexo-theme-hiero/">How to edit hexo theme hiero</a></h6>
+              <span>November 6, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-use-Firebase-RemoteConfig/">How to use Firebase RemoteConfig</a></h6>
               <span>November 5, 2019</span>
             </div>
@@ -2681,18 +2604,6 @@ signal.map { value in
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-get-Binding-via-dollar-prefix-in-SwiftUI/">How to get Binding via dollar prefix in SwiftUI</a></h6>
-              <span>November 2, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2705,7 +2616,7 @@ signal.map { value in
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">31</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">102</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">148</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">4</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">102</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">148</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -2715,7 +2626,7 @@ signal.map { value in
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/android/" style="font-size: 17.14px;">android</a> <a href="/tags/ci/" style="font-size: 10px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.71px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 10px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/dart/" style="font-size: 11.43px;">dart</a> <a href="/tags/design/" style="font-size: 10px;">design</a> <a href="/tags/electron/" style="font-size: 11.43px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.71px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.43px;">flutter</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/iOS/" style="font-size: 19.29px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.86px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.43px;">kotlin</a> <a href="/tags/life/" style="font-size: 11.43px;">life</a> <a href="/tags/macOS/" style="font-size: 18.57px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.71px;">machine learning</a> <a href="/tags/node/" style="font-size: 14.29px;">node</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 12.86px;">react native</a> <a href="/tags/script/" style="font-size: 10.71px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 15.71px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15px;">tech</a> <a href="/tags/testing/" style="font-size: 12.14px;">testing</a> <a href="/tags/watchOS/" style="font-size: 13.57px;">watchOS</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/xcode/" style="font-size: 11.43px;">xcode</a>
+      <a href="/tags/android/" style="font-size: 17.69px;">android</a> <a href="/tags/ci/" style="font-size: 10px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.77px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 10px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/dart/" style="font-size: 11.54px;">dart</a> <a href="/tags/design/" style="font-size: 10px;">design</a> <a href="/tags/electron/" style="font-size: 11.54px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.77px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.54px;">flutter</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/iOS/" style="font-size: 19.23px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.69px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.92px;">kotlin</a> <a href="/tags/life/" style="font-size: 11.54px;">life</a> <a href="/tags/macOS/" style="font-size: 18.46px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.77px;">machine learning</a> <a href="/tags/node/" style="font-size: 14.62px;">node</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 13.08px;">react native</a> <a href="/tags/script/" style="font-size: 10.77px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.15px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.38px;">tech</a> <a href="/tags/testing/" style="font-size: 12.31px;">testing</a> <a href="/tags/watchOS/" style="font-size: 13.85px;">watchOS</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/xcode/" style="font-size: 11.54px;">xcode</a>
     </div>
   </div>
 
@@ -2725,7 +2636,7 @@ signal.map { value in
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">22</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
