@@ -179,6 +179,63 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-change-year-in-Date-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-change-year-in-Date-in-Swift/">How to change year in Date in Swift</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-change-year-in-Date-in-Swift/" class="article-date">
+	  <time datetime="2017-06-09T08:53:47.000Z" itemprop="datePublished">June 9, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/54" target="_blank" rel="noopener">#54</a></strong></p>
+<p>Today I’m trying to change the year of a <code>Date</code> object to 2000 in Swift.</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> date = <span class="type">Date</span>()</span><br></pre></td></tr></table></figure>
+
+<p>Firstly, I tried with <code>date(bySetting:)</code> but it does not work with past year. It simply returns nil</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Calendar</span>.current.date(bySetting: .year, value: <span class="number">2000</span>, of: date)</span><br></pre></td></tr></table></figure>
+
+<p>Secondly, I tried with <code>dateComponents</code>. The <code>component.year</code> has changed, but it <code>calendar</code> still returns the original date, very strange !!. No matter what timezone and calendar I use, it still has this problem</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> component = calendar.dateComponents(<span class="keyword">in</span>: <span class="type">TimeZone</span>.current, from: base)</span><br><span class="line">component.year = year</span><br><span class="line"><span class="type">Calendar</span>.current.date(from: component)</span><br></pre></td></tr></table></figure>
+
+<p>Finally, I tried to be more explicit, and it works 🎉 </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> component = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: base)</span><br><span class="line">component.year = year</span><br><span class="line"><span class="type">Calendar</span>.current.date(from: component)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-WWDC-changelog"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -2413,93 +2470,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-How-to-create-a-piano-using-iOS-9-Auto-Layout"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-create-a-piano-using-iOS-9-Auto-Layout/">How to create a piano using iOS 9 Auto Layout</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-create-a-piano-using-iOS-9-Auto-Layout/" class="article-date">
-	  <time datetime="2017-05-10T20:06:09.000Z" itemprop="datePublished">May 10, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/22" target="_blank" rel="noopener">#22</a></strong></p>
-<p>In the beginning, people use frame and Autoresizing Mask, then they use Auto Layout, then iOS 9 encourages them to use <code>NSLayoutAnchor</code>, <code>UILayoutGuide</code> and <code>UIStackView</code></p>
-<p>For more convenient Auto Layout, check <a href="https://medium.com/flawless-app-stories/how-to-make-auto-layout-more-convenient-in-ios-df3b42fed37f" target="_blank" rel="noopener">How to make Auto Layout more convenient in iOS</a> and <a href="https://github.com/onmyway133/Anchors" target="_blank" rel="noopener">Anchors</a></p>
-<h2 id="NSLayoutAnchor"><a href="#NSLayoutAnchor" class="headerlink" title="NSLayoutAnchor"></a>NSLayoutAnchor</h2><blockquote>
-<p>The NSLayoutAnchor class is a factory class for creating NSLayoutConstraint objects using a fluent API. Use these constraints to programmatically define your layout using Auto Layout.</p>
-</blockquote>
-<p>It has 3 subclasses</p>
-<p><code>NSLayoutDimension</code></p>
-<ul>
-<li>func constraintEqualToConstant(_ c: CGFloat) -&gt; NSLayoutConstraint!</li>
-</ul>
-<p><code>NSLayoutXAxisAnchor</code></p>
-<ul>
-<li>Allows working with horizontal constraints</li>
-<li>Prevent these</li>
-</ul>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// This constraint generates an incompatible pointer type warning</span></span><br><span class="line">cancelButton.leadingAnchor.constraintEqualToAnchor(saveButton.topAnchor, constant: <span class="number">8.0</span>).active = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<p><code>NSLayoutYAxisAnchor</code></p>
-<ul>
-<li>Allows working with vertical constraints</li>
-<li>Prevent these</li>
-</ul>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// This constraint generates an incompatible pointer type warning</span></span><br><span class="line">cancelButton.topAnchor.constraintEqualToAnchor(saveButton.trailingAnchor, constant: <span class="number">8.0</span>).active = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="UILayoutGuide"><a href="#UILayoutGuide" class="headerlink" title="UILayoutGuide"></a>UILayoutGuide</h2><p>Previously, we used dummy views to aid constraints. Now we use <code>UILayoutGuide</code></p>
-<h3 id="Define-an-equal-spacing-between-a-series-of-views"><a href="#Define-an-equal-spacing-between-a-series-of-views" class="headerlink" title="Define an equal spacing between a series of views"></a>Define an equal spacing between a series of views</h3><p><img src="https://cloud.githubusercontent.com/assets/2284279/25923413/b2c9085c-35dd-11e7-874f-58269cdbc707.png" alt="uilayoutguide_spacing"></p>
-<p>See full <a href="https://gist.github.com/onmyway133/fcf892aac565d36ee890" target="_blank" rel="noopener">gist</a></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> space1 = <span class="type">UILayoutGuide</span>()</span><br><span class="line">view.addLayoutGuide(space1)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> space2 = <span class="type">UILayoutGuide</span>()</span><br><span class="line">view.addLayoutGuide(space2)</span><br><span class="line"></span><br><span class="line">space1.widthAnchor.constraintEqualToAnchor(space2.widthAnchor).active = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">saveButton.trailingAnchor.constraintEqualToAnchor(space1.leadingAnchor).active = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">cancelButton.leadingAnchor.constraintEqualToAnchor(space1.trailingAnchor).active = <span class="literal">true</span></span><br><span class="line">cancelButton.trailingAnchor.constraintEqualToAnchor(space2.leadingAnchor).active = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">clearButton.leadingAnchor.constraintEqualToAnchor(space2.trailingAnchor).active = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Layout-guides-can-also-act-as-a-black-box-containing-a-number-of-other-views-and-controls"><a href="#Layout-guides-can-also-act-as-a-black-box-containing-a-number-of-other-views-and-controls" class="headerlink" title="Layout guides can also act as a black box, containing a number of other views and controls"></a>Layout guides can also act as a black box, containing a number of other views and controls</h3><p><img src="https://cloud.githubusercontent.com/assets/2284279/25923425/bbe47ffc-35dd-11e7-86cf-79b642188b9e.png" alt="uilayoutguide_container"></p>
-<p>See the full <a href="https://gist.github.com/onmyway133/faa135b4db601d0db9a8" target="_blank" rel="noopener">gist</a></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> container = <span class="type">UILayoutGuide</span>()</span><br><span class="line">view.addLayoutGuide(container)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Set interior constraints</span></span><br><span class="line">label.lastBaselineAnchor.constraintEqualToAnchor(textField.lastBaselineAnchor).active = <span class="literal">true</span></span><br><span class="line">label.leadingAnchor.constraintEqualToAnchor(container.leadingAnchor).active = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">textField.leadingAnchor.constraintEqualToAnchor(label.trailingAnchor, constant: <span class="number">8.0</span>).active = <span class="literal">true</span></span><br><span class="line">textField.trailingAnchor.constraintEqualToAnchor(container.trailingAnchor).active = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">textField.topAnchor.constraintEqualToAnchor(container.topAnchor).active = <span class="literal">true</span></span><br><span class="line">textField.bottomAnchor.constraintEqualToAnchor(container.bottomAnchor).active = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Set exterior constraints</span></span><br><span class="line"><span class="comment">// The contents of the container can be treated as a black box</span></span><br><span class="line"><span class="keyword">let</span> margins = view.layoutMarginsGuide</span><br><span class="line"></span><br><span class="line">container.leadingAnchor.constraintEqualToAnchor(margins.leadingAnchor).active = <span class="literal">true</span></span><br><span class="line">container.trailingAnchor.constraintEqualToAnchor(margins.trailingAnchor).active = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Must use NSLayoutConstraint with the scene's top and bottom layout guides.</span></span><br><span class="line"><span class="type">NSLayoutConstraint</span>(item: container,</span><br><span class="line">    attribute: .<span class="type">Top</span>,</span><br><span class="line">    relatedBy: .<span class="type">Equal</span>,</span><br><span class="line">    toItem: topLayoutGuide,</span><br><span class="line">    attribute: .<span class="type">Bottom</span>,</span><br><span class="line">    multiplier: <span class="number">1.0</span>,</span><br><span class="line">    constant: <span class="number">20.0</span>).active = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="layoutMarginsGuide"><a href="#layoutMarginsGuide" class="headerlink" title="layoutMarginsGuide"></a>layoutMarginsGuide</h3><p>Margins are now represented as <code>layoutMarginsGuide</code>, a subclass of <code>UILayoutGuide</code></p>
-<h3 id="topLayoutGuide-and-bottomLayoutGuide"><a href="#topLayoutGuide-and-bottomLayoutGuide" class="headerlink" title="topLayoutGuide and bottomLayoutGuide"></a>topLayoutGuide and bottomLayoutGuide</h3><p>In the container example, we saw how we must use <code>NSLayoutConstraint</code> with the <code>topLayoutGuide</code>. <code>topLayoutGuide</code> and <code>bottomLayoutGuide</code> are object conforming to <code>UILayoutSupport</code> protocol</p>
-<h3 id="layoutFrame"><a href="#layoutFrame" class="headerlink" title="layoutFrame"></a>layoutFrame</h3><blockquote>
-<p>The layout guide defines a rectangular space in its owning view’s coordinate system. This property contains a valid CGRect value by the time its owning view’s layoutSubviews method is called.</p>
-</blockquote>
-<p>In the above container example, the container layout guide frame is</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(16.0, 40.0, 343.0, 21.0)</span><br></pre></td></tr></table></figure>
-
-<h2 id="Piano"><a href="#Piano" class="headerlink" title="Piano"></a>Piano</h2><p><img src="https://cloud.githubusercontent.com/assets/2284279/25923400/a1a60246-35dd-11e7-9ccf-46f3d910f722.png" alt="piano"></p>
-<p>See <a href="https://github.com/onmyway133/archives/tree/master/Piano" target="_blank" rel="noopener">Piano on Github</a> on how to create a Piano using <code>UILayoutGuide</code>, <code>NSLayoutAnchor</code> and <code>UIStackView</code></p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2604,6 +2574,18 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/Links-for-Push-Notification/">Links for Push Notification</a></h6>
+              <span>November 11, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-access-view-in-fragment-in-Kotlin/">How to access view in fragment in Kotlin</a></h6>
               <span>November 10, 2019</span>
             </div>
@@ -2658,18 +2640,6 @@ var themeMenus = {};
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-apply-translations-to-Localizable.strings/">How to apply translations to Localizable.strings</a></h6>
-              <span>November 5, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2682,7 +2652,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">104</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">148</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">4</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">105</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">148</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -2692,7 +2662,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/android/" style="font-size: 17.86px;">android</a> <a href="/tags/ci/" style="font-size: 10px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.71px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 10px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/dart/" style="font-size: 11.43px;">dart</a> <a href="/tags/design/" style="font-size: 10.71px;">design</a> <a href="/tags/electron/" style="font-size: 11.43px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.71px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.43px;">flutter</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/iOS/" style="font-size: 19.29px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.14px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.43px;">kotlin</a> <a href="/tags/layout/" style="font-size: 10px;">layout</a> <a href="/tags/life/" style="font-size: 11.43px;">life</a> <a href="/tags/macOS/" style="font-size: 18.57px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.71px;">machine learning</a> <a href="/tags/node/" style="font-size: 14.29px;">node</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 12.86px;">react native</a> <a href="/tags/script/" style="font-size: 10.71px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 15.71px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15px;">tech</a> <a href="/tags/testing/" style="font-size: 12.14px;">testing</a> <a href="/tags/watchOS/" style="font-size: 13.57px;">watchOS</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/xcode/" style="font-size: 11.43px;">xcode</a>
+      <a href="/tags/android/" style="font-size: 17.86px;">android</a> <a href="/tags/ci/" style="font-size: 10px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.71px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 10px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/dart/" style="font-size: 11.43px;">dart</a> <a href="/tags/design/" style="font-size: 10.71px;">design</a> <a href="/tags/electron/" style="font-size: 11.43px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.71px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.43px;">flutter</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/iOS/" style="font-size: 19.29px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.14px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.43px;">kotlin</a> <a href="/tags/layout/" style="font-size: 10px;">layout</a> <a href="/tags/life/" style="font-size: 11.43px;">life</a> <a href="/tags/macOS/" style="font-size: 18.57px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.71px;">machine learning</a> <a href="/tags/node/" style="font-size: 14.29px;">node</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 12.86px;">react native</a> <a href="/tags/script/" style="font-size: 10.71px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 15.71px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15px;">tech</a> <a href="/tags/testing/" style="font-size: 12.14px;">testing</a> <a href="/tags/watchOS/" style="font-size: 13.57px;">watchOS</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/xcode/" style="font-size: 11.43px;">xcode</a>
     </div>
   </div>
 
@@ -2702,7 +2672,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">22</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">22</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 

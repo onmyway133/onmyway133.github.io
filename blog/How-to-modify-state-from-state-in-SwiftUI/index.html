@@ -29,7 +29,7 @@
 <meta property="og:site_name" content="onmyway133">
 <meta property="og:description" content="Issue #487 In case we have to modify state when another state is known, we can encapsulate all those states in ObservableObject and use onReceive to check the state we want to act on. If we were to mo">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-10T21:55:01.000Z">
+<meta property="og:updated_time" content="2019-11-11T13:18:42.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to modify state from state in SwiftUI">
 <meta name="twitter:description" content="Issue #487 In case we have to modify state when another state is known, we can encapsulate all those states in ObservableObject and use onReceive to check the state we want to act on. If we were to mo">
@@ -233,7 +233,9 @@ var themeMenus = {};
 <p>We need to manually notify using <code>objectWillChange</code> !! Maybe this is a SwiftUI bug</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">detect</span><span class="params">(image: UIImage)</span></span> &#123;</span><br><span class="line">    viewModel.isDetecting = <span class="literal">true</span></span><br><span class="line">    <span class="keyword">try</span>? detector.detect(image: image, completion: &#123; result <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">switch</span> result &#123;</span><br><span class="line">        <span class="keyword">case</span> .success(<span class="keyword">let</span> string):</span><br><span class="line">            <span class="keyword">self</span>.viewModel.result = string</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">self</span>.viewModel.result = <span class="string">""</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">self</span>.viewModel.isDetecting = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">self</span>.viewModel.objectWillChange.send()</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="objectWillChange"><a href="#objectWillChange" class="headerlink" title="objectWillChange"></a>objectWillChange</h2><p><a href="https://twitter.com/luka_bernardi/status/1155944329363349504?lang=no" target="_blank" rel="noopener">https://twitter.com/luka_bernardi/status/1155944329363349504?lang=no</a></p>
+<p>If we remove the declaration of <code>var objectWillChange = ObservableObjectPublisher()</code>, then it works automatically</p>
+<h2 id="objectWillChange"><a href="#objectWillChange" class="headerlink" title="objectWillChange"></a>objectWillChange</h2><p>Learn more about the history of <code>objectWillChange</code></p>
+<p><a href="https://twitter.com/luka_bernardi/status/1155944329363349504?lang=no" target="_blank" rel="noopener">https://twitter.com/luka_bernardi/status/1155944329363349504?lang=no</a></p>
 <blockquote>
 <p>In Beta 5 ObjectBinding is now defined in Combine as ObservableObject (the property wrapper is now @ObservedObject). There is also a new property wrapper @Published where we automatically synthesize the objectWillChange publisher and call it on willSet.</p>
 </blockquote>
@@ -245,6 +247,7 @@ var themeMenus = {};
 <li><a href="https://stackoverflow.com/questions/56551131/what-does-the-dollar-sign-do-in-this-example" target="_blank" rel="noopener">https://stackoverflow.com/questions/56551131/what-does-the-dollar-sign-do-in-this-example</a></li>
 <li><a href="https://stackoverflow.com/questions/44037611/how-to-avoid-setstate-inside-render-when-state-depends-on-render?rq=1" target="_blank" rel="noopener">https://stackoverflow.com/questions/44037611/how-to-avoid-setstate-inside-render-when-state-depends-on-render?rq=1</a></li>
 <li><a href="https://stackoverflow.com/questions/57459727/why-an-observedobject-array-is-not-updated-in-my-swiftui-application" target="_blank" rel="noopener">https://stackoverflow.com/questions/57459727/why-an-observedobject-array-is-not-updated-in-my-swiftui-application</a></li>
+<li><a href="https://www.pointfree.co/blog/posts/30-swiftui-and-state-management-corrections" target="_blank" rel="noopener">https://www.pointfree.co/blog/posts/30-swiftui-and-state-management-corrections</a></li>
 </ul>
 
       
