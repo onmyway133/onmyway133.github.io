@@ -4064,6 +4064,107 @@ export default AirbnbStyleGuide</code></pre><h2 id="Where-to-go-from-here"><a hr
     
 
   
+    <article id="post-How-to-get-running-window-informations-in-macOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-get-running-window-informations-in-macOS/">How to get running window informations in macOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-get-running-window-informations-in-macOS/" class="article-date">
+	  <time datetime="2019-05-16T11:03:35.000Z" itemprop="datePublished">May 16, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/243" target="_blank" rel="noopener">#243</a></strong></p>
+<p>From <a href="https://developer.apple.com/documentation/coregraphics/1455137-cgwindowlistcopywindowinfo" target="_blank" rel="noopener">https://developer.apple.com/documentation/coregraphics/1455137-cgwindowlistcopywindowinfo</a></p>
+<blockquote>
+<p>Generates and returns information about the selected windows in the current user session.</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyWindowInfo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> frame: <span class="type">CGRect</span></span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">let</span> pid: <span class="type">Int</span></span><br><span class="line">    <span class="keyword">let</span> number: <span class="type">Int</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>?(json: [<span class="type">String</span>: <span class="type">Any</span>]) &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> pid = json[<span class="string">"kCGWindowOwnerPID"</span>] <span class="keyword">as</span>? <span class="type">Int</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> name = json[<span class="string">"kCGWindowOwnerName"</span>] <span class="keyword">as</span>? <span class="type">String</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> rect = json[<span class="string">"kCGWindowBounds"</span>] <span class="keyword">as</span>? [<span class="type">String</span>: <span class="type">Any</span>] <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> x = rect[<span class="string">"X"</span>] <span class="keyword">as</span>? <span class="type">CGFloat</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> y = rect[<span class="string">"Y"</span>] <span class="keyword">as</span>? <span class="type">CGFloat</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> height = rect[<span class="string">"Height"</span>] <span class="keyword">as</span>? <span class="type">CGFloat</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> width = rect[<span class="string">"Width"</span>] <span class="keyword">as</span>? <span class="type">CGFloat</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> number = json[<span class="string">"kCGWindowNumber"</span>] <span class="keyword">as</span>? <span class="type">Int</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">self</span>.pid = pid</span><br><span class="line">        <span class="keyword">self</span>.name = name</span><br><span class="line">        <span class="keyword">self</span>.number = number</span><br><span class="line">        <span class="keyword">self</span>.frame = <span class="type">CGRect</span>(x: x, y: y, width: width, height: height)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">guard</span> <span class="keyword">let</span> jsons = <span class="type">CGWindowListCopyWindowInfo</span>(.optionAll, kCGNullWindowID) <span class="keyword">as</span>? [[<span class="type">String</span>: <span class="type">Any</span>]] <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> infos = jsons.compactMap(&#123; <span class="type">MyWindowInfo</span>(json: $<span class="number">0</span>) &#125;)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-show-full-screen-window-programmatically-in-macOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-show-full-screen-window-programmatically-in-macOS/">How to show full screen window programmatically in macOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-show-full-screen-window-programmatically-in-macOS/" class="article-date">
+	  <time datetime="2019-05-16T10:20:45.000Z" itemprop="datePublished">May 16, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/242" target="_blank" rel="noopener">#242</a></strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> window = <span class="type">NSWindow</span>(contentRect: mainScreen.frame, styleMask: .borderless, backing: .buffered, <span class="keyword">defer</span>: <span class="literal">false</span>)</span><br><span class="line">window.level = .floating</span><br><span class="line">window.contentView = <span class="type">NSView</span>()</span><br><span class="line">window.makeKeyAndOrderFront(<span class="type">NSApp</span>)</span><br><span class="line"><span class="type">NSApp</span>.activate(ignoringOtherApps: <span class="literal">true</span>)</span><br></pre></td></tr></table></figure>
+
+<p>and then later hide it</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">window.orderOut(<span class="type">NSApp</span>)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Useful-git-commands-for-everyday-use!"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -4257,6 +4358,60 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
     
 
   
+    <article id="post-How-to-work-around-app-damaged-warning-in-macOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-work-around-app-damaged-warning-in-macOS/">How to work around app damaged warning in macOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-work-around-app-damaged-warning-in-macOS/" class="article-date">
+	  <time datetime="2019-05-15T17:46:15.000Z" itemprop="datePublished">May 15, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/238" target="_blank" rel="noopener">#238</a></strong></p>
+<blockquote>
+<p>“App” is damaged and can’t be opened. You should move it to the Trash. </p>
+</blockquote>
+<p>👉 Disable gate keeper</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo spctl --master-disable</span><br><span class="line">spctl --status</span><br></pre></td></tr></table></figure>
+
+<p>Current workaround is to remove Launch At Login handling code.</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/terminal/">terminal</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-shake-NSView-in-macOS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -4304,182 +4459,11 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
     
 
   
-    <article id="post-How-to-use-CAReplicatorLayer-to-make-activity-indicator-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-CAReplicatorLayer-to-make-activity-indicator-in-iOS/">How to use CAReplicatorLayer to make activity indicator in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-CAReplicatorLayer-to-make-activity-indicator-in-iOS/" class="article-date">
-	  <time datetime="2019-05-13T11:43:49.000Z" itemprop="datePublished">May 13, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/230" target="_blank" rel="noopener">#230</a></strong></p>
-<p><a href="https://developer.apple.com/documentation/quartzcore/careplicatorlayer" target="_blank" rel="noopener">CAReplicatorLayer</a> is a layer that creates a specified number of sublayer copies with varying geometric, temporal, and color transformations</p>
-<p>Here we use <code>instanceTransform</code> which applies transformation matrix around the center of the replicator layer</p>
-<p>Below is how we use <code>replicatorLayer</code> to replicate lots of <code>line</code> and rotate them around the center.</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> replicatorLayer = <span class="type">CAReplicatorLayer</span>()</span><br><span class="line"><span class="keyword">let</span> animation = <span class="type">CABasicAnimation</span>(keyPath: #keyPath(<span class="type">CALayer</span>.opacity))</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> line = <span class="type">CALayer</span>()</span><br><span class="line"><span class="keyword">let</span> lineCount: <span class="type">Int</span> = <span class="number">12</span></span><br><span class="line"><span class="keyword">let</span> duration: <span class="type">TimeInterval</span> = <span class="number">1.0</span></span><br><span class="line"><span class="keyword">let</span> lineSize: <span class="type">CGSize</span> = <span class="type">CGSize</span>(width: <span class="number">20</span>, height: <span class="number">6</span>)</span><br><span class="line"><span class="keyword">let</span> lineColor: <span class="type">UIColor</span> = <span class="type">UIColor</span>.darkGray</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> angle = <span class="type">CGFloat</span>.pi * <span class="number">2</span> / <span class="type">CGFloat</span>(lineCount)</span><br><span class="line"><span class="keyword">let</span> rotation = <span class="type">CATransform3DMakeRotation</span>(angle, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1.0</span>)</span><br><span class="line"></span><br><span class="line">replicatorLayer.instanceTransform = rotation</span><br><span class="line">replicatorLayer.instanceCount = lineCount</span><br><span class="line">replicatorLayer.instanceDelay = duration / <span class="type">TimeInterval</span>(lineCount)</span><br><span class="line"></span><br><span class="line">line.backgroundColor = lineColor.cgColor</span><br><span class="line">line.frame.size = lineSize</span><br><span class="line">line.cornerRadius = lineSize.height / <span class="number">2</span></span><br><span class="line"></span><br><span class="line">animation.fromValue = <span class="number">1.0</span></span><br><span class="line">animation.toValue = <span class="number">0.0</span></span><br><span class="line">animation.repeatCount = <span class="type">Float</span>.greatestFiniteMagnitude</span><br><span class="line">animation.timingFunction = <span class="type">CAMediaTimingFunction</span>(name: .linear)</span><br><span class="line">animation.duration = duration</span><br><span class="line"></span><br><span class="line">replicatorLayer.addSublayer(line)</span><br><span class="line">layer.addSublayer(replicatorLayer)</span><br><span class="line"></span><br><span class="line"><span class="comment">// x: </span></span><br><span class="line"><span class="comment">// y: half the height, changing affects rotation of lines</span></span><br><span class="line">line.position = <span class="type">CGPoint</span>(x: <span class="number">48</span>, y: <span class="number">75</span>)</span><br><span class="line"></span><br><span class="line">line.add(animation, forKey: <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure>
-
-<p>Pay attention to <code>position</code> of the <code>line</code>. The larger the <code>x</code>, the closer to center. <code>y</code> should be half the height of the replicator layer size, changing it affects the skewness of the <code>line</code>.</p>
-<img width="584" alt="indicator" src="https://user-images.githubusercontent.com/2284279/57626103-809f2100-7595-11e9-9851-2df8b6013757.png">
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-do-rotation-for-CALayer-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-do-rotation-for-CALayer-in-iOS/">How to do rotation for CALayer in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-do-rotation-for-CALayer-in-iOS/" class="article-date">
-	  <time datetime="2019-05-13T10:20:29.000Z" itemprop="datePublished">May 13, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/229" target="_blank" rel="noopener">#229</a></strong></p>
-<h2 id="Use-keypath"><a href="#Use-keypath" class="headerlink" title="Use keypath"></a>Use keypath</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> animation = <span class="type">CASpringAnimation</span>(keyPath: #keyPath(<span class="type">CALayer</span>.transform))</span><br><span class="line">animation.fromValue = <span class="number">0</span></span><br><span class="line">animation.valueFunction = <span class="type">CAValueFunction</span>(name: <span class="type">CAValueFunctionName</span>.rotateZ)</span><br><span class="line">animation.timingFunction = <span class="type">CAMediaTimingFunction</span>(name: .easeIn)</span><br><span class="line"></span><br><span class="line">animation.toValue = <span class="type">CGFloat</span>.pi / <span class="number">4</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="Avoid-setting-frame-many-times"><a href="#Avoid-setting-frame-many-times" class="headerlink" title="Avoid setting frame many times"></a>Avoid setting frame many times</h2><p>Otherwise, <code>frame</code> is the box that covers the rotation transform, and <code>backgroundColor</code> now fills that huge box</p>
-<p><img src="https://user-images.githubusercontent.com/2284279/57622665-67df3d00-758e-11e9-9e4c-f2baec78b4af.jpg" alt="abc"></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">layoutSubviews</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.layoutSubviews()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">guard</span> line.frame.width &lt;= <span class="number">0</span> <span class="keyword">else</span> &#123;</span><br><span class="line">    	<span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    line.backgroundColor = <span class="type">UIColor</span>.red.cgColor</span><br><span class="line">    line.cornerRadius = <span class="number">3</span></span><br><span class="line">	line.frame.size = <span class="type">CGSize</span>(width: bounds.width*<span class="number">0.6</span>, height: <span class="number">6</span>)</span><br><span class="line">    line.position = layer.position</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Auto-Layout"><a href="#Auto-Layout" class="headerlink" title="Auto Layout"></a>Auto Layout</h2><p>Avoid using Auto Layout for the rotated view</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-not-use-isRemovedOnCompletion-for-CAAnimation-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-not-use-isRemovedOnCompletion-for-CAAnimation-in-iOS/">How to not use isRemovedOnCompletion for CAAnimation in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-not-use-isRemovedOnCompletion-for-CAAnimation-in-iOS/" class="article-date">
-	  <time datetime="2019-05-13T09:17:43.000Z" itemprop="datePublished">May 13, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/228" target="_blank" rel="noopener">#228</a></strong></p>
-<p>CAAnimation is about presentation layer, after animation completes, the view snaps back to its original state. If we want to keep the state after animation, then the wrong way is to use <code>CAMediaTimingFillMode.forward</code> and <code>isRemovedOnCompletion</code></p>
-<h2 id="Animation-never-ends"><a href="#Animation-never-ends" class="headerlink" title="Animation never ends"></a>Animation never ends</h2><p><code>forwards</code> <a href="https://developer.apple.com/documentation/quartzcore/camediatimingfillmode/1427658-forwards" target="_blank" rel="noopener">https://developer.apple.com/documentation/quartzcore/camediatimingfillmode/1427658-forwards</a></p>
-<blockquote>
-<p>The receiver remains visible in its final state when the animation is completed.</p>
-</blockquote>
-<p><code>isRemovedOnCompletion</code></p>
-<p><a href="https://developer.apple.com/documentation/quartzcore/caanimation/1412458-isremovedoncompletion" target="_blank" rel="noopener">https://developer.apple.com/documentation/quartzcore/caanimation/1412458-isremovedoncompletion</a></p>
-<blockquote>
-<p>When true, the animation is removed from the target layer’s animations once its active duration has passed. Defaults to true.</p>
-</blockquote>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">layer.fillMode = .forwards</span><br><span class="line">animation. isRemovedOnCompletion = <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<p>This is to tell the animation to never ends and keep its last presentation state. Wrong approach ❗️</p>
-<h2 id="Set-final-state-before-calling-animation"><a href="#Set-final-state-before-calling-animation" class="headerlink" title="Set final state before calling animation"></a>Set final state before calling animation</h2><p>The presentation state is just for animation, the source of truth lies in the layer itself. We need to set the final state before calling animation</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> animation = <span class="type">CABasicAnimation</span>(keyPath: #keyPath(<span class="type">CAShapeLayer</span>.strokeEnd))</span><br><span class="line"></span><br><span class="line">shapeLayer.strokeEnd = <span class="number">1.0</span></span><br><span class="line">shapeLayer.add(animation, forKey: <span class="string">""</span>)</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/7/">Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/9/">Next</a>
+    <a class="extend prev" rel="prev" href="/page/7/">Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/9/">Next</a>
   </nav>
 
 </section>
@@ -4657,7 +4641,7 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/accessibility/">accessibility</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">134</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">62</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">179</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">10</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/accessibility/">accessibility</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">134</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">66</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">181</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">10</span></li></ul>
     </div>
   </div>
 
@@ -4667,7 +4651,7 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/accessibility/" style="font-size: 10px;">accessibility</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.65px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.18px;">apple script</a> <a href="/tags/ci/" style="font-size: 11.18px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.59px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.76px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.59px;">css</a> <a href="/tags/dart/" style="font-size: 11.76px;">dart</a> <a href="/tags/database/" style="font-size: 10.59px;">database</a> <a href="/tags/design/" style="font-size: 10.59px;">design</a> <a href="/tags/electron/" style="font-size: 11.76px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.18px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.76px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.76px;">github</a> <a href="/tags/go/" style="font-size: 10.59px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.41px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.24px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.06px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.76px;">layout</a> <a href="/tags/life/" style="font-size: 14.12px;">life</a> <a href="/tags/links/" style="font-size: 14.71px;">links</a> <a href="/tags/macOS/" style="font-size: 18.82px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.59px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.76px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.53px;">node</a> <a href="/tags/objc/" style="font-size: 10.59px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 11.18px;">react</a> <a href="/tags/react-native/" style="font-size: 15.29px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.18px;">rx</a> <a href="/tags/script/" style="font-size: 10.59px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.47px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.88px;">tech</a> <a href="/tags/terminal/" style="font-size: 10px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.35px;">testing</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.76px;">voip</a> <a href="/tags/watchOS/" style="font-size: 12.94px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.59px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.59px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 14.12px;">xcode</a>
+      <a href="/tags/accessibility/" style="font-size: 10px;">accessibility</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.65px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.18px;">apple script</a> <a href="/tags/ci/" style="font-size: 11.18px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.59px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.76px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.59px;">css</a> <a href="/tags/dart/" style="font-size: 11.76px;">dart</a> <a href="/tags/database/" style="font-size: 10.59px;">database</a> <a href="/tags/design/" style="font-size: 10.59px;">design</a> <a href="/tags/electron/" style="font-size: 11.76px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.18px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.76px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.76px;">github</a> <a href="/tags/go/" style="font-size: 10.59px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.41px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.24px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.06px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.76px;">layout</a> <a href="/tags/life/" style="font-size: 14.12px;">life</a> <a href="/tags/links/" style="font-size: 14.71px;">links</a> <a href="/tags/macOS/" style="font-size: 18.82px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.59px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.76px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.53px;">node</a> <a href="/tags/objc/" style="font-size: 10.59px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 11.18px;">react</a> <a href="/tags/react-native/" style="font-size: 15.29px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.18px;">rx</a> <a href="/tags/script/" style="font-size: 10.59px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.47px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.88px;">tech</a> <a href="/tags/terminal/" style="font-size: 10.59px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.35px;">testing</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.76px;">voip</a> <a href="/tags/watchOS/" style="font-size: 12.94px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.59px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.59px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 14.12px;">xcode</a>
     </div>
   </div>
 
@@ -4677,7 +4661,7 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">43</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">46</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
