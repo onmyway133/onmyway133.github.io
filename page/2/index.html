@@ -179,6 +179,55 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-handle-different-states-in-a-screen-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-handle-different-states-in-a-screen-in-iOS/">How to handle different states in a screen in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-handle-different-states-in-a-screen-in-iOS/" class="article-date">
+	  <time datetime="2019-10-17T09:13:07.000Z" itemprop="datePublished">October 17, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/469" target="_blank" rel="noopener">#469</a></strong></p>
+<p>If there are lots of logics and states inside a screen, it is best to introduce parent and child container, and switch child depends on state. Each child acts as a State handler.</p>
+<p>In less logic case, we can introduce a Scenario class that holds the state. So the <code>ViewController</code> can be very slim. The thing with State is that all possible scenarios are clear and required to be handled</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDetailScenario</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">enum</span> <span class="title">State</span> </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> unknown</span><br><span class="line">        <span class="keyword">case</span> getUser(<span class="type">Email</span>)</span><br><span class="line">        <span class="keyword">case</span> newUser(<span class="type">Email</span>)</span><br><span class="line">        <span class="keyword">case</span> existingUser(<span class="type">User</span>)</span><br><span class="line">        <span class="keyword">case</span> failure(<span class="type">Error</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> state: <span class="type">State</span> = .unknown(<span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.reload()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">reload</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> state &#123;</span><br><span class="line">        <span class="keyword">case</span> .unknown:</span><br><span class="line">            handleUnknown()</span><br><span class="line">        <span class="keyword">case</span> .getUser(<span class="keyword">let</span> email):</span><br><span class="line">            handleGetUser(email: email)</span><br><span class="line">        <span class="keyword">case</span> .newUser(<span class="keyword">let</span> email):</span><br><span class="line">            handleNewUser(email: email)</span><br><span class="line">        <span class="keyword">case</span> .existingUser(<span class="keyword">let</span> user):</span><br><span class="line">            handleExistingUser(user: user</span><br><span class="line">        <span class="keyword">case</span> .failure(<span class="keyword">let</span> error):</span><br><span class="line">            logError(error)</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-reload-data-without-using-onAppear-in-SwiftUI-in-watchOS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1915,67 +1964,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-How-to-log-Error-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-log-Error-in-Swift/">How to log Error in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-log-Error-in-Swift/" class="article-date">
-	  <time datetime="2019-10-03T05:44:18.000Z" itemprop="datePublished">October 3, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/439" target="_blank" rel="noopener">#439</a></strong></p>
-<h2 id="Use-localizedDescription"><a href="#Use-localizedDescription" class="headerlink" title="Use localizedDescription"></a>Use localizedDescription</h2><p>We need to provide <code>NSLocalizedDescriptionKey</code> inside user info dictionary, otherwise the outputt string may not be what we want.</p>
-<h3 id="NSError"><a href="#NSError" class="headerlink" title="NSError"></a>NSError</h3><p><a href="https://developer.apple.com/documentation/foundation/nserror/1414418-localizeddescription" target="_blank" rel="noopener">https://developer.apple.com/documentation/foundation/nserror/1414418-localizeddescription</a></p>
-<blockquote>
-<p>A string containing the localized description of the error.<br>The object in the user info dictionary for the key NSLocalizedDescriptionKey. If the user info dictionary doesn’t contain a value for NSLocalizedDescriptionKey, a default string is constructed from the domain and code.</p>
-</blockquote>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> error = <span class="type">NSError</span>(domain: <span class="string">"com.onmyway133.MyApp"</span>, code: <span class="number">2</span>, userInfo: [</span><br><span class="line">    <span class="string">"status_code"</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="string">"status_message"</span>: <span class="string">"not enough power"</span></span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">error.localizedDescription</span><br><span class="line"><span class="comment">// "The operation couldn’t be completed. (com.onmyway133.MyApp error 2.)"</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Error"><a href="#Error" class="headerlink" title="Error"></a>Error</h3><p><a href="https://developer.apple.com/documentation/swift/error/2292912-localizeddescription" target="_blank" rel="noopener">https://developer.apple.com/documentation/swift/error/2292912-localizeddescription</a></p>
-<blockquote>
-<p>Retrieve the localized description for this error.</p>
-</blockquote>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">AppError</span>: <span class="title">Error</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> request</span><br><span class="line">    <span class="keyword">case</span> invalid</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">AppError</span>.request.localizedDescription</span><br><span class="line"><span class="comment">// "The operation couldn’t be completed. (MyApp.AppError error 0.)"</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="Use-describing-String"><a href="#Use-describing-String" class="headerlink" title="Use describing String"></a>Use describing String</h2><p>To have better control, we can have <code>toString</code> which prints closly to what we expect</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Error</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">toString</span><span class="params">()</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">String</span>(describing: <span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">AppError</span>.request.<span class="built_in">toString</span>()</span><br><span class="line"><span class="comment">// request</span></span><br><span class="line"></span><br><span class="line">nsError.<span class="built_in">toString</span>()</span><br><span class="line"><span class="comment">// Error Domain=com.onmyway133.MyApp Code=2 "(null)" UserInfo=&#123;status_message=not enough power, status_code=SwiftGRPC.StatusCode.powerRequired&#125;</span></span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2080,6 +2068,18 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/Links-for-Xcode/">Links for Xcode</a></h6>
+              <span>November 12, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/Links-for-Push-Notification/">Links for Push Notification</a></h6>
               <span>November 11, 2019</span>
             </div>
@@ -2134,18 +2134,6 @@ var themeMenus = {};
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-Firebase-RemoteConfig/">How to use Firebase RemoteConfig</a></h6>
-              <span>November 5, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2158,7 +2146,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">105</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">148</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">4</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">105</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">148</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -2168,7 +2156,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/android/" style="font-size: 17.86px;">android</a> <a href="/tags/ci/" style="font-size: 10px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.71px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 10px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/dart/" style="font-size: 11.43px;">dart</a> <a href="/tags/design/" style="font-size: 10.71px;">design</a> <a href="/tags/electron/" style="font-size: 11.43px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.71px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.43px;">flutter</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/iOS/" style="font-size: 19.29px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.14px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.43px;">kotlin</a> <a href="/tags/layout/" style="font-size: 10px;">layout</a> <a href="/tags/life/" style="font-size: 11.43px;">life</a> <a href="/tags/macOS/" style="font-size: 18.57px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.71px;">machine learning</a> <a href="/tags/node/" style="font-size: 14.29px;">node</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 12.86px;">react native</a> <a href="/tags/script/" style="font-size: 10.71px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 15.71px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15px;">tech</a> <a href="/tags/testing/" style="font-size: 12.14px;">testing</a> <a href="/tags/watchOS/" style="font-size: 13.57px;">watchOS</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/xcode/" style="font-size: 11.43px;">xcode</a>
+      <a href="/tags/android/" style="font-size: 18.13px;">android</a> <a href="/tags/ci/" style="font-size: 10px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.63px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 10px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/dart/" style="font-size: 11.25px;">dart</a> <a href="/tags/design/" style="font-size: 10.63px;">design</a> <a href="/tags/electron/" style="font-size: 11.25px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.63px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.25px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/iOS/" style="font-size: 19.38px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.5px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.88px;">kotlin</a> <a href="/tags/layout/" style="font-size: 10px;">layout</a> <a href="/tags/life/" style="font-size: 11.25px;">life</a> <a href="/tags/links/" style="font-size: 15px;">links</a> <a href="/tags/macOS/" style="font-size: 18.75px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.63px;">machine learning</a> <a href="/tags/node/" style="font-size: 14.38px;">node</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 13.13px;">react native</a> <a href="/tags/script/" style="font-size: 10.63px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.25px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.63px;">tech</a> <a href="/tags/testing/" style="font-size: 12.5px;">testing</a> <a href="/tags/watchOS/" style="font-size: 13.75px;">watchOS</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/xcode/" style="font-size: 11.88px;">xcode</a>
     </div>
   </div>
 
@@ -2178,7 +2166,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">22</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 

@@ -179,6 +179,75 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-show-generic-list-in-Fragment-in-Android"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-show-generic-list-in-Fragment-in-Android/">How to show generic list in Fragment in Android</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-show-generic-list-in-Fragment-in-Android/" class="article-date">
+	  <time datetime="2019-08-28T06:57:10.000Z" itemprop="datePublished">August 28, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/378" target="_blank" rel="noopener">#378</a></strong></p>
+<p>After having a <a href="https://github.com/onmyway133/blog/issues/357" target="_blank" rel="noopener">generic RecyclerView</a>, if we want to show multiple kinds of data in Fragment, we can use generic.</p>
+<p>We may be tempted to use interface or protocol, but should prefer generic.</p>
+<figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FeedFragment</span></span>() : Fragment() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onActivityCreated</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onActivityCreated(savedInstanceState)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> mainViewModel: MainViewModel = ViewModelProviders.of(activity!!).<span class="keyword">get</span>(MainViewModel::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        mainViewModel.resId.observe(viewLifecycleOwner, Observer &#123;</span><br><span class="line">            <span class="keyword">when</span> (it) &#123;</span><br><span class="line">                R.id.gitHub -&gt; &#123; handleGitHub() &#125;</span><br><span class="line">                R.id.hackerNews -&gt; &#123; handleHackerNews() &#125;</span><br><span class="line">                R.id.reddit -&gt; &#123; handleReddit() &#125;</span><br><span class="line">                R.id.dev -&gt; &#123; handleDev() &#125;</span><br><span class="line">                R.id.productHunt -&gt; &#123; handleProductHunt() &#125;</span><br><span class="line">                <span class="keyword">else</span> -&gt; &#123;&#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">        recyclerView.layoutManager = LinearLayoutManager(context)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The difference between each kind are</p>
+<ul>
+<li>The type of model</li>
+<li>The type of Adapter</li>
+<li>How to observe from viewModel</li>
+<li>How to load from viewModel</li>
+</ul>
+<p>Here we also use <code>lifecycleScope</code> from <code>lifecycle runtime ktx</code></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">"androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-alpha01"</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">handle</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    makeResId: () -&gt; <span class="type">Int</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">    makeAdapter: () -&gt; <span class="type">com</span>.<span class="type">myapp</span>.<span class="type">Adapter</span>&lt;<span class="type">T</span>&gt;,</span></span></span><br><span class="line"><span class="function"><span class="params">    observe: ((<span class="type">ArrayList</span>&lt;<span class="type">T</span>&gt;) -&gt; <span class="type">Unit</span>) -&gt; <span class="type">Unit</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">    load: <span class="type">suspend</span> () -&gt; <span class="type">Unit</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span> &#123;</span><br><span class="line">    (activity <span class="keyword">as</span> AppCompatActivity).toolbar.title = getString(makeResId())</span><br><span class="line">    <span class="keyword">val</span> adapter = makeAdapter()</span><br><span class="line">    recyclerView.adapter = adapter</span><br><span class="line">    observe &#123;</span><br><span class="line">        adapter.update(it)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">doLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">        viewLifecycleOwner.lifecycleScope.launch &#123;</span><br><span class="line">            progressBar.visibility = View.VISIBLE</span><br><span class="line">            load()</span><br><span class="line">            progressBar.visibility = View.GONE</span><br><span class="line">            swipeRefreshLayout.isRefreshing = <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    doLoad()</span><br><span class="line">    swipeRefreshLayout.setOnRefreshListener &#123;</span><br><span class="line">        doLoad()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Then we just need to provide the required data</p>
+<figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleDev</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> viewModel: com.myapp.ViewModel <span class="keyword">by</span> viewModel()</span><br><span class="line">    handle(</span><br><span class="line">        &#123; R.string.menu_dev &#125;,</span><br><span class="line">        &#123; com.myapp.Adapter(items = arrayListOf()) &#125;,</span><br><span class="line">        &#123; completion -&gt;</span><br><span class="line">            viewModel.items.observe(viewLifecycleOwner, Observer &#123;</span><br><span class="line">                completion(it)</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            viewModel.load()</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://developer.android.com/topic/libraries/architecture/coroutines" target="_blank" rel="noopener">Use Kotlin coroutines with Architecture components</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-manage-OneSignal-push-notification-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -509,7 +578,7 @@ var themeMenus = {};
       
       
   <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li></ul>
 
       
             
@@ -1946,71 +2015,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-Links-for-Android"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Links-for-Android/">Links for Android</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Links-for-Android/" class="article-date">
-	  <time datetime="2019-08-06T18:24:43.000Z" itemprop="datePublished">August 6, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/348" target="_blank" rel="noopener">#348</a></strong></p>
-<ul>
-<li>Google Maven Repository <a href="https://dl.google.com/dl/android/maven2/index.html" target="_blank" rel="noopener">https://dl.google.com/dl/android/maven2/index.html</a></li>
-</ul>
-<h3 id="Posts"><a href="#Posts" class="headerlink" title="Posts"></a>Posts</h3><ul>
-<li><a href="https://medium.com/androiddevelopers/viewmodels-a-simple-example-ed5ac416317e" target="_blank" rel="noopener">https://medium.com/androiddevelopers/viewmodels-a-simple-example-ed5ac416317e</a></li>
-<li><a href="https://proandroiddev.com/5-common-mistakes-when-using-architecture-components-403e9899f4cb" target="_blank" rel="noopener">https://proandroiddev.com/5-common-mistakes-when-using-architecture-components-403e9899f4cb</a></li>
-<li><a href="https://tech.instacart.com/introducing-coil-kotlin-first-image-loading-on-android-f0fdc7a2a99e" target="_blank" rel="noopener">https://tech.instacart.com/introducing-coil-kotlin-first-image-loading-on-android-f0fdc7a2a99e</a></li>
-</ul>
-<h3 id="Coroutine"><a href="#Coroutine" class="headerlink" title="Coroutine"></a>Coroutine</h3><ul>
-<li>Index <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/index.html" target="_blank" rel="noopener">https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/index.html</a></li>
-<li><a href="https://proandroiddev.com/suspend-what-youre-doing-retrofit-has-now-coroutines-support-c65bd09ba067" target="_blank" rel="noopener">https://proandroiddev.com/suspend-what-youre-doing-retrofit-has-now-coroutines-support-c65bd09ba067</a></li>
-<li><a href="https://blog.mindorks.com/mastering-kotlin-coroutines-in-android-step-by-step-guide" target="_blank" rel="noopener">https://blog.mindorks.com/mastering-kotlin-coroutines-in-android-step-by-step-guide</a></li>
-<li><a href="https://jivimberg.io/blog/2018/05/04/parallel-map-in-kotlin/" target="_blank" rel="noopener">https://jivimberg.io/blog/2018/05/04/parallel-map-in-kotlin/</a></li>
-<li><a href="https://developer.android.com/topic/libraries/architecture/coroutines" target="_blank" rel="noopener">Use Kotlin coroutines with Architecture components</a></li>
-<li><a href="https://proandroiddev.com/async-operations-with-kotlin-coroutines-part-1-c51cc581ad33" target="_blank" rel="noopener">https://proandroiddev.com/async-operations-with-kotlin-coroutines-part-1-c51cc581ad33</a></li>
-<li><a href="https://medium.com/@elizarov/coroutine-context-and-scope-c8b255d59055" target="_blank" rel="noopener">https://medium.com/@elizarov/coroutine-context-and-scope-c8b255d59055</a></li>
-<li><a href="https://medium.com/@elizarov/structured-concurrency-722d765aa952" target="_blank" rel="noopener">https://medium.com/@elizarov/structured-concurrency-722d765aa952</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2115,6 +2119,18 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/Links-for-Xcode/">Links for Xcode</a></h6>
+              <span>November 12, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/Links-for-Push-Notification/">Links for Push Notification</a></h6>
               <span>November 11, 2019</span>
             </div>
@@ -2169,18 +2185,6 @@ var themeMenus = {};
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-Firebase-RemoteConfig/">How to use Firebase RemoteConfig</a></h6>
-              <span>November 5, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2193,7 +2197,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">105</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">148</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">4</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">105</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">148</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -2203,7 +2207,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/android/" style="font-size: 17.86px;">android</a> <a href="/tags/ci/" style="font-size: 10px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.71px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 10px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/dart/" style="font-size: 11.43px;">dart</a> <a href="/tags/design/" style="font-size: 10.71px;">design</a> <a href="/tags/electron/" style="font-size: 11.43px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.71px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.43px;">flutter</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/iOS/" style="font-size: 19.29px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.14px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.43px;">kotlin</a> <a href="/tags/layout/" style="font-size: 10px;">layout</a> <a href="/tags/life/" style="font-size: 11.43px;">life</a> <a href="/tags/macOS/" style="font-size: 18.57px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.71px;">machine learning</a> <a href="/tags/node/" style="font-size: 14.29px;">node</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 12.86px;">react native</a> <a href="/tags/script/" style="font-size: 10.71px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 15.71px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15px;">tech</a> <a href="/tags/testing/" style="font-size: 12.14px;">testing</a> <a href="/tags/watchOS/" style="font-size: 13.57px;">watchOS</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/xcode/" style="font-size: 11.43px;">xcode</a>
+      <a href="/tags/android/" style="font-size: 18.13px;">android</a> <a href="/tags/ci/" style="font-size: 10px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.63px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 10px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/dart/" style="font-size: 11.25px;">dart</a> <a href="/tags/design/" style="font-size: 10.63px;">design</a> <a href="/tags/electron/" style="font-size: 11.25px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.63px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.25px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/iOS/" style="font-size: 19.38px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.5px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.88px;">kotlin</a> <a href="/tags/layout/" style="font-size: 10px;">layout</a> <a href="/tags/life/" style="font-size: 11.25px;">life</a> <a href="/tags/links/" style="font-size: 15px;">links</a> <a href="/tags/macOS/" style="font-size: 18.75px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.63px;">machine learning</a> <a href="/tags/node/" style="font-size: 14.38px;">node</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 13.13px;">react native</a> <a href="/tags/script/" style="font-size: 10.63px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.25px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.63px;">tech</a> <a href="/tags/testing/" style="font-size: 12.5px;">testing</a> <a href="/tags/watchOS/" style="font-size: 13.75px;">watchOS</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/xcode/" style="font-size: 11.88px;">xcode</a>
     </div>
   </div>
 
@@ -2213,7 +2217,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">22</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
