@@ -179,6 +179,706 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-make-scrollable-vertical-NSStackView"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-make-scrollable-vertical-NSStackView/">How to make scrollable vertical NSStackView</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-make-scrollable-vertical-NSStackView/" class="article-date">
+	  <time datetime="2019-03-18T13:59:00.000Z" itemprop="datePublished">March 18, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/173" target="_blank" rel="noopener">#173</a></strong></p>
+<p>You might need to flip <code>NSClipView</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"><span class="keyword">import</span> Anchors</span><br><span class="line"><span class="keyword">import</span> Omnia</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ScrollableStackView</span>: <span class="title">NSView</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">FlippedClipView</span>: <span class="title">NSClipView</span> </span>&#123;</span><br><span class="line">        <span class="keyword">override</span> <span class="keyword">var</span> isFlipped: <span class="type">Bool</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>(frame frameRect: <span class="type">NSRect</span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(frame: frameRect)</span><br><span class="line">        setup()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>?(coder decoder: <span class="type">NSCoder</span>) &#123;</span><br><span class="line">        <span class="built_in">fatalError</span>()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> stackView: <span class="type">NSStackView</span> = withObject(<span class="type">NSStackView</span>()) &#123;</span><br><span class="line">        $<span class="number">0</span>.orientation = .vertical</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> scrollView: <span class="type">NSScrollView</span> = <span class="type">NSScrollView</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">        addSubview(scrollView)</span><br><span class="line">        scrollView.hasVerticalScroller = <span class="literal">true</span></span><br><span class="line">        scrollView.drawsBackground = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">        activate(</span><br><span class="line">            scrollView.anchor.edges</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> clipView = <span class="type">FlippedClipView</span>()</span><br><span class="line">        clipView.translatesAutoresizingMaskIntoConstraints = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">        clipView.drawsBackground = <span class="literal">false</span></span><br><span class="line">        scrollView.contentView = clipView</span><br><span class="line"></span><br><span class="line">        activate(</span><br><span class="line">            clipView.anchor.edges.<span class="built_in">equal</span>.to(scrollView.anchor)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        scrollView.documentView = stackView</span><br><span class="line">        stackView.translatesAutoresizingMaskIntoConstraints = <span class="literal">false</span></span><br><span class="line">        activate(</span><br><span class="line">            clipView.anchor.<span class="keyword">left</span>.top.<span class="keyword">right</span>.<span class="built_in">equal</span>.to(stackView.anchor)</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://stackoverflow.com/questions/10016475/create-nsscrollview-programmatically-in-an-nsview-cocoa/55219153#55219153" target="_blank" rel="noopener">https://stackoverflow.com/questions/10016475/create-nsscrollview-programmatically-in-an-nsview-cocoa/55219153#55219153</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-make-view-take-up-full-width-in-vertical-NSStackView"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-make-view-take-up-full-width-in-vertical-NSStackView/">How to make view take up full width in vertical NSStackView</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-make-view-take-up-full-width-in-vertical-NSStackView/" class="article-date">
+	  <time datetime="2019-03-18T13:58:20.000Z" itemprop="datePublished">March 18, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/172" target="_blank" rel="noopener">#172</a></strong></p>
+<p><a href="https://stackoverflow.com/questions/51644692/nsstackview-subviews-not-resizing-sub-stack-views/55220837#55220837" target="_blank" rel="noopener">https://stackoverflow.com/questions/51644692/nsstackview-subviews-not-resizing-sub-stack-views/55220837#55220837</a></p>
+<p>If you want child view inside vertical NSStackView to fill its parent width, then <code>reduce contentCompressionResistancePriority</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">myChildView.translatesAutoresizingMaskIntoConstraints = <span class="literal">false</span></span><br><span class="line">myChildView.setContentCompressionResistancePriority(</span><br><span class="line">  <span class="type">NSLayoutConstraint</span>.<span class="type">Priority</span>(rawValue: <span class="number">1</span>),</span><br><span class="line">  <span class="keyword">for</span>: .horizontal</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="type">NSLayoutConstraint</span>.activate([</span><br><span class="line">  myChildView.heightAnchor.constraint(equalToConstant: <span class="number">50</span>)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"><span class="type">NSAnimationContext</span>.runAnimationGroup(&#123;context <span class="keyword">in</span></span><br><span class="line">  context.duration = <span class="number">0.25</span></span><br><span class="line">  context.allowsImplicitAnimation = <span class="literal">true</span></span><br><span class="line">  stackView.insertArrangedSubview(myChildView, at: <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">  view.layoutSubtreeIfNeeded()</span><br><span class="line">&#125;, completionHandler: <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-load-top-level-view-from-xib-in-macOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-load-top-level-view-from-xib-in-macOS/">How to load top level view from xib in macOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-load-top-level-view-from-xib-in-macOS/" class="article-date">
+	  <time datetime="2019-03-18T13:57:09.000Z" itemprop="datePublished">March 18, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/171" target="_blank" rel="noopener">#171</a></strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> views: <span class="type">NSArray?</span></span><br><span class="line"><span class="type">NSNib</span>(nibNamed: <span class="type">NSNib</span>.<span class="type">Name</span>(<span class="string">"ProfileView"</span>), bundle: <span class="literal">nil</span>)?.instantiate(withOwner: <span class="literal">nil</span>, topLevelObjects: &amp;views)</span><br><span class="line"><span class="keyword">let</span> profileView = views!.compactMap(&#123; $<span class="number">0</span> <span class="keyword">as</span>? <span class="type">ProfileView</span> &#125;).first!</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-fix-MethodError-undefined-method-real_path-with-CocoaPods"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-fix-MethodError-undefined-method-real_path-with-CocoaPods/">How to fix MethodError - undefined method `real_path` with CocoaPods?</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-fix-MethodError-undefined-method-real_path-with-CocoaPods/" class="article-date">
+	  <time datetime="2019-02-25T13:55:08.000Z" itemprop="datePublished">February 25, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/170" target="_blank" rel="noopener">#170</a></strong></p>
+<p><img src="https://user-images.githubusercontent.com/2284279/53346190-d3622880-3916-11e9-9028-ad0a6a37b277.jpg" alt="abc"></p>
+<p>I’m using cocoapods 1.6.0.beta.2 in a React Native apps and it has been working fine. The pods that I need is <code>Firebase</code> and <code>FacebookSDK</code>. Today after pod install, I got error</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NoMethodError - undefined method `real_path&apos; for nil:NilClass</span><br></pre></td></tr></table></figure>
+
+<p>I then tried running <code>pod deintegrate</code> to start from scratch, but that command fails as well.</p>
+<p>My next try is with <code>cocoapods 1.6.0</code> and <code>cocoapods 1.6.1</code> but the problem still persists.</p>
+<p><code>undefined method</code> in Ruby means that we are calling a method on an object that is nil. I like to track down problems via reading code, but this error is very vague.</p>
+<p>Looking thorough at the log, I see CocoaPods has done fetching dependencies, but fails at the integration step, so it must be something wrong with my project file.</p>
+<p>Then I trace back commits to <code>project.pbxproj</code> to see if there’s anything wrong. It turns out that there was a commit that accidentally removes <code>Pods-MyApp Staging.release.xcconfig</code> from project. That also comes with removal of</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">baseConfigurationReference = B7FC69316CC27F11022F8A82 /* Pods-MyApp Staging.release.xcconfig */;</span><br></pre></td></tr></table></figure>
+
+<h2 id="CocoaPods-uses-xcconfig"><a href="#CocoaPods-uses-xcconfig" class="headerlink" title="CocoaPods uses xcconfig"></a>CocoaPods uses xcconfig</h2><p>As you know, CocoaPods uses <code>xcconfig</code> files to declare pod related information like  <code>FRAMEWORK_SEARCH_PATHS</code>, <code>OTHER_LDFLAGS</code> and other variables like</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PODS_BUILD_DIR = $&#123;BUILD_DIR&#125;</span><br><span class="line">PODS_CONFIGURATION_BUILD_DIR = $&#123;PODS_BUILD_DIR&#125;/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)</span><br><span class="line">PODS_PODFILE_DIR_PATH = $&#123;SRCROOT&#125;/.</span><br><span class="line">PODS_ROOT = $&#123;SRCROOT&#125;/Pods</span><br></pre></td></tr></table></figure>
+
+<p>And for a normal <code>pod install</code>, CocoaPods adds some <code>xcconfig</code> files to your project, and the path is <code>Pods/Target Support Files/Pods-DeepDiffDemo</code>. There will always be <code>debug.xcconfig</code> and <code>release.xcconfig</code> for each of your project target.</p>
+<img width="1678" alt="xcconfig" src="https://user-images.githubusercontent.com/2284279/53345363-0dcac600-3915-11e9-975f-e6a7207912d0.png">
+
+<p>If your project MyApp has a production target called <code>MyApp Production</code> and <code>MyApp Staging</code>, then you should have these files</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Pods-MyApp Staging.debug.xcconfig</span><br><span class="line">Pods-MyApp Staging.release.xcconfig</span><br><span class="line">Pods-MyApp Production.debug.xcconfig</span><br><span class="line">Pods-MyApp Production.release.xcconfig</span><br></pre></td></tr></table></figure>
+
+<p>These are added to projects but not checked to any targets. Just like plist, you don’t need to add xcconfig files to target.</p>
+<p>If you go to project Info page, you will see that these xcconfig files are selected</p>
+<img width="824" alt="project" src="https://user-images.githubusercontent.com/2284279/53345592-93e70c80-3915-11e9-9826-3d1b9f30b900.png">
+
+<h2 id="Missing-xcconfig"><a href="#Missing-xcconfig" class="headerlink" title="Missing xcconfig"></a>Missing xcconfig</h2><p>In my case, <code>Pods-MyApp Staging.release.xcconfig</code> was somehow missing from project, hence all pod commands fail.</p>
+<p>The fix is to re-add that file and select that xcconfig in project Info page</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocoapods/">cocoapods</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Testimonial"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Testimonial/">Testimonial</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Testimonial/" class="article-date">
+	  <time datetime="2018-12-18T16:16:33.000Z" itemprop="datePublished">December 18, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/169" target="_blank" rel="noopener">#169</a></strong></p>
+<p><a href="https://medium.com/@kylpo/wow-i-learned-so-much-from-this-article-thank-you-595f29077633" target="_blank" rel="noopener">https://medium.com/@kylpo/wow-i-learned-so-much-from-this-article-thank-you-595f29077633</a></p>
+<img width="534" alt="xcode" src="https://user-images.githubusercontent.com/2284279/50170685-ca3e5500-02f0-11e9-81fe-86aa08207735.png">
+
+<p><a href="https://stackoverflow.com/questions/34990175/test-target-x-encountered-an-error-early-unexpected-exit-operation-never-finis/36343395?noredirect=1#comment94467666_36343395" target="_blank" rel="noopener">https://stackoverflow.com/questions/34990175/test-target-x-encountered-an-error-early-unexpected-exit-operation-never-finis/36343395?noredirect=1#comment94467666_36343395</a></p>
+<img width="690" alt="test" src="https://user-images.githubusercontent.com/2284279/50170737-e5a96000-02f0-11e9-8608-ee434869e232.png">
+
+<p><a href="https://github.com/onmyway133/notes/issues/2" target="_blank" rel="noopener">https://github.com/onmyway133/notes/issues/2</a></p>
+<img width="581" alt="rotation" src="https://user-images.githubusercontent.com/2284279/50170776-feb21100-02f0-11e9-9bd0-e88703c84abf.png">
+
+<p><a href="https://stackoverflow.com/questions/49478/git-ignore-file-for-xcode-projects/26034755#26034755" target="_blank" rel="noopener">https://stackoverflow.com/questions/49478/git-ignore-file-for-xcode-projects/26034755#26034755</a></p>
+<img width="695" alt="example" src="https://user-images.githubusercontent.com/2284279/50208156-c0f4cd00-0370-11e9-8926-05cf66f39bc5.png">
+
+<p><a href="https://stackoverflow.com/a/46122458/1418457" target="_blank" rel="noopener">https://stackoverflow.com/a/46122458/1418457</a></p>
+<img width="719" alt="push" src="https://user-images.githubusercontent.com/2284279/52259951-ad072980-2924-11e9-8756-ada74e1f739e.png">
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Understanding-weak-and-strong-in-Objective-C"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Understanding-weak-and-strong-in-Objective-C/">Understanding weak and strong in Objective C</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Understanding-weak-and-strong-in-Objective-C/" class="article-date">
+	  <time datetime="2018-05-31T10:41:57.000Z" itemprop="datePublished">May 31, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/164" target="_blank" rel="noopener">#164</a></strong></p>
+<p>From my own blog post <a href="https://github.com/Fantageek/fantageek.github.io/blob/source/source/_posts/2014-06-27-understanding-weak-self-and-strong-self.markdown" target="_blank" rel="noopener">https://github.com/Fantageek/fantageek.github.io/blob/source/source/_posts/2014-06-27-understanding-weak-self-and-strong-self.markdown</a></p>
+<hr>
+<p>Blocks are wonderful. To avoid retain cycle you often see the weakSelf - strongSelf dance like this</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__<span class="keyword">weak</span> __typeof__(<span class="keyword">self</span>) weakSelf = <span class="keyword">self</span>;</span><br><span class="line">    <span class="keyword">self</span>.block = ^&#123;</span><br><span class="line">        __typeof__(<span class="keyword">self</span>) strongSelf = weakSelf;</span><br><span class="line">        [strongSelf doSomething];</span><br><span class="line">        [strongSelf doSomethingElse];</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="When-block-is-created"><a href="#When-block-is-created" class="headerlink" title="When block is created"></a>When block is created</h2><h4 id="Block-is-object-when-it-is-copied"><a href="#Block-is-object-when-it-is-copied" class="headerlink" title="Block is object when it is copied"></a>Block is object when it is copied</h4><p>Blocks are created on the stack and will go away when their stack frame returns. While on the stack, a block has no effect on the storage or lifetime of anything it accesses.</p>
+<p>If blocks need to exist after the stack frame returns, they can be copied to the heap and this action is an explicit operation. This way, a block will gain reference-counting as all objects in Cocoa. When they are copied, they take their captured scope with them, retaining any objects they refer</p>
+<h4 id="Blocks-can-capture-values-from-the-enclosing-scope"><a href="#Blocks-can-capture-values-from-the-enclosing-scope" class="headerlink" title="Blocks can capture values from the enclosing scope"></a>Blocks can capture values from the enclosing scope</h4><p>As well as containing executable code, a block also has the ability to capture state from its enclosing scope. Note that block captures the variable along with its decorators (i.e. weak qualifier),</p>
+<p>=&gt; This explains why you need to declare self as __weak</p>
+<h2 id="When-block-is-executed"><a href="#When-block-is-executed" class="headerlink" title="When block is executed"></a>When block is executed</h2><p>When block is executed, it is possible for weakSelf to be non-nil for the first method (doSomething), but not for the second (doSomethingElse)</p>
+<p>You may think, at first, this is a trick to use self inside the block avoiding the retain cycle warning. This is not the case. The strong reference to self is created at block execution time while using self in the block is evaluated at block declaration time, thus retaining the object.</p>
+<p>For best practice, however, you should create a strong reference of your object using the weak one. This won’t create a retain cycle either as the strong pointer within the block will only exist until the block completes (it’s only scope is the block itself).</p>
+<p>=&gt; This explains why you need to declare another __strong self</p>
+<h2 id="More-explanation"><a href="#More-explanation" class="headerlink" title="More explanation"></a>More explanation</h2><p>This is my answer to reader Nikita</p>
+<ol>
+<li><p>As many people point out, “Blocks are created on the stack and will go away when their stack frame returns. While on the stack, a block has no effect on the storage or lifetime of anything it accesses.”<br>Even if block (declared on the stack) increase reference count to all the object it accesses, this would be useless, because this block will be discard when function returns</p>
+</li>
+<li><p>When block are copied (You see that people usually declare property (copy) for block), it will increase reference count to all the objects it accesses.</p>
+</li>
+</ol>
+<p>Why? because block are mean to be executed at a later time, so it need to keep strong reference to all the object it access. Block can be executed MANY TIMES, so IT WON’T RELEASE self AFTER this ran.</p>
+<p>When you nil out the block, it will be dealloc, hence it will decrease the reference count to all the objects it access.</p>
+<p>AFNetworking nil out the block after it is called, so you don’t have to use weakself inside block <a href="http://www.fantageek.com/1376/afnetworking-gotcha-2/" target="_blank" rel="noopener">http://www.fantageek.com/1376/afnetworking-gotcha-2/</a></p>
+<ol>
+<li>So there are cases when you don’t have to use weakself inside block<br>a. Make sure the block is not copied, you simply declare and run it<br>b. Make sure the block is nil out after it is called</li>
+</ol>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="http://dhoerl.wordpress.com/2013/04/23/i-finally-figured-out-weakself-and-strongself/" target="_blank" rel="noopener">I finally figured out weakSelf and strongSelf</a></li>
+<li><a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithBlocks/WorkingwithBlocks.html" target="_blank" rel="noopener">Working with Blocks</a></li>
+<li><a href="http://albertodebortoli.github.io/blog/2013/08/03/objective-c-blocks-caveat/" target="_blank" rel="noopener">Objective-C Blocks Caveat</a></li>
+<li><a href="http://albertodebortoli.github.io/blog/2013/04/21/objective-c-blocks-under-the-hood/" target="_blank" rel="noopener">Objective-C Blocks Under the Hood</a></li>
+<li><a href="http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-1/" target="_blank" rel="noopener">A look inside blocks: Episode 1</a></li>
+<li><a href="http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-2/" target="_blank" rel="noopener">A look inside blocks: Episode 2</a></li>
+<li><a href="http://www.galloway.me.uk/2013/05/a-look-inside-blocks-episode-3-block-copy/" target="_blank" rel="noopener">A look inside blocks: Episode 3</a></li>
+<li><a href="http://nilsou.com/blog/2013/08/21/objective-c-blocks-syntax/" target="_blank" rel="noopener">From C Declarators to Objective-C Blocks Syntax</a></li>
+<li><a href="http://arigrant.com/blog/2014/1/18/the-syntax-of-objective-c-blocks" target="_blank" rel="noopener">The Syntax of Objective-C Blocks</a></li>
+<li><a href="http://stackoverflow.com/a/17105368/1418457" target="_blank" rel="noopener">Referring to weak self inside a nested block</a></li>
+<li><a href="http://blackpixel.com/blog/2014/03/capturing-myself.html" target="_blank" rel="noopener">Capturing My(self)</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/objc/">objc</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Interesting-how-did-you-managed-to-plug-GitHub-issues-into-the-dev.to-platform"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Interesting-how-did-you-managed-to-plug-GitHub-issues-into-the-dev.to-platform/">Interesting, how did you managed to plug GitHub issues into the dev.to platform</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Interesting-how-did-you-managed-to-plug-GitHub-issues-into-the-dev.to-platform/" class="article-date">
+	  <time datetime="2018-05-26T20:14:56.000Z" itemprop="datePublished">May 26, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/163" target="_blank" rel="noopener">#163</a></strong></p>
+<p>I’ve found your post <a href="https://dev.to/onmyway133/changing-electron-app-icon" target="_blank" rel="noopener">https://dev.to/onmyway133/changing-electron-app-icon</a> and fist thought there is some static site generator which uses GitHub’s issues as a datasource.</p>
+<p>Am I right?</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Trying-IBM-Watson"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Trying-IBM-Watson/">Trying IBM Watson</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Trying-IBM-Watson/" class="article-date">
+	  <time datetime="2018-05-02T11:46:54.000Z" itemprop="datePublished">May 2, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/162" target="_blank" rel="noopener">#162</a></strong></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Request-and-Task"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Request-and-Task/">Request and Task</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Request-and-Task/" class="article-date">
+	  <time datetime="2018-05-02T08:50:05.000Z" itemprop="datePublished">May 2, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/161" target="_blank" rel="noopener">#161</a></strong></p>
+<p><a href="https://developer.apple.com/documentation/foundation/urlsession" target="_blank" rel="noopener">https://developer.apple.com/documentation/foundation/urlsession</a><br><a href="https://developer.apple.com/documentation/speech" target="_blank" rel="noopener">https://developer.apple.com/documentation/speech</a></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Learning-from-Open-Source-Colocate-test-files"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Learning-from-Open-Source-Colocate-test-files/">Learning from Open Source  Colocate test files</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Learning-from-Open-Source-Colocate-test-files/" class="article-date">
+	  <time datetime="2018-04-12T06:55:32.000Z" itemprop="datePublished">April 12, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/160" target="_blank" rel="noopener">#160</a></strong></p>
+<ul>
+<li><a href="https://kickstarter.engineering/why-you-should-co-locate-your-xcode-tests-c69f79211411" target="_blank" rel="noopener">Why you should co-locate your Xcode tests</a></li>
+<li>Files</li>
+</ul>
+<p><a href="https://github.com/kickstarter/ios-oss/blob/master/Kickstarter-iOS/ViewModels/RootViewModel.swift" target="_blank" rel="noopener">https://github.com/kickstarter/ios-oss/blob/master/Kickstarter-iOS/ViewModels/RootViewModel.swift</a><br><a href="https://github.com/kickstarter/ios-oss/blob/master/Kickstarter-iOS/ViewModels/RootViewModelTests.swift" target="_blank" rel="noopener">https://github.com/kickstarter/ios-oss/blob/master/Kickstarter-iOS/ViewModels/RootViewModelTests.swift</a></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Using-CircleCI-2.0"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Using-CircleCI-2.0/">Using CircleCI 2.0</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Using-CircleCI-2.0/" class="article-date">
+	  <time datetime="2018-04-03T11:29:58.000Z" itemprop="datePublished">April 3, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/158" target="_blank" rel="noopener">#158</a></strong></p>
+<p>We ‘ve been using CircleCI for many of our open source projects. Since the end of last year 2017, version 2.0 began to come out, and we think it’s good time to try it now together with <a href="https://swift.org/blog/swift-4-1-released/" target="_blank" rel="noopener">Swift 4.1</a> and <a href="https://developer.apple.com/news/?id=01242018d" target="_blank" rel="noopener">Xcode 9.3</a></p>
+<p>The problem with <a href="https://circleci.com/docs/2.0/" target="_blank" rel="noopener">version 2.0</a> is it’s so powerful and has lots of cool new features like jobs and workflows, but that requires going to documentation for how to <a href="https://circleci.com/docs/2.0/migrating-from-1-2/" target="_blank" rel="noopener">migrate</a> configuration file, especially <a href="https://circleci.com/docs/2.0/migrating-from-1-2/#search-and-replace-deprecated-20-keys" target="_blank" rel="noopener">Search and Replace Deprecated 2.0 Keys</a></p>
+<h3 id="Creating-config-yml"><a href="#Creating-config-yml" class="headerlink" title="Creating config.yml"></a>Creating <code>config.yml</code></h3><p>The first thing is to create a new <code>config.yml</code> inside folder <code>.circleci</code></p>
+<blockquote>
+<p>Copy your existing circle.yml file into a new directory called .circleci at the root of your project repository.</p>
+</blockquote>
+<p>Next is to declare version and jobs</p>
+<blockquote>
+<p>Add version: 2 to the top of the .circleci/config.yml file.</p>
+</blockquote>
+<h3 id="Checking-xcodebuild"><a href="#Checking-xcodebuild" class="headerlink" title="Checking xcodebuild"></a>Checking <code>xcodebuild</code></h3><p>For simple cases, we just use <code>xcodebuild</code> to build and test the project, so it’s good to try it locally to avoid lots of trial commits to trigger CircleCI. You can take a look at this PR <a href="https://github.com/hyperoslo/Cheers/pull/20" target="_blank" rel="noopener">https://github.com/hyperoslo/Cheers/pull/20</a></p>
+<p>Before our configuration file for version 1.0 looks like this</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- <span class="built_in">set</span> -o pipefail &amp;&amp; xcodebuild -project Cheers.xcodeproj -scheme <span class="string">"Cheers-iOS"</span> -sdk iphonesimulator -destination <span class="string">'platform=iOS Simulator,name=iPhone 8,OS=11.0'</span> -enableCodeCoverage YES <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>Now we should put <code>pipefail</code> inside <code>shell</code>, follow <a href="https://github.com/CircleCI-Public/circleci-demo-ios/blob/master/.circleci/config.yml" target="_blank" rel="noopener">https://github.com/CircleCI-Public/circleci-demo-ios/blob/master/.circleci/config.yml</a></p>
+<blockquote>
+<p>shell: /bin/bash –login -o pipefail</p>
+</blockquote>
+<p>Now is the actual trying <code>xcodebuild</code>, after many failures due to <code>destination</code> param</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild: error: Unable to find a destination matching the provided destination specifier:</span><br><span class="line">		&#123; platform:iOS Simulator, OS:11.3 &#125;</span><br><span class="line"></span><br><span class="line">	Missing required device specifier option.</span><br><span class="line">	The device type “iOS Simulator” requires that either “name” or “id” be specified.</span><br><span class="line">	Please supply either “name” or “id”.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild: error: option &apos;Destination&apos; requires at least one parameter of the form &apos;key=value&apos;</span><br></pre></td></tr></table></figure>
+
+<p>I found this to work, run this in the same folder as your <code>xcodeproj</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild -project Cheers.xcodeproj -scheme <span class="string">"Cheers-iOS"</span> -sdk iphonesimulator -destination <span class="string">"platform=iOS Simulator,OS=11.3,name=iPhone X"</span> -enableCodeCoverage YES <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Adding-workflow"><a href="#Adding-workflow" class="headerlink" title="Adding workflow"></a>Adding workflow</h3><p>Version 2.0 introduces <a href="https://circleci.com/docs/2.0/workflows/" target="_blank" rel="noopener">workflow</a> which helps organising jobs</p>
+<blockquote>
+<p>A workflow is a set of rules for defining a collection of jobs and their run order. Workflows support complex job orchestration using a simple set of configuration keys to help you resolve failures sooner.</p>
+</blockquote>
+<p>For our simple use cases, we add this workflow</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">workflows:</span></span><br><span class="line"><span class="attr">  version:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">  build-and-test:</span></span><br><span class="line"><span class="attr">    jobs:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">build-and-test</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Collecting-Test-Metadata"><a href="#Collecting-Test-Metadata" class="headerlink" title="Collecting Test Metadata"></a>Collecting Test Metadata</h2><ul>
+<li><a href="https://circleci.com/docs/2.0/collect-test-data/" target="_blank" rel="noopener">https://circleci.com/docs/2.0/collect-test-data/</a></li>
+</ul>
+<blockquote>
+<p>CircleCI collects test metadata from XML files and uses it to provide insights into your job</p>
+</blockquote>
+<h2 id="Final"><a href="#Final" class="headerlink" title="Final"></a>Final</h2><p>Use below as template</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="number">2.1</span></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line"><span class="attr">  build_test:</span></span><br><span class="line"><span class="attr">    macos:</span></span><br><span class="line"><span class="attr">      xcode:</span> <span class="string">"11.0"</span></span><br><span class="line"><span class="attr">    shell:</span> <span class="string">/bin/bash</span> <span class="bullet">--login</span> <span class="bullet">-o</span> <span class="string">pipefail</span></span><br><span class="line"><span class="attr">    steps:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">checkout</span></span><br><span class="line"><span class="attr">      - run:</span></span><br><span class="line"><span class="attr">          command:</span> <span class="string">|</span></span><br><span class="line"><span class="string">            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf</span></span><br><span class="line"><span class="string">            pod install</span></span><br><span class="line"><span class="string"></span><span class="attr">      - run:</span></span><br><span class="line"><span class="attr">          command:</span> <span class="string">xcodebuild</span> <span class="bullet">-workspace</span> <span class="string">MyApp.xcworkspace</span> <span class="bullet">-scheme</span> <span class="string">"MyApp"</span> <span class="bullet">-sdk</span> <span class="string">iphonesimulator</span> <span class="bullet">-destination</span> <span class="string">"platform=iOS Simulator,name=iPhone X,OS=12.2"</span> <span class="bullet">-enableCodeCoverage</span> <span class="literal">YES</span> <span class="string">test</span></span><br><span class="line"><span class="attr">      - store_test_results:</span></span><br><span class="line"><span class="attr">          path:</span> <span class="string">test-results</span></span><br><span class="line"></span><br><span class="line"><span class="attr">workflows:</span></span><br><span class="line"><span class="attr">  version:</span> <span class="number">2.1</span></span><br><span class="line"><span class="attr">  primary:</span></span><br><span class="line"><span class="attr">    jobs:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">build_test</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://circleci.com/docs/2.0/ios-migrating-from-1-2/" target="_blank" rel="noopener">https://circleci.com/docs/2.0/ios-migrating-from-1-2/</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ci/">ci</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xcode/">xcode</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Jitter-buffer-in-VoIP"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Jitter-buffer-in-VoIP/">Jitter buffer in VoIP</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Jitter-buffer-in-VoIP/" class="article-date">
+	  <time datetime="2018-02-27T11:30:02.000Z" itemprop="datePublished">February 27, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/157" target="_blank" rel="noopener">#157</a></strong></p>
+<p>This post was from long time ago when I did <a href="http://pjsip.org/" target="_blank" rel="noopener">pjsip</a></p>
+<hr>
+<p>A jitter buffer temporarily stores arriving packets in order to minimize delay variations. If packets arrive too late then they are discarded. A jitter buffer may be mis-configured and be either too large or too small.  </p>
+<h3 id="Impact"><a href="#Impact" class="headerlink" title="Impact"></a>Impact</h3><p>If a jitter buffer is too small then an excessive number of packets may be discarded, which can lead to call quality degradation. </p>
+<p>Lower settings cause less delay in the meeting, but meetings with lower settings are more susceptible to jitter effects caused by network congestion. Less data is buffered, increasing the likelihood that delayed or lost packets will produce a jitter effect in the media stream.</p>
+<p>If a jitter buffer is too large then the additional delay can lead to conversational difficulty.</p>
+<p>Higher settings are more effective at reducing jitter effects. With higher settings, more data is buffered, which allows more time for delayed packets to arrive at the client. However, higher settings also result in more delay (or latency) in the meeting. A user who is speaking will not be heard immediately by the other meeting participants. The delay in the meeting increases with the amount of time that data is held in the buffer.</p>
+<h3 id="Resolution"><a href="#Resolution" class="headerlink" title="Resolution"></a>Resolution</h3><p>A typical jitter buffer configuration is 30mS to 50mS in size. In the case of   an adaptive jitter buffer then the maximum size may be set to 100-200mS. Note that if the jitter buffer size exceeds 100mS then the additional delay introduced can lead to conversational difficulty.</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><p><a href="http://publib.boulder.ibm.com/infocenter/sametime/v7r5m1/index.jsp?topic=/com.ibm.help.sametime.admin.doc/st_adm_avserv_audframepacket_t.html" target="_blank" rel="noopener">lib.boulder.ibm.com/infocenter/sametime</a>  </p>
+</li>
+<li><p><a href="http://www.voiptroubleshooter.com/problems/jitterbuffer.html" target="_blank" rel="noopener">http://www.voiptroubleshooter.com</a></p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tech/">tech</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/voip/">voip</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Some-Windows-Phone-7-development-tips"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -313,7 +1013,7 @@ var themeMenus = {};
       
       
   <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tech/">tech</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tech/">tech</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/voip/">voip</a></li></ul>
 
       
             
@@ -713,6 +1413,9 @@ Searching many threads on SO, like these create android Sliding Menu like Facebo
     <footer class="entry-meta entry-footer">
       
       
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ci/">ci</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocoapods/">cocoapods</a></li></ul>
+
       
             
       
@@ -1395,1066 +2098,11 @@ Searching many threads on SO, like these create android Sliding Menu like Facebo
     
 
   
-    <article id="post-Some-Swift-tips"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Some-Swift-tips/">Some Swift tips</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Some-Swift-tips/" class="article-date">
-	  <time datetime="2018-01-03T14:09:55.000Z" itemprop="datePublished">January 3, 2018</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/136" target="_blank" rel="noopener">#136</a></strong></p>
-<h3 id="Adding-final"><a href="#Adding-final" class="headerlink" title="Adding final"></a>Adding final</h3><ul>
-<li><a href="https://gist.github.com/krzysztofzablocki/8c9a6c428cf5fcf19effca223a5548cd" target="_blank" rel="noopener">https://gist.github.com/krzysztofzablocki/8c9a6c428cf5fcf19effca223a5548cd</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Learning-from-Open-Source-Making-Deferred-in-Kotlin"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Learning-from-Open-Source-Making-Deferred-in-Kotlin/">Learning from Open Source  Making Deferred in Kotlin</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Learning-from-Open-Source-Making-Deferred-in-Kotlin/" class="article-date">
-	  <time datetime="2018-01-03T12:52:21.000Z" itemprop="datePublished">January 3, 2018</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/135" target="_blank" rel="noopener">#135</a></strong></p>
-<p>From <a href="https://github.com/JakeWharton/retrofit2-kotlin-coroutines-adapter/blob/master/src/main/java/com/jakewharton/retrofit2/adapter/kotlin/coroutines/experimental/CoroutineCallAdapterFactory.kt#L86" target="_blank" rel="noopener">https://github.com/JakeWharton/retrofit2-kotlin-coroutines-adapter/blob/master/src/main/java/com/jakewharton/retrofit2/adapter/kotlin/coroutines/experimental/CoroutineCallAdapterFactory.kt#L86</a></p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">adapt</span><span class="params">(call: <span class="type">Call</span>&lt;<span class="type">T</span>&gt;)</span></span>: Deferred&lt;T&gt; &#123;</span><br><span class="line">  <span class="keyword">val</span> deferred = CompletableDeferred&lt;T&gt;()</span><br><span class="line"></span><br><span class="line">  deferred.invokeOnCompletion &#123;</span><br><span class="line">    <span class="keyword">if</span> (deferred.isCancelled) &#123;</span><br><span class="line">      call.cancel()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  call.enqueue(<span class="keyword">object</span> : Callback&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onFailure</span><span class="params">(call: <span class="type">Call</span>&lt;<span class="type">T</span>&gt;, t: <span class="type">Throwable</span>)</span></span> &#123;</span><br><span class="line">      deferred.completeExceptionally(t)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onResponse</span><span class="params">(call: <span class="type">Call</span>&lt;<span class="type">T</span>&gt;, response: <span class="type">Response</span>&lt;<span class="type">T</span>&gt;)</span></span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (response.isSuccessful) &#123;</span><br><span class="line">        deferred.complete(response.body()!!)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        deferred.completeExceptionally(HttpException(response))</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> deferred</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Learning-from-Open-Source-Using-dylib-in-macOS-applications"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Learning-from-Open-Source-Using-dylib-in-macOS-applications/">Learning from Open Source  Using dylib in macOS applications</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Learning-from-Open-Source-Using-dylib-in-macOS-applications/" class="article-date">
-	  <time datetime="2018-01-03T11:37:12.000Z" itemprop="datePublished">January 3, 2018</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/134" target="_blank" rel="noopener">#134</a></strong></p>
-<ul>
-<li><a href="https://github.com/mortenjust/androidtool-mac" target="_blank" rel="noopener">https://github.com/mortenjust/androidtool-mac</a></li>
-<li><a href="https://github.com/mortenjust/droptogif" target="_blank" rel="noopener">https://github.com/mortenjust/droptogif</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Using-dlopen-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Using-dlopen-in-iOS/">Using dlopen in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Using-dlopen-in-iOS/" class="article-date">
-	  <time datetime="2018-01-02T07:48:51.000Z" itemprop="datePublished">January 2, 2018</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/133" target="_blank" rel="noopener">#133</a></strong></p>
-<p>With <code>dlopen</code> we can make uses of some private frameworks. It will be fun</p>
-<p>From <a href="http://blog.zats.io/2017/12/27/iPhone-X-home-button/" target="_blank" rel="noopener">iPhone X home button</a></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// somewhere in viewDidLoad</span></span><br><span class="line">dlopen([binaryPath cStringUsingEncoding:<span class="built_in">NSUTF8StringEncoding</span>], RTLD_NOW);</span><br><span class="line"><span class="built_in">UIView</span> *<span class="keyword">const</span> view = [[<span class="built_in">NSClassFromString</span>(<span class="string">@"SBHomeGrabberView"</span>) alloc] init];</span><br><span class="line">[view sizeToFit];</span><br><span class="line">[<span class="keyword">self</span>.view addSubview:view];</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Learning-from-Open-Source-Hit-testing-with-UIWindow"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Learning-from-Open-Source-Hit-testing-with-UIWindow/">Learning from Open Source  Hit testing with UIWindow</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Learning-from-Open-Source-Hit-testing-with-UIWindow/" class="article-date">
-	  <time datetime="2017-12-22T11:10:43.000Z" itemprop="datePublished">December 22, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/132" target="_blank" rel="noopener">#132</a></strong></p>
-<p>From <a href="https://github.com/Flipboard/FLEX/blob/master/Classes/ExplorerInterface/FLEXWindow.m" target="_blank" rel="noopener">https://github.com/Flipboard/FLEX/blob/master/Classes/ExplorerInterface/FLEXWindow.m</a></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">id</span>)initWithFrame:(<span class="built_in">CGRect</span>)frame</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> initWithFrame:frame];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.backgroundColor = [<span class="built_in">UIColor</span> clearColor];</span><br><span class="line">        <span class="comment">// Some apps have windows at UIWindowLevelStatusBar + n.</span></span><br><span class="line">        <span class="comment">// If we make the window level too high, we block out UIAlertViews.</span></span><br><span class="line">        <span class="comment">// There's a balance between staying above the app's windows and staying below alerts.</span></span><br><span class="line">        <span class="comment">// UIWindowLevelStatusBar + 100 seems to hit that balance.</span></span><br><span class="line">        <span class="keyword">self</span>.windowLevel = <span class="built_in">UIWindowLevelStatusBar</span> + <span class="number">100.0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">BOOL</span>)pointInside:(<span class="built_in">CGPoint</span>)point withEvent:(<span class="built_in">UIEvent</span> *)event</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">BOOL</span> pointInside = <span class="literal">NO</span>;</span><br><span class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span>.eventDelegate shouldHandleTouchAtPoint:point]) &#123;</span><br><span class="line">        pointInside = [<span class="keyword">super</span> pointInside:point withEvent:event];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> pointInside;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>From <a href="https://github.com/Flipboard/FLEX/blob/master/Classes/ExplorerInterface/FLEXExplorerViewController.m" target="_blank" rel="noopener">https://github.com/Flipboard/FLEX/blob/master/Classes/ExplorerInterface/FLEXExplorerViewController.m</a></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)shouldReceiveTouchAtWindowPoint:(<span class="built_in">CGPoint</span>)pointInWindowCoordinates</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">BOOL</span> shouldReceiveTouch = <span class="literal">NO</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CGPoint</span> pointInLocalCoordinates = [<span class="keyword">self</span>.view convertPoint:pointInWindowCoordinates fromView:<span class="literal">nil</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Always if it's on the toolbar</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">CGRectContainsPoint</span>(<span class="keyword">self</span>.explorerToolbar.frame, pointInLocalCoordinates)) &#123;</span><br><span class="line">        shouldReceiveTouch = <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Always if we're in selection mode</span></span><br><span class="line">    <span class="keyword">if</span> (!shouldReceiveTouch &amp;&amp; <span class="keyword">self</span>.currentMode == FLEXExplorerModeSelect) &#123;</span><br><span class="line">        shouldReceiveTouch = <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Always in move mode too</span></span><br><span class="line">    <span class="keyword">if</span> (!shouldReceiveTouch &amp;&amp; <span class="keyword">self</span>.currentMode == FLEXExplorerModeMove) &#123;</span><br><span class="line">        shouldReceiveTouch = <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Always if we have a modal presented</span></span><br><span class="line">    <span class="keyword">if</span> (!shouldReceiveTouch &amp;&amp; <span class="keyword">self</span>.presentedViewController) &#123;</span><br><span class="line">        shouldReceiveTouch = <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> shouldReceiveTouch;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-make-NSCollectionView-programatically-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-make-NSCollectionView-programatically-in-Swift/">How to make NSCollectionView programatically in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-make-NSCollectionView-programatically-in-Swift/" class="article-date">
-	  <time datetime="2017-12-21T12:54:45.000Z" itemprop="datePublished">December 21, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/131" target="_blank" rel="noopener">#131</a></strong></p>
-<p>Here’s how to create <code>NSCollectionView</code> programatically. We need to embed it inside <code>NScrollView</code> for scrolling to work. Code is in Swift 4</p>
-<h3 id="NSCollectionView"><a href="#NSCollectionView" class="headerlink" title="NSCollectionView"></a>NSCollectionView</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> layout = <span class="type">NSCollectionViewFlowLayout</span>()</span><br><span class="line">layout.minimumLineSpacing = <span class="number">4</span></span><br><span class="line"></span><br><span class="line">collectionView = <span class="type">NSCollectionView</span>()</span><br><span class="line">collectionView.dataSource = <span class="keyword">self</span></span><br><span class="line">collectionView.delegate = <span class="keyword">self</span></span><br><span class="line">collectionView.collectionViewLayout = layout</span><br><span class="line">collectionView.allowsMultipleSelection = <span class="literal">false</span></span><br><span class="line">collectionView.backgroundColors = [.clear]</span><br><span class="line">collectionView.isSelectable = <span class="literal">true</span></span><br><span class="line">collectionView.register(</span><br><span class="line">  <span class="type">Cell</span>.<span class="keyword">self</span>,</span><br><span class="line">  forItemWithIdentifier: <span class="type">NSUserInterfaceItemIdentifier</span>(rawValue: <span class="string">"Cell"</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<h3 id="NScrollView"><a href="#NScrollView" class="headerlink" title="NScrollView"></a>NScrollView</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scrollView = <span class="type">NSScrollView</span>()</span><br><span class="line">scrollView.documentView = collectionView</span><br><span class="line">view.addSubview(scrollView)</span><br></pre></td></tr></table></figure>
-
-<h3 id="NSCollectionViewItem"><a href="#NSCollectionViewItem" class="headerlink" title="NSCollectionViewItem"></a>NSCollectionViewItem</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Cell</span>: <span class="title">NSCollectionViewItem</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> label = <span class="type">Label</span>()</span><br><span class="line">  <span class="keyword">let</span> myImageView = <span class="type">NSImageView</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">loadView</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">self</span>.view = <span class="type">NSView</span>()</span><br><span class="line">    <span class="keyword">self</span>.view.wantsLayer = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="NSCollectionViewDataSource"><a href="#NSCollectionViewDataSource" class="headerlink" title="NSCollectionViewDataSource"></a>NSCollectionViewDataSource</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, numberOfItemsInSection section: Int)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> coins.<span class="built_in">count</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath)</span></span> -&gt; <span class="type">NSCollectionViewItem</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> cell = collectionView.makeItem(</span><br><span class="line">    withIdentifier: <span class="type">NSUserInterfaceItemIdentifier</span>(rawValue: <span class="string">"Cell"</span>),</span><br><span class="line">    <span class="keyword">for</span>: indexPath</span><br><span class="line">  ) <span class="keyword">as</span>! <span class="type">Cell</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> coin = coins[indexPath.item]</span><br><span class="line"></span><br><span class="line">  cell.label.stringValue = coin.name</span><br><span class="line">  cell.coinImageView.image =</span><br><span class="line">    <span class="type">NSImage</span>(named: <span class="type">NSImage</span>.<span class="type">Name</span>(rawValue: <span class="string">"USD"</span>))</span><br><span class="line">    ?? <span class="type">NSImage</span>(named: <span class="type">NSImage</span>.<span class="type">Name</span>(rawValue: <span class="string">"Others"</span>))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> cell</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="NSCollectionViewDelegateFlowLayout"><a href="#NSCollectionViewDelegateFlowLayout" class="headerlink" title="NSCollectionViewDelegateFlowLayout"></a>NSCollectionViewDelegateFlowLayout</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set&lt;IndexPath&gt;)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> indexPath = indexPaths.first,</span><br><span class="line">    <span class="keyword">let</span> cell = collectionView.item(at: indexPath) <span class="keyword">as</span>? <span class="type">Cell</span> <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set&lt;IndexPath&gt;)</span></span> &#123;</span><br><span class="line">  <span class="keyword">guard</span> <span class="keyword">let</span> indexPath = indexPaths.first,</span><br><span class="line">    <span class="keyword">let</span> cell = collectionView.item(at: indexPath) <span class="keyword">as</span>? <span class="type">Cell</span> <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, sizeForItemAt indexPath: IndexPath)</span></span> -&gt; <span class="type">NSSize</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="type">NSSize</span>(</span><br><span class="line">    width: collectionView.frame.size.width,</span><br><span class="line">    height: <span class="number">40</span></span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-UnsafePointer-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/UnsafePointer-in-Swift/">UnsafePointer in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/UnsafePointer-in-Swift/" class="article-date">
-	  <time datetime="2017-12-20T15:58:30.000Z" itemprop="datePublished">December 20, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/130" target="_blank" rel="noopener">#130</a></strong></p>
-<p>Code is in Swift 4</p>
-<h3 id="Constructing-UnsafeMutablePointer"><a href="#Constructing-UnsafeMutablePointer" class="headerlink" title="Constructing UnsafeMutablePointer"></a>Constructing UnsafeMutablePointer</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> byteCount = <span class="number">32</span></span><br><span class="line"><span class="keyword">let</span> result = <span class="type">UnsafeMutablePointer</span>&lt;<span class="type">UInt8</span>&gt;.allocate(capacity: byteCount)</span><br></pre></td></tr></table></figure>
-
-<h3 id="Data-to-UnsafePointer"><a href="#Data-to-UnsafePointer" class="headerlink" title="Data to UnsafePointer"></a>Data to UnsafePointer</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Data</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">toPointer</span><span class="params">()</span></span> -&gt; <span class="type">UnsafePointer</span>&lt;<span class="type">UInt8</span>&gt;? &#123;</span><br><span class="line">    <span class="keyword">let</span> buffer = <span class="type">UnsafeMutablePointer</span>&lt;<span class="type">UInt8</span>&gt;.allocate(capacity: <span class="built_in">count</span>)</span><br><span class="line">    <span class="keyword">let</span> stream = <span class="type">OutputStream</span>(toBuffer: buffer, capacity: <span class="built_in">count</span>)</span><br><span class="line"></span><br><span class="line">    stream.<span class="keyword">open</span>()</span><br><span class="line">    withUnsafeBytes(&#123; (p: <span class="type">UnsafePointer</span>&lt;<span class="type">UInt8</span>&gt;) -&gt; <span class="type">Void</span> <span class="keyword">in</span></span><br><span class="line">      stream.write(p, maxLength: <span class="built_in">count</span>)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    stream.close()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="type">UnsafePointer</span>&lt;<span class="type">UInt8</span>&gt;(buffer)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="UnsafePointer-to-Data"><a href="#UnsafePointer-to-Data" class="headerlink" title="UnsafePointer to Data"></a>UnsafePointer to Data</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UnsafePointer</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">toData</span><span class="params">()</span></span> -&gt; <span class="type">Data</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Data</span>(bytes: <span class="type">UnsafeRawPointer</span>(<span class="keyword">self</span>), <span class="built_in">count</span>: <span class="number">32</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Dealing-with-C-API"><a href="#Dealing-with-C-API" class="headerlink" title="Dealing with C API"></a>Dealing with C API</h3><p>This is how to do keccak hash using C API from <a href="https://github.com/ethereum/ethash/blob/master/src/libethash/sha3.c" target="_blank" rel="noopener">https://github.com/ethereum/ethash/blob/master/src/libethash/sha3.c</a></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KeccakHash</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">hash</span><span class="params">(data: Data)</span></span> <span class="keyword">throws</span> -&gt; <span class="type">Data</span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> dataPointer = data.toPointer() <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="type">InteralError</span>.invalid</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> byteCount = <span class="number">32</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> result = <span class="type">UnsafeMutablePointer</span>&lt;<span class="type">UInt8</span>&gt;.allocate(capacity: byteCount)</span><br><span class="line">    sha3_256(result, byteCount, dataPointer, data.<span class="built_in">count</span>)</span><br><span class="line">    <span class="keyword">return</span> result.toData()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li>See <a href="https://github.com/onmyway133/Reindeers/blob/master/Sources/Extensions.swift" target="_blank" rel="noopener">https://github.com/onmyway133/Reindeers/blob/master/Sources/Extensions.swift</a></li>
-<li><a href="https://oleb.net/blog/2017/12/importing-c-library-into-swift/" target="_blank" rel="noopener"><br>How to import a C library in Swift using the Swift Package Manager</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-prevent-UIVisualEffectView-crash"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-prevent-UIVisualEffectView-crash/">How to prevent UIVisualEffectView crash</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-prevent-UIVisualEffectView-crash/" class="article-date">
-	  <time datetime="2017-12-20T09:40:35.000Z" itemprop="datePublished">December 20, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/124" target="_blank" rel="noopener">#124</a></strong></p>
-<p>We all know that there’s a potential crash with <code>UIVisualEffectView</code> on iOS 11. The fix is to not add sub views directly to <code>UIVisualEffectView</code>, but to its <code>contentView</code>. So we should change</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">effectView.addSubview(button)</span><br></pre></td></tr></table></figure>
-
-<p>to </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">effectView.contentView.addubView(button)</span><br></pre></td></tr></table></figure>
-
-<p>Here we don’t need to perform iOS version check, because <code>effectView.contentView</code> works for any iOS versions.</p>
-<h3 id="Potential-cases-for-crashes"><a href="#Potential-cases-for-crashes" class="headerlink" title="Potential cases for crashes"></a>Potential cases for crashes</h3><p>Here are some cases you can potentially cause the crashes</p>
-<p><strong><em>Strange namings</em></strong></p>
-<p>Normally we name our <code>UIVisualEffectView</code> as <code>blurView</code>, <code>effectView</code>. But there’s times we name it differently like <code>navigationView</code>, <code>containerView</code>, <code>boxView</code>, … This way we may completely forget that it’s a <code>UIVisualEffectView</code> 🙀 </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">containerView.addSubview(button)</span><br><span class="line">boxView.insertSubview(label, at: <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>Custom loadView</em></strong></p>
-<p>Sometimes it’s convenient to have our <code>UIViewController &#39;s view</code> as a whole blur view, so that all things inside have a nice blur effect background</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OverlayController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> blurView = <span class="type">UIVisualEffectView</span>(effect: <span class="type">UIBlurEffect</span>(style: .dark))</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">loadView</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.loadView()</span><br><span class="line">    <span class="keyword">self</span>.view = blurView</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">    view.addSubview(button)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>By setting our <code>blurView</code> as <code>view</code> in <code>loadView</code>, we have no idea afterwards that <code>view</code> is actually a <code>UIVisualEffectView</code> 🙀 </p>
-<p><strong><em>Inheritance</em></strong></p>
-<p>What happen if we have another <code>UIViewController</code> that inherits from our <code>OverlayController</code>, all it knows about <code>view</code> is <code>UIView</code>, it does not know that it is a disguising <code>UIVisualEffectView</code> 🙀 </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClocksController</span>: <span class="title">OverlayController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">    view.addSubview(timeLabel)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong><em>Superclass type</em></strong></p>
-<p>Sometimes declare our things but with protocol or superclass types. Consumers of our API have no clue to know that it is <code>UIVisualEffectView</code> 🙀 </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> view: <span class="type">UIView</span> = <span class="type">UIVisualEffectView</span>(effect: <span class="type">UIBlurEffect</span>(style: .dark))</span><br></pre></td></tr></table></figure>
-
-<p>Here it appears to us that <code>view</code> is of type <code>UIView</code></p>
-<p><strong><em>Legacy codebase</em></strong></p>
-<p>Now imagine you ‘ve handled a legacy codebase to deal with. Perform finding and replacing all those things related to <code>UIVisualEffectView</code> is very hard task. Especially since we tend to write less tests for UI</p>
-<h3 id="Making-it-impossible-to-crash"><a href="#Making-it-impossible-to-crash" class="headerlink" title="Making it impossible to crash"></a>Making it impossible to crash</h3><p>I like concept like <a href="https://wiki.haskell.org/Phantom_type" target="_blank" rel="noopener">Phantom type</a> to limit interface. Here we’re not using type but a wrapper </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">BlurView</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> effectView: <span class="type">UIVisualEffectView</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(style: <span class="type">UIBlurEffectStyle</span>, backgroundColor: <span class="type">UIColor?</span> = <span class="literal">nil</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.effectView = <span class="type">UIVisualEffectView</span>(effect: <span class="type">UIBlurEffect</span>(style: style))</span><br><span class="line">    <span class="keyword">self</span>.effectView.backgroundColor = backgroundColor</span><br><span class="line">    <span class="keyword">super</span>.<span class="keyword">init</span>(frame: .zero)</span><br><span class="line">    insertSubview(effectView, at: <span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">required</span> <span class="keyword">init</span>?(coder aDecoder: <span class="type">NSCoder</span>) &#123;</span><br><span class="line">    <span class="built_in">fatalError</span>()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">addSubview</span><span class="params">(<span class="number">_</span> view: UIView)</span></span> &#123;</span><br><span class="line">    effectView.contentView.addSubview(view)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">layoutSubviews</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.layoutSubviews()</span><br><span class="line"></span><br><span class="line">    effectView.frame = bounds</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Here we override <code>addSubview</code> to always add views to <code>effectView.contentView</code>. In the <code>init</code> method, we need to call <code>insertSubview</code> instead because of our overriden <code>addSubview</code></p>
-<p>Now <code>BlurView</code> has a blur effect thanks to is underlying <code>UIVisualEffectView</code>, but expose only <code>addSubview</code> because of its <code>UIView</code> interface. This way it is impossible to cause crashes 😎 </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> blurView = <span class="type">BlurView</span>(style: .dark)</span><br><span class="line">blurView.addSubview(button(</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Understanding-suspend-function-in-Kotlin-Coroutine-in-Android"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Understanding-suspend-function-in-Kotlin-Coroutine-in-Android/">Understanding suspend function in Kotlin Coroutine in Android</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Understanding-suspend-function-in-Kotlin-Coroutine-in-Android/" class="article-date">
-	  <time datetime="2017-12-18T14:41:21.000Z" itemprop="datePublished">December 18, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/123" target="_blank" rel="noopener">#123</a></strong></p>
-<h2 id="Getting-to-know-Coroutine"><a href="#Getting-to-know-Coroutine" class="headerlink" title="Getting to know Coroutine"></a>Getting to know Coroutine</h2><p>From <a href="https://kotlinlang.org/docs/reference/coroutines.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/reference/coroutines.html</a></p>
-<blockquote>
-<p>To continue the analogy, await() can be a suspending function (hence also callable from within an async {} block) that suspends a coroutine until some computation is done and returns its result:</p>
-</blockquote>
-<p>From <a href="https://kotlinlang.org/docs/tutorials/coroutines-basic-jvm.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/tutorials/coroutines-basic-jvm.html</a></p>
-<blockquote>
-<p>We are using the delay() function that’s like Thread.sleep(), but better: it doesn’t block a thread, but only suspends the coroutine itself. The thread is returned to the pool while the coroutine is waiting, and when the waiting is done, the coroutine resumes on a free thread in the pool.</p>
-</blockquote>
-<blockquote>
-<p>await() can not be called outside a coroutine, because it needs to suspend until the computation finishes, and only coroutines can suspend in a non-blocking way</p>
-</blockquote>
-<h2 id="What-does-suspend-function-mean-in-Kotlin-Coroutine-🤔"><a href="#What-does-suspend-function-mean-in-Kotlin-Coroutine-🤔" class="headerlink" title="What does suspend function mean in Kotlin Coroutine 🤔"></a>What does suspend function mean in Kotlin Coroutine 🤔</h2><p><a href="https://stackoverflow.com/questions/47871868/what-does-suspend-function-mean-in-kotlin-coroutine" target="_blank" rel="noopener">https://stackoverflow.com/questions/47871868/what-does-suspend-function-mean-in-kotlin-coroutine</a></p>
-<p>I’m reading Kotlin Coroutine and know that it is based on suspend function. But what does suspend mean?</p>
-<p>Coroutine or function gets suspended?</p>
-<p>From <a href="https://kotlinlang.org/docs/reference/coroutines.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/reference/coroutines.html</a></p>
-<p>Basically, coroutines are computations that can be suspended without blocking a thread</p>
-<p>I heard people often say “suspend function”. But I think it is the coroutine who gets suspended because it is waiting for the function to finished? “suspend” usually means “cease operation”, in this case the coroutine is idle.</p>
-<p>Should we say the coroutine is suspended ?</p>
-<p>Which coroutine gets suspended?</p>
-<p>From <a href="https://kotlinlang.org/docs/reference/coroutines.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/reference/coroutines.html</a></p>
-<p>To continue the analogy, await() can be a suspending function (hence also callable from within an async {} block) that suspends a coroutine until some computation is done and returns its result:</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">async &#123; <span class="comment">// Here I call it the outer async coroutine</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// Here I call computation the inner coroutine</span></span><br><span class="line">    <span class="keyword">val</span> result = computation.await()</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>🤔 It says “that suspends a coroutine until some computation is done”, but coroutine is like a lightweight thread. So if the coroutine is suspended, how can the computation is done ?</p>
-<p>We see await is called on computation, so it might be async that returns Deferred, which means it can start another coroutine</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">computation</span><span class="params">()</span></span>: Deferred&lt;<span class="built_in">Boolean</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> async &#123;</span><br><span class="line">        <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>🤔 The quote say that suspends a coroutine. Does it mean suspend the outer async coroutine, or suspend the inner computation coroutine?</p>
-<p>Does suspend mean that while outer async coroutine is waiting (await) for the inner computation coroutine to finish, it (the outer async coroutine) idles (hence the name suspend) and returns thread to the thread pool, and when the child computation coroutine finishes, it (the outer async coroutine) wakes up, takes another thread from the pool and continues?</p>
-<p>The reason I mention the thread is because of <a href="https://kotlinlang.org/docs/tutorials/coroutines-basic-jvm.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/tutorials/coroutines-basic-jvm.html</a></p>
-<p>The thread is returned to the pool while the coroutine is waiting, and when the waiting is done, the coroutine resumes on a free thread in the pool</p>
-<h2 id="Understanding-async"><a href="#Understanding-async" class="headerlink" title="Understanding async"></a>Understanding async</h2><p>From <a href="https://github.com/Kotlin/kotlinx.coroutines/blob/master/coroutines-guide.md" target="_blank" rel="noopener">https://github.com/Kotlin/kotlinx.coroutines/blob/master/coroutines-guide.md</a></p>
-<blockquote>
-<p>Conceptually, async is just like launch. It starts a separate coroutine which is a light-weight thread that works concurrently with all the other coroutines. The difference is that launch returns a Job and does not carry any resulting value, while async returns a Deferred – a light-weight non-blocking future that represents a promise to provide a result later. You can use .await() on a deferred value to get its eventual result, but Deferred is also a Job, so you can cancel it if needed.</p>
-</blockquote>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        <span class="keyword">val</span> one = async &#123; doSomethingUsefulOne() &#125;</span><br><span class="line">        <span class="keyword">val</span> two = async &#123; doSomethingUsefulTwo() &#125;</span><br><span class="line">        println(<span class="string">"The answer is <span class="subst">$&#123;one.await() + two.await()&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Completed in <span class="variable">$time</span> ms"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>There is a laziness option to async using an optional start parameter with a value of CoroutineStart.LAZY. It starts coroutine only when its result is needed by some await or if a start function is invoked. Run the following example that differs from the previous one only by this option:</p>
-</blockquote>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        <span class="keyword">val</span> one = async(start = CoroutineStart.LAZY) &#123; doSomethingUsefulOne() &#125;</span><br><span class="line">        <span class="keyword">val</span> two = async(start = CoroutineStart.LAZY) &#123; doSomethingUsefulTwo() &#125;</span><br><span class="line">        println(<span class="string">"The answer is <span class="subst">$&#123;one.await() + two.await()&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Completed in <span class="variable">$time</span> ms"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="What-is-the-difference-between-launch-join-and-async-await-in-Kotlin-coroutines"><a href="#What-is-the-difference-between-launch-join-and-async-await-in-Kotlin-coroutines" class="headerlink" title="What is the difference between launch/join and async/await in Kotlin coroutines"></a>What is the difference between launch/join and async/await in Kotlin coroutines</h2><p><a href="https://stackoverflow.com/a/48079738/1418457" target="_blank" rel="noopener">https://stackoverflow.com/a/48079738/1418457</a></p>
-<p>I find this guide <a href="https://github.com/Kotlin/kotlinx.coroutines/blob/master/coroutines-guide.md" target="_blank" rel="noopener">https://github.com/Kotlin/kotlinx.coroutines/blob/master/coroutines-guide.md</a> to be useful. I will quote the essential parts</p>
-<p>🦄 coroutine</p>
-<p>Essentially, coroutines are light-weight threads.</p>
-<p>So you can think of coroutine as something that manages thread in a very efficient way.</p>
-<p>🐤 launch</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    launch &#123; <span class="comment">// launch new coroutine in background and continue</span></span><br><span class="line">        delay(<span class="number">1000L</span>) <span class="comment">// non-blocking delay for 1 second (default time unit is ms)</span></span><br><span class="line">        println(<span class="string">"World!"</span>) <span class="comment">// print after delay</span></span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Hello,"</span>) <span class="comment">// main thread continues while coroutine is delayed</span></span><br><span class="line">    Thread.sleep(<span class="number">2000L</span>) <span class="comment">// block main thread for 2 seconds to keep JVM alive</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>So launch starts a background thread, does something, and returns a token immediately as Job. You can call join on this Job to block until this launch thread completes</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> job = launch &#123; <span class="comment">// launch new coroutine and keep a reference to its Job</span></span><br><span class="line">        delay(<span class="number">1000L</span>)</span><br><span class="line">        println(<span class="string">"World!"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Hello,"</span>)</span><br><span class="line">    job.join() <span class="comment">// wait until child coroutine completes</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>🦆 async</p>
-<p>Conceptually, async is just like launch. It starts a separate coroutine which is a light-weight thread that works concurrently with all the other coroutines. The difference is that launch returns a Job and does not carry any resulting value, while async returns a Deferred – a light-weight non-blocking future that represents a promise to provide a result later.</p>
-<p>So async starts a background thread, does something, and returns a token immediately as Deferred.</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        <span class="keyword">val</span> one = async &#123; doSomethingUsefulOne() &#125;</span><br><span class="line">        <span class="keyword">val</span> two = async &#123; doSomethingUsefulTwo() &#125;</span><br><span class="line">        println(<span class="string">"The answer is <span class="subst">$&#123;one.await() + two.await()&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Completed in <span class="variable">$time</span> ms"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>You can use .await() on a deferred value to get its eventual result, but Deferred is also a Job, so you can cancel it if needed.</p>
-<p>So Deferred is actually a Job. See <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/-deferred/index.html" target="_blank" rel="noopener">https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/-deferred/index.html</a></p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Deferred</span>&lt;<span class="type">out T</span>&gt; : <span class="type">Job </span></span>(source)</span><br></pre></td></tr></table></figure>
-
-<p>🦋 async is eager by default</p>
-<p>There is a laziness option to async using an optional start parameter with a value of CoroutineStart.LAZY. It starts coroutine only when its result is needed by some await or if a start function is invoked.</p>
-<h2 id="Understand-Kotlin-Coroutines-on-Android-Google-I-O’19"><a href="#Understand-Kotlin-Coroutines-on-Android-Google-I-O’19" class="headerlink" title="Understand Kotlin Coroutines on Android (Google I/O’19)"></a>Understand Kotlin Coroutines on Android (Google I/O’19)</h2><p><a href="https://www.youtube.com/watch?v=BOHK_w09pVA" target="_blank" rel="noopener">https://www.youtube.com/watch?v=BOHK_w09pVA</a></p>
-<img width="1176" alt="cor" src="https://user-images.githubusercontent.com/2284279/57587873-6836f400-750c-11e9-9944-2c00b8d83a87.png">
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Hashable-and-Set-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Hashable-and-Set-in-Swift/">Hashable and Set in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Hashable-and-Set-in-Swift/" class="article-date">
-	  <time datetime="2017-12-13T14:10:40.000Z" itemprop="datePublished">December 13, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/122" target="_blank" rel="noopener">#122</a></strong></p>
-<p>From <a href="https://developer.apple.com/documentation/swift/set" target="_blank" rel="noopener">Set</a></p>
-<blockquote>
-<p>You can create a set with any element type that conforms to the Hashable protocol. By default, most types in the standard library are hashable, including strings, numeric and Boolean types, enumeration cases without associated values, and even sets themselves.</p>
-</blockquote>
-<p>From <a href="https://developer.apple.com/documentation/swift/hashable" target="_blank" rel="noopener">Hashable</a></p>
-<blockquote>
-<p>The Hashable protocol inherits from the Equatable protocol, so you must also add an equal-to operator (==) function for your custom type.</p>
-</blockquote>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Hashable</span> : <span class="title">Equatable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The hash value.</span></span><br><span class="line">    <span class="comment">///</span></span><br><span class="line">    <span class="comment">/// Hash values are not guaranteed to be equal across different executions of</span></span><br><span class="line">    <span class="comment">/// your program. Do not save hash values to use during a future execution.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> hashValue: <span class="type">Int</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li><a href="https://useyourloaf.com/blog/swift-hashable/" target="_blank" rel="noopener">https://useyourloaf.com/blog/swift-hashable/</a></li>
-<li><a href="http://kelan.io/2015/swift-hashable-for-sets/" target="_blank" rel="noopener">http://kelan.io/2015/swift-hashable-for-sets/</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Generic-declaration-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Generic-declaration-in-Swift/">Generic declaration in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Generic-declaration-in-Swift/" class="article-date">
-	  <time datetime="2017-12-13T11:53:23.000Z" itemprop="datePublished">December 13, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/121" target="_blank" rel="noopener">#121</a></strong></p>
-<p>These are different</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DiffService</span>&lt;<span class="title">T</span>: <span class="title">MKAnnotation</span> &amp; <span class="title">Equatable</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DiffService</span>&lt;<span class="title">T</span>: <span class="title">MKAnnotation</span>, <span class="title">Equatable</span>&gt;</span></span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-A-taste-of-MVVM-and-Reactive-paradigm"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/A-taste-of-MVVM-and-Reactive-paradigm/">A taste of MVVM and Reactive paradigm</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/A-taste-of-MVVM-and-Reactive-paradigm/" class="article-date">
-	  <time datetime="2017-12-07T16:41:32.000Z" itemprop="datePublished">December 7, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/120" target="_blank" rel="noopener">#120</a></strong></p>
-<p>Original post <a href="https://medium.com/flawless-app-stories/a-taste-of-mvvm-and-reactive-paradigm-5288a819cca1" target="_blank" rel="noopener">https://medium.com/flawless-app-stories/a-taste-of-mvvm-and-reactive-paradigm-5288a819cca1</a></p>
-<hr>
-<h2 id="A-taste-of-MVVM-and-Reactive-paradigm"><a href="#A-taste-of-MVVM-and-Reactive-paradigm" class="headerlink" title="A taste of MVVM and Reactive paradigm"></a>A taste of MVVM and Reactive paradigm</h2><p>I like Swift, like many other object oriented programming languages. Swift allows you to represent real world objects that have some characteristics and can perform some action.</p>
-<p>I tend to think of an app as a world where each object is a person. They work and communicate. If a person can’t do the work alone, he needs to ask for help. Take a project, for example, if the manager has to do all of the work by himself, he will go crazy. So there is a need to organise and delegate tasks, and for many persons to collaborate on the project: designer, tester, scrum master, developer. After the task is done, the manager needs to be informed.</p>
-<p>This may not a good example. But at least you get the importance of communication and delegation in OOP. I was very intrigued by the word “architecture” when I started iOS programming. But after doing for a while, it all comes down to identifying and splitting responsibilities. This article tells a bit about MVC and simple <a href="https://refactoring.com/catalog/extractClass.html" target="_blank" rel="noopener">Extract Class</a>refactoring to MVVM, and how to go further with Rx. You are free to create your own architecture, but whatever you do, consistence is key as to not confuse or surprise your teammates.</p>
-<h2 id="Model-View-Controller"><a href="#Model-View-Controller" class="headerlink" title="Model View Controller"></a>Model View Controller</h2><p>Take a look at the architecture you know the best, MVC, short for Model View Controller. You always get one when you create a new iOS project. View is where you present your data, using UIView, UIButton, UILabel. Model is just a fancy word for data. It can be your entity, data from networking, object from database, or from cache. The controller is the thing that mediates between the model and the view.</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*ETgFfqjBaD8SdQBd.png" alt></p>
-<h2 id="UIViewController-is-the-center-of-the-universe"><a href="#UIViewController-is-the-center-of-the-universe" class="headerlink" title="UIViewController is the center of the universe"></a>UIViewController is the center of the universe</h2><p>The problem with ViewController is that it tends to be huge. Apple puts it as the center of the universe, where it has lots of properties and responsibilities. There are many things that you can only do with a UIViewController. Things like interacting with storyboard, managing the view, configuring view rotation, state restoration. UIViewController is designed with lots of hooks for you to override and customize.</p>
-<p>Take a look at the many sections in UIViewController <a href="https://developer.apple.com/documentation/uikit/uiviewcontroller" target="_blank" rel="noopener">documentation</a>, you can’t do the following without a UIViewController.</p>
-<pre><code>func viewDidLoad()
-var preferredStatusBarStyle: UIStatusBarStyle { get }
-UITableViewDataSource
-var presentationController: UIPresentationController? { get }
-func childViewControllerForScreenEdgesDeferringSystemGestures() -&gt; UIViewController?
-func didMove(toParentViewController parent: UIViewController?)
-var systemMinimumLayoutMargins: NSDirectionalEdgeInsets
-var edgesForExtendedLayout: UIRectEdge
-var previewActionItems: [UIPreviewActionItem]
-var navigationItem: UINavigationItem
-var shouldAutorotate: Bool</code></pre><p>As your app grows, we need to add more code for other logic. Such as networking, data source, handling multiple delegates, presenting child view controllers. We can, of course, put all the stuff on the view controller, but that results in big view controller and improvement in your scrolling skill. This is where you lose the big picture of responsibilities because all stuff stays in the mega view controller. You tend to introduce code duplication and bugs are hard to fix because they are all over the places.</p>
-<p>The same goes with Page in Windows Phone or Activity in Android. They are intended for a screen or partial screen of functionality. There are certain actions that can only be done through them like <a href="https://msdn.microsoft.com/en-us/library/system.windows.controls.page.onnavigatedto%28v=vs.105%29.aspx" target="_blank" rel="noopener">Page.OnNavigatedTo</a>, <a href="https://developer.android.com/guide/components/activities/activity-lifecycle#oncreate" target="_blank" rel="noopener">Activity.onCreate</a>.</p>
-<p><img src="https://cdn-images-1.medium.com/max/3000/0*FegPo70Zxmid6brv.png" alt></p>
-<h2 id="The-buzzwords-of-architecture"><a href="#The-buzzwords-of-architecture" class="headerlink" title="The buzzwords of architecture"></a>The buzzwords of architecture</h2><p>What do you do when the ViewController is doing a lot? You offset the work to other components. By the way, if you want another object to do the user input handling, you can use the Presenter. If the Presenter is doing too much, then it can offset the business logic to the Interactor. Also, there are more buzzwords that can be used.</p>
-<pre><code>let buzzWords = [
-  &quot;Model&quot;, &quot;View&quot;, &quot;Controller&quot;, &quot;Entity&quot;, &quot;Router&quot;, &quot;Clean&quot;, &quot;Reactive&quot;, 
-  &quot;Presenter&quot;, &quot;Interactor&quot;, &quot;Megatron&quot;, &quot;Coordinator&quot;, &quot;Flow&quot;, &quot;Manager&quot;
-]
-let architecture = buzzWords.shuffled().takeRandom()
-let acronym = architecture.makeAcronym()</code></pre><p><img src="https://cdn-images-1.medium.com/max/2000/0*N785wG7eDrflu_OT.jpeg" alt></p>
-<p>After all the buzzwords are assembled, we get an architecture. There are <a href="https://github.com/onmyway133/fantastic-ios-architecture" target="_blank" rel="noopener">many</a> of them, ranging from simple extract class refactoring, embracing MVC or taking inspiration from Clean Code, Rx, EventBus or Redux. The choice depends on project, and some teams prefer one architecture over the other.</p>
-<h2 id="The-pragmatic-programmer"><a href="#The-pragmatic-programmer" class="headerlink" title="The pragmatic programmer"></a>The pragmatic programmer</h2><p>People have different opinion about what is good architecture. For me, it is about clear separation of concern, good communication pattern and being comfortable to use. Each component in the architecture should be identifiable and have a specific role. The communication must be clear so that we know which object is talking to each other. This together with good dependency injection will make testing easier.</p>
-<p>Things that sound good in theory may not work well in practice. Separated domain objects are cool, protocol extensions are cool, multiple layers of abstraction are cool. But too many of them can be a problem.</p>
-<p>If you read enough about design patterns, you know they all come down to these simple principles:</p>
-<ul>
-<li><p>Encapsulate what varies: identify the aspects of your application that vary and separate them from what stays the same.</p>
-</li>
-<li><p>Program to an interface, not an implementation</p>
-</li>
-<li><p>Prefer composition over inheritance</p>
-</li>
-</ul>
-<p>If there’s one thing we should master, it’s <strong>composition</strong>. The key is to identify responsibility and compose them in a reasonable and consistent way. Consult with your team mates on what suits the most. Always writing code with the thought that you will also be the future maintainer. Then you will write it differently.</p>
-<h2 id="Don’t-fight-against-the-system"><a href="#Don’t-fight-against-the-system" class="headerlink" title="Don’t fight against the system"></a>Don’t fight against the system</h2><p>Some architectures introduce completely new paradigm. Some of them are cumbersome that there people write scripts to generate boiler plate code. It’s good that there are many approaches to a problem. But for me sometimes it feels they are fighting the system. Some tasks are made easy while some trivial tasks become extremely hard. We should not constrain ourselves to one architecture simply because it are trendy. Be pragmatic, not dogmatic.</p>
-<p>In iOS, we should embrace MVC. UIViewController is not meant for a full screen of content. They can contain and be composed to split the functionalities. We can use <a href="http://khanlou.com/2015/10/coordinators-redux/" target="_blank" rel="noopener">Coordinator</a> and <a href="https://github.com/onmyway133/blog/issues/106" target="_blank" rel="noopener">FlowController</a> to manage dependencies and handle flow. <a href="https://www.swiftbysundell.com/posts/custom-container-view-controllers-in-swift" target="_blank" rel="noopener">Container</a>for state transition, embedded logic <a href="https://www.swiftbysundell.com/posts/logic-controllers-in-swift" target="_blank" rel="noopener">controller</a>, <a href="https://davedelong.com/blog/2017/11/06/a-better-mvc-part-3-fixing-massive-view-controller/" target="_blank" rel="noopener">part</a> of full screen content. This embracing ViewController approach play nicely with MVC in iOS and is my preferable way of doing.</p>
-<h2 id="Model-View-ViewModel"><a href="#Model-View-ViewModel" class="headerlink" title="Model View ViewModel"></a>Model View ViewModel</h2><p><img src="https://cdn-images-1.medium.com/max/2000/0*oRX6izHOCsHdhDoW.png" alt></p>
-<p>Another good-enough way is to offload some of the tasks to another object, let’s call it ViewModel. The name does not matter, you can name it Reactor, Maestro, Dinosaur. The important thing is your team get an agreed name. ViewModel takes some tasks from the ViewController and reports when it’s done. There are <a href="https://www.objc.io/issues/7-foundation/communication-patterns/" target="_blank" rel="noopener">communication patterns</a> in Cocoa Touch such as delegate, closures to use.</p>
-<p>ViewModel is self-contained, has no reference to UIKit, and has just input and output. We can put <a href="https://ashfurrow.com/blog/mvvm-is-exceptionally-ok/" target="_blank" rel="noopener">a lot of things</a> into ViewModel like calculation, formatting, networking, business logic. Also, if you don’t like the ViewModel to become massive, you surely need to create some dedicated objects. ViewModel is the first step to get a slim ViewController.</p>
-<h2 id="Synchronously"><a href="#Synchronously" class="headerlink" title="Synchronously"></a>Synchronously</h2><p>Below is a very simple ViewModel, which formats data based on User model. This is done synchronously.</p>
-<pre><code>class ProfileController: UIViewController {
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    let viewModel = ViewModel(user: user)
-    nameLabel.text = viewModel.name
-    birthdayLabel.text = viewModel.birthdayString
-    salaryLabel.text = viewModel.salary
-    piLabel.text = viewModel.millionthDigitOfPi
-  }
-}</code></pre><h2 id="Asynchronously"><a href="#Asynchronously" class="headerlink" title="Asynchronously"></a>Asynchronously</h2><p>We work with asynchronous API all the time. What if we want to show the user’s number of Facebook friends? For this to work we need to call Facebook API and this operation takes time. The ViewModel can report back via closure.</p>
-<pre><code>viewModel.getFacebookFriends { friends in
-  self.friendCountLabel.text = &quot;\(friends.count)&quot;
-}</code></pre><p>Internally, the ViewModel may offload the task to a dedicated Facebook API client object.</p>
-<pre><code>class ViewModel {
-  func getFacebookFriends(completion: [User] -&gt; Void) {
-    let client = APIClient()
-    client.getFacebookFriends(for: user) { friends in
-      DispatchQueue.main.async {
-        completion(friends)
-      }
-    }
-  }
-}</code></pre><h2 id="Jetpack-in-Android"><a href="#Jetpack-in-Android" class="headerlink" title="Jetpack in Android"></a>Jetpack in Android</h2><p><img src="https://cdn-images-1.medium.com/max/2000/0*ORC4mswaenJBZOwP.png" alt></p>
-<p>Google introduced Android Architecture Component, now part of Jetpack, at Google IO 2017. It has ViewModel and LiveData, which is also a type of MVVM applied in Android. ViewModel survives through configuration changes, and notify results in terms of LiveData for Activity to consume.</p>
-<pre><code>class MyActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-
-        val model = ViewModelProviders.of(this).get(MyViewModel::class.java)
-        model.getUsers().observe(this, { users -&gt;
-            // update UI
-        })
-    }
-}</code></pre><p>This is one of the reason I like ViewModel. If we follow ViewModel like this, then code structures between iOS and Android become similar. There should be no need for some random Javascript cross platform solutions. You learn the concept once, and apply it on both iOS and Android. I learn ViewModel, RxSwift on iOS and feel right at home when I work with RxJava and RxBinding on Android. The Kickstarter project also proves that this works well in their <a href="https://github.com/kickstarter/ios-oss" target="_blank" rel="noopener">iOS</a> and <a href="https://github.com/kickstarter/android-oss" target="_blank" rel="noopener">Android</a> apps.</p>
-<h2 id="Binding"><a href="#Binding" class="headerlink" title="Binding"></a>Binding</h2><p>To encapsulate the closure, we can create a class called Binding, which can notify one or multiple listeners. It takes advantage of didSet, and the observable property becomes clear.</p>
-<pre><code>class Binding&lt;T&gt; {
-  var value: T {
-    didSet {
-      listener?(value)
-    }
-  }
-  private var listener: ((T) -&gt; Void)?
-  init(value: T) {
-    self.value = value
-  }
-  func bind(_ closure: @escaping (T) -&gt; Void) {
-    closure(value)
-    listener = closure
-  }
-}</code></pre><p>Here is how to use it inside ViewModel:</p>
-<pre><code>class ViewModel {
-  let friends = Binding&lt;[User]&gt;(value: [])
-  init() {
-    getFacebookFriends {
-      friends.value = $0
-    }
-  }
-  func getFacebookFriends(completion: ([User]) -&gt; Void) {
-      // Do the work
-  }
-}</code></pre><p>When ever friends are fetched, or changed, the ViewController is updated accordingly. This is called reaction to changes.</p>
-<pre><code>override func viewDidLoad() {
-  super.viewDidLoad()
-  viewModel.friends.bind { friends in
-    self.friendsCountLabel.text = &quot;\(friends.count)&quot;
-  }
-}</code></pre><p>You often see MVVM introduction with reactive frameworks, and it is for a reason. They offer many chaining operators and make reactive programming easier and more declarative.</p>
-<h2 id="RxSwift"><a href="#RxSwift" class="headerlink" title="RxSwift"></a>RxSwift</h2><p>Perhaps the most common reactive framework in Swift is <a href="https://github.com/ReactiveX/RxSwift" target="_blank" rel="noopener">RxSwift</a>. The thing I like about it is that it follows <a href="http://reactivex.io/" target="_blank" rel="noopener">ReactiveX</a> pattern. So you will feel more familiar if you already use <a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="noopener">RxJava</a>, <a href="https://github.com/ReactiveX/rxjs" target="_blank" rel="noopener">RxJs</a>, or <a href="https://github.com/ReactiveX/RxKotlin" target="_blank" rel="noopener">RxKotlin</a>.</p>
-<h2 id="Observable"><a href="#Observable" class="headerlink" title="Observable"></a>Observable</h2><p><img src="https://cdn-images-1.medium.com/max/2000/0*GXJMWsuz8LvgkEXb.png" alt></p>
-<p>RxSwift unifies sync and async operations through Observable. This is how you make one.</p>
-<pre><code>class ViewModel {
-  let friends: Observable&lt;[User]&gt;
-  init() {
-    let client = APIClient()
-    friends = Observable&lt;[User]&gt;.create({ subscriber in
-      client.getFacebookFriends(completion: { friends in
-        subscriber.onNext(friends)
-        subscriber.onCompleted()
-      })
-      return Disposables.create()
-    })
-  }
-}</code></pre><p>The power of RxSwift lies in its numerous operators, which help you chain Observables. Here you can call 2 network requests, wait for both of them to finish, then sum up the friends. This is very streamlined and saves you lots of time. Here you can just subscribe to the Observable, it will be triggered when the request completes:</p>
-<pre><code>override func viewDidLoad() {
-  super.viewDidLoad()
-  viewModel.friends.subscribe(onNext: { friends in
-    self.friendsCountLabel.text = &quot;\(friends.count)&quot;
-  })
-}</code></pre><h2 id="Input-and-output"><a href="#Input-and-output" class="headerlink" title="Input and output"></a>Input and output</h2><p>One thing that is nice about ViewModel and Rx is that we can separate input and output using Observable, which gives a clear interface. Read more at <a href="https://github.com/onmyway133/blog/issues/87" target="_blank" rel="noopener">Learning from Open Source: Input and output container</a>.</p>
-<p>Below it is clear that we fetch is an input, and friends is the viable output.</p>
-<pre><code>class ViewModel {
-  class Input {
-    let fetch = PublishSubject&lt;()&gt;()
-  }
-  class Output {
-    let friends: Driver&lt;[User]&gt;
-  }
-  let apiClient: APIClient
-  let input: Input
-  let output: Output
-  init(apiClient: APIClient) {
-    self.apiClient = apiClient
-    // Connect input and output
-  }
-}
-
-class ProfileViewController: BaseViewController&lt;ProfileView&gt; {
-  let viewModel: ProfileViewModelType
-  init(viewModel: ProfileViewModelType) {
-    self.viewModel = viewModel
-  }
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    // Input
-    viewModel.input.fetch.onNext(())
-    // Output
-    viewModel.output.friends.subscribe(onNext: { friends in
-      self.friendsCountLabel.text = &quot;\(friends.count)&quot;
-    })
-  }
-}</code></pre><h2 id="How-reactive-works"><a href="#How-reactive-works" class="headerlink" title="How reactive works"></a>How reactive works</h2><p>If you feel like Rx, it’s good to get an understanding of them after using some frameworks for a while. There are some concepts like Signal, SignalProducer, Observable, Promise, Future, Task, Job, Launcher, Async and some people can have a very distinction about them. Here I simply call it Signal, which is something that can signal values.</p>
-<h2 id="Monad"><a href="#Monad" class="headerlink" title="Monad"></a>Monad</h2><p>Signal and its <a href="https://en.wikipedia.org/wiki/Result_type" target="_blank" rel="noopener">Result</a> are just <a href="https://en.wikipedia.org/wiki/Monad_%28functional_programming%29" target="_blank" rel="noopener">monads</a>, which are thing that can be mapped and chained.</p>
-<p>Signal makes use of deferred execution callback closures. It can be pushed or pulled. Which is just how the Signal updates its value and the order the callbacks are called.</p>
-<p>Execution callback closure means that we pass a function to another function. And the passed in function will get called when appropriated.</p>
-<h2 id="Sync-vs-Async"><a href="#Sync-vs-Async" class="headerlink" title="Sync vs Async"></a>Sync vs Async</h2><p>Monad can be in either sync or async mode. Sync is easier to understand, but async is somewhat you’re already familiar and used in practice.</p>
-<p>Basically,</p>
-<ul>
-<li><p>Sync: you get the returned value right away via return</p>
-</li>
-<li><p>Async: you get the returned value via callback block</p>
-</li>
-</ul>
-<p>Here is an example of simple sync and async free functions:</p>
-<pre><code>// Sync
-func sum(a: Int, b: Int) -&gt; Int {
-    return a + b
-}
-
-// Async
-func sum(a: Int, b: Int, completion: Int -&gt; Void) {
-    // Assumed it is a very long task to get the result
-    let result = a + b
-
-    completion(result)
-}</code></pre><p>And how sync and async apply to Result type. Notice the async version, we get the transformed value in a completion closure instead of immediate return from function.</p>
-<pre><code>enum Result&lt;T&gt; {
-  case value(value: T)
-  case failure(error: Error)
-
-  // Sync
-  public func map&lt;U&gt;(f: (T) -&gt; U) -&gt; Result&lt;U&gt; {
-    switch self {
-    case let .value(value):
-      return .value(value: f(value))
-    case let .failure(error):
-      return .failure(error: error)
-    }
-  }
-
-  // Async
-  public func map&lt;U&gt;(f: @escaping ((T), (U) -&gt; Void) -&gt; Void) -&gt; (((Result&lt;U&gt;) -&gt; Void) -&gt; Void) {
-    return { g in   // g: Result&lt;U&gt; -&gt; Void
-      switch self {
-      case let .value(value):
-        f(value) { transformedValue in  // transformedValue: U
-          g(.value(value: transformedValue))
-        }
-      case let .failure(error):
-        g(.failure(error: error))
-      }
-    }
-  }
-}</code></pre><h2 id="Push-Signal"><a href="#Push-Signal" class="headerlink" title="Push Signal"></a>Push Signal</h2><p>Given a chained signals like this:</p>
-<p>A -(map)-&gt; B -(flatMap)-&gt; C -(flatMap)-&gt; D -(subscribe)</p>
-<p>Push Signal, means that when the source signal A is sent an event, it propagates that event via callbacks. PushSignal is similar to PublishSubject in RxSwift.</p>
-<ul>
-<li><p>Triggered by sending event to the source signal.</p>
-</li>
-<li><p>We must keep A as it keeps the others around</p>
-</li>
-<li><p>We subscribe the last D</p>
-</li>
-<li><p>We send event to the first A</p>
-</li>
-<li><p>A ‘s callback gets called, it it in turn calls callback of B with the result of A ‘s map, then B ‘s callback calls C ‘s callback with the result of B‘s flatMap, and so on.</p>
-</li>
-</ul>
-<p>It is similar to <a href="https://promisesaplus.com/" target="_blank" rel="noopener">Promise A+</a>, you can see my Swift implementation of Promise A+ <a href="https://github.com/onmyway133/Then/blob/master/Pod/Classes/Promise.swift" target="_blank" rel="noopener">in my Then framework</a>. For now, here is the Swift 4 implementation of a simple PushSignal.</p>
-<pre><code>public final class PushSignal&lt;T&gt; {
-  var event: Result&lt;T&gt;?
-  var callbacks: [(Result&lt;T&gt;) -&gt; Void] = []
-  let lockQueue = DispatchQueue(label: &quot;Serial Queue&quot;)
-
-  func notify() {
-    guard let event = event else {
-      return
-    }
-
-    callbacks.forEach { callback in
-      callback(event)
-    }
-  }
-
-  func update(event: Result&lt;T&gt;) {
-    lockQueue.sync {
-      self.event = event
-    }
-
-    notify()
-  }
-
-  public func subscribe(f: @escaping (Result&lt;T&gt;) -&gt; Void) -&gt; Signal&lt;T&gt; {
-    // Callback
-    if let event = event {
-      f(event)
-    }
-
-    callbacks.append(f)
-
-    return self
-  }
-
-  public func map&lt;U&gt;(f: @escaping (T) -&gt; U) -&gt; Signal&lt;U&gt; {
-    let signal = Signal&lt;U&gt;()
-
-    _ = subscribe { event in
-      signal.update(event: event.map(f: f))
-    }
-
-    return signal
-  }
-}</code></pre><p>Below is how a PushSignal is used to transform a chain from string to its length, you should see 4, the length of the string “test” printed.</p>
-<pre><code>let signal = PushSignal&lt;String&gt;()
-
-_ = signal.map { value in
-  return value.count
-}.subscribe { event in
-  if case let .value(value) = event {
-    print(value)
-  } else {
-    print(&quot;error&quot;)
-  }
-}
-
-signal.update(event: .value(value: &quot;test&quot;))</code></pre><h2 id="Pull-Signal"><a href="#Pull-Signal" class="headerlink" title="Pull Signal"></a>Pull Signal</h2><p>Given a chained signals like this:</p>
-<p>A -(map)-&gt; B -(flatMap)-&gt; C -(flatMap)-&gt; D -(subscribe)</p>
-<p>Pull Signal, sometimes called Future, means when we subscribe to the final signal D, it causes the previous signals to action:</p>
-<ul>
-<li><p>Triggered by subscribing to the final signal D;</p>
-</li>
-<li><p>We must keep D as it keeps the others around;</p>
-</li>
-<li><p>We subscribe the last D;</p>
-</li>
-<li><p>D ‘s operation runs, and it cause C ‘s operation to runs, … then A ‘s operation runs. It is in A that the task is performed (like fetching network, retrieving database, file access, heavy computation, …) to get the result, and A ‘s completion gets called. Then A’s completion calls B ‘s completion with the result mapped by B ‘s map, … all the way to the subscriber ‘s completion block.</p>
-</li>
-</ul>
-<p>Here is a Swift 4 implementation of PullSignal. PullSignal is similar to Observablein RxSwift and SignalProducer in ReactiveSwift.</p>
-<pre><code>public struct PullSignal&lt;T&gt; {
-  let operation: ((Result&lt;T&gt;) -&gt; Void) -&gt; Void
-
-  public init(operation: @escaping ((Result&lt;T&gt;) -&gt; Void) -&gt; Void) {
-    self.operation = operation
-  }
-
-  public func start(completion: (Result&lt;T&gt;) -&gt; Void) {
-    operation() { event in
-      completion(event)
-    }
-  }
-
-  public func map&lt;U&gt;(f: @escaping (T) -&gt; U) -&gt; PullSignal&lt;U&gt; {
-    return PullSignal&lt;U&gt; { completion in
-      self.start { event in
-        completion(event.map(f: f))
-      }
-    }
-  }
-}</code></pre><p>The chain is inactive until you call start at the last signal in the chain, which triggers operation flow all over to the first signal. Run this snippet and you should see 4, the length of the string “test” printed on the console.</p>
-<pre><code>let signal = PullSignal&lt;String&gt; { completion in
-  // There should be some long running operation here
-  completion(Result.value(value: &quot;test&quot;))
-}
-
-signal.map { value in
-  value.count
-}.start { event in
-  if case let .value(value) = event {
-    print(value)
-  } else {
-    print(&quot;error&quot;)
-  }
-}</code></pre><p>I hope those snippets are simple enough to help you understand how signal works under the hood, and how to differentiate hot and cold signals. To get a fully working Signal framework, you need to implement more operations. Such as retry, rebounce, throttle, queue, flatten, filter, delay, combine and add support for UIKit like RxCocoa does. Find out how to implement in my <a href="https://github.com/onmyway133/archives/tree/master/Signal/Pod/Classes" target="_blank" rel="noopener">Signal</a> repo.</p>
-<h2 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h2><p>Architecture is a very opinionated topic. Hopefully this article gives you some ideas to add into your decision points. MVC is dominant in iOS, MVVM is a good friend and Rx is a powerful tool. Here are some more interesting readings:</p>
-<ul>
-<li><a href="https://ashfurrow.com/blog/mvvm-is-exceptionally-ok/" target="_blank" rel="noopener">MVVM is Exceptionally OK</a></li>
-<li><a href="https://academy.realm.io/posts/krzysztof-zablocki-mDevCamp-ios-architecture-mvvm-mvc-viper/" target="_blank" rel="noopener">Good iOS Application Architecture: MVVM vs. MVC vs. VIPER</a></li>
-<li><a href="https://www.youtube.com/watch?v=YWVzCd5FYbs" target="_blank" rel="noopener">A Better MVC</a></li>
-<li><a href="https://blog.uptech.team/taming-great-complexity-mvvm-coordinators-and-rxswift-8daf8a76e7fd" target="_blank" rel="noopener">Taming Great Complexity: MVVM, Coordinators and RxSwift</a></li>
-<li><a href="http://blogs.microsoft.co.il/bnaya/2010/03/13/rx-for-beginners-part-9-hot-vs-cold-observable/" target="_blank" rel="noopener">Rx — for beginners (part 9): Hot Vs. Cold observable</a></li>
-<li><a href="https://github.com/ReactiveX/RxSwift/blob/master/Documentation/HotAndColdObservables.md" target="_blank" rel="noopener">Hot and Cold Observables</a></li>
-<li><a href="https://stackoverflow.com/questions/17082255/when-to-use-ienumerable-vs-iobservable" target="_blank" rel="noopener">When to use IEnumerable vs IObservable?</a></li>
-<li><a href="https://www.youtube.com/watch?v=AcDaWe3S75c" target="_blank" rel="noopener">Functional Reactive Programming without Black Magic</a></li>
-<li><a href="https://www.youtube.com/watch?v=mbd6g7NfR-8" target="_blank" rel="noopener">Swift Sync and Async Error Handling</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/9/">Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/11/">Next</a>
+    <a class="extend prev" rel="prev" href="/page/9/">Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/11/">Next</a>
   </nav>
 
 </section>
@@ -2554,6 +2202,18 @@ signal.map { value in
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/Links-for-accessibility/">Links for accessibility</a></h6>
+              <span>November 12, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/Links-for-Xcode/">Links for Xcode</a></h6>
               <span>November 12, 2019</span>
             </div>
@@ -2608,18 +2268,6 @@ signal.map { value in
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-edit-hexo-theme-hiero/">How to edit hexo theme hiero</a></h6>
-              <span>November 6, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2632,7 +2280,7 @@ signal.map { value in
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">105</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">148</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">5</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/accessibility/">accessibility</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">125</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">57</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">173</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2642,7 +2290,7 @@ signal.map { value in
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/android/" style="font-size: 18.13px;">android</a> <a href="/tags/ci/" style="font-size: 10px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.63px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 10px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/dart/" style="font-size: 11.25px;">dart</a> <a href="/tags/design/" style="font-size: 10.63px;">design</a> <a href="/tags/electron/" style="font-size: 11.25px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.63px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.25px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/iOS/" style="font-size: 19.38px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.5px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.88px;">kotlin</a> <a href="/tags/layout/" style="font-size: 10px;">layout</a> <a href="/tags/life/" style="font-size: 11.25px;">life</a> <a href="/tags/links/" style="font-size: 15px;">links</a> <a href="/tags/macOS/" style="font-size: 18.75px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.63px;">machine learning</a> <a href="/tags/node/" style="font-size: 14.38px;">node</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 13.13px;">react native</a> <a href="/tags/script/" style="font-size: 10.63px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.25px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.63px;">tech</a> <a href="/tags/testing/" style="font-size: 12.5px;">testing</a> <a href="/tags/watchOS/" style="font-size: 13.75px;">watchOS</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/xcode/" style="font-size: 11.88px;">xcode</a>
+      <a href="/tags/accessibility/" style="font-size: 10px;">accessibility</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 18px;">android</a> <a href="/tags/apple-script/" style="font-size: 10px;">apple script</a> <a href="/tags/ci/" style="font-size: 10.67px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.67px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.33px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10.67px;">css</a> <a href="/tags/dart/" style="font-size: 12px;">dart</a> <a href="/tags/database/" style="font-size: 10.67px;">database</a> <a href="/tags/design/" style="font-size: 10.67px;">design</a> <a href="/tags/electron/" style="font-size: 12px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.67px;">firebase</a> <a href="/tags/flutter/" style="font-size: 12px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.33px;">github</a> <a href="/tags/iOS/" style="font-size: 19.33px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.33px;">kotlin</a> <a href="/tags/layout/" style="font-size: 10.67px;">layout</a> <a href="/tags/life/" style="font-size: 14.67px;">life</a> <a href="/tags/links/" style="font-size: 15.33px;">links</a> <a href="/tags/macOS/" style="font-size: 18.67px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.67px;">machine learning</a> <a href="/tags/node/" style="font-size: 14px;">node</a> <a href="/tags/objc/" style="font-size: 10.67px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 13.33px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/script/" style="font-size: 10.67px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.67px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 16px;">tech</a> <a href="/tags/testing/" style="font-size: 12.67px;">testing</a> <a href="/tags/voip/" style="font-size: 12px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.33px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.67px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.67px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 12.67px;">xcode</a>
     </div>
   </div>
 
@@ -2652,7 +2300,7 @@ signal.map { value in
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">29</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 

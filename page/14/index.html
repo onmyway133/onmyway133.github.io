@@ -179,6 +179,1041 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-use-Controller-and-View-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-Controller-and-View-in-iOS/">How to use Controller and View in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-Controller-and-View-in-iOS/" class="article-date">
+	  <time datetime="2017-05-12T05:37:48.000Z" itemprop="datePublished">May 12, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/37" target="_blank" rel="noopener">#37</a></strong></p>
+<p>I like to write UI in code, and with Auto Layout, it is an easy task. However that leaves ViewController with a lots of code. One way we can do is to separate <code>V</code> from <code>C</code> in <code>MVC</code>, by using a dedicated view</p>
+<p>We can do that with generic, that initialises a view and replace the <code>view</code>, let’s call it <code>root</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseController</span>&lt;<span class="title">T</span>: <span class="title">UIView</span>&gt;: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> root = <span class="type">T</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">loadView</span><span class="params">()</span></span> &#123;</span><br><span class="line">    view = root</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Now we can have a <code>UIView</code> subclass, like <code>LoginView</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginView</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line"> <span class="built_in">lazy</span> <span class="keyword">var</span> textField: <span class="type">UITextField</span> = <span class="type">UITextField</span>().then &#123;</span><br><span class="line">    $<span class="number">0</span>.textAlignment = .center</span><br><span class="line">    $<span class="number">0</span>.borderStyle = .roundedRect</span><br><span class="line">    $<span class="number">0</span>.keyboardType = .phonePad</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">lazy</span> <span class="keyword">var</span> button: <span class="type">UIButton</span> = <span class="type">UIButton</span>().then &#123;</span><br><span class="line">    $<span class="number">0</span>.setTitleColor(.black, <span class="keyword">for</span>: .normal)</span><br><span class="line">    $<span class="number">0</span>.backgroundColor = .lightGray</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">init</span>(frame: <span class="type">CGRect</span>) &#123;</span><br><span class="line">    <span class="keyword">super</span>.<span class="keyword">init</span>(frame: frame)</span><br><span class="line"></span><br><span class="line">    addSubviews(</span><br><span class="line">      textField,</span><br><span class="line">      button</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="type">Constraint</span>.on(</span><br><span class="line">      textField.centerXAnchor.constraint(equalTo: textField.superview!.centerXAnchor),</span><br><span class="line">      textField.centerYAnchor.constraint(equalTo: textField.superview!.centerYAnchor),</span><br><span class="line">      textField.widthAnchor.constraint(equalTo: textField.superview!.widthAnchor, constant: -<span class="number">20</span>),</span><br><span class="line"></span><br><span class="line">      button.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: <span class="number">20</span>),</span><br><span class="line">      button.centerXAnchor.constraint(equalTo: button.superview!.centerXAnchor),</span><br><span class="line">      button.widthAnchor.constraint(equalTo: textField.widthAnchor, multiplier: <span class="number">0.8</span>),</span><br><span class="line">      button.heightAnchor.constraint(equalToConstant: <span class="number">44</span>)</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">required</span> <span class="keyword">init</span>?(coder aDecoder: <span class="type">NSCoder</span>) &#123;</span><br><span class="line">    <span class="built_in">fatalError</span>()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And then the <code>LoginController</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginController</span>: <span class="title">BaseController</span>&lt;<span class="title">LoginView</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">    view.backgroundColor = .white</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> gr = <span class="type">UITapGestureRecognizer</span>(target: <span class="keyword">self</span>, action: #selector(viewTapped))</span><br><span class="line">    root.addGestureRecognizer(gr)</span><br><span class="line"></span><br><span class="line">    root.button.setTitle(<span class="string">"Login"</span>, <span class="keyword">for</span>: .normal)</span><br><span class="line">    root.button.addTarget(<span class="keyword">self</span>, action: #selector(loginButtonTouched), <span class="keyword">for</span>: .touchUpInside)</span><br><span class="line">    root.button.isEnabled = <span class="literal">false</span></span><br><span class="line">    root.button.showsTouchWhenHighlighted = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    root.textField.placeholder = <span class="string">"Phone number"</span></span><br><span class="line">    root.textField.delegate = <span class="keyword">self</span></span><br><span class="line">    root.textField.text = dependencyContainer.phoneService.<span class="keyword">prefix</span></span><br><span class="line">    root.textField.addTarget(<span class="keyword">self</span>, action: #selector(textFieldDidChange), <span class="keyword">for</span>: .editingChanged)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And this is how we declare the <code>LoginController</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> loginController = <span class="type">LoginController</span>()</span><br><span class="line">navigationController.viewControllers = [loginController]</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-use-MainController-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-MainController-in-iOS/">How to use MainController in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-MainController-in-iOS/" class="article-date">
+	  <time datetime="2017-05-12T05:37:42.000Z" itemprop="datePublished">May 12, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/36" target="_blank" rel="noopener">#36</a></strong></p>
+<p>Usually in an app, we have these flows: onboarding, login, main. And we usually set <code>OnboardingController</code>, <code>LoginController</code> and <code>MainController</code> as the root view controller respectively depending on the state.</p>
+<p>I find it useful to have the <code>MainController</code> as the container for main flow. It can be a tab controller, swipe menu controller or contains just 1 child view controller. The screens are provided by child view controllers, but the <code>MainController</code> does the following jobs</p>
+<ul>
+<li>Status bar style</li>
+</ul>
+<p>We usually need to call <code>preferredStatusBarStyle</code> on the parent controller. See <a href="https://stackoverflow.com/questions/19022210/preferredstatusbarstyle-isnt-called" target="_blank" rel="noopener">https://stackoverflow.com/questions/19022210/preferredstatusbarstyle-isnt-called</a></p>
+<ul>
+<li>App did become active</li>
+</ul>
+<p>Usually when app is brought to foreground, we need to fetch logged in user profile to see if there’s changes. We do this by listening to <code>app did become active</code> in <code>MainController</code>. </p>
+<ul>
+<li>Mock to open</li>
+</ul>
+<p>This can be anti pattern. But in UI Tests, for laziness, we can just use some <a href="http://nshipster.com/launch-arguments-and-environment-variables/" target="_blank" rel="noopener">launch arguments</a> and check to present some specific screens to test, because <code>MainController</code> is the root for main flow.</p>
+<ul>
+<li>Logout</li>
+</ul>
+<p>Because things originate from <code>MainController</code>, things can terminate in <code>MainController</code>. We can handle <code>logout</code>, clear states, and tell <code>MainController</code> to tell <code>AppDelegate</code> to switch to another root controller</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-handle-Auto-Layout-with-different-screen-sizes"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-handle-Auto-Layout-with-different-screen-sizes/">How to handle Auto Layout with different screen sizes</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-handle-Auto-Layout-with-different-screen-sizes/" class="article-date">
+	  <time datetime="2017-05-12T04:22:18.000Z" itemprop="datePublished">May 12, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/35" target="_blank" rel="noopener">#35</a></strong></p>
+<p>Auto Layout is awesome. Just declare the constraints and the views are resized accordingly to their parent ‘s <code>bounds</code> changes. But sometimes it does not look good, because we have fixed values for padding, width, height, and even fixed font size.</p>
+<p>Read more <a href="https://medium.com/flawless-app-stories/how-to-make-auto-layout-more-convenient-in-ios-df3b42fed37f" target="_blank" rel="noopener">How to make Auto Layout more convenient in iOS</a></p>
+<p>This can be solved by some degree using <code>Size Class</code>. The idea of <code>size class</code> is that we have many sets of constraints, and based on the device traits, we enabled some of them. This is more convenient to do in Storyboard (although very hard to reason about), but if we’re doing in code (my prefer way), then it is a lot of code. And a lot of code means a lot of bugs.</p>
+<p>If you take a look at <a href="http://iosres.com/" target="_blank" rel="noopener">iOSRes</a>, we see the ratio <code>16:9</code> (<code>height:width</code>)</p>
+<ul>
+<li>iPhone SE (320 x 568): 1.775</li>
+<li>iPhone 6 (375 x 667): 1.778</li>
+<li>iPhone 6+ (414 x 736): 1.778</li>
+</ul>
+<p>They mostly have the same ratio. So we can have a simple approach, that scale elements based on ratio. Given the fact that the designer usually designs for <code>iPhone 6 size</code>, we can make that a base.</p>
+<p>In this approach, the content will scale up or down depending on its ratio. You may argue that the idea of bigger phone is to display more, not to show the same content bigger. You may be right, in that case you need to create different constraints and different UIs. But if you want simple solutions that work, this is one of them</p>
+<p>This is the technique I used when doing <code>Windows Phone development</code>, but it applies to many platforms as well</p>
+<h3 id="Calculate-the-ratio"><a href="#Calculate-the-ratio" class="headerlink" title="Calculate the ratio"></a>Calculate the ratio</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Device</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Base width in point, use iPhone 6</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">let</span> base: <span class="type">CGFloat</span> = <span class="number">375</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">var</span> ratio: <span class="type">CGFloat</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">UIScreen</span>.main.bounds.width / base</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Extension-to-make-it-convenient"><a href="#Extension-to-make-it-convenient" class="headerlink" title="Extension to make it convenient"></a>Extension to make it convenient</h3><p>We can have a computed property called <code>adjusted</code> that adjusts the size based on the ratio</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">CGFloat</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> adjusted: <span class="type">CGFloat</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span> * <span class="type">Device</span>.ratio</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Double</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> adjusted: <span class="type">CGFloat</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">CGFloat</span>(<span class="keyword">self</span>) * <span class="type">Device</span>.ratio</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Int</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> adjusted: <span class="type">CGFloat</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">CGFloat</span>(<span class="keyword">self</span>) * <span class="type">Device</span>.ratio</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Use-the-ratio"><a href="#Use-the-ratio" class="headerlink" title="Use the ratio"></a>Use the ratio</h3><p>You can adjust as much as you want</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">label.font = UIFont.systemFont(ofSize: 23.adjusted)</span><br><span class="line"></span><br><span class="line">phoneTextField.leftAnchor.constraint(equalTo: container.leftAnchor, constant: 30.adjusted),</span><br><span class="line">phoneTextField.rightAnchor.constraint(equalTo: container.rightAnchor, constant: -30.adjusted),</span><br><span class="line"></span><br><span class="line">imageView.widthAnchor.constraint(equalToConstant: 80.adjusted), imageView.heightAnchor.constraint(equalToConstant: 90.adjusted),</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-NSApplicationDelegate-and-notification"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/NSApplicationDelegate-and-notification/">NSApplicationDelegate and notification</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/NSApplicationDelegate-and-notification/" class="article-date">
+	  <time datetime="2017-05-10T20:18:22.000Z" itemprop="datePublished">May 10, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/34" target="_blank" rel="noopener">#34</a></strong></p>
+<p>In an iOS project, we often see this in <code>AppDelegate</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@UIApplicationMain</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AppDelegate</span>: <span class="title">UIResponder</span>, <span class="title">UIApplicationDelegate</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> window: <span class="type">UIWindow?</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>But in a Cocoa project, we see this instead</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NSApplicationMain</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AppDelegate</span>: <span class="title">NSObject</span>, <span class="title">NSApplicationDelegate</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">applicationDidFinishLaunching</span><span class="params">(aNotification: NSNotification)</span></span> &#123;</span><br><span class="line">        <span class="comment">// Insert code here to initialize your application</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">applicationWillTerminate</span><span class="params">(aNotification: NSNotification)</span></span> &#123;</span><br><span class="line">        <span class="comment">// Insert code here to tear down your application</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this case the param is of type <code>NSNotification</code></p>
+<h2 id="Delegate-and-notification"><a href="#Delegate-and-notification" class="headerlink" title="Delegate and notification"></a>Delegate and notification</h2><p>Reading <a href="https://developer.apple.com/library/mac/documentation/General/Conceptual/DevPedia-CocoaCore/Delegation.html" target="_blank" rel="noopener">Cocoa Core Competencies - Delegation</a></p>
+<blockquote>
+<p>The delegate of most Cocoa framework classes is automatically registered as an observer of notifications posted by the delegating object. The delegate need only implement a notification method declared by the framework class to receive a particular notification message. Following the example above, a window object posts an NSWindowWillCloseNotification to observers but sends a windowShouldClose: message to its delegate.</p>
+</blockquote>
+<p>So the pattern is that the delegate should strip the <code>NS</code> and <code>Notification</code>, like <code>NSWindowWillCloseNotification</code> to <code>windowShouldClose:</code></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Understanding-SDK-and-Deployment-Target-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Understanding-SDK-and-Deployment-Target-in-iOS/">Understanding SDK and Deployment Target in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Understanding-SDK-and-Deployment-Target-in-iOS/" class="article-date">
+	  <time datetime="2017-05-10T20:18:05.000Z" itemprop="datePublished">May 10, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/33" target="_blank" rel="noopener">#33</a></strong></p>
+<p>I see that my answer to the question <a href="http://stackoverflow.com/questions/18568572/whats-the-meaning-of-base-sdk-ios-deployment-target-target-and-project-in-xc/22536773#22536773" target="_blank" rel="noopener">What’s the meaning of Base SDK, iOS deployment target, Target, and Project in xcode</a> gets lots of views, so I think I need to elaborate more about it</p>
+<p>Good read</p>
+<ul>
+<li><a href="https://developer.apple.com/tech-talks/videos/" target="_blank" rel="noopener"> iOS 7 TechTalk - Architecting Modern Apps, Part 2</a></li>
+<li><a href="https://developer.apple.com/library/ios/documentation/DeveloperTools/Conceptual/cross_development/Configuring/configuring.html" target="_blank" rel="noopener">Configuring a Project for SDK-Based Development</a></li>
+</ul>
+<p><img src="http://i.stack.imgur.com/CJF6Y.png" alt></p>
+<h2 id="Base-SDK"><a href="#Base-SDK" class="headerlink" title="Base SDK"></a>Base SDK</h2><ul>
+<li>We can’t configure this anymore, as Xcode will use the latest SDK. For Xcode 7, the SDK is iOS 9</li>
+<li>If we upgrade Xcode, it will use the newer version of the SDK. Like Xcode 7.2, the SDK is iOS 9.1</li>
+<li><blockquote>
+<p>Choosing the latest SDK for your project lets you use the new APIs introduced in the OS update that corresponds to that SDK. When new functionality is added as part of a system update, the system update itself does not typically contain updated header files reflecting the change. The SDKs, however, do contain updated header files.</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="Deployment-Target"><a href="#Deployment-Target" class="headerlink" title="Deployment Target"></a>Deployment Target</h2><ul>
+<li>We can set in Xcode -&gt; Target -&gt; Deployment Info -&gt; Deployment Target</li>
+<li>State that we support this iOS version</li>
+</ul>
+<h2 id="What-does-it-mean"><a href="#What-does-it-mean" class="headerlink" title="What does it mean"></a>What does it mean</h2><blockquote>
+<p>So, a modern App might use iOS 9 as the Target SDK, and iOS 7 as the deployment target. This means that you can run on iOS 7, iOS 8 and iOS 9, and that you have available to you any iOS 9 calls when actually running on iOS 9.</p>
+</blockquote>
+<p>.</p>
+<blockquote>
+<p>Each .sdk directory resembles the directory hierarchy of the operating system release it represents: It has usr, System, and Developer directories at its top level. OS X .sdk directories also contain a Library directory. Each of these directories in turn contains subdirectories with the headers and libraries that are present in the corresponding version of the operating system with Xcode installed.</p>
+</blockquote>
+<p>.</p>
+<blockquote>
+<p>The libraries in an iOS or OS X SDK are stubs for linking only; they do not contain executable code but just the exported symbols. SDK support works only with native build targets.</p>
+</blockquote>
+<p>So the SDK is just like stub and header only. It means that we can use certain APIs, but on OS that does not have the real symbols for those APIs, it crashes</p>
+<h2 id="available"><a href="#available" class="headerlink" title="available"></a>available</h2><p>Swift 2 introduces <code>available</code> construct that guards against failure when trying to use newer APIs.</p>
+<p>Note that <code>available</code> is runtime, not compile time. All the code is inside your executable</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> #available(iOS <span class="number">9</span>, <span class="type">OSX</span> <span class="number">10.10</span>, *) &#123;</span><br><span class="line">    <span class="comment">// Code to execute on iOS 9, OS X 10.10</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="deprecated-APIs"><a href="#deprecated-APIs" class="headerlink" title="deprecated APIs"></a>deprecated APIs</h2><ul>
+<li><a href="https://developer.apple.com/library/ios/documentation/DeveloperTools/Conceptual/cross_development/Using/using.html#//apple_ref/doc/uid/20002000-SW6" target="_blank" rel="noopener">Finding Instances of Deprecated API Usage</a></li>
+</ul>
+<blockquote>
+<p>Always check to see if you are using deprecated APIs; though still available, deprecated APIs are not guaranteed to be available in the future</p>
+</blockquote>
+<h2 id="Compile-time-vs-Runtime"><a href="#Compile-time-vs-Runtime" class="headerlink" title="Compile time vs Runtime"></a>Compile time vs Runtime</h2><ul>
+<li><a href="https://developer.apple.com/library/ios/documentation/DeveloperTools/Conceptual/cross_development/Using/using.html#//apple_ref/doc/uid/20002000-SW5" target="_blank" rel="noopener">Conditionally Compiling for Different SDKs</a></li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#<span class="keyword">if</span> (arch(i386) || arch(x86_64)) &amp;&amp; os(iOS)</span><br><span class="line">    <span class="comment">// code inside gets inserted into executable when builds for simulator</span></span><br><span class="line">#<span class="keyword">else</span></span><br><span class="line">    <span class="comment">// code inside gets inserted into executable when builds for device</span></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#<span class="keyword">if</span> os(<span class="type">OSX</span>)</span><br><span class="line">    <span class="keyword">import</span> Cocoa</span><br><span class="line">#elseif os(iOS)</span><br><span class="line">    <span class="keyword">import</span> UIKit</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// All the code gets inserted into executable, but is run depending on the version of the OS</span></span><br><span class="line"><span class="keyword">if</span> #available(iOS <span class="number">9</span>, *) &#123;</span><br><span class="line">    <span class="comment">// use UIStackView</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// show your manual Auto Layout skill</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Weakly-vs-strongly-linked"><a href="#Weakly-vs-strongly-linked" class="headerlink" title="Weakly vs strongly linked"></a>Weakly vs strongly linked</h2><ul>
+<li><a href="https://developer.apple.com/library/ios/documentation/DeveloperTools/Conceptual/cross_development/Configuring/configuring.html#//apple_ref/doc/uid/10000163i-CH1-SW2" target="_blank" rel="noopener">Weak Linking and Apple Frameworks</a></li>
+<li><a href="http://stackoverflow.com/questions/16922013/what-does-it-mean-to-weak-link-a-framework" target="_blank" rel="noopener">What does it mean to “weak-link” a framework?</a></li>
+<li><a href="https://developer.apple.com/library/mac/documentation/MacOSX/Conceptual/BPFrameworks/Concepts/WeakLinking.html" target="_blank" rel="noopener">Frameworks and Weak Linking</a></li>
+</ul>
+<blockquote>
+<p>For example, suppose in Xcode you set the deployment target (minimum required version) to “OS X v10.5” and the base SDK (maximum allowed version) to “OS X v10.6”. During compilation, the compiler would weakly link interfaces that were introduced in OS X v10.6 while strongly linking interfaces defined in earlier versions of the OS. This would allow your application to run in OS X v10.5 and take advantage of newer features when available.</p>
+</blockquote>
+<p>.</p>
+<blockquote>
+<p>None of the (platform) frameworks is really “included in the bundle”. Instead, your app has a reference (“link”) to a framework once you add it to the “Link Binary with Library” build phase. The frameworks are pre-installed on the devices. When you run an app, all the app’s framework references are resolved by the dynamic linker (on the device), which means the framework code is loaded so your app can use it.</p>
+</blockquote>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="http://useyourloaf.com/blog/checking-api-availability-with-swift.html" target="_blank" rel="noopener">Checking API Availability With Swift</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-App-backed-by-website-in-iOS-9"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/App-backed-by-website-in-iOS-9/">App backed by website in iOS 9</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/App-backed-by-website-in-iOS-9/" class="article-date">
+	  <time datetime="2017-05-10T20:17:28.000Z" itemprop="datePublished">May 10, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/32" target="_blank" rel="noopener">#32</a></strong></p>
+<p>iOS 9 introduces new ways for your app to work better, backed by your websites</p>
+<h2 id="Smart-App-Banners"><a href="#Smart-App-Banners" class="headerlink" title="Smart App Banners"></a>Smart App Banners</h2><ul>
+<li><a href="https://developer.apple.com/library/mac/documentation/AppleApplications/Reference/SafariWebContent/PromotingAppswithAppBanners/PromotingAppswithAppBanners.html" target="_blank" rel="noopener">Promoting Apps with Smart App Banners</a></li>
+</ul>
+<blockquote>
+<p>If the app is already installed on a user’s device, the banner intelligently changes its action, and tapping the banner will simply open the app. If the user doesn’t have your app on his device, tapping on the banner will take him to the app’s entry in the App Store</p>
+</blockquote>
+<blockquote>
+<p>To add a Smart App Banner to your website, include the following meta tag in the head of each page where you’d like the banner to appear:</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta name=&quot;apple-itunes-app&quot; content=&quot;app-id=myAppStoreID, affiliate-data=myAffiliateData, app-argument=myURL&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Universal-Links"><a href="#Universal-Links" class="headerlink" title="Universal Links"></a>Universal Links</h2><ul>
+<li><a href="https://developer.apple.com/library/ios/documentation/General/Conceptual/AppSearch/UniversalLinks.html" target="_blank" rel="noopener">Support Universal Links</a></li>
+</ul>
+<blockquote>
+<p>When you support universal links, iOS 9 users can tap a link to your website and get seamlessly redirected to your installed app without going through Safari. If your app isn’t installed, tapping a link to your website opens your website in Safari.</p>
+</blockquote>
+<h2 id="Web-Markup"><a href="#Web-Markup" class="headerlink" title="Web Markup"></a>Web Markup</h2><ul>
+<li><a href="https://developer.apple.com/library/ios/documentation/General/Conceptual/AppSearch/WebContent.html#//apple_ref/doc/uid/TP40016308-CH8-SW1" target="_blank" rel="noopener">Mark Up Web Content</a></li>
+</ul>
+<blockquote>
+<p>If some or all of your app’s content is also available on your website, you can use web markup to give users access to your content in search results. Using web markup lets the Applebot web crawler index your content in Apple’s server-side index, which makes it available to all iOS users in Spotlight and Safari search results.</p>
+</blockquote>
+<h2 id="Shared-Web-Credentials"><a href="#Shared-Web-Credentials" class="headerlink" title="Shared Web Credentials"></a>Shared Web Credentials</h2><ul>
+<li><a href="https://developer.apple.com/library/ios/documentation/Security/Reference/SharedWebCredentialsRef/" target="_blank" rel="noopener">Shared Web Credentials Reference</a></li>
+</ul>
+<blockquote>
+<p>Shared web credentials is a programming interface that enables native iOS apps to share credentials with their website counterparts. For example, a user may log in to a website in Safari, entering a user name and password, and save those credentials using the iCloud Keychain. Later, the user may run a native app from the same developer, and instead of the app requiring the user to reenter a user name and password, shared web credentials gives it access to the credentials that were entered earlier in Safari.</p>
+</blockquote>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="https://developer.apple.com/videos/play/wwdc2015-509/" target="_blank" rel="noopener">WWDC 2015 Session 509 Seamless Linking to Your App</a></li>
+<li><a href="https://www.youtube.com/watch?v=JDAZKDAUpqY" target="_blank" rel="noopener">Integrating your Site and your iOS App</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Disingenuousness"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Disingenuousness/">Disingenuousness</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Disingenuousness/" class="article-date">
+	  <time datetime="2017-05-10T20:17:08.000Z" itemprop="datePublished">May 10, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/31" target="_blank" rel="noopener">#31</a></strong></p>
+<p>I’m very happy to be <a href="http://www.fantageek.com/blog/2015/10/31/on-open-source/" target="_blank" rel="noopener">on open source</a> movement, and it ‘ll be great to hear about what people have achieved</p>
+<ul>
+<li><a href="https://code.facebook.com/posts/1236426443040107?__mref=message" target="_blank" rel="noopener">Open source in 2015: A year of growth</a></li>
+<li><a href="http://blog.parse.com/learn/introducing-the-open-source-hub/" target="_blank" rel="noopener">Introducing the Open Source Hub</a></li>
+<li><a href="https://developer.apple.com/opensource/" target="_blank" rel="noopener">Open Source at Apple</a></li>
+<li><a href="https://www.youtube.com/watch?v=YsUTuwpbURA" target="_blank" rel="noopener">Emerging Best Practices • Ash Furrow</a></li>
+</ul>
+<p>And <a href="https://twitter.com/merowing_" target="_blank" rel="noopener">@merowing_</a> also mentioned in <a href="http://merowing.info/2015/12/writing-xcode-plugin-in-swift/" target="_blank" rel="noopener">Writing Xcode plugin in Swift</a></p>
+<blockquote>
+<p>Attribution</p>
+</blockquote>
+<blockquote>
+<p>Writing this was much simpler because I was able to look at other people plugins, mostly those related to console, without them being open sourcing it would be more work to figure this stuff out with hopper.</p>
+</blockquote>
+<p>Open source helps us move forward, learn and share together</p>
+<h2 id="The-dark-side-of-the-Force"><a href="#The-dark-side-of-the-Force" class="headerlink" title="The dark side of the Force"></a>The dark side of the Force</h2><ul>
+<li><a href="http://www.imdb.com/title/tt0080684/quotes" target="_blank" rel="noopener">Star Wars: Episode V - The Empire Strikes Back </a></li>
+</ul>
+<blockquote>
+<p>Luke: Is the dark side stronger?</p>
+</blockquote>
+<blockquote>
+<p>Yoda: No, no, no. Quicker, easier, more seductive.</p>
+</blockquote>
+<p>It’s a pain to see plagiarism around</p>
+<ul>
+<li><a href="http://www.observationalhazard.com/2015/12/open-source-plagiarism.html" target="_blank" rel="noopener">Open Source Plagiarism
+</a></li>
+<li><a href="https://github.com/FancyPixel/gulps#imitation-is-the-sincerest-form-of-flattery" target="_blank" rel="noopener">Imitation is the sincerest form of flattery</a></li>
+<li><a href="https://github.com/Microsoft/WinObjC/issues/35" target="_blank" rel="noopener">Restore original licenses</a></li>
+</ul>
+<p>Open source softwares are in fact intellectual properties, and the authors should get acknowledgement for the work that they do.</p>
+<p>It’s not fair to take the credit of other’s work and not giving any attribution</p>
+<blockquote>
+<p>By its nature, open source software has a unique relationship with intellectual property rights</p>
+</blockquote>
+<blockquote>
+<p>One thing that’s not up for debate in most circles is that it’s dishonest and disingenuous to take someone else’s project, modify it slightly, and call it your own.</p>
+</blockquote>
+<blockquote>
+<p>Further, regardless of whether or not a project crosses that line, it must (by the terms of most open source licenses) acknowledge the original work/author.</p>
+</blockquote>
+<p>And the reaction</p>
+<ul>
+<li><p><a href="https://github.com/khoiln/RunKit/pull/7" target="_blank" rel="noopener">Attribute Original Author</a></p>
+</li>
+<li><p><a href="https://twitter.com/davekopec/status/671913819673899008" target="_blank" rel="noopener">Open Source Plagiarism</a></p>
+</li>
+<li><p><a href="https://github.com/github/dmca/blob/master/2015-12-04-Async.md" target="_blank" rel="noopener">DMCA takedown on repos that rip off Async</a></p>
+</li>
+<li><p><a href="https://twitter.com/theandreamazz" target="_blank" rel="noopener">@theandreamazz</a></p>
+</li>
+</ul>
+<blockquote>
+<p>It’s always sad to see blatant plagiarism, and I think it really hurts the community more than the author itself. It gives people a good reason to keep the sources private. </p>
+</blockquote>
+<h2 id="Being-nice"><a href="#Being-nice" class="headerlink" title="Being nice"></a>Being nice</h2><p>I often hear people say that</p>
+<blockquote>
+<p>It is easier to find good developer than developer with good attitude</p>
+</blockquote>
+<ul>
+<li><a href="https://ashfurrow.com/blog/building-online-communities/" target="_blank" rel="noopener">Building Online Communities</a></li>
+<li><a href="https://ashfurrow.com/blog/being-polite-in-open-source/" target="_blank" rel="noopener">Being Polite in Open Source</a></li>
+<li><a href="https://ashfurrow.com/blog/minswan-for-ios/" target="_blank" rel="noopener">MINSWAN for iOS</a></li>
+</ul>
+<p>Github also states that</p>
+<blockquote>
+<p>We understand and agree that copying others’ work without permission goes against the spirit of the open source community</p>
+</blockquote>
+<h2 id="Do-the-right-things"><a href="#Do-the-right-things" class="headerlink" title="Do the right things"></a>Do the right things</h2><ul>
+<li><a href="http://artsy.github.io/blog/2015/12/10/License-and-You/" target="_blank" rel="noopener">Licenses for OSS Code</a></li>
+<li><a href="https://www.quora.com/How-do-I-properly-credit-an-original-codes-developer-for-her-open-source-contribution" target="_blank" rel="noopener">How do I properly credit an original code’s developer for her open source contribution?</a></li>
+</ul>
+<p>Is it MIT ‘s fault? Definitely no</p>
+<ul>
+<li><a href="https://twitter.com/TProphet/status/666715662199336960" target="_blank" rel="noopener">@TProphet
+</a></li>
+</ul>
+<blockquote>
+<p>False choice. Giving up freedom does not lead to more security, just less freedom.</p>
+</blockquote>
+<h2 id="Takeaways"><a href="#Takeaways" class="headerlink" title="Takeaways"></a>Takeaways</h2><ul>
+<li>Don’t take things personally</li>
+<li>It’s hard to be perfect, but we can learn to do the right things</li>
+<li>We may do the wrong things, but don’t worry, there ‘ll be help via Issues and Pull Requests</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/life/">life</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-do-curry-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-do-curry-in-Swift/">How to do curry in Swift</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-do-curry-in-Swift/" class="article-date">
+	  <time datetime="2017-05-10T20:16:51.000Z" itemprop="datePublished">May 10, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/30" target="_blank" rel="noopener">#30</a></strong></p>
+<p>Haskell is notorious for <code>currying</code>, and Swift has currying, too</p>
+<p>I love ReactiveCocoa, RxSwift and I always take time to dig into it. The other day, I was practise making Signal based on this talk <a href="https://www.youtube.com/watch?v=AcDaWe3S75c" target="_blank" rel="noopener">UIKonf 2015 - Jens Ravens: Functional Reactive Programming without Black Magic</a></p>
+<p>Take a look at my repo <a href="https://github.com/onmyway133/Signal" target="_blank" rel="noopener">Signal</a></p>
+<h2 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h2><p>I was making a filter for a <code>Signal</code>. The idea of filter is that we should update signal if the Event is Next with right filtered value</p>
+<p><code>Signal.swift</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public func filter(f: T -&gt; Bool) -&gt; Signal&lt;T&gt;&#123;</span><br><span class="line">    let signal = Signal&lt;T&gt;()</span><br><span class="line">    subscribe &#123; result in</span><br><span class="line">        switch(result) &#123;</span><br><span class="line">        case let .Success(value):</span><br><span class="line">            if f(value) &#123;</span><br><span class="line">                signal.update(result)</span><br><span class="line">            &#125;</span><br><span class="line">        case let .Error(error): signal.update(.Error(error))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return signal</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-params"><a href="#2-params" class="headerlink" title="2 params"></a>2 params</h2><p>But having <code>Event</code> as another monad, I think it should be more encapsulated if that switching logic gets moved into the <code>Event</code>. Here the filter takes 2 params</p>
+<p><code>Event.swift</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">func filter(f: T -&gt; Bool, callback: (Event&lt;T&gt; -&gt; Void)) &#123;</span><br><span class="line">        switch self &#123;</span><br><span class="line">        case let .Next(value) where f(value):</span><br><span class="line">            callback(self)</span><br><span class="line">        case .Failed:</span><br><span class="line">            callback(self)</span><br><span class="line">        default:</span><br><span class="line">            break</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Signal.swift</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public func filter(f: T -&gt; Bool) -&gt; Signal&lt;T&gt; &#123;</span><br><span class="line">    let signal = Signal&lt;T&gt;()</span><br><span class="line"></span><br><span class="line">    subscribe &#123; event in</span><br><span class="line">        event.filter(f, callback: signal.update)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return signal</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Currying"><a href="#Currying" class="headerlink" title="Currying"></a>Currying</h2><p>With currying, we can make <code>filter</code> a more abstract function, and defer the decision to pass the <code>callback</code> param. It is a little carried away but I find it helpful this way</p>
+<p>Now <code>filter</code> accepts 1 param, and it returns a function that takes <code>callback</code> as its param</p>
+<p><code>Event.swift</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">func filter(f: T -&gt; Bool) -&gt; ((Event&lt;T&gt; -&gt; Void) -&gt; Void) &#123;</span><br><span class="line">        return &#123; g in</span><br><span class="line">            switch self &#123;</span><br><span class="line">            case let .Next(value) where f(value):</span><br><span class="line">                g(self)</span><br><span class="line">            case .Failed:</span><br><span class="line">                g(self)</span><br><span class="line">            default:</span><br><span class="line">                break</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Signal.swift</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public func filter(f: T -&gt; Bool) -&gt; Signal&lt;T&gt; &#123;</span><br><span class="line">        let signal = Signal&lt;T&gt;()</span><br><span class="line"></span><br><span class="line">        subscribe &#123; event in</span><br><span class="line">            event.filter(f)(signal.update)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return signal</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Curry-syntax-in-Swift-2"><a href="#Curry-syntax-in-Swift-2" class="headerlink" title="Curry syntax in Swift 2"></a>Curry syntax in Swift 2</h2><p>Swift 2 supports curry syntax function</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sum</span><span class="params">(a: Int)</span></span>(b: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> sumWith5 = sum(<span class="number">5</span>)</span><br><span class="line"><span class="keyword">let</span> result = sumWith5(b: <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="No-more-curry-syntax-in-Swift-3"><a href="#No-more-curry-syntax-in-Swift-3" class="headerlink" title="No more curry syntax in Swift 3"></a>No more curry syntax in Swift 3</h2><p>You may want to find out</p>
+<ul>
+<li><a href="http://ericasadun.com/2015/12/18/bidding-farewell-to-currying/" target="_blank" rel="noopener">Bidding farewell to currying</a></li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="http://learnyouahaskell.com/higher-order-functions" target="_blank" rel="noopener">Higher order functions</a></li>
+<li><a href="http://programmers.stackexchange.com/questions/185585/what-is-the-advantage-of-currying" target="_blank" rel="noopener">What is the advantage of currying?</a></li>
+<li><a href="http://stackoverflow.com/questions/4888480/practical-use-of-curried-functions?lq=1" target="_blank" rel="noopener">Practical use of curried functions?</a></li>
+<li><a href="https://robots.thoughtbot.com/introduction-to-function-currying-in-swift" target="_blank" rel="noopener">Introduction to Function Currying in Swift</a></li>
+<li><a href="http://www.russbishop.net/swift-function-currying" target="_blank" rel="noopener">Swift Function Currying</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-use-push-notification-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-push-notification-in-iOS/">How to use push notification in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-push-notification-in-iOS/" class="article-date">
+	  <time datetime="2017-05-10T20:15:51.000Z" itemprop="datePublished">May 10, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/29" target="_blank" rel="noopener">#29</a></strong></p>
+<p>Here are my notes for working with Push Notification, updated for iOS 9</p>
+<h2 id="How-to-register"><a href="#How-to-register" class="headerlink" title="How to register"></a>How to register</h2><ul>
+<li>Register to receive push notification</li>
+</ul>
+<p><code>registerForRemoteNotificationTypes</code> is deprecated in iOS 8+</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">UIApplication</span>.sharedApplication().registerForRemoteNotifications()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Register to alert user through UI</li>
+</ul>
+<blockquote>
+<p>If your app displays alerts, play sounds, or badges its icon, you must call this method during your launch cycle to request permission to alert the user in these ways</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> types: <span class="type">UIUserNotificationType</span> = [.<span class="type">Badge</span>, .<span class="type">Sound</span>, .<span class="type">Alert</span>]</span><br><span class="line"><span class="keyword">let</span> categories = <span class="type">Set</span>&lt;<span class="type">UIUserNotificationCategory</span>&gt;()</span><br><span class="line"><span class="keyword">let</span> settings = <span class="type">UIUserNotificationSettings</span>(forTypes: types, categories: categories)</span><br><span class="line"></span><br><span class="line"><span class="type">UIApplication</span>.sharedApplication().registerUserNotificationSettings(settings)</span><br></pre></td></tr></table></figure>
+
+<p>You don’t need to wait for <code>registerUserNotificationSettings</code> to callback before calling <code>registerForRemoteNotifications</code></p>
+<h2 id="When-to-register"><a href="#When-to-register" class="headerlink" title="When to register"></a>When to register</h2><ul>
+<li><a href="https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/IPhoneOSClientImp.html" target="_blank" rel="noopener">Registering, Scheduling, and Handling User Notifications</a></li>
+</ul>
+<blockquote>
+<p>Never cache a device token; always get the token from the system whenever you need it. If your app previously registered for remote notifications, calling the registerForRemoteNotifications method again does not incur any additional overhead, and iOS returns the existing device token to your app delegate immediately. In addition, iOS calls your delegate method any time the device token changes, not just in response to your app registering or re-registering</p>
+</blockquote>
+<blockquote>
+<p>The user can change the notification settings for your app at any time using the Settings app. Because settings can change, always call the registerUserNotificationSettings: at launch time and use the application:didRegisterUserNotificationSettings: method to get the response. If the user disallows specific notification types, avoid using those types when configuring local and remote notifications for your app.</p>
+</blockquote>
+<h2 id="didReceiveRemoteNotification"><a href="#didReceiveRemoteNotification" class="headerlink" title="didReceiveRemoteNotification"></a>didReceiveRemoteNotification</h2><p>About <code>application:didReceiveRemoteNotification:</code></p>
+<blockquote>
+<p>Implement the application:didReceiveRemoteNotification:fetchCompletionHandler: method instead of this one whenever possible. If your delegate implements both methods, the app object calls the application:didReceiveRemoteNotification:fetchCompletionHandler: method.</p>
+</blockquote>
+<blockquote>
+<p>If the app is not running when a remote notification arrives, the method launches the app and provides the appropriate information in the launch options dictionary. The app does not call this method to handle that remote notification. Instead, your implementation of the application:willFinishLaunchingWithOptions: or application:didFinishLaunchingWithOptions: method needs to get the remote notification payload data and respond appropriately.</p>
+</blockquote>
+<p>About <code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code></p>
+<p>This is for silent push notification with <code>content-available</code></p>
+<blockquote>
+<p>Unlike the application:didReceiveRemoteNotification: method, which is called only when your app is running in the foreground, the system calls this method when your app is running in the foreground or background</p>
+</blockquote>
+<blockquote>
+<p>In addition, if you enabled the remote notifications background mode, the system launches your app (or wakes it from the suspended state) and puts it in the background state when a push notification arrives. However, the system does not automatically launch your app if the user has force-quit it. In that situation, the user must relaunch your app or restart the device before the system attempts to launch your app automatically again.</p>
+</blockquote>
+<blockquote>
+<p>If the user opens your app from the system-displayed alert, the system may call this method again when your app is about to enter the foreground so that you can update your user interface and display information pertaining to the notification.</p>
+</blockquote>
+<h2 id="How-to-handle"><a href="#How-to-handle" class="headerlink" title="How to handle"></a>How to handle</h2><p>Usually, the use of push notification is to display a specific article, a specific DetailViewController, … in your app. So the good practices are</p>
+<ul>
+<li>When the app is in foreground: Gently display some kind of alert view and ask the user whether he would like to go to that specific page or not</li>
+<li>When user is brought from background to foreground, or from terminated to foreground: Just navigate to that specific page. For example, if you use UINavigationController, you can set that specific page the top most ViewController, if you use UITabBarController, you can set that specific page the selected tab, something like that</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- <span class="function"><span class="keyword">func</span> <span class="title">handlePushNotification</span><span class="params">(userInfo: NSDictionary)</span></span> &#123;</span><br><span class="line">    <span class="comment">// Check applicationState</span></span><br><span class="line">	<span class="keyword">if</span> (applicationState == <span class="type">UIApplicationStateActive</span>) &#123;</span><br><span class="line">        <span class="comment">// Application is running in foreground</span></span><br><span class="line">        showAlertForPushNotification(userInfo)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (applicationState == <span class="type">UIApplicationStateBackground</span> || applicationState == <span class="type">UIApplicationStateInactive</span>) &#123;</span><br><span class="line">    <span class="comment">// Application is brought from background or launched after terminated</span></span><br><span class="line">        handlePushNotification(userInfo)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here we create another method `handlePushNotification:`` to handle push notification. When you receive push notification, 3 cases can occur</p>
+<h4 id="Case-1-Foreground"><a href="#Case-1-Foreground" class="headerlink" title="Case 1: Foreground"></a>Case 1: Foreground</h4><p>Loud push</p>
+<ul>
+<li>No system alert</li>
+<li><code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code> called</li>
+</ul>
+<p>Silent push</p>
+<ul>
+<li>No system alert</li>
+<li><code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code> called</li>
+</ul>
+<h4 id="Case-2-Background"><a href="#Case-2-Background" class="headerlink" title="Case 2: Background"></a>Case 2: Background</h4><p>Loud push</p>
+<ul>
+<li>System alert</li>
+<li>No method called</li>
+<li>Tap notification and <code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code> called</li>
+<li>Tap on App Icon and nothing is called</li>
+</ul>
+<p>Silent push</p>
+<ul>
+<li>System alert</li>
+<li><code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code> called. If app is suspended, its state changed to <code>UIApplicationStateBackground</code></li>
+<li>Tap notification and <code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code> called</li>
+<li>Tap on App Icon and nothing is called</li>
+</ul>
+<h4 id="Case-3-Terminated"><a href="#Case-3-Terminated" class="headerlink" title="Case 3: Terminated"></a>Case 3: Terminated</h4><p>Loud push</p>
+<ul>
+<li>System alert</li>
+<li>No method called</li>
+<li>Tap notification and <code>application:didFinishLaunchingWithOptions:</code> with <code>launchOptions</code>,  <code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code> called</li>
+<li>Tap on App Icon and <code>application:didFinishLaunchingWithOptions:</code> is called with <code>launchOptions</code> set to nil</li>
+</ul>
+<p>Silent push</p>
+<ul>
+<li>System alert</li>
+<li><code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code> called. If app was not killed by user, it is woke up and state changed to <code>UIApplicationStateInactive</code>.</li>
+<li>Tap notification and <code>application:didFinishLaunchingWithOptions:</code> with <code>launchOptions</code>,  <code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code> called</li>
+<li>Tap on App Icon and <code>application:didFinishLaunchingWithOptions:</code> is called with <code>launchOptions</code> set to nil</li>
+</ul>
+<h2 id="System-alert"><a href="#System-alert" class="headerlink" title="System alert"></a>System alert</h2><p>System alert only show if the payload contains “alert”</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"aps"</span> : &#123;</span><br><span class="line">        <span class="attr">"alert"</span> : &#123;</span><br><span class="line">            <span class="attr">"title"</span> : <span class="string">"Game Request"</span>,</span><br><span class="line">            <span class="attr">"body"</span> : <span class="string">"Bob wants to play poker"</span>,</span><br><span class="line">            <span class="attr">"action-loc-key"</span> : <span class="string">"PLAY"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"badge"</span> : <span class="number">5</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"param1"</span> : <span class="string">"bar"</span>,</span><br><span class="line">    <span class="attr">"param2"</span> : [ <span class="string">"bang"</span>,  <span class="string">"whiz"</span> ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Silent-push-payload"><a href="#Silent-push-payload" class="headerlink" title="Silent push payload"></a>Silent push payload</h2><p>For now I see that silent push must contain “sound” for <code>application:didReceiveRemoteNotification:fetchCompletionHandler:</code> to be called when app is in background</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> <span class="attr">"aps"</span>: &#123;</span><br><span class="line">   <span class="attr">"content-available"</span>: <span class="number">1</span>,</span><br><span class="line">   <span class="attr">"alert"</span>: <span class="string">"hello"</span> // include this if we want to show alert</span><br><span class="line">   <span class="string">"sound"</span>: <span class="string">""</span> // this does the trick</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"param1"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"param2"</span>: <span class="string">"text"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/IPhoneOSClientImp.html" target="_blank" rel="noopener">Scheduling, Registering, and Handling Notifications</a></li>
+<li><a href="http://www.abdus.me/ios-programming-tips/handle-push-notifications-when-arrived-ios/" target="_blank" rel="noopener">Handle push notifications when arrived in ios application</a></li>
+<li><a href="http://stackoverflow.com/questions/5099483/how-to-respond-to-push-notification-view-if-app-is-already-running-in-the-backgr" target="_blank" rel="noopener">How to respond to push notification view if app is already running in the background</a></li>
+<li><a href="http://stackoverflow.com/questions/5056689/didreceiveremotenotification-when-in-background" target="_blank" rel="noopener">didReceiveRemoteNotification when in background</a></li>
+<li><a href="http://samwize.com/2015/08/07/how-to-handle-remote-notification-with-background-mode-enabled/" target="_blank" rel="noopener">How to handle remote notification with background mode enabled</a></li>
+<li><a href="http://stackoverflow.com/questions/20569201/remote-notification-method-called-twice" target="_blank" rel="noopener">Remote notification method called twice</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Understanding-push-and-pull-signal-in-reactive-paradigm"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Understanding-push-and-pull-signal-in-reactive-paradigm/">Understanding push and pull signal in reactive paradigm</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Understanding-push-and-pull-signal-in-reactive-paradigm/" class="article-date">
+	  <time datetime="2017-05-10T20:15:27.000Z" itemprop="datePublished">May 10, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/28" target="_blank" rel="noopener">#28</a></strong></p>
+<p>The idea of Signal may originate from <a href="http://elm-lang.org/guide/reactivity" target="_blank" rel="noopener">Elm Reactivity</a>, and it has now been widely adopted in iOS</p>
+<p>I once asked <a href="http://stackoverflow.com/questions/29374792/what-are-examples-of-hot-and-cold-signal-in-reactivecocoa" target="_blank" rel="noopener">What are examples of hot and cold signal in ReactiveCocoa?</a></p>
+<ul>
+<li><a href="http://stackoverflow.com/questions/17082255/when-to-use-ienumerable-vs-iobservable" target="_blank" rel="noopener">When to use IEnumerable vs IObservable?</a></li>
+<li>[ReactiveCocoa Framework Overview](Framework Overview)</li>
+<li><a href="http://blogs.microsoft.co.il/bnaya/2010/03/13/rx-for-beginners-part-9-hot-vs-cold-observable/" target="_blank" rel="noopener">Rx – for beginners (part 9): Hot Vs. Cold observable</a></li>
+<li><a href="https://github.com/ReactiveX/RxSwift/blob/master/Documentation/HotAndColdObservables.md" target="_blank" rel="noopener">RxSwift Hot and Cold Observables</a></li>
+</ul>
+<p>Whether it is hot vs cold, Signal vs Signal Producer, Observable vs Enumerable, … it’s good to understand how it gets implemented, so that to have a good sense of how they work</p>
+<h2 id="Monad"><a href="#Monad" class="headerlink" title="Monad"></a>Monad</h2><ul>
+<li><a href="http://www.fantageek.com/blog/2015/07/10/understanding-monad/" target="_blank" rel="noopener">Understanding Monad</a></li>
+</ul>
+<p>Basically, Signal and its Result are just monads, which are thing that can be mapped and chained.</p>
+<p>Signal makes use of deferred execution callback blocks, and <code>push vs pull</code> is just how the Signal updates its value and the order the callbacks are called</p>
+<p>Execution callback block is that we pass a function to another function, and it will get called when appropriated</p>
+<h2 id="Sync-vs-Async"><a href="#Sync-vs-Async" class="headerlink" title="Sync vs Async"></a>Sync vs Async</h2><p>Monad can be in either sync or async mode. Sync is easier to understand, but async is somewhat you’re already familiar and used in practice</p>
+<p>Basically,</p>
+<ul>
+<li>Sync: you get the returned value right away via <code>return</code></li>
+<li>Aync: you get the returned value via callback block</li>
+</ul>
+<p>Here is an example of a simple function</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Sync</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sum</span><span class="params">(a: Int, b: Int)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Async</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sum</span><span class="params">(a: Int, b: Int, completion: Int -&gt; Void)</span></span> &#123;</span><br><span class="line">    <span class="comment">// Assumed it is a very long task to get the result</span></span><br><span class="line">    <span class="keyword">let</span> result = a + b</span><br><span class="line"></span><br><span class="line">    completion(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here is an example of <code>Event</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Sync</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">map</span>&lt;U&gt;<span class="params">(@noescape f: T -&gt; U)</span></span> -&gt; <span class="type">Event</span>&lt;<span class="type">U</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">let</span> .<span class="type">Next</span>(value):</span><br><span class="line">        <span class="keyword">return</span> .<span class="type">Next</span>(value: f(value))</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">let</span> .<span class="type">Failed</span>(error):</span><br><span class="line">        <span class="keyword">return</span> .<span class="type">Failed</span>(error: error)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Async</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">map</span>&lt;U&gt;<span class="params">(f: <span class="params">(T, U -&gt; Void)</span></span></span> -&gt; <span class="type">Void</span>) -&gt; ((<span class="type">Event</span>&lt;<span class="type">U</span>&gt; -&gt; <span class="type">Void</span>) -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123; g <span class="keyword">in</span>   <span class="comment">// g: Event&lt;U&gt; -&gt; Void</span></span><br><span class="line">            <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="keyword">let</span> .<span class="type">Next</span>(value):</span><br><span class="line">                f(value) &#123; transformedValue <span class="keyword">in</span>  <span class="comment">// transformedValue: U</span></span><br><span class="line">                    g(.<span class="type">Next</span>(value: transformedValue))</span><br><span class="line">                &#125;</span><br><span class="line">            <span class="keyword">case</span> <span class="keyword">let</span> .<span class="type">Failed</span>(error):</span><br><span class="line">                g(.<span class="type">Failed</span>(error: error))</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Push-Signal"><a href="#Push-Signal" class="headerlink" title="Push Signal"></a>Push Signal</h2><ul>
+<li><a href="https://github.com/onmyway133/archives/blob/master/Signal/Pod/Classes/Signal.swift" target="_blank" rel="noopener">Signal.swift</a></li>
+<li><a href="https://www.youtube.com/watch?v=AcDaWe3S75c" target="_blank" rel="noopener">UIKonf 2015 - Jens Ravens: Functional Reactive Programming without Black Magic</a></li>
+</ul>
+<p>Take a look at my Push Signal, called <a href="https://github.com/onmyway133/Signal/blob/master/Pod/Classes/Signal.swift" target="_blank" rel="noopener">Signal</a>, it is like how <a href="https://github.com/onmyway133/Then/blob/master/Pod/Classes/Promise.swift" target="_blank" rel="noopener">Promise A+ Then</a> works</p>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Signal</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> event: <span class="type">Event</span>&lt;<span class="type">T</span>&gt;?</span><br><span class="line">    <span class="keyword">var</span> callbacks: [<span class="type">Event</span>&lt;<span class="type">T</span>&gt; -&gt; <span class="type">Void</span>] = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">notify</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> event = event <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        callbacks.forEach &#123; callback <span class="keyword">in</span></span><br><span class="line">            callback(event)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">update</span><span class="params">(event event: Event&lt;T&gt;)</span></span> &#123;</span><br><span class="line">        dispatch_sync(lockQueue) &#123;</span><br><span class="line">            <span class="keyword">self</span>.event = event</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        notify()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">subscribe</span><span class="params">(f: Event&lt;T&gt; -&gt; Void)</span></span> -&gt; <span class="type">Signal</span>&lt;<span class="type">T</span>&gt; &#123;</span><br><span class="line">        <span class="comment">// Callback</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> event = event &#123;</span><br><span class="line">            f(event)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        callbacks.append(f)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">self</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">map</span>&lt;U&gt;<span class="params">(f: T -&gt; U)</span></span> -&gt; <span class="type">Signal</span>&lt;<span class="type">U</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> signal = <span class="type">Signal</span>&lt;<span class="type">U</span>&gt;()</span><br><span class="line"></span><br><span class="line">        subscribe &#123; event <span class="keyword">in</span></span><br><span class="line">            signal.update(event: event.<span class="built_in">map</span>(f))</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> signal</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> signal = <span class="type">Signal</span>&lt;<span class="type">String</span>&gt;()</span><br><span class="line"></span><br><span class="line">signal.<span class="built_in">map</span> &#123; value <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">return</span> value.characters.<span class="built_in">count</span></span><br><span class="line">    &#125;.subscribe &#123; event <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">case</span> <span class="keyword">let</span> .<span class="type">Next</span>(value) = event &#123;</span><br><span class="line">            <span class="type">XCTAssert</span>(value == <span class="number">4</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="type">XCTAssert</span>(<span class="literal">false</span>)</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">signal.sendNext(<span class="string">"test"</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Callbacks"><a href="#Callbacks" class="headerlink" title="Callbacks"></a>Callbacks</h3><p>Given a chained signals like this</p>
+<p>A -(map)-&gt; B -(flatMap)-&gt; C -(flatMap)-&gt; D -(subscribe)</p>
+<ul>
+<li>The idea is we send event to the source signal, and it propagates events through via callbacks.</li>
+<li>Triggered by sending event to the source signal.</li>
+<li>We must keep A as it keeps the others around</li>
+<li>We subscribe the last D</li>
+<li>We send event to the first A</li>
+<li>A ‘s callback gets called, it it in turn calls callback of B with the result of A ‘s map, then B ‘s callback calls C ‘s callback with the result of B<br>‘s flatMap, …</li>
+</ul>
+<h2 id="Pull-Signal"><a href="#Pull-Signal" class="headerlink" title="Pull Signal"></a>Pull Signal</h2><ul>
+<li><a href="https://github.com/onmyway133/archives/blob/master/Signal/Pod/Classes/Future.swift" target="_blank" rel="noopener">Future.swift</a></li>
+<li><a href="https://www.youtube.com/watch?v=mbd6g7NfR-8" target="_blank" rel="noopener">Swift Sync and Async Error Handling - iOS Conf SG 2015</a></li>
+</ul>
+<p>Take a look at my Pull Signal, called <a href="https://github.com/onmyway133/Signal/blob/master/Pod/Classes/Future.swift" target="_blank" rel="noopener">Future</a></p>
+<h3 id="Implementation-1"><a href="#Implementation-1" class="headerlink" title="Implementation"></a>Implementation</h3><p>Here <code>operation</code> is a task, when called and completed, will notify its <code>completion</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">Future</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> operation: (<span class="type">Event</span>&lt;<span class="type">T</span>&gt; -&gt; <span class="type">Void</span>) -&gt; <span class="type">Void</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">init</span>(operation: (<span class="type">Event</span>&lt;<span class="type">T</span>&gt; -&gt; <span class="type">Void</span>) -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.operation = operation</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">start</span><span class="params">(completion: Event&lt;T&gt; -&gt; Void)</span></span> &#123;</span><br><span class="line">        operation() &#123; event <span class="keyword">in</span></span><br><span class="line">            completion(event)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">map</span>&lt;U&gt;<span class="params">(f: T -&gt; U)</span></span> -&gt; <span class="type">Future</span>&lt;<span class="type">U</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Future</span>&lt;<span class="type">U</span>&gt; &#123; completion <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">self</span>.start &#123; event <span class="keyword">in</span></span><br><span class="line">                completion(event.<span class="built_in">map</span>(f))</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Usage-1"><a href="#Usage-1" class="headerlink" title="Usage"></a>Usage</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">let _ = Future&lt;String&gt; &#123; completion in</span><br><span class="line">        // There is some work here</span><br><span class="line">        completion(Event(value: &quot;test&quot;))</span><br><span class="line">    &#125;</span><br><span class="line">    .map &#123; value in</span><br><span class="line">        value.characters.count</span><br><span class="line">    &#125;.start &#123; event in</span><br><span class="line">        if case let .Next(value) = event &#123;</span><br><span class="line">            XCTAssert(value == 4)</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            XCTAssert(false)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Callbacks-1"><a href="#Callbacks-1" class="headerlink" title="Callbacks"></a>Callbacks</h3><p>Given a chained signals like this</p>
+<p>A -(map)-&gt; B -(flatMap)-&gt; C -(flatMap)-&gt; D -(subscribe)</p>
+<ul>
+<li>The idea is we subscribe to the final signal D, and it cause the previous signals to action.</li>
+<li>Triggered by subscribing to the final signal.</li>
+<li>We must keep D as it keeps the others around</li>
+<li>We subscribe the last D</li>
+<li>D ‘s operation actions, and it cause C ‘s operation to action, … then A ‘s operation actions. It is in A that the task is performed (like fetching network, retrieving database, file access, heavy computation, …) to get the result, and A ‘s completion gets called. Then A’s completion calls B ‘s completion with the result mapped by B ‘s map, … all the way to the subscriber ‘s completion block</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-make-iOS-Stretchy-Header-with-Auto-Layout"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-make-iOS-Stretchy-Header-with-Auto-Layout/">How to make iOS Stretchy Header with Auto Layout</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-make-iOS-Stretchy-Header-with-Auto-Layout/" class="article-date">
+	  <time datetime="2017-05-10T20:12:10.000Z" itemprop="datePublished">May 10, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/27" target="_blank" rel="noopener">#27</a></strong></p>
+<p>Stretchy header is cool. People are familiar with changing frames to achieve this, like <a href="http://blog.matthewcheok.com/design-teardown-stretchy-headers/" target="_blank" rel="noopener">Design Teardown: Stretchy Headers</a>. But with Auto Layout, we can achieve this with much nicer declarative constraints</p>
+<p>The demo project is <a href="https://github.com/onmyway133/archives/tree/master/StretchyHeader" target="_blank" rel="noopener">StretchyHeader</a></p>
+<p><img src="https://cloud.githubusercontent.com/assets/2284279/25923575/70c06d82-35de-11e7-8384-0549d7ef8021.gif" alt="demo"></p>
+<p>I use <a href="https://github.com/SnapKit/SnapKit" target="_blank" rel="noopener">SnapKit</a> to make it clear what constraints we need</p>
+<h2 id="scrollView"><a href="#scrollView" class="headerlink" title="scrollView"></a>scrollView</h2><p>The <code>scrollView</code> should pin its 4 edges to the <code>ViewController &#39;s view</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupScrollView</span><span class="params">()</span></span> &#123;</span><br><span class="line">        scrollView = <span class="type">UIScrollView</span>()</span><br><span class="line">        scrollView.delegate = <span class="keyword">self</span></span><br><span class="line"></span><br><span class="line">        view.addSubview(scrollView)</span><br><span class="line">        scrollView.snp_makeConstraints &#123; make <span class="keyword">in</span></span><br><span class="line">            make.edges.equalTo(view)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="scrollViewContentView"><a href="#scrollViewContentView" class="headerlink" title="scrollViewContentView"></a>scrollViewContentView</h2><p>The <code>scrollViewContentView</code> must pin its 4 edges to the <code>scrollView</code> to help determine <code>scrollView</code> <code>contentSize</code></p>
+<p>The height of <code>scrollViewContentView</code> is determined by its subviews. The subviews inside must pin their <code>top</code> and <code>bottom</code> to the <code>scrollViewContentView</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupScrollViewContentView</span><span class="params">()</span></span> &#123;</span><br><span class="line">        scrollViewContentView = <span class="type">UIView</span>()</span><br><span class="line"></span><br><span class="line">        scrollView.addSubview(scrollViewContentView)</span><br><span class="line">        scrollViewContentView.snp_makeConstraints &#123; make <span class="keyword">in</span></span><br><span class="line">            make.edges.equalTo(scrollView)</span><br><span class="line">            make.width.equalTo(view.snp_width)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="header"><a href="#header" class="headerlink" title="header"></a>header</h2><p>The <code>header</code> must pin its top to the <code>scrollView</code> parent, which is the <code>ViewController &#39;s view</code></p>
+<p>Read the <code>title</code> section, you ‘ll see that in order to make <code>header</code> stretchy, it must be pinned top and bottom</p>
+<p>But if we scroll up, there will be a constraint conflict between these pinned <code>top</code> and <code>bottom</code> constraints</p>
+<p>So we must declare <code>headerTopConstraint</code> priority as 999, and <code>headerLessThanTopConstraint</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupHeader</span><span class="params">()</span></span> &#123;</span><br><span class="line">        header = <span class="type">UIImageView</span>()</span><br><span class="line">        header.image = <span class="type">UIImage</span>(named: <span class="string">"onepiece"</span>)!</span><br><span class="line"></span><br><span class="line">        scrollViewContentView.addSubview(header)</span><br><span class="line">        header.snp_makeConstraints &#123; make <span class="keyword">in</span></span><br><span class="line">            <span class="comment">// Pin header to scrollView 's parent, which is now ViewController 's view</span></span><br><span class="line">            <span class="comment">// When header is moved up, headerTopConstraint is not enough, so make its priority 999, and add another less than or equal constraint</span></span><br><span class="line">            make.leading.trailing.equalTo(scrollViewContentView)</span><br><span class="line">            <span class="keyword">self</span>.headerTopConstraint =  make.top.equalTo(view.snp_top).priority(<span class="number">999</span>).constraint</span><br><span class="line">            <span class="keyword">self</span>.headerLessThanTopConstraint = make.top.lessThanOrEqualTo(view.snp_top).constraint</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="title"><a href="#title" class="headerlink" title="title"></a>title</h2><p>The <code>title</code> must pin its top to the <code>scrollViewContentView</code> to help determine <code>scrollViewContentView</code> height</p>
+<p>The <code>title</code> must also pin its top the <code>header</code> bottom in order to make <code>header</code> stretchy</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupTitleLabel</span><span class="params">()</span></span> &#123;</span><br><span class="line">        titleLabel = <span class="type">UILabel</span>()</span><br><span class="line">        titleLabel.numberOfLines = <span class="number">0</span></span><br><span class="line">        titleLabel.font = <span class="type">UIFont</span>.preferredFontForTextStyle(<span class="type">UIFontTextStyleTitle1</span>)</span><br><span class="line">        titleLabel.text = <span class="string">"One Piece"</span></span><br><span class="line"></span><br><span class="line">        scrollViewContentView.addSubview(titleLabel)</span><br><span class="line">        titleLabel.snp_makeConstraints &#123; make <span class="keyword">in</span></span><br><span class="line">            make.leading.equalTo(scrollViewContentView).offset(<span class="number">20</span>)</span><br><span class="line">            make.trailing.equalTo(scrollViewContentView).offset(-<span class="number">20</span>)</span><br><span class="line">            <span class="comment">// Pin to the header to make it stretchy</span></span><br><span class="line">            make.top.equalTo(header.snp_bottom).offset(<span class="number">20</span>)</span><br><span class="line">            <span class="comment">// Pin to the content view to help determine scrollView contentSize</span></span><br><span class="line">            make.top.equalTo(scrollViewContentView.snp_top).offset(headerHeight)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="scrollViewDidScroll"><a href="#scrollViewDidScroll" class="headerlink" title="scrollViewDidScroll"></a>scrollViewDidScroll</h2><p>The header is always pinned to the top, unless you adjust it, here in <code>scrollViewDidScroll</code></p>
+<p>Here I use <code>Constraint</code>, which is a class from <code>SnapKit</code>, but the idea is to change the <code>constant</code> of the <code>NSLayoutConstraint</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">scrollViewDidScroll</span><span class="params">(scrollView: UIScrollView)</span></span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> headerTopConstraint = headerTopConstraint,</span><br><span class="line">            headerLessThanTopConstraint = headerLessThanTopConstraint</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> y = scrollView.contentOffset.y</span><br><span class="line">        <span class="keyword">let</span> offset = y &gt; <span class="number">0</span> ? -y : <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        headerLessThanTopConstraint.updateOffset(offset)</span><br><span class="line">        headerTopConstraint.updateOffset(offset)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>By the way, did you just learn the story of One Piece :]</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="http://blog.domesticcat.com.au/ios/2014/03/19/creating-parallax-effect-on-uiscrollview-using-simple-constraints/" target="_blank" rel="noopener">Creating parallax effect on UIScrollView using constraints</a></li>
+<li><a href="https://github.com/BillCarsonFr/ScrollviewParallax" target="_blank" rel="noopener">ScrollviewParallax</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-group-digits-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-group-digits-in-Swift/">How to group digits in Swift</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-group-digits-in-Swift/" class="article-date">
+	  <time datetime="2017-05-10T20:10:30.000Z" itemprop="datePublished">May 10, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/26" target="_blank" rel="noopener">#26</a></strong></p>
+<p>When working on <a href="https://github.com/onmyway133/Scale" target="_blank" rel="noopener">Scale</a> I think it’s good to have a way to group the digit so that it is easier to reason</p>
+<p>Luckily, Swift already supports this. See <a href="https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/TheBasics.html#//apple_ref/doc/uid/TP40014097-CH5-ID309" target="_blank" rel="noopener">The Swift Programming Language - Numeric Literals</a></p>
+<blockquote>
+<p>Numeric literals can contain extra formatting to make them easier to read. Both integers and floats can be padded with extra zeros and can contain underscores to help with readability. Neither type of formatting affects the underlying value of the literal</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> paddedDouble = <span class="number">000123.456</span></span><br><span class="line"><span class="keyword">let</span> oneMillion = <span class="number">1_000_000</span></span><br><span class="line"><span class="keyword">let</span> justOverOneMillion = <span class="number">1_000_000.000_000_1</span></span><br></pre></td></tr></table></figure>
+
+<p>Talking about grouping digits after the decimal point, it is interesting too <a href="http://math.stackexchange.com/questions/182775/convention-of-digit-grouping-after-decimal-point" target="_blank" rel="noopener">Convention of digit grouping after decimal point</a></p>
+<p>So now we have</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">MetricUnit</span>: <span class="title">Double</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> nano = <span class="number">0.000_000_001</span></span><br><span class="line">    <span class="keyword">case</span> micro = <span class="number">0.000_001</span></span><br><span class="line">    <span class="keyword">case</span> milli = <span class="number">0.001</span></span><br><span class="line">    <span class="keyword">case</span> centi = <span class="number">0.01</span></span><br><span class="line">    <span class="keyword">case</span> deci = <span class="number">0.1</span></span><br><span class="line">    <span class="keyword">case</span> base = <span class="number">1</span></span><br><span class="line">    <span class="keyword">case</span> deka = <span class="number">10</span></span><br><span class="line">    <span class="keyword">case</span> hecto = <span class="number">100</span></span><br><span class="line">    <span class="keyword">case</span> kilo = <span class="number">1_000</span></span><br><span class="line">    <span class="keyword">case</span> mega = <span class="number">1_000_000</span></span><br><span class="line">    <span class="keyword">case</span> giga = <span class="number">1_000_000_000</span></span><br><span class="line">    <span class="keyword">case</span> tera = <span class="number">1_000_000_000_000</span></span><br><span class="line">    <span class="keyword">case</span> peta = <span class="number">1_000_000_000_000_000</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> defaultScale: <span class="type">Double</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">MetricUnit</span>.base.rawValue</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-make-a-simple-resolver-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -552,6 +1587,9 @@ var themeMenus = {};
     <footer class="entry-meta entry-footer">
       
       
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
       
             
       
@@ -823,50 +1861,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-A-dream-is-not-a-dream-anymore-when-you-don&#39;t-have-time-for-it"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/A-dream-is-not-a-dream-anymore-when-you-don't-have-time-for-it/">A dream is not a dream anymore when you don&#39;t have time for it</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/A-dream-is-not-a-dream-anymore-when-you-don't-have-time-for-it/" class="article-date">
-	  <time datetime="2017-05-02T19:13:26.000Z" itemprop="datePublished">May 2, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/16" target="_blank" rel="noopener">#16</a></strong></p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
     <article id="post-The-luxury-of-free-time"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -983,6 +1977,9 @@ var themeMenus = {};
     <footer class="entry-meta entry-footer">
       
       
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/life/">life</a></li></ul>
+
       
             
       
@@ -1032,6 +2029,9 @@ var themeMenus = {};
     <footer class="entry-meta entry-footer">
       
       
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
       
             
       
@@ -1254,6 +2254,9 @@ var themeMenus = {};
     <footer class="entry-meta entry-footer">
       
       
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/life/">life</a></li></ul>
+
       
             
       
@@ -1314,6 +2317,9 @@ var themeMenus = {};
     <footer class="entry-meta entry-footer">
       
       
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/life/">life</a></li></ul>
+
       
             
       
@@ -1387,305 +2393,11 @@ var themeMenus = {};
     
 
   
-    <article id="post-Markdown-editor"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Markdown-editor/">Markdown editor</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Markdown-editor/" class="article-date">
-	  <time datetime="2017-04-30T09:06:02.000Z" itemprop="datePublished">April 30, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/6" target="_blank" rel="noopener">#6</a></strong></p>
-<p>I like writing with markdown, it gives me comfortable experience with complete control over what I want to write. </p>
-<p>I recommend <a href="https://github.com/yoshuawuyts/vmd" target="_blank" rel="noopener">vmd</a> which renders exactly as GitHub. <code>vmd</code> is for rendering only, you need an editor to write, I use <code>Sublime Text</code> because it opens very fast</p>
-<p>I also recommend using <a href="https://github.com/eczarny/spectacle" target="_blank" rel="noopener">spectacle</a> to easily split and organize windows</p>
-<p><img src="https://cloud.githubusercontent.com/assets/2284279/25563860/bf8e576c-2da5-11e7-81b1-dced24653be2.png" alt="vmd"></p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Open-Source"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Open-Source/">Open Source</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Open-Source/" class="article-date">
-	  <time datetime="2017-04-29T11:09:13.000Z" itemprop="datePublished">April 29, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/5" target="_blank" rel="noopener">#5</a></strong></p>
-<p><a href="https://onmyway133.github.io/opensource/">https://onmyway133.github.io/opensource/</a></p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Primary-key-in-Realm"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Primary-key-in-Realm/">Primary key in Realm</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Primary-key-in-Realm/" class="article-date">
-	  <time datetime="2017-04-26T18:19:29.000Z" itemprop="datePublished">April 26, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/4" target="_blank" rel="noopener">#4</a></strong></p>
-<p>Realm is great. But without primary key, it will duplicate the record, like <a href="https://github.com/realm/realm-java/issues/2730" target="_blank" rel="noopener">https://github.com/realm/realm-java/issues/2730</a>, <a href="http://stackoverflow.com/questions/32322460/should-i-define-the-primary-key-for-each-entity-in-realm" target="_blank" rel="noopener">http://stackoverflow.com/questions/32322460/should-i-define-the-primary-key-for-each-entity-in-realm</a>, … So to force ourselves into the good habit of declaring primary key, we can leverage Swift protocol</p>
-<p>Create primary constrain protocol like this</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">PrimaryKeyAware</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> id: <span class="type">Int</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">primaryKey</span><span class="params">()</span></span> -&gt; <span class="type">String?</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>and conform it in out Realm object</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Profile</span>: <span class="title">Object</span>, <span class="title">PrimaryKeyAware</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">dynamic</span> <span class="keyword">var</span> firstName: <span class="type">String</span> = <span class="string">""</span></span><br><span class="line">  <span class="keyword">dynamic</span> <span class="keyword">var</span> lastName: <span class="type">String</span> = <span class="string">""</span></span><br><span class="line">  <span class="keyword">dynamic</span> <span class="keyword">var</span> id: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">primaryKey</span><span class="params">()</span></span> -&gt; <span class="type">String?</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"id"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>This way, when using that object in out <code>RealmStorage</code>, we are safe to say that it has a primary key</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RealmStorage</span>&lt;<span class="title">T</span>: <span class="title">Object</span>&gt; <span class="title">where</span> <span class="title">T</span>: <span class="title">PrimaryKeyAware</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> realm: <span class="type">Realm</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(realm: <span class="type">Realm</span> = <span class="type">RealmProvider</span>.realm()) &#123;</span><br><span class="line">    <span class="keyword">self</span>.realm = realm</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">save</span><span class="params">(<span class="number">_</span> objects: [T])</span></span> &#123;</span><br><span class="line">    <span class="keyword">try</span>? realm.write &#123;</span><br><span class="line">      realm.add(objects, update: <span class="literal">true</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The usage is like this</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> profile = <span class="type">Profile</span>()</span><br><span class="line"><span class="keyword">let</span> storage = <span class="type">RealmStorage</span>&lt;<span class="type">Profile</span>&gt;()</span><br><span class="line">storage.save([profile])</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-take-an-app-from-a-private-framework-in-macOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-take-an-app-from-a-private-framework-in-macOS/">How to take an app from a private framework in macOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-take-an-app-from-a-private-framework-in-macOS/" class="article-date">
-	  <time datetime="2017-04-26T18:12:27.000Z" itemprop="datePublished">April 26, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/3" target="_blank" rel="noopener">#3</a></strong></p>
-<p>The other day I was browsing through <a href="https://github.com/sindresorhus/touch-bar-simulator" target="_blank" rel="noopener">https://github.com/sindresorhus/touch-bar-simulator</a>, it was very brilliant of him to pull <code>IDETouchBarSimulatorHostWindowController</code> from <code>DFRSupportKit.framework</code>. This is worth checking out</p>
-<p><img src="https://github.com/sindresorhus/touch-bar-simulator/raw/master/screenshot.png" alt></p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Configuration-closure-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Configuration-closure-in-Swift/">Configuration closure in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Configuration-closure-in-Swift/" class="article-date">
-	  <time datetime="2017-04-26T17:42:44.000Z" itemprop="datePublished">April 26, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/2" target="_blank" rel="noopener">#2</a></strong></p>
-<p>When I was reading through Swinject, I found something interesting <a href="https://github.com/Swinject/Swinject/blob/master/Sources/Container.swift" target="_blank" rel="noopener">https://github.com/Swinject/Swinject/blob/master/Sources/Container.swift</a></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">convenience</span> <span class="keyword">init</span>(parent: <span class="type">Container?</span> = <span class="literal">nil</span>, registeringClosure: (<span class="type">Container</span>) -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">  <span class="keyword">self</span>.<span class="keyword">init</span>(parent: parent)</span><br><span class="line">  registeringClosure(<span class="keyword">self</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The <code>init</code> has a <code>closure</code> that makes configuration easy, much like a <code>Builder</code> pattern. So I think we can learn from that and make a <code>Configurable</code> protocol</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Configurable</span>: <span class="title">class</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Configurable</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">config</span><span class="params">(block: <span class="params">(<span class="keyword">Self</span>)</span></span></span> -&gt; <span class="type">Void</span>) -&gt; <span class="type">Self</span> &#123;</span><br><span class="line">    block(<span class="keyword">self</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">NSObject</span> : <span class="title">Configurable</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>With this, we can init some class with less hassle</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> view = <span class="type">UIView</span>().config &#123;</span><br><span class="line">  $<span class="number">0</span>.backgroundColor = .white</span><br><span class="line">  $<span class="number">0</span>.layer.cornerRadius = <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Hello-world-again"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Hello-world-again/">Hello world, again</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Hello-world-again/" class="article-date">
-	  <time datetime="2017-04-26T17:25:15.000Z" itemprop="datePublished">April 26, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/1" target="_blank" rel="noopener">#1</a></strong></p>
-<p>I’ve used Wordpress, then moved to GitHub Pages with <a href="https://jekyllrb.com/" target="_blank" rel="noopener">Jekyll</a>, <a href="http://octopress.org/" target="_blank" rel="noopener">Octopress</a>, <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>, <a href="https://github.com/spf13/hugo" target="_blank" rel="noopener">Hugo</a>. You can view my page here <a href="http://fantageek.com/" target="_blank" rel="noopener">http://fantageek.com/</a>. It was good with all the custom themes and <a href="https://disqus.com/" target="_blank" rel="noopener">Disqus</a></p>
-<p>But then I was a bit lazy with all the commands <code>generate, commit, deploy</code>, it hinders me from writing, so I moved to <a href="https://medium.com/@onmyway133" target="_blank" rel="noopener">Medium</a>. </p>
-<p>The only thing I like about Medium is its discovery, your posts have high chanced of finding and viewing by people. What’s the point of writing if no one read it? But then I miss all the awesome markdown features of GitHub Pages. Medium is easy to use, but it seems it’s not for hackers, and I find it really uncomfortable when adding code block and headings. Medium also lists my comments as stories, which is kind of 😲 </p>
-<p>I like to write fast, and with good comments system, and I love Markdown.</p>
-<p>I like GitHub. I use GitHub for my <a href="https://github.com/onmyway133/notes" target="_blank" rel="noopener">notes</a>, so I think I will use it for my blog as well. Hope all these GitHub convenience will encourage me to write more often. This will, of course, be less discoverable by people. So if you by any chance visit this blog, ohayou from me 👋 </p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/13/">Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span>
+    <a class="extend prev" rel="prev" href="/page/13/">Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/15/">Next</a>
   </nav>
 
 </section>
@@ -1785,6 +2497,18 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/Links-for-accessibility/">Links for accessibility</a></h6>
+              <span>November 12, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/Links-for-Xcode/">Links for Xcode</a></h6>
               <span>November 12, 2019</span>
             </div>
@@ -1839,18 +2563,6 @@ var themeMenus = {};
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-edit-hexo-theme-hiero/">How to edit hexo theme hiero</a></h6>
-              <span>November 6, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -1863,7 +2575,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">105</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">32</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">148</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">5</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/accessibility/">accessibility</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">125</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">57</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">173</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -1873,7 +2585,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/android/" style="font-size: 18.13px;">android</a> <a href="/tags/ci/" style="font-size: 10px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.63px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 10px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10px;">css</a> <a href="/tags/dart/" style="font-size: 11.25px;">dart</a> <a href="/tags/design/" style="font-size: 10.63px;">design</a> <a href="/tags/electron/" style="font-size: 11.25px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.63px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.25px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/iOS/" style="font-size: 19.38px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.5px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.88px;">kotlin</a> <a href="/tags/layout/" style="font-size: 10px;">layout</a> <a href="/tags/life/" style="font-size: 11.25px;">life</a> <a href="/tags/links/" style="font-size: 15px;">links</a> <a href="/tags/macOS/" style="font-size: 18.75px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.63px;">machine learning</a> <a href="/tags/node/" style="font-size: 14.38px;">node</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 13.13px;">react native</a> <a href="/tags/script/" style="font-size: 10.63px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.25px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.63px;">tech</a> <a href="/tags/testing/" style="font-size: 12.5px;">testing</a> <a href="/tags/watchOS/" style="font-size: 13.75px;">watchOS</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/xcode/" style="font-size: 11.88px;">xcode</a>
+      <a href="/tags/accessibility/" style="font-size: 10px;">accessibility</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 18px;">android</a> <a href="/tags/apple-script/" style="font-size: 10px;">apple script</a> <a href="/tags/ci/" style="font-size: 10.67px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.67px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.33px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/css/" style="font-size: 10.67px;">css</a> <a href="/tags/dart/" style="font-size: 12px;">dart</a> <a href="/tags/database/" style="font-size: 10.67px;">database</a> <a href="/tags/design/" style="font-size: 10.67px;">design</a> <a href="/tags/electron/" style="font-size: 12px;">electron</a> <a href="/tags/firebase/" style="font-size: 10.67px;">firebase</a> <a href="/tags/flutter/" style="font-size: 12px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.33px;">github</a> <a href="/tags/iOS/" style="font-size: 19.33px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.33px;">kotlin</a> <a href="/tags/layout/" style="font-size: 10.67px;">layout</a> <a href="/tags/life/" style="font-size: 14.67px;">life</a> <a href="/tags/links/" style="font-size: 15.33px;">links</a> <a href="/tags/macOS/" style="font-size: 18.67px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.67px;">machine learning</a> <a href="/tags/node/" style="font-size: 14px;">node</a> <a href="/tags/objc/" style="font-size: 10.67px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 10px;">react</a> <a href="/tags/react-native/" style="font-size: 13.33px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/script/" style="font-size: 10.67px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.67px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 16px;">tech</a> <a href="/tags/testing/" style="font-size: 12.67px;">testing</a> <a href="/tags/voip/" style="font-size: 12px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.33px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.67px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.67px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 12.67px;">xcode</a>
     </div>
   </div>
 
@@ -1883,7 +2595,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">29</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
