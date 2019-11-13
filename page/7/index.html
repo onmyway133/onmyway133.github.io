@@ -179,6 +179,177 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-show-context-menu-in-NSCollectionView"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-show-context-menu-in-NSCollectionView/">How to show context menu in NSCollectionView</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-show-context-menu-in-NSCollectionView/" class="article-date">
+	  <time datetime="2019-06-23T19:31:37.000Z" itemprop="datePublished">June 23, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/321" target="_blank" rel="noopener">#321</a></strong></p>
+<h2 id="Detect-locationInWindow-in-NSEvent"><a href="#Detect-locationInWindow-in-NSEvent" class="headerlink" title="Detect locationInWindow in NSEvent"></a>Detect locationInWindow in NSEvent</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClickedCollectionView</span>: <span class="title">NSCollectionView</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> clickedIndex: <span class="type">Int?</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">menu</span><span class="params">(<span class="keyword">for</span> event: NSEvent)</span></span> -&gt; <span class="type">NSMenu?</span> &#123;</span><br><span class="line">        clickedIndex = <span class="literal">nil</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> point = convert(event.locationInWindow, from: <span class="literal">nil</span>)</span><br><span class="line">        <span class="keyword">for</span> index <span class="keyword">in</span> <span class="number">0</span>..&lt;numberOfItems(inSection: <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">let</span> frame = frameForItem(at: index)</span><br><span class="line">            <span class="keyword">if</span> <span class="type">NSMouseInRect</span>(point, frame, isFlipped) &#123;</span><br><span class="line">                clickedIndex = index</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.menu(<span class="keyword">for</span>: event)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> menu = <span class="type">NSMenu</span>()</span><br><span class="line">menu.addItem(<span class="type">NSMenuItem</span>(title: <span class="string">"Delete"</span>, action: #selector(didSelectDelete(<span class="number">_</span>:)), keyEquivalent: <span class="string">""</span>))</span><br><span class="line">collectionView.menu = menu</span><br><span class="line"></span><br><span class="line"><span class="meta">@objc</span> <span class="function"><span class="keyword">func</span> <span class="title">didSelectDelete</span><span class="params">(<span class="number">_</span> item: NSMenuItem)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span></span><br><span class="line">        <span class="keyword">let</span> index = collectionView.clickedIndex,</span><br><span class="line">        index &lt; notes.<span class="built_in">count</span></span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> indexPath = <span class="type">IndexPath</span>(item: index, section: <span class="number">0</span>)</span><br><span class="line">    notes.remove(at: index)</span><br><span class="line">    collectionView.deleteItems(at: <span class="type">Set</span>(arrayLiteral: indexPath))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>For NSCollectionView with more than 1 sections</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> frame = layoutAttributesForItem(at: <span class="type">IndexPath</span>(item: index, section: <span class="number">0</span>))?.frame ?? .zero</span><br></pre></td></tr></table></figure>
+
+<h2 id="Use-Omnia"><a href="#Use-Omnia" class="headerlink" title="Use Omnia"></a>Use Omnia</h2><p><a href="https://github.com/onmyway133/Omnia" target="_blank" rel="noopener">Omnia</a> supports clicked indexPath for multi section <code>NSCollectionView</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">collectionViewHandler.addMenuItem(title: <span class="string">"Add to Favorite"</span>, action: &#123; item <span class="keyword">in</span></span><br><span class="line">    <span class="built_in">print</span>(item)            </span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-customize-NSTextView-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-customize-NSTextView-in-AppKit/">How to customize NSTextView in AppKit</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-customize-NSTextView-in-AppKit/" class="article-date">
+	  <time datetime="2019-06-22T20:08:50.000Z" itemprop="datePublished">June 22, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/320" target="_blank" rel="noopener">#320</a></strong></p>
+<h2 id="Scrollable"><a href="#Scrollable" class="headerlink" title="Scrollable"></a>Scrollable</h2><ul>
+<li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/TextUILayer/Tasks/TextInScrollView.html" target="_blank" rel="noopener">Putting an NSTextView Object in an NSScrollView</a> </li>
+<li>Use xib then load</li>
+</ul>
+<img width="1407" alt="textview" src="https://user-images.githubusercontent.com/2284279/59969303-800d8900-954a-11e9-90f9-07d63b7a64f2.png">
+
+<h2 id="Embed-image-or-NSTextAttachmentCellProtocol"><a href="#Embed-image-or-NSTextAttachmentCellProtocol" class="headerlink" title="Embed image or NSTextAttachmentCellProtocol"></a>Embed image or <code>NSTextAttachmentCellProtocol</code></h2><ul>
+<li>Select TextView</li>
+<li>Select <code>Rich Text</code> and <code>Graphics</code></li>
+<li>Select Size Inspector -&gt; Resizable and tick both Horizontally and Vertically</li>
+</ul>
+<h2 id="Customize"><a href="#Customize" class="headerlink" title="Customize"></a>Customize</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">scrollView.drawsBackground = false</span><br><span class="line">textView.drawsBackground = false</span><br><span class="line">textView.string = &quot;What&apos;s on your mind?&quot;</span><br><span class="line">textView.delegate = self</span><br><span class="line">textView.selectedTextAttributes = [</span><br><span class="line">    NSAttributedString.Key.backgroundColor: NSColor(hex: &quot;414858&quot;),</span><br><span class="line">    NSAttributedString.Key.foregroundColor: NSColor(hex: &quot;ACB2BE&quot;)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">extension MainView: NSTextViewDelegate &#123;</span><br><span class="line">    func textViewDidChangeSelection(_ notification: Notification) &#123;</span><br><span class="line">        // Change text color again after image dragging</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-use-custom-font-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-custom-font-in-AppKit/">How to use custom font in AppKit</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-custom-font-in-AppKit/" class="article-date">
+	  <time datetime="2019-06-22T18:55:56.000Z" itemprop="datePublished">June 22, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/319" target="_blank" rel="noopener">#319</a></strong></p>
+<ul>
+<li>Add fonts to targets</li>
+<li>Declare in Info.plist</li>
+</ul>
+<p><a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/GeneralPurposeKeys.html#//apple_ref/doc/uid/TP40009253-SW8" target="_blank" rel="noopener">https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/GeneralPurposeKeys.html#//apple_ref/doc/uid/TP40009253-SW8</a></p>
+<blockquote>
+<p>ATSApplicationFontsPath (String - macOS) identifies the location of a font file or directory of fonts in the bundle’s Resources directory. If present, macOS activates the fonts at the specified path for use by the bundled app. The fonts are activated only for the bundled app and not for the system as a whole. The path itself should be specified as a relative directory of the bundle’s Resources directory. For example, if a directory of fonts was at the path /Applications/MyApp.app/Contents/Resources/Stuff/MyFonts/, you should specify the string Stuff/MyFonts/ for the value of this key.</p>
+</blockquote>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>ATSApplicationFontsPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">string</span>&gt;</span>.<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Reference by name</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NSFont</span>(name: <span class="string">"FiraCode-Bold"</span>, size: <span class="number">14</span>)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-make-custom-controller-for-View-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -513,130 +684,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-What-is-new-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/What-is-new-in-iOS/">What is new in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/What-is-new-in-iOS/" class="article-date">
-	  <time datetime="2019-06-17T10:53:31.000Z" itemprop="datePublished">June 17, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p>
-<h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p>
-<blockquote>
-<p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p>
-<blockquote>
-<p>A class that animates changes to views and allows the dynamic modification of those animations.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p>
-<blockquote>
-<p>A container that encapsulates the Core Data stack in your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p>
-<blockquote>
-<p>The abstract superclass for all feedback generators.</p>
-</blockquote>
-<h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p>
-<blockquote>
-<p>An object that controls the process of requesting App Store ratings and reviews from users.</p>
-</blockquote>
-<h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p>
-<blockquote>
-<p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p>
-<blockquote>
-<p>Integrate machine learning models into your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p>
-<blockquote>
-<p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p>
-<blockquote>
-<p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p>
-<blockquote>
-<p>Access per-device, per-developer data that your associated server can use in its business logic.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p>
-<blockquote>
-<p>Bring drag and drop to your app by using interaction APIs with your views.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p>
-<blockquote>
-<p>Detect NFC tags and read messages that contain NDEF data.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p>
-<blockquote>
-<p>Animatable corner radius</p>
-</blockquote>
-<h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p>
-<blockquote>
-<p>Make it easy for users to log into apps and services.</p>
-</blockquote>
-<h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><ul>
-<li><a href="https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13</a></li>
-<li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/</a></li>
-</ul>
-<p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p>
-<blockquote>
-<p>Declare the user interface and behavior for your app on every platform.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p>
-<blockquote>
-<p>Customize handling of asynchronous events by combining event-processing operators.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p>
-<blockquote>
-<p>Perform cryptographic operations securely and efficiently.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p>
-<blockquote>
-<p>Expose UISearchTextField on UISearchBar</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
     <article id="post-Links-for-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -843,6 +890,130 @@ var themeMenus = {};
 <p>Make it easy for users to log into apps and services.</p>
 </blockquote>
 <h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p>
+<blockquote>
+<p>Declare the user interface and behavior for your app on every platform.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p>
+<blockquote>
+<p>Customize handling of asynchronous events by combining event-processing operators.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p>
+<blockquote>
+<p>Perform cryptographic operations securely and efficiently.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p>
+<blockquote>
+<p>Expose UISearchTextField on UISearchBar</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-What-is-new-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/What-is-new-in-iOS/">What is new in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/What-is-new-in-iOS/" class="article-date">
+	  <time datetime="2019-06-17T10:53:31.000Z" itemprop="datePublished">June 17, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p>
+<h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p>
+<blockquote>
+<p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p>
+<blockquote>
+<p>A class that animates changes to views and allows the dynamic modification of those animations.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p>
+<blockquote>
+<p>A container that encapsulates the Core Data stack in your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p>
+<blockquote>
+<p>The abstract superclass for all feedback generators.</p>
+</blockquote>
+<h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p>
+<blockquote>
+<p>An object that controls the process of requesting App Store ratings and reviews from users.</p>
+</blockquote>
+<h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p>
+<blockquote>
+<p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p>
+<blockquote>
+<p>Integrate machine learning models into your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p>
+<blockquote>
+<p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p>
+<blockquote>
+<p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p>
+<blockquote>
+<p>Access per-device, per-developer data that your associated server can use in its business logic.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p>
+<blockquote>
+<p>Bring drag and drop to your app by using interaction APIs with your views.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p>
+<blockquote>
+<p>Detect NFC tags and read messages that contain NDEF data.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p>
+<blockquote>
+<p>Animatable corner radius</p>
+</blockquote>
+<h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p>
+<blockquote>
+<p>Make it easy for users to log into apps and services.</p>
+</blockquote>
+<h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><ul>
+<li><a href="https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13</a></li>
+<li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/</a></li>
+</ul>
+<p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p>
 <blockquote>
 <p>Declare the user interface and behavior for your app on every platform.</p>
 </blockquote>
@@ -1749,6 +1920,78 @@ if (packet != NULL)
     
 
   
+    <article id="post-Links-for-SwiftUI"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Links-for-SwiftUI/">Links for SwiftUI</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Links-for-SwiftUI/" class="article-date">
+	  <time datetime="2019-06-11T07:34:21.000Z" itemprop="datePublished">June 11, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/300" target="_blank" rel="noopener">#300</a></strong></p>
+<h2 id="SwiftUI"><a href="#SwiftUI" class="headerlink" title="SwiftUI"></a>SwiftUI</h2><ul>
+<li><a href="https://mecid.github.io/2019/09/18/redux-like-state-container-in-swiftui/" target="_blank" rel="noopener">Redux-like state container in SwiftUI</a></li>
+<li><a href="https://www.objc.io/blog/2019/10/29/swiftui-environment/" target="_blank" rel="noopener">SwiftUI: Setting Environment Values</a></li>
+<li><a href="https://kean.github.io/post/swiftui-layout-system" target="_blank" rel="noopener">SwiftUI Layout System</a></li>
+<li><a href="https://www.hackingwithswift.com/quick-start/swiftui/swiftui-tips-and-tricks" target="_blank" rel="noopener">SwiftUI tips and tricks</a></li>
+<li><a href="https://medium.com/better-programming/understanding-swiftui-data-flow-79429a49ae35" target="_blank" rel="noopener">Understanding SwiftUI Data Flow</a></li>
+<li><a href="https://rwapp.co.uk/2019/11/06/SwiftUI-Accessibility/" target="_blank" rel="noopener">SwiftUI Accessibility</a></li>
+<li><a href="https://troz.net/post/2019/swiftui-data-flow/" target="_blank" rel="noopener">SwiftUI Data Flow</a></li>
+<li><a href="https://www.pointfree.co/blog/posts/30-swiftui-and-state-management-corrections" target="_blank" rel="noopener">SwiftUI and State Management Corrections</a></li>
+<li><a href="https://www.hackingwithswift.com/quick-start/swiftui/whats-the-difference-between-observedobject-state-and-environmentobject" target="_blank" rel="noopener">What’s the difference between @ObservedObject, @State, and @EnvironmentObject?</a></li>
+</ul>
+<p>Code</p>
+<ul>
+<li><a href="https://github.com/xtabbas/calculator-checklist" target="_blank" rel="noopener">https://github.com/xtabbas/calculator-checklist</a></li>
+<li><a href="https://github.com/alfianlosari/SwiftUI-MovieDB" target="_blank" rel="noopener">https://github.com/alfianlosari/SwiftUI-MovieDB</a></li>
+<li><a href="https://github.com/unixzii/SwiftUI-2048" target="_blank" rel="noopener">https://github.com/unixzii/SwiftUI-2048</a></li>
+<li><a href="https://github.com/mecid/swiftui-recipes-app" target="_blank" rel="noopener">https://github.com/mecid/swiftui-recipes-app</a></li>
+<li><a href="https://github.com/nickffox/KeyboardObserving" target="_blank" rel="noopener">https://github.com/nickffox/KeyboardObserving</a></li>
+</ul>
+<h2 id="Combine"><a href="#Combine" class="headerlink" title="Combine"></a>Combine</h2><ul>
+<li><a href="https://github.com/learncombine/Combine101" target="_blank" rel="noopener">https://github.com/learncombine/Combine101</a></li>
+</ul>
+<h2 id="Property-wrapper"><a href="#Property-wrapper" class="headerlink" title="Property wrapper"></a>Property wrapper</h2><ul>
+<li><a href="https://basememara.com/swift-dependency-injection-via-property-wrapper/" target="_blank" rel="noopener">Swift Dependency Injection via Property Wrapper</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swiftUI/">swiftUI</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Getting-started-with-WWDC-2019"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1841,78 +2084,6 @@ if (packet != NULL)
       
   <span class="ico-tags"></span>
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Links-for-SwiftUI"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Links-for-SwiftUI/">Links for SwiftUI</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Links-for-SwiftUI/" class="article-date">
-	  <time datetime="2019-06-11T07:34:21.000Z" itemprop="datePublished">June 11, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/300" target="_blank" rel="noopener">#300</a></strong></p>
-<h2 id="SwiftUI"><a href="#SwiftUI" class="headerlink" title="SwiftUI"></a>SwiftUI</h2><ul>
-<li><a href="https://mecid.github.io/2019/09/18/redux-like-state-container-in-swiftui/" target="_blank" rel="noopener">Redux-like state container in SwiftUI</a></li>
-<li><a href="https://www.objc.io/blog/2019/10/29/swiftui-environment/" target="_blank" rel="noopener">SwiftUI: Setting Environment Values</a></li>
-<li><a href="https://kean.github.io/post/swiftui-layout-system" target="_blank" rel="noopener">SwiftUI Layout System</a></li>
-<li><a href="https://www.hackingwithswift.com/quick-start/swiftui/swiftui-tips-and-tricks" target="_blank" rel="noopener">SwiftUI tips and tricks</a></li>
-<li><a href="https://medium.com/better-programming/understanding-swiftui-data-flow-79429a49ae35" target="_blank" rel="noopener">Understanding SwiftUI Data Flow</a></li>
-<li><a href="https://rwapp.co.uk/2019/11/06/SwiftUI-Accessibility/" target="_blank" rel="noopener">SwiftUI Accessibility</a></li>
-<li><a href="https://troz.net/post/2019/swiftui-data-flow/" target="_blank" rel="noopener">SwiftUI Data Flow</a></li>
-<li><a href="https://www.pointfree.co/blog/posts/30-swiftui-and-state-management-corrections" target="_blank" rel="noopener">SwiftUI and State Management Corrections</a></li>
-<li><a href="https://www.hackingwithswift.com/quick-start/swiftui/whats-the-difference-between-observedobject-state-and-environmentobject" target="_blank" rel="noopener">What’s the difference between @ObservedObject, @State, and @EnvironmentObject?</a></li>
-</ul>
-<p>Code</p>
-<ul>
-<li><a href="https://github.com/xtabbas/calculator-checklist" target="_blank" rel="noopener">https://github.com/xtabbas/calculator-checklist</a></li>
-<li><a href="https://github.com/alfianlosari/SwiftUI-MovieDB" target="_blank" rel="noopener">https://github.com/alfianlosari/SwiftUI-MovieDB</a></li>
-<li><a href="https://github.com/unixzii/SwiftUI-2048" target="_blank" rel="noopener">https://github.com/unixzii/SwiftUI-2048</a></li>
-<li><a href="https://github.com/mecid/swiftui-recipes-app" target="_blank" rel="noopener">https://github.com/mecid/swiftui-recipes-app</a></li>
-<li><a href="https://github.com/nickffox/KeyboardObserving" target="_blank" rel="noopener">https://github.com/nickffox/KeyboardObserving</a></li>
-</ul>
-<h2 id="Combine"><a href="#Combine" class="headerlink" title="Combine"></a>Combine</h2><ul>
-<li><a href="https://github.com/learncombine/Combine101" target="_blank" rel="noopener">https://github.com/learncombine/Combine101</a></li>
-</ul>
-<h2 id="Property-wrapper"><a href="#Property-wrapper" class="headerlink" title="Property wrapper"></a>Property wrapper</h2><ul>
-<li><a href="https://basememara.com/swift-dependency-injection-via-property-wrapper/" target="_blank" rel="noopener">Swift Dependency Injection via Property Wrapper</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swiftUI/">swiftUI</a></li></ul>
 
       
             
@@ -2191,781 +2362,6 @@ if (packet != NULL)
     
 
   
-    <article id="post-How-to-use-Gradle-Kotlin-DSL-in-Android"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-Gradle-Kotlin-DSL-in-Android/">How to use Gradle Kotlin DSL in Android</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-Gradle-Kotlin-DSL-in-Android/" class="article-date">
-	  <time datetime="2019-05-24T09:38:15.000Z" itemprop="datePublished">May 24, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/285" target="_blank" rel="noopener">#285</a></strong></p>
-<h2 id="kts"><a href="#kts" class="headerlink" title="kts"></a>kts</h2><p>settings.gradle.kts</p>
-<figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include(<span class="string">":app"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>build.gradle.kts</p>
-<figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.gradle.kotlin.dsl.apply</span><br><span class="line"><span class="keyword">import</span> org.gradle.kotlin.dsl.dependencies</span><br><span class="line"><span class="keyword">import</span> org.gradle.kotlin.dsl.kotlin</span><br><span class="line"><span class="keyword">import</span> org.gradle.kotlin.dsl.*</span><br><span class="line"><span class="keyword">import</span> org.jetbrains.kotlin.config.KotlinCompilerVersion</span><br><span class="line"></span><br><span class="line">plugins &#123;</span><br><span class="line">    id(<span class="string">"com.android.application"</span>)</span><br><span class="line">    kotlin(<span class="string">"android"</span>)</span><br><span class="line">    kotlin(<span class="string">"android.extensions"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//apply &#123;</span></span><br><span class="line"><span class="comment">//    from("$rootDir/tools/grgit.gradle")</span></span><br><span class="line"><span class="comment">//    from("$rootDir/buildSrc/quality.gradle.kts")</span></span><br><span class="line"><span class="comment">//    from("$rootDir/tools/ktlint.gradle")</span></span><br><span class="line"><span class="comment">//    from("$rootDir/tools/detekt.gradle")</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion(<span class="number">28</span>)</span><br><span class="line">    flavorDimensions(<span class="string">"default"</span>)</span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId = <span class="string">"com.onmyway133.myapp"</span></span><br><span class="line">        minSdkVersion(<span class="number">26</span>)</span><br><span class="line">        targetSdkVersion(<span class="number">28</span>)</span><br><span class="line"><span class="comment">//        versionCode = ext.get("gitCommitCount") as? Int</span></span><br><span class="line">        versionCode = <span class="number">1</span></span><br><span class="line">        versionName = <span class="string">"1.0"</span></span><br><span class="line">        testInstrumentationRunner = <span class="string">"androidx.test.runner.AndroidJUnitRunner"</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    signingConfigs &#123;</span><br><span class="line">        create(<span class="string">"release"</span>) &#123;</span><br><span class="line">            keyAlias = <span class="string">"keyalias"</span></span><br><span class="line">            keyPassword = <span class="string">"keypassword"</span></span><br><span class="line">            storePassword = <span class="string">"storepassword"</span></span><br><span class="line">            storeFile = file(<span class="string">"/Users/khoa/Android/Key/keystore"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        getByName(<span class="string">"debug"</span>) &#123;</span><br><span class="line">            signingConfig = signingConfigs.getByName(<span class="string">"debug"</span>)</span><br><span class="line">            isMinifyEnabled = <span class="literal">true</span></span><br><span class="line">            proguardFiles(getDefaultProguardFile(<span class="string">"proguard-android-optimize.txt"</span>), <span class="string">"<span class="variable">$project</span>.rootDir/tools/proguard-rules-debug.pro"</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        getByName(<span class="string">"release"</span>) &#123;</span><br><span class="line">            signingConfig = signingConfigs.getByName(<span class="string">"release"</span>)</span><br><span class="line">            isMinifyEnabled = <span class="literal">true</span></span><br><span class="line">            isShrinkResources = <span class="literal">true</span></span><br><span class="line">            proguardFiles(getDefaultProguardFile(<span class="string">"proguard-android-optimize.txt"</span>), <span class="string">"<span class="variable">$project</span>.rootDir/tools/proguard-rules.pro"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    productFlavors &#123;</span><br><span class="line">        create(<span class="string">"staging"</span>) &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        create(<span class="string">"production"</span>) &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    lintOptions &#123;</span><br><span class="line">        lintConfig = file(<span class="string">"<span class="variable">$project</span>.rootDir/tools/lint-rules.xml"</span>)</span><br><span class="line">        htmlOutput = file(<span class="string">"<span class="variable">$project</span>.buildDir/outputs/lint/lint.html"</span>)</span><br><span class="line">        xmlReport = <span class="literal">false</span></span><br><span class="line">        htmlReport = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation(fileTree(mapOf(<span class="string">"dir"</span> to <span class="string">"libs"</span>, <span class="string">"include"</span> to listOf(<span class="string">"*.jar"</span>))))</span><br><span class="line">    implementation(kotlin(<span class="string">"stdlib-jdk7"</span>, KotlinCompilerVersion.VERSION))</span><br><span class="line">    implementation(<span class="string">"androidx.appcompat:appcompat:1.0.2"</span>)</span><br><span class="line">    implementation(<span class="string">"androidx.core:core-ktx:1.0.2"</span>)</span><br><span class="line">    implementation(<span class="string">"androidx.constraintlayout:constraintlayout:1.1.3"</span>)</span><br><span class="line">    implementation(<span class="string">"com.google.android.material:material:1.0.0"</span>)</span><br><span class="line">    testImplementation(<span class="string">"junit:junit:4.12"</span>)</span><br><span class="line">    androidTestImplementation(<span class="string">"androidx.test:runner:1.1.1"</span>)</span><br><span class="line">    androidTestImplementation(<span class="string">"androidx.test.espresso:espresso-core:3.1.1"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tasks.getByName(<span class="string">"check"</span>).dependsOn(<span class="string">"lint"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>tools/quality.gradle.kts</p>
-<figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id(<span class="string">"findbugs"</span>)</span><br><span class="line">    id(<span class="string">"pmd"</span>)</span><br><span class="line">    id(<span class="string">"checkstyle"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tasks &#123;</span><br><span class="line">    <span class="keyword">val</span> findbugs <span class="keyword">by</span> registering(FindBugs::<span class="class"><span class="keyword">class</span>) </span>&#123;</span><br><span class="line">        ignoreFailures = <span class="literal">false</span></span><br><span class="line">        effort = <span class="string">"max"</span></span><br><span class="line">        reportLevel = <span class="string">"low"</span></span><br><span class="line">        classes = files(<span class="string">"<span class="variable">$project</span>.buildDir/intermediates/javac"</span>)</span><br><span class="line"></span><br><span class="line">        setExcludeFilter(file(<span class="string">"<span class="variable">$rootProject</span>.rootDir/tools/findbugs-exclude.xml"</span>))</span><br><span class="line"></span><br><span class="line">        source = fileTree(<span class="string">"src/main/java/"</span>)</span><br><span class="line">        classpath = files()</span><br><span class="line"></span><br><span class="line">        reports &#123;</span><br><span class="line">            xml.isEnabled = <span class="literal">false</span></span><br><span class="line">            html.isEnabled = <span class="literal">true</span></span><br><span class="line">            html.destination = file(<span class="string">"<span class="variable">$project</span>.buildDir/outputs/findbugs/findbugs-output.html"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> pmd <span class="keyword">by</span> registering(Pmd::<span class="class"><span class="keyword">class</span>) </span>&#123;</span><br><span class="line">        ruleSetFiles = files(<span class="string">"<span class="subst">$&#123;project.rootDir&#125;</span>/tools/pmd-rules.xml"</span>)</span><br><span class="line">        ignoreFailures = <span class="literal">false</span></span><br><span class="line">        ruleSets = listOf&lt;String&gt;()</span><br><span class="line"></span><br><span class="line">        fileTree()</span><br><span class="line">        source(fileTree(baseDir = <span class="string">"src/main/java"</span>))</span><br><span class="line">        include(<span class="string">"**/*.kt"</span>)</span><br><span class="line">        exclude(<span class="string">"**/gen/**"</span>)</span><br><span class="line"></span><br><span class="line">        reports &#123;</span><br><span class="line">            xml.isEnabled = <span class="literal">false</span></span><br><span class="line">            html.isEnabled = <span class="literal">true</span></span><br><span class="line">            html.destination = file(<span class="string">"<span class="variable">$project</span>.buildDir/outputs/pmd/pmd.html"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> checkstyle <span class="keyword">by</span> registering(Checkstyle::<span class="class"><span class="keyword">class</span>) </span>&#123;</span><br><span class="line">        description = <span class="string">"Check code standard"</span></span><br><span class="line">        group = <span class="string">"verification"</span></span><br><span class="line"></span><br><span class="line">        configFile = file(<span class="string">"<span class="variable">$project</span>.rootDir/tools/checkstyle.xml"</span>)</span><br><span class="line">        source(fileTree(baseDir = <span class="string">"src"</span>))</span><br><span class="line">        include(<span class="string">"**/*.kt"</span>)</span><br><span class="line">        exclude(<span class="string">"**/gen/**"</span>)</span><br><span class="line"></span><br><span class="line">        classpath = files()</span><br><span class="line">        ignoreFailures = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
-<li><a href="https://guides.gradle.org/migrating-build-logic-from-groovy-to-kotlin" target="_blank" rel="noopener">https://guides.gradle.org/migrating-build-logic-from-groovy-to-kotlin</a></li>
-<li><a href="https://github.com/gradle/kotlin-dsl/blob/master/samples/hello-android/app/build.gradle.kts" target="_blank" rel="noopener">https://github.com/gradle/kotlin-dsl/blob/master/samples/hello-android/app/build.gradle.kts</a></li>
-</ul>
-<h2 id="About-Gradle"><a href="#About-Gradle" class="headerlink" title="About Gradle"></a>About Gradle</h2><ul>
-<li><a href="https://medium.com/@wasyl/understanding-android-gradle-build-files-e4b45b73cc4c" target="_blank" rel="noopener">Understanding Android Gradle build files</a></li>
-<li><a href="https://developer.android.com/studio/build/index.html" target="_blank" rel="noopener">Configure your build</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Learning-VoIP-RTP-and-SIP-(aka-awesome-pjsip)"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Learning-VoIP-RTP-and-SIP-(aka-awesome-pjsip)/">Learning VoIP, RTP and SIP (aka awesome pjsip)</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Learning-VoIP-RTP-and-SIP-(aka-awesome-pjsip)/" class="article-date">
-	  <time datetime="2019-05-23T16:29:00.000Z" itemprop="datePublished">May 23, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/284" target="_blank" rel="noopener">#284</a></strong></p>
-<p>Original post <a href="https://codeburst.io/learning-voip-rtp-and-sip-aka-awesome-pjsip-2035fa02cf88" target="_blank" rel="noopener">https://codeburst.io/learning-voip-rtp-and-sip-aka-awesome-pjsip-2035fa02cf88</a></p>
-<hr>
-<p>Before working with Windows Phone and iOS, my life involved researching VoIP. That was to build a C library for voice over IP functionality for a very popular app, and that was how I got started in open source.</p>
-<p>The library I was working with were <a href="https://www.linphone.org/" target="_blank" rel="noopener">Linphone</a> and <a href="http://pjsip.org/" target="_blank" rel="noopener">pjsip</a>. I learn a lot of UDP and SIP protocol, how to build C library for consumption in iOS, Android and Windows Phone, how challenging it is to support C++ component and thread pool in Windows Phone 8, how to tweak entropy functionality in OpenSSL to make it compile in Windows Phone 8, how hard it was to debug C code with Android NDK. It was time when I needed to open Visual Studio, Xcode and Eclipse IDE at the same time, joined <a href="https://www.google.no/search?q=lists.pjsip.org+onmyway133&oq=lists.pjsip.org+onmyway133" target="_blank" rel="noopener">mailing list</a> and followed <a href="http://dir.gmane.org/gmane.comp.voip.pjsip" target="_blank" rel="noopener">gmane</a>. Lots of good memories.</p>
-<p>Today I find that those bookmarks I made are still available on Safari, so I think I should share here. I need to remove many articles because they are outdated or not available anymore. These are the resources that I actually read and used, not some random links. Hopefully you can find something useful.</p>
-<p>This post focuses more about resources for pjsip on client and how to talk directly and with/without a proxy server.</p>
-<h2 id="First-of-all"><a href="#First-of-all" class="headerlink" title="First of all"></a>First of all</h2><p>Here are some of the articles and open sources made by me regarding VoIP, hope you find it useful</p>
-<ul>
-<li><p><a href="https://github.com/onmyway133/rtpproxy" target="_blank" rel="noopener">rtpproxy</a>: I forked from <a href="http://www.rtpproxy.org/" target="_blank" rel="noopener">http://www.rtpproxy.org/</a> and changed code to make it support for IP handover. It means the proxy can handle when IP changes from 3G, 4G to Wifi and to reduce chances of attacks</p>
-</li>
-<li><p><a href="https://github.com/onmyway133/blog/issues/157" target="_blank" rel="noopener">Jitter buffer in VoIP</a></p>
-</li>
-<li><p><a href="https://github.com/onmyway133/blog/issues/155" target="_blank" rel="noopener">How to calculate packet size in VoIP</a></p>
-</li>
-</ul>
-<h2 id="VoIP-overview"><a href="#VoIP-overview" class="headerlink" title="VoIP overview"></a>VoIP overview</h2><blockquote>
-<p><strong>Voice over Internet Protocol</strong> (also <strong>voice over IP</strong>, <strong>VoIP</strong> or <strong>IP telephony</strong>) is a methodology and group of technologies for the delivery of <a href="https://en.wikipedia.org/wiki/Voice_communication" target="_blank" rel="noopener">voice communications</a> and <a href="https://en.wikipedia.org/wiki/Multimedia" target="_blank" rel="noopener">multimedia</a> sessions over <a href="https://en.wikipedia.org/wiki/Internet_Protocol" target="_blank" rel="noopener">Internet Protocol</a> (IP) networks, such as the <a href="https://en.wikipedia.org/wiki/Internet" target="_blank" rel="noopener">Internet</a></p>
-</blockquote>
-<ul>
-<li><p><a href="http://toncar.cz/Tutorials/VoIP/index.html" target="_blank" rel="noopener">Voice over IP Overview</a>: introduction to VoIP concepts, H.323 and SIP protocol</p>
-</li>
-<li><p><a href="https://en.wikipedia.org/wiki/Voice_over_IP" target="_blank" rel="noopener">Voice over Internet Protocol</a> the wikipedia article contains very foundation knowledge</p>
-</li>
-<li><p><a href="https://www.voip-info.org/open-source-voip-software" target="_blank" rel="noopener">Open Source VOIP Software</a>: this is a must read. Lots of foundation articles about client and server functionalities, SIP, TURN, RTP, and many open sources framworks</p>
-</li>
-<li><p><a href="https://planetcalc.com/3144/" target="_blank" rel="noopener">VOIP call bandwidth</a>: a very key factor in VoIP application is bandwidth consumption, it’s good to not going far beyond the accepted limit</p>
-</li>
-<li><p><a href="https://www.voip-info.org/routers-sip-alg" target="_blank" rel="noopener">Routers SIP ALG</a>: this is the most annoying, because there is NAT and many types of NAT, also router with SIP ALG</p>
-</li>
-<li><p><a href="http://sipsimpleclient.org/projects/sipsimpleclient/wiki/SipCoreApiDocumentation" target="_blank" rel="noopener">SIP SIMPLE Client SDK</a>: introduction to SIP core library, but it gives an overview of how</p>
-</li>
-</ul>
-<h2 id="SIP"><a href="#SIP" class="headerlink" title="SIP"></a>SIP</h2><blockquote>
-<p>The <strong>Session Initiation Protocol</strong> (<strong>SIP</strong>) is a <a href="https://en.wikipedia.org/wiki/Communications_protocol" target="_blank" rel="noopener">communications protocol</a> for <a href="https://en.wikipedia.org/wiki/Signaling_(telecommunications)" target="_blank" rel="noopener">signaling</a> and controlling multimedia <a href="https://en.wikipedia.org/wiki/Communication_session" target="_blank" rel="noopener">communication sessions</a> in applications of <a href="https://en.wikipedia.org/wiki/Internet_telephony" target="_blank" rel="noopener">Internet telephony</a> for voice and video calls, in private IP telephone systems, as well as in <a href="https://en.wikipedia.org/wiki/Instant_messaging" target="_blank" rel="noopener">instant messaging</a> over <a href="https://en.wikipedia.org/wiki/Internet_Protocol" target="_blank" rel="noopener">Internet Protocol</a> (IP) networks.</p>
-</blockquote>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*QBmsgWtKc5q30xgb.jpeg" alt></p>
-<ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Session_Initiation_Protocol" target="_blank" rel="noopener">Session Initiation Protocol</a></p>
-</li>
-<li><p><a href="https://www.ietf.org/rfc/rfc3261.txt" target="_blank" rel="noopener">RFC 3261</a>: to understand SIP, we need to read its standard. I don’t know how many times I read this RFC.</p>
-</li>
-<li><p><a href="http://www.opensips.org" target="_blank" rel="noopener">OpenSIPS</a>: OpenSIPS is a multi-functional, multi-purpose signaling SIP server</p>
-</li>
-<li><p><a href="http://www.tech-invite.com/fo-sip/tinv-fo-sip-archi.html" target="_blank" rel="noopener">SIP protocol structure through an example</a>: this is a must read, it shows very basic but necessary knowledge</p>
-</li>
-<li><p><a href="http://www.siptutorial.net/SIP/relation.html" target="_blank" rel="noopener">Relation among Call, Dialog, Transaction &amp; Message</a>: basic concepts about call, dialog, transaction and message</p>
-</li>
-<li><p><a href="https://www.microsip.org" target="_blank" rel="noopener">microSIP</a>: Open source portable SIP softphone for Windows based on PJSIP stack. I used to use this to test my pjsip tweaked library before building it for mobile</p>
-</li>
-<li><p><a href="https://code.google.com/archive/p/csipsimple/wikis/WhatIsSIP.wiki" target="_blank" rel="noopener">What is SIP</a>: introduction to SIP written by the author of CSipSimple</p>
-</li>
-<li><p><a href="https://www.onsip.com/blog/sip-proxy-server" target="_blank" rel="noopener">What is SIP proxy server</a></p>
-</li>
-<li><p><a href="https://wiki.wireshark.org/SIP" target="_blank" rel="noopener">SIP by Wireshack</a>: introduction to SIP written by Wireshack. I used Wireshack a lot to intercept and debug SIP sessions</p>
-</li>
-<li><p><a href="http://www.ingate.com/files/Solving_Firewall-NAT_Traversal.pdf" target="_blank" rel="noopener">Solving the Firewall/NAT Traversal Issue of SIP</a>: this shows how NAT can be a problem to SIP applications and how NAT traversal works</p>
-</li>
-<li><p><a href="https://www.codeproject.com/Articles/97657/Introduction-to-SIP-for-Java-C-and-VB-Developers" target="_blank" rel="noopener">Introduction to SIP for Java, C#, and VB Developers</a></p>
-</li>
-<li><p><a href="https://www.doubango.org/sipml5/" target="_blank" rel="noopener">SipML5</a> SIP client written in Javascript</p>
-</li>
-<li><p><a href="https://wiki.asterisk.org/wiki/display/AST/SIP+Retransmissions" target="_blank" rel="noopener">SIP Retransmissions</a>: what and how to handle retransmission</p>
-</li>
-<li><p><a href="https://tools.ietf.org/html/draft-ietf-sipping-dialogusage-06" target="_blank" rel="noopener">draft-ietf-sipping-dialogusage-06</a>: this is a draft about Multiple Dialog Usages in the Session Initiation Protocol</p>
-</li>
-<li><p><a href="https://docs.switzernet.com/people/emin-gabrielyan/070403-sip-invite-cancel/" target="_blank" rel="noopener">Creating and sending INVITE and CANCEL SIP text messages</a>: SIP also supports sending text message, not just audio and video packages. This isa good for chat application</p>
-</li>
-</ul>
-<h2 id="SIP-server"><a href="#SIP-server" class="headerlink" title="SIP server"></a>SIP server</h2><ul>
-<li><a href="https://www.voip-info.org/kamailio" target="_blank" rel="noopener">Kamailio</a>: this is the server that I used, and it plays well with lots of standard SIP clients, including pjsip. Debugging on this server was also a fun story</li>
-</ul>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*2bnrKUxdiJMuqO1D.png" alt></p>
-<ul>
-<li><p><a href="http://nil.uniza.sk/sip/nat-fw/configuring-nat-traversal-using-kamailio-31-and-rtpproxy-server" target="_blank" rel="noopener">Configuring NAT traversal using Kamailio 3.1 and the Rtpproxy server</a>: I don’t know how many times I had read this post</p>
-</li>
-<li><p><a href="http://www.thewindowsclub.com/set-up-sip-server-windows" target="_blank" rel="noopener">How to set up and use SIP Server on Windows</a>: I used this to test a working SIP server on Windows</p>
-</li>
-<li><p><a href="https://www.sipwise.org/news/technical/byov-system-spce-as-sbc/" target="_blank" rel="noopener">Build your own VoIP System</a></p>
-</li>
-<li><p><a href="https://puck.nether.net/pipermail/voiceops/2011-May/002512.html" target="_blank" rel="noopener">OpenSIPS/Kamailio serving far end nat traversal</a>: discussion about how Kamailio deals with NAT traversal</p>
-</li>
-<li><p><a href="http://kamailio.org/docs/modules/3.0.x/modules_k/nat_traversal.html" target="_blank" rel="noopener">NAT Traversal Module</a>: how NAT traversal works in Kamailio as a module</p>
-</li>
-</ul>
-<h2 id="RFC"><a href="#RFC" class="headerlink" title="RFC"></a>RFC</h2><p>RTP, SIP clients and server need to conform to some predefined protocols to meet standard and to be able to talk with each other. You need to read <a href="https://en.wikipedia.org/wiki/Request_for_Comments" target="_blank" rel="noopener">RFC</a> a lot, besides you need to read some drafts.</p>
-<ul>
-<li><p><a href="https://tools.ietf.org/html/rfc3550" target="_blank" rel="noopener">RFC 3550 - RTP: A Transport Protocol for Real-Time Applications</a></p>
-</li>
-<li><p><a href="https://tools.ietf.org/html/rfc3261" target="_blank" rel="noopener">RFC 3261 - SIP: Session Initiation Protocol</a></p>
-</li>
-<li><p><a href="https://tools.ietf.org/id/draft-takeda-symmetric-nat-traversal-00.txt" target="_blank" rel="noopener">Symmetric NAT Traversal using STUN</a></p>
-</li>
-<li><p><a href="https://tools.ietf.org/html/rfc3842" target="_blank" rel="noopener">RFC 3842 - A Message Summary and Message Waiting Indication Event Package for the Session Initiation Protocol (SIP)</a></p>
-</li>
-</ul>
-<h2 id="NAT"><a href="#NAT" class="headerlink" title="NAT"></a>NAT</h2><p>NAT solves the problem with lack of IP, but it causes lots of problem for SIP applications, and for me as well 😂</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*CyseeMdKG6RWTsoM.gif" alt></p>
-<ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Network_address_translation" target="_blank" rel="noopener">Network address translation</a>: Network address translation (NAT) is a method of remapping one IP address space into another by modifying network address information in the IP header of packets while they are in transit across a traffic routing device</p>
-</li>
-<li><p><a href="https://kb.smartvox.co.uk/voip-sip/sip-nat-problem/" target="_blank" rel="noopener">SIP and NAT: Why is it a problem?</a></p>
-</li>
-<li><p><a href="http://www.freeccnaworkbook.com/workbooks/ccna/configuring-port-address-translation-pat-many-to-one" target="_blank" rel="noopener">Configuring Port Address Translation (PAT)</a>: how to configure port forwarding</p>
-</li>
-<li><p><a href="http://www.think-like-a-computer.com/2011/09/16/types-of-nat/" target="_blank" rel="noopener">Types Of NAT Explained (Port Restricted NAT, etc)</a>: This is a must read. I didn’t expect there’s many kinds of NAT in real life, and how each type affects SIP application in its own way</p>
-</li>
-<li><p><a href="http://www.think-like-a-computer.com/2011/03/14/one-way-audio-voip/" target="_blank" rel="noopener">One Way Audio SIP Fix</a>: sometimes we get the problem that only 1 person can speak, this talks about why</p>
-</li>
-<li><p><a href="http://freshmeat.sourceforge.net/articles/nat-traversal-for-the-sip-protocol" target="_blank" rel="noopener">NAT traversal for the SIP protocol</a>: explains RTP, SIP and NAT</p>
-</li>
-<li><p><a href="http://www.goto.info.waseda.ac.jp/~wei/file/wei-apan-v10.pdf" target="_blank" rel="noopener">A New Method for Symmetric NAT Traversal in UDP and TCP</a></p>
-</li>
-<li><p><a href="https://voipstudio.com/sip-nat-traversal/" target="_blank" rel="noopener">SIP NAT Traversal</a>: This is a must read. How to make SIP work under NAT</p>
-</li>
-<li><p><a href="http://www.viagenie.ca/publications/2008-09-24-astricon-stun-turn-ice.pdf" target="_blank" rel="noopener">NAT and Firewall Traversal with STUN / TURN / ICE</a>: pjsip and Kamailio actually supports STUN, TURN and ICE protocol. Learn about these concepts and how to make it work</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjnath/docs/html/group__nat__intro.htm" target="_blank" rel="noopener">Introduction to Network Address Translation (NAT) and NAT Traversal</a></p>
-</li>
-</ul>
-<h2 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h2><p>Learn how TCP helps SIP in initiating session and to turn in TCP mode for package sending</p>
-<p><img src="https://cdn-images-1.medium.com/max/2826/0*OKLXqTzL1z4-OhZO.png" alt></p>
-<ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Transmission_Control_Protocol" target="_blank" rel="noopener">Transmission Control Protocol</a>: The Transmission Control Protocol (TCP) is one of the main protocols of the Internet protocol suite. It originated in the initial network implementation in which it complemented the Internet Protocol (IP)</p>
-</li>
-<li><p><a href="https://en.wikipedia.org/wiki/Network_socket#Datagram_socket" target="_blank" rel="noopener">Datagram socket</a>: A datagram socket is a type of network socket which provides a connectionless point for sending or receiving data packets.[2] Each packet sent or received on a datagram socket is individually addressed and routed</p>
-</li>
-<li><p><a href="https://stackoverflow.com/questions/7735618/tcp-rst-packet-details" target="_blank" rel="noopener">TCP RST packet details</a>: learn the important of RST bit</p>
-</li>
-<li><p><a href="https://stackoverflow.com/questions/11410754/rst-packet-sent-from-application-when-tcp-connection-not-getting-closed-properly?rq=1" target="_blank" rel="noopener">RST packet sent from application when TCP connection not getting closed properly</a></p>
-</li>
-<li><p><a href="https://stackoverflow.com/questions/3870260/why-will-a-tcp-server-send-a-fin-immediately-after-accepting-a-connection" target="_blank" rel="noopener">Why will a TCP Server send a FIN immediately after accepting a connection?</a></p>
-</li>
-<li><p><a href="https://blogs.technet.microsoft.com/networking/2009/08/12/where-do-resets-come-from-no-the-stork-does-not-bring-them/" target="_blank" rel="noopener">Where do resets come from? (No, the stork does not bring them.)</a>: learn about 3 ways handshake in TCP connection</p>
-</li>
-<li><p><a href="http://www.linuxjournal.com/files/linuxjournal.com/linuxjournal/articles/023/2333/2333s2.html" target="_blank" rel="noopener">TCP listen() Backlog</a></p>
-</li>
-<li><p><a href="http://www.freesoft.org/CIE/Course/Section4/6.htm" target="_blank" rel="noopener">Sockets and Ports</a>: Do not confuse between socket and port</p>
-</li>
-<li><p><a href="http://www.pasieronen.com/publications/NRCTR2008002.pdf" target="_blank" rel="noopener">TCP Wake-Up: Reducing Keep-Alive Traffic in Mobile IPv4 and IPsec NAT Traversal</a></p>
-</li>
-<li><p><a href="https://code.google.com/archive/p/csipsimple/issues/1582" target="_blank" rel="noopener">failed to register using tcp only</a></p>
-</li>
-<li><p><a href="https://code.google.com/archive/p/csipsimple/issues/705" target="_blank" rel="noopener">TCP vs UDP</a></p>
-</li>
-</ul>
-<h2 id="TLS"><a href="#TLS" class="headerlink" title="TLS"></a>TLS</h2><p>Learn about <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank" rel="noopener">Transport Layer Security</a> and SSL, especially openSSL for how to secure SIP connection. The interesting thing is to read code in pjsip about how it uses openSSL to encrypt messages</p>
-<ul>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/TLS" target="_blank" rel="noopener">Configuring PJSIP with TLS</a></p>
-</li>
-<li><p><a href="https://stackoverflow.com/questions/8178963/why-tls-for-sip" target="_blank" rel="noopener">Why TLS for SIP</a></p>
-</li>
-<li><p><a href="http://excelsupport.dialogic.com/imgpubs/webhelp/sip_over_tls_ov.htm" target="_blank" rel="noopener">SIP Signaling Over TLS</a></p>
-</li>
-<li><p><a href="https://www.techrepublic.com/blog/data-center/ssl-tls-certificates-what-you-need-to-know/" target="_blank" rel="noopener">SSL/TLS certificates: What you need to know</a></p>
-</li>
-<li><p><a href="http://nil.uniza.sk/network-security/tls/configuring-tls-support-kamailio-31-howto" target="_blank" rel="noopener">Configuring TLS support in Kamailio 3.1 — Howto</a>: learn how to enable TLS mode in Kamailio</p>
-</li>
-<li><p><a href="https://www.voip-info.org/sip-tls" target="_blank" rel="noopener">SIP TLS</a>: how to configure TLS in Asterisk</p>
-</li>
-</ul>
-<h2 id="ICE"><a href="#ICE" class="headerlink" title="ICE"></a>ICE</h2><p>Learn about <a href="https://en.wikipedia.org/wiki/Interactive_Connectivity_Establishment" target="_blank" rel="noopener">Interactive Connectivity Establishment</a>, another way to workaround NAT</p>
-<ul>
-<li><p><a href="https://www.slideshare.net/oej/sip-2012-ice-nat-traversal-for-media" target="_blank" rel="noopener">SIP 2012:: ICE — NAT traversal for media</a></p>
-</li>
-<li><p><a href="https://blog.pjsip.org/2007/04/06/introducing-pjnath-open-source-ice-stun-and-turn/" target="_blank" rel="noopener">Introducing pjnath — Open Source ICE, STUN, and TURN for NAT Traversal</a></p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__TRANSPORT__ICE.htm" target="_blank" rel="noopener">ICE Media Transport</a></p>
-</li>
-</ul>
-<h2 id="STUN-and-TURN"><a href="#STUN-and-TURN" class="headerlink" title="STUN and TURN"></a>STUN and TURN</h2><p>Learn about <a href="https://en.wikipedia.org/wiki/STUN" target="_blank" rel="noopener">Session Traversal Utilities for NAT</a> and <a href="https://en.wikipedia.org/wiki/Traversal_Using_Relays_around_NAT" target="_blank" rel="noopener">Traversal Using Relays around NAT</a>, another way to workaround NAT</p>
-<ul>
-<li><p><a href="https://www.voip-info.org/stun" target="_blank" rel="noopener">STUN</a>: STUN (Simple Traversal of UDP through NATs (Network Address Translation)) is a protocol for assisting devices behind a NAT firewall or router with their packet routing. RFC 5389 redefines the term STUN as ‘Session Traversal Utilities for NAT’.</p>
-</li>
-<li><p><a href="https://stackoverflow.com/questions/13501288/what-is-stun-and-does-it-need-a-port-forwarded-server" target="_blank" rel="noopener">What is STUN and does it need a port-forwarded server?</a></p>
-</li>
-<li><p><a href="http://turnserver.sourceforge.net" target="_blank" rel="noopener">TURN server</a></p>
-</li>
-</ul>
-<h2 id="ALG"><a href="#ALG" class="headerlink" title="ALG"></a>ALG</h2><p>Learn about [Application Layer Gateway](<a href="http://Application" target="_blank" rel="noopener">http://Application</a> Layer Gateway) and how it affects your SIP application. This component knows how to deal and modify your SIP message, so it might introduce unexpected behaviours.</p>
-<ul>
-<li><p><a href="https://support.gradwell.com/hc/en-gb/articles/215553503" target="_blank" rel="noopener">What is SIP ALG and why does Gradwell recommend that I turn it off?</a></p>
-</li>
-<li><p><a href="https://www.juniper.net/documentation/software/junos-security/junos-security95/junos-security-swconfig-security/sip-alg-understanding.html" target="_blank" rel="noopener">Understanding the SIP ALG</a></p>
-</li>
-<li><p><a href="http://www.voiptuts.com/2011/02/what-is-sip-alg-application-layer.html" target="_blank" rel="noopener">What Is Sip ALG (Application Layer Gateway) Voip firewall</a></p>
-</li>
-<li><p><a href="http://www.watchguard.com/help/docs/wsm/11/en-us/content/en-us/proxies/sip/sip_proxy_about_c.html" target="_blank" rel="noopener">About the SIP ALG</a></p>
-</li>
-<li><p><a href="https://www.juniper.net/documentation/software/junos-security/junos-security96/junos-security-swconfig-security/id-60290.html" target="_blank" rel="noopener">Understanding SIP with Network Address Translation (NAT)</a>: This is a must read, a very thorough document</p>
-</li>
-</ul>
-<h2 id="Voice-quality"><a href="#Voice-quality" class="headerlink" title="Voice quality"></a>Voice quality</h2><p>Learn about voice quality, bandwidth and fixing delay in audio</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/1*Gst1j53g8PaqkBuP6RbZZg.png" alt></p>
-<ul>
-<li><p><a href="https://www.voipmechanic.com/phoneandvoicequality_2.htm" target="_blank" rel="noopener">VoIP — fixing voice quality</a></p>
-</li>
-<li><p><a href="https://www.lifewire.com/delay-in-voip-3426312" target="_blank" rel="noopener">What is Delay in VoIP?</a></p>
-</li>
-<li><p><a href="https://www.cisco.com/c/en/us/support/docs/voice/voice-quality/5125-delay-details.html" target="_blank" rel="noopener">Understanding Delay in Packet Voice Networks</a></p>
-</li>
-<li><p><a href="https://hubpages.com/technology/Reducing-the-SIP-Packet-Size-in-VoIP" target="_blank" rel="noopener">Reducing the SIP Packet Size in VoIP</a></p>
-</li>
-<li><p><a href="https://www.lifewire.com/what-affects-voice-quality-in-voip-calls-3426724" target="_blank" rel="noopener">What Affects Voice Quality in VoIP Calls</a></p>
-</li>
-<li><p><a href="https://www.voip-info.org/5-curable-causes-of-poor-voip-call-quality" target="_blank" rel="noopener">5 Curable Causes of Poor VoIP Call Quality</a></p>
-</li>
-<li><p><a href="https://kb.smartvox.co.uk/voip-sip/rtp-jitter-audio-quality-voip/" target="_blank" rel="noopener">RTP, Jitter and audio quality in VoIP</a>: learn about the important of jitter and RTP</p>
-</li>
-<li><p><a href="https://www.comsys.rwth-aachen.de/fileadmin/papers/2012/2012-aktas-new2an-codecswitching.pdf" target="_blank" rel="noopener">An Adaptive Codec Switching Scheme for SIP-based VoIP</a>: explain codec switching during call in SIP based VoIP</p>
-</li>
-<li><p><a href="https://searchunifiedcommunications.techtarget.com/tutorial/VoIP-bandwidth-fundamentals" target="_blank" rel="noopener">How to master VoIP bandwidth fundamentals</a></p>
-</li>
-<li><p><a href="https://www.cisco.com/c/en/us/support/docs/voice/voice-quality/7934-bwidth-consume.html" target="_blank" rel="noopener">Voice Over IP — Per Call Bandwidth Consumption</a></p>
-</li>
-</ul>
-<h2 id="Echo"><a href="#Echo" class="headerlink" title="Echo"></a>Echo</h2><p>This is a very common problem in VoIP, sometimes we hear voice from the other and also from us. Learn how echo is made, and how to effectively do echo cancellation</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*GyZHcz0TKL_UHdYJ.png" alt></p>
-<ul>
-<li><p><a href="https://www.cisco.com/c/en/us/td/docs/ios/solutions_docs/voip_solutions/EA_ISD.html" target="_blank" rel="noopener">Echo Analysis for Voice over IP</a></p>
-</li>
-<li><p><a href="https://www.speex.org/docs/manual/speex-manual/node7.html#SECTION00740000000000000000" target="_blank" rel="noopener">Echo Cancellation</a>: How to use Speex to cancel echo</p>
-</li>
-<li><p><a href="https://en.wikipedia.org/wiki/Echo_suppression_and_cancellation" target="_blank" rel="noopener">Echo suppression and cancellation</a></p>
-</li>
-<li><p><a href="https://www.voip-info.org/echo-and-sidetone" target="_blank" rel="noopener">Echo and Sidetone</a>: A telephone is a duplex device, meaning it is both transmitting and receiving on the same pair of wires. The phone network must ensure that not too much of the caller’s voice is fed back into his or her receiver</p>
-</li>
-<li><p><a href="https://www.voipmechanic.com/echo-technical.htm" target="_blank" rel="noopener">VoIP Echo and how to correct it</a></p>
-</li>
-<li><p><a href="https://www.voip-info.org/causes-of-echo" target="_blank" rel="noopener">Causes of Echo</a></p>
-</li>
-<li><p><a href="https://stackoverflow.com/questions/18870124/how-software-echo-canceller-works" target="_blank" rel="noopener">How software echo canceller works?</a>: I asked about how we use software to do echo cancellation</p>
-</li>
-</ul>
-<h2 id="Dual-Tone"><a href="#Dual-Tone" class="headerlink" title="Dual Tone"></a>Dual Tone</h2><p>Learn how to generate dual tone to make signal in telecommunication</p>
-<ul>
-<li><p><a href="https://www.mediacollege.com/audio/tone/dtmf.html" target="_blank" rel="noopener">DTMF (Dual-Tone Multi-Frequency)</a></p>
-</li>
-<li><p><a href="https://www.3cx.com/blog/voip-howto/dtmf-rfc2833/" target="_blank" rel="noopener">The dance of DTMF, SIP &amp; RFC 2833 — An introduction</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/FAQ#dtmf" target="_blank" rel="noopener">How can I send inband DTMF tones?</a></p>
-</li>
-</ul>
-<h2 id="pjsip"><a href="#pjsip" class="headerlink" title="pjsip"></a>pjsip</h2><blockquote>
-<p>PJSIP is a free and <a href="http://www.pjsip.org/about.htm#opensource" target="_blank" rel="noopener">open source</a> multimedia communication library written in C language implementing standard based protocols such as SIP, SDP, RTP, STUN, TURN, and ICE. It combines signaling protocol (SIP) with rich multimedia framework and NAT traversal functionality into high level API that is portable and suitable for almost any type of systems ranging from desktops, embedded systems, to mobile handsets.</p>
-</blockquote>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*E82pcZW_6lhy8l1H.jpg" alt></p>
-<ul>
-<li><p><a href="http://www.pjsip.org/pjsip/docs/html/group__PJSUA__LIB.htm" target="_blank" rel="noopener">PJSUA API — High Level Softphone API</a>: high level usage of pjsip</p>
-</li>
-<li><p><a href="https://www.scribd.com/document/55939030/Suresh-Report-Voip1" target="_blank" rel="noopener">pjsip library architecture</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/" target="_blank" rel="noopener">pjsip documentation</a></p>
-</li>
-</ul>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*e4Lr7TxJlSdQhA-b.png" alt></p>
-<ul>
-<li><p><a href="http://www.pjsip.org/pjsip/docs/html/group__PJSIP__TRANSACT__UTIL.htm" target="_blank" rel="noopener">Stateful Operations</a>: common functions to send request statefully</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjsip/docs/html/group__PJSIP__ENDPT__STATELESS.htm" target="_blank" rel="noopener">Message Creation and Stateless Operations</a>: functions related to send and receive messages</p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/media-flow#IncomingRTPRTCPPackets" target="_blank" rel="noopener">Understanding Media Flow</a>: this is a must read. The media layer is so important, it controls sound, codec and conference bridge.</p>
-</li>
-</ul>
-<p><img src="https://cdn-images-1.medium.com/max/2000/1*oEs7lMDuaSG-En-R7ig-og.png" alt></p>
-<ul>
-<li><p><a href="http://www.pjsip.org/using.htm" target="_blank" rel="noopener">Getting Started: Building and Using PJSIP and PJMEDIA</a>: This article describes how to download, customize, build, and use the open source PJSIP and PJMEDIA SIP and media stack</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__CODEC.htm" target="_blank" rel="noopener">Codec Framework</a>: pjsip supports multiple codec</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMED__JBUF.htm" target="_blank" rel="noopener">Adaptive jitter buffer</a>: this takes sometime to understand, but it plays an important part in making pjsip work properly regarding buffer handling</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjsip/docs/html/group__PJSUA__LIB__ACC.htm" target="_blank" rel="noopener">PJSUA-API Accounts Management</a>: how to register account in pjsua</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjlib/docs/html/group__pj__dll__target.htm" target="_blank" rel="noopener">Building Dynamic Link Libraries (DLL/DSO)</a>: how to build pjsip as a dynamic library</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__CONFIG.htm" target="_blank" rel="noopener">Compile time configuration</a>: lots of configuration we can apply to pjsip</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjlib/docs/html/group__PJ__POOL__GROUP.htm" target="_blank" rel="noopener">Fast Memory Pool</a>: pjsip has its own memory pool. It’s very interesting to look at the source code and learn something new</p>
-</li>
-<li><p><a href="http://www.pjsip.org/sip_media_features.htm" target="_blank" rel="noopener">SIP and Media Features</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/Using_SIP_TCP" target="_blank" rel="noopener">Using SIP TCP Transport</a>: How to enable TCP mode in SIP and to initiate SIP session</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__STEREO.htm" target="_blank" rel="noopener">Monochannel and multichannel audio frame converter</a>: interesting read about mono and multi channel</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjlib/docs/html/group__PJ__IOQUEUE.htm" target="_blank" rel="noopener">IOQueue: I/O Event Dispatching with Proactor Pattern</a>: the code for this is very interesting and plays a fundamental in how pjsip handles events</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjlib-util/docs/html/group__PJ__DNS__RESOLVER.htm" target="_blank" rel="noopener">DNS Asynchronous/Caching Resolution Engine</a>: how pjsip handles DNS resolution by itself</p>
-</li>
-</ul>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*VBotMl-b9232q1JL.png" alt></p>
-<ul>
-<li><p><a href="http://www.pjsip.org/pjlib/docs/html/group__PJ__SSL__SOCK.htm" target="_blank" rel="noopener">Secure socket I/O</a>: the code for this is important if you want to learn how to use SSL under the hood</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__MF__DTMF__TONE__GENERATOR.htm" target="_blank" rel="noopener">Multi-frequency tone generator</a>: I learn a lot how pjsip uses sin wave to generate tone</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjsip/docs/html/group__PJSIP__RESOLVE.htm" target="_blank" rel="noopener">SIP SRV Server Resolution (RFC 3263 — Locating SIP Servers)</a>: learn the mechanism for how pjsip finds a particular SIP server</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjlib/docs/html/group__PJ__EXCEPT.htm" target="_blank" rel="noopener">Exception Handling</a>: how to do Try Catch in C</p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/PJSUA_Locks" target="_blank" rel="noopener">Mutex Locks Order in PJSUA-LIB</a>: how multiple locks at each layer helps ensure correction and avoid deadlocks. I had lots of nightmare debugging deadlocks with pjsip 😱</p>
-</li>
-</ul>
-<h2 id="Threading"><a href="#Threading" class="headerlink" title="Threading"></a>Threading</h2><p>pjsip uses <a href="https://en.wikipedia.org/wiki/Thread-local_storage" target="_blank" rel="noopener">Local Thread Storage</a> which introduces very cool behaviors</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*rD0iy3joZsBXsMYo.png" alt></p>
-<ul>
-<li><p><a href="http://www.pjsip.org/pjlib/docs/html/group__PJ__THREAD.htm" target="_blank" rel="noopener">Thread — Operating System Dependent Functionality</a></p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2009-April/006997.html" target="_blank" rel="noopener">Threads question</a>: how pjlib handles thread</p>
-</li>
-<li><p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms686991(v=vs.85).aspx" target="_blank" rel="noopener">Using Thread Local Storage</a>: how to use TlsAlloc and TlsFree in Windows</p>
-</li>
-<li><p><a href="http://www.installsetupconfig.com/win32programming/windowsthreadsprocessapis7_7.html" target="_blank" rel="noopener">The Windows Processes and Threads 8</a></p>
-</li>
-<li><p><a href="https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_61/rzahw/rzahwex1.htm" target="_blank" rel="noopener">Example: Thread local storage in a Pthread program</a>: how Pthread works</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjlib/docs/html/group__PJ__TLS.htm" target="_blank" rel="noopener">Thread Local Storage</a>: learn about pj_thread</p>
-</li>
-</ul>
-<h2 id="Resampling"><a href="#Resampling" class="headerlink" title="Resampling"></a>Resampling</h2><p>How to work with sample rate of the media stream</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*DkP_SZQGZaSdvZAF.jpg" alt></p>
-<ul>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__RESAMPLE__PORT.htm" target="_blank" rel="noopener">Resample Port</a>: how to perform resampling in pjmedia</p>
-</li>
-<li><p>Resampling Algorithm: code to perform resampling</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/page_pjmedia_samples_resampleplay_c.htm" target="_blank" rel="noopener">Samples: Using Resample Port</a>: very straightforward example to change sample rate of the media stream</p>
-</li>
-</ul>
-<h2 id="Memory-and-Performance"><a href="#Memory-and-Performance" class="headerlink" title="Memory and Performance"></a>Memory and Performance</h2><ul>
-<li><p><a href="http://comments.gmane.org/gmane.comp.voip.pjsip/14219" target="_blank" rel="noopener">Memory allocation strategy</a></p>
-</li>
-<li><p><a href="http://www.pjsip.org/high-performance-sip.htm" target="_blank" rel="noopener">PJSIP — High Performance Open Source SIP Stack</a></p>
-</li>
-</ul>
-<h2 id="Audio"><a href="#Audio" class="headerlink" title="Audio"></a>Audio</h2><ul>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/audio-how-to-record" target="_blank" rel="noopener">How to Record Audio with pjsua</a>: how to use pjsua to record audio.</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__MEM__CAPTURE.htm" target="_blank" rel="noopener">Memory/Buffer-based Capture Port</a>: believe me, you will jump into pjmedia_mem_capture_create a lot</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__FILE__REC.htm" target="_blank" rel="noopener">File Writer (Recorder)</a>: record audio to .wav file</p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2008-February/001838.html" target="_blank" rel="noopener">Using pjsua to create a mp3 stream</a></p>
-</li>
-<li><p><a href="https://www.codeproject.com/Articles/332109/AMR-Audio-Encoding" target="_blank" rel="noopener">AMR Audio Encoding</a>: understands AMR encoding</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__audio__device__api.htm" target="_blank" rel="noopener">Audio Device API</a>: how pjsip detects and use Audio device</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMED__SND__PORT.htm" target="_blank" rel="noopener">Sound Device Port</a>: Media Port Connection Abstraction to the Sound Device</p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2009-December/009719.html" target="_blank" rel="noopener">audio bursting</a></p>
-</li>
-<li><p><a href="http://comments.gmane.org/gmane.comp.voip.pjsip/11623" target="_blank" rel="noopener">Buffer problem</a></p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2009-March/006783.html" target="_blank" rel="noopener">Problem with PJMEDIA’s play callback</a></p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__FRAME__OP.htm" target="_blank" rel="noopener">Audio Manipulation Algorithms</a>: lots of cool algorithm written in C for audio manipulation. The hardest and most imporant one is probably <a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMED__JBUF.htm" target="_blank" rel="noopener">Adaptive jitter buffer</a></p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2010-January/010167.html" target="_blank" rel="noopener">bad quality on iphone 2G with os 3.0</a>: No one would use iPhone 2G now, but it’s good to be aware of older phones</p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2009-April/007265.html" target="_blank" rel="noopener">getting Underflow, buf_cnt=0, will generate 1 frame continuessly</a>: how to handle underflow in pjmedia</p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/MeasuringSoundLatency" target="_blank" rel="noopener">Measuring Sound Latency</a>: This article describes how to measure both sound device latency and overall (end-to-end) latency of ​pjsua</p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/audio-check-packet-loss" target="_blank" rel="noopener">Checking for Network Impairments of Incoming RTP Packets</a></p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2013-January/015647.html" target="_blank" rel="noopener">Master/sound</a>: How master sound works and deal with no sound on the mic input port</p>
-</li>
-</ul>
-<h2 id="Video"><a href="#Video" class="headerlink" title="Video"></a>Video</h2><p>I learn a lot regarding video capture, ffmpeg and color space, especially YUV</p>
-<ul>
-<li><p><a href="https://code.google.com/archive/p/siphon/wikis/VIdeoSupport.wiki" target="_blank" rel="noopener">siphon — VIdeoSupport.wiki</a>: How siphon deals with video before pjsip 2.0</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__video__device__api.htm" target="_blank" rel="noopener">Video Device API</a>; PJMEDIA Video Device API is a cross-platform video API appropriate for use with VoIP applications and many other types of video streaming applications.</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjsip/docs/html/group__PJSUA__LIB__VIDEO.htm" target="_blank" rel="noopener">PJSUA-API Video</a>: Uses video APIs in pjsua with pjsip 2.1.0</p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/Video_Users_Guide" target="_blank" rel="noopener">PJSIP Video User’s Guide</a>: all you need to know about video support in pjsip</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMED__VID__STRM.htm" target="_blank" rel="noopener">Video streams</a>: I can’t never forget pjmedia_vid_stream_create</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__VID__TEE.htm" target="_blank" rel="noopener">Video source duplicator</a>: duplicate video data in the stream.</p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__FILE__PLAY.htm" target="_blank" rel="noopener">AVI File Player</a>: Video and audio playback from AVI file</p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/ReleaseNotes-2.0" target="_blank" rel="noopener">PJSIP Version 2.0 Release Notes</a>: starting with 2.0, pjsip supports video. Good to read</p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/ticket/1263" target="_blank" rel="noopener">Video API for PJSUA-LIB</a></p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2012-July/014959.html" target="_blank" rel="noopener">How to make a loopback video call with AVI file?</a></p>
-</li>
-<li><p><a href="https://stackoverflow.com/questions/3367187/what-is-lib-swscale-used-for-by-ffmpeg-programers" target="_blank" rel="noopener">What is lib Swscale used for by ffmpeg programers?</a></p>
-</li>
-<li><p><a href="https://github.com/dmcrodrigues/FFmpeg-iOS-build-script" target="_blank" rel="noopener">FFmpeg-iOS-build-script</a>: details how to build ffmpeg for iOS</p>
-</li>
-</ul>
-<h2 id="CSipSimple"><a href="#CSipSimple" class="headerlink" title="CSipSimple"></a>CSipSimple</h2><p>There are many SIP client for mobile and desktop, <a href="https://www.microsip.org/" target="_blank" rel="noopener">microSIP</a>, <a href="https://jitsi.org/" target="_blank" rel="noopener">Jitsi</a>, <a href="https://www.linphone.org/technical-corner/linphone/overview" target="_blank" rel="noopener">Linphone</a>, <a href="https://www.doubango.org/" target="_blank" rel="noopener">Doubango</a>, … They all follow strictly SIP standard and may have their own SIP core, for example microSIP uses pjsip, Linphone uses liblinphone, …</p>
-<p>Among that, I learn a lot from the Android client, <a href="https://code.google.com/archive/p/csipsimple/" target="_blank" rel="noopener">CSipSimple</a>, which offers very nice interface and have good functionalities. Unfortunately <a href="https://github.com/r3gis3r/CSipSimple/issues/6" target="_blank" rel="noopener">Google Code was closed</a>, so I don’t know if the author has plan to do development on GitHub.</p>
-<p>I also participated a lot on the Google forum for <a href="https://groups.google.com/forum/#!searchin/csipsimple-users/onmyway133%7Csort:date" target="_blank" rel="noopener">user</a> and <a href="https://groups.google.com/forum/#!searchin/csipsimple-dev/onmyway133%7Csort:date" target="_blank" rel="noopener">dev</a>. Thanks for Regis, I learn a lot about open source and that made me interested in open source.</p>
-<p>You can read <a href="https://groups.google.com/forum/#!topic/csipsimple-dev/ihZN8s_-g_4" target="_blank" rel="noopener">What is a branded version</a></p>
-<blockquote>
-<p>I don’t make any money from csipsimple at all. It’s a pure opensource and free as in speech project.<br>I develop it on my free time and just so that it benefit users.<br>That’s the reason why the project is released under GPL license terms. I advise you to read carefully the license (you’ll learn a lot of things on the spirit of the license and the project) : <a href="http://www.gnu.org/licenses/gpl.html" target="_blank" rel="noopener">http://www.gnu.org/licenses/gpl.html</a><br>To sump up, the spirit of the GPL is that users should be always allowed to see the source code of the software they use, to use it the way they want and to redistribute it.</p>
-</blockquote>
-<h2 id="RTP-Proxy"><a href="#RTP-Proxy" class="headerlink" title="RTP Proxy"></a>RTP Proxy</h2><p>Because of NAT or in case users want to talk via a proxy, then a <a href="http://www.rtpproxy.org/" target="_blank" rel="noopener">RTP proxy</a> is needed. RTPProxy follows standard and works well with Kamailio</p>
-<ul>
-<li><p><a href="https://saevolgo.blogspot.no/2012/03/making-rtpproxy-work.html" target="_blank" rel="noopener">Making RTPproxy work</a></p>
-</li>
-<li><p><a href="https://sourceforge.net/p/sippy/rtpproxy/ci/master/tree/" target="_blank" rel="noopener">Sippy B2BUA and RFC3261 SIP Stack</a></p>
-</li>
-<li><p><a href="https://linux.die.net/man/8/rtpproxy" target="_blank" rel="noopener">rtpproxy(8) — Linux man page</a></p>
-</li>
-<li><p><a href="https://lists.kamailio.org//pipermail/sr-users/2008-April/062814.html" target="_blank" rel="noopener">rtpproxy address filling</a></p>
-</li>
-</ul>
-<h2 id="Other-related-articles"><a href="#Other-related-articles" class="headerlink" title="Other related articles"></a>Other related articles</h2><ul>
-<li><p><a href="https://thestereobus.com/2008/01/12/sample-rate-and-bitrate-the-guts-of-digital-audio/" target="_blank" rel="noopener">Sample Rate and Bitrate: The Guts of Digital Audio</a></p>
-</li>
-<li><p><a href="http://webcache.googleusercontent.com/search?q=cache:http://www.techexams.net/forums/ccnp/48768-voip-packet-size.html" target="_blank" rel="noopener">VoIP Packet Size</a></p>
-</li>
-<li><p><a href="https://lists.freedesktop.org/archives/gstreamer-devel/2012-August/036865.html" target="_blank" rel="noopener">How to measure brandwith consumption of an rtp stream?</a></p>
-</li>
-<li><p><a href="https://docs.microsoft.com/en-us/previous-versions/office/developer/communication-server-2007/bb759215(v=office.12)" target="_blank" rel="noopener">Sending Reliable Provisional Responses</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/ticket/1586" target="_blank" rel="noopener">SILK audio codec wrapper implementation</a></p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2008-July/003843.html" target="_blank" rel="noopener">conference bridge questions</a></p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2012-January/014037.html" target="_blank" rel="noopener">multiple audio devices, multiple calls, conferencing, recording and mix all of the above</a></p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2010-January/010089.html" target="_blank" rel="noopener">How to Know Offline Call</a></p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2008-May/002857.html" target="_blank" rel="noopener">Symmetric RTP</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/ticket/1412" target="_blank" rel="noopener">Account specific NAT settings: STUN, ICE, and TURN</a></p>
-</li>
-<li><p><a href="https://technfun.wordpress.com/2008/11/06/sip-stories-part-3-invite-retransmission/" target="_blank" rel="noopener">SIP stories, part 3: INVITE retransmission</a></p>
-</li>
-<li><p><a href="http://lists.pjsip.org/pipermail/pjsip_lists.pjsip.org/2010-February/010329.html" target="_blank" rel="noopener">TCP/TLS reconnect</a></p>
-</li>
-<li><p><a href="https://lists.kamailio.org//pipermail/sr-users/2010-May/063880.html" target="_blank" rel="noopener">Configuring TCP keep alive and connection lifetime</a></p>
-</li>
-<li><p><a href="http://lists.opensips.org/pipermail/users/2012-September/023057.html" target="_blank" rel="noopener">Max TCP connections</a></p>
-</li>
-<li><p><a href="http://comments.gmane.org/gmane.comp.voip.pjsip/836" target="_blank" rel="noopener">VAD detection scenario</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/ticket/1340" target="_blank" rel="noopener">Handle native capture preview</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/ticket/1360" target="_blank" rel="noopener">Video orientation support</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/ticket/95" target="_blank" rel="noopener">Keep-alive mechanism for TCP and TLS transports</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/ticket/56" target="_blank" rel="noopener">Periodically transmit RTP packet on silence</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/ticket/87" target="_blank" rel="noopener">Conference bridge should transmit silence frame when level is zero</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/ticket/883" target="_blank" rel="noopener">Add user defined NAT hole-punching and keep-alive mechanism to media stream</a></p>
-</li>
-</ul>
-<h2 id="IP-change"><a href="#IP-change" class="headerlink" title="IP change"></a>IP change</h2><p>IP change during call can cause problem, such as when user goes from Wifi to 4G mode</p>
-<ul>
-<li><p><a href="http://comments.gmane.org/gmane.comp.voip.pjsip/16134" target="_blank" rel="noopener">Proper way to handle Ip address changes in Android</a></p>
-</li>
-<li><p><a href="https://code.google.com/archive/p/csipsimple/issues/1423" target="_blank" rel="noopener">support WiFi and 3G simultaneously</a></p>
-</li>
-</ul>
-<h2 id="RTP-and-RTCP"><a href="#RTP-and-RTCP" class="headerlink" title="RTP and RTCP"></a>RTP and RTCP</h2><p>Learn about [Realtime transport control protocol](<a href="http://Real-time" target="_blank" rel="noopener">http://Real-time</a> Transport Protocol) and how that works with RTP</p>
-<ul>
-<li><p><a href="http://disi.unitn.it/locigno/didattica/AdNet/10-11/05-5_VoIP-RTP_H.pdf" target="_blank" rel="noopener">Voice over IP: RTP/RTCP — The transport layer</a></p>
-</li>
-<li><p><a href="http://www.networksorcery.com/enp/protocol/rtcp.htm" target="_blank" rel="noopener">RTCP, RTP Control Protocol</a></p>
-</li>
-<li><p><a href="http://www.netlab.tkk.fi/opetus/s38130/k99/presentations/4.pdf" target="_blank" rel="noopener">Protocol overview: RTP and RTCP</a></p>
-</li>
-<li><p><a href="http://www.cs.odu.edu/~cs778/jeffay/Lecture6.pdf" target="_blank" rel="noopener">The Multimedia Control Protocol RTCP</a></p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/page_pjmedia_samples_confsample_c.htm" target="_blank" rel="noopener">Using Conference Bridge</a></p>
-</li>
-<li><p><a href="http://docs.huihoo.com/telecom/sip_rtp_stack.html" target="_blank" rel="noopener">SIP and RTP Stack</a></p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__TRANSPORT.htm" target="_blank" rel="noopener">Media Transport</a></p>
-</li>
-<li><p><a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMED__RTP.htm" target="_blank" rel="noopener">RTP Session and Encapsulation (RFC 3550)</a></p>
-</li>
-</ul>
-<h2 id="Codec"><a href="#Codec" class="headerlink" title="Codec"></a>Codec</h2><p>To reduce payload size, we need to encode and decode the audio and video package. We usually use <a href="https://www.speex.org/" target="_blank" rel="noopener">Speex</a> and <a href="https://opus-codec.org/" target="_blank" rel="noopener">Opus</a>. Also, it’s good to understand the .wav format</p>
-<ul>
-<li><p><a href="http://www.topherlee.com/software/pcm-tut-wavformat.html" target="_blank" rel="noopener">Digital Audio — Creating a WAV (RIFF) file</a></p>
-</li>
-<li><p><a href="https://docs.microsoft.com/en-us/previous-versions/windows/xna/ff827591(v=xnagamestudio.41)" target="_blank" rel="noopener">Streaming Data from a WAV File</a></p>
-</li>
-<li><p><a href="https://www.speex.org/docs/manual/speex-manual/node7.html" target="_blank" rel="noopener">Programming with Speex (the libspeex API)</a></p>
-</li>
-<li><p><a href="https://www.speex.org/docs/manual/speex-manual/node10.html" target="_blank" rel="noopener">Speex narrowband mode</a></p>
-</li>
-<li><p><a href="http://www.opus-codec.org/docs/" target="_blank" rel="noopener">Developing with libopus (API reference)</a></p>
-</li>
-</ul>
-<h2 id="Building-pjsip-for-Windows-Phone-8"><a href="#Building-pjsip-for-Windows-Phone-8" class="headerlink" title="Building pjsip for Windows Phone 8"></a>Building pjsip for Windows Phone 8</h2><p>Windows Phone 8 introduces C++ component , changes in threading, VoIP and audio background mode. To do this I need to find another threadpool component and tweak openSSL a bit to make it compile on Windows Phone 8. I lost the source code so can’t upload the code to GitHub 😢. Also many links broke because Nokia was not here any more</p>
-<ul>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/Getting-Started/Other-Platforms" target="_blank" rel="noopener">Building for Other Platforms</a></p>
-</li>
-<li><p><a href="https://trac.pjsip.org/repos/wiki/Getting-Started/Windows-Phone" target="_blank" rel="noopener">Getting Started: Building for UWP and Windows Phone 8.x</a></p>
-</li>
-<li><p><a href="http://www.pjsip.org/docs/latest/pjlib/docs/html/porting_pjlib_pg.htm" target="_blank" rel="noopener">Porting to New CPU Architecture</a>: pjlib is the foundation of pjsip. Learn how to port it to another platform</p>
-</li>
-<li><p><a href="https://docs.microsoft.com/en-us/previous-versions/windows/desktop/apps/jj206983(v=vs.105)" target="_blank" rel="noopener">VoIP apps for Windows Phone 8</a></p>
-</li>
-<li><p><a href="https://docs.microsoft.com/en-us/previous-versions/windows/desktop/apps/jj207046(v=vs.105)" target="_blank" rel="noopener">How to implement audio streaming for VoIP calls for Windows Phone 8</a></p>
-</li>
-<li><p><a href="http://docs.embarcadero.com/products/rad_studio/delphiAndcpp2009/HelpUpdate2/EN/html/devwin32/oocinprocessoutofprocessandremoteservers_xml.html" target="_blank" rel="noopener">In-process, Out-of-process, and Remote Servers</a></p>
-</li>
-<li><p><a href="https://www.codeproject.com/Articles/19605/Basics-of-an-IDL-file" target="_blank" rel="noopener">Basics of an IDL file</a></p>
-</li>
-</ul>
-<h2 id="Porting-OpenSSL-to-Windows-Phone-8"><a href="#Porting-OpenSSL-to-Windows-Phone-8" class="headerlink" title="Porting OpenSSL to Windows Phone 8"></a>Porting OpenSSL to Windows Phone 8</h2><p>Firstly, learn how to compile, use OpenSSL. How to call it from pjsip, and how to make it compile in Visual Studio for Windows Phone 8. I also learn the important of Winsock, how to port a library. I struggled a lot with porting openSSL to Windows RT, then to Windows Phone 8</p>
-<p>A lot of links were broken 😢 so I can’t paste them all here.</p>
-<ul>
-<li><p><a href="https://www.linuxjournal.com/article/4822" target="_blank" rel="noopener">An Introduction to OpenSSL Programming</a></p>
-</li>
-<li><p><a href="https://mikaelkoskinen.net/post/ssl-socket-support-in-windows-phone" target="_blank" rel="noopener">SSL Socket support in Windows Phone</a></p>
-</li>
-<li><p><a href="http://www.markarteaga.com/building-secure-windows-phone-8-apps-apis-and-techniques/" target="_blank" rel="noopener">Building Secure Windows Phone 8 Apps — APIs and Techniques</a></p>
-</li>
-<li><p><a href="https://social.msdn.microsoft.com/forums/windowsapps/en-US/8f3c82e6-3b42-4138-9342-f9d687ee6466/is-winsock-available-on-windows-phone-8" target="_blank" rel="noopener">Is Winsock available on Windows Phone 8?</a></p>
-</li>
-<li><p><a href="https://social.msdn.microsoft.com/Forums/windowsapps/en-US/2662cac1-fbb6-4ac4-8553-06375d798720/why-i-am-not-been-able-to-use-all-the-header-files-egsslh-under-open-source-openssl-library-" target="_blank" rel="noopener">Why i am not been able to use all the header files (eg-&gt;ssl.h) under open source openssl library</a></p>
-</li>
-<li><p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms738545(v=vs.85).aspx" target="_blank" rel="noopener">Getting Started with Winsock</a></p>
-</li>
-<li><p><a href="http://developer.covenanteyes.com/building-openssl-for-visual-studio/" target="_blank" rel="noopener">Building OpenSSL for Visual Studio</a></p>
-</li>
-<li><p><a href="http://eran.geek.co.il/wp/archives/3897" target="_blank" rel="noopener">How to Compile OpenSSL for Visual Studio 2010/2012</a></p>
-</li>
-<li><p><a href="http://www.blogcompiler.com/2011/12/21/openssl-for-windows/" target="_blank" rel="noopener">OpenSSL for Windows</a></p>
-</li>
-<li><p><a href="https://forum.xda-developers.com/showthread.php?t=2113595" target="_blank" rel="noopener">OpenSSL for Windows RT</a></p>
-</li>
-<li><p><a href="https://rt.openssl.org/Ticket/Display.html?id=2911&user=guest&pass=guest" target="_blank" rel="noopener">2911: enhancement request: Windows RT support</a></p>
-</li>
-<li><p><a href="https://stackoverflow.com/questions/1640258/need-a-fast-random-generator-for-c" target="_blank" rel="noopener">Need a fast random generator for c++</a></p>
-</li>
-<li><p><a href="https://stackoverflow.com/questions/4796590/window-c-c-crypto-api-examples-and-tips" target="_blank" rel="noopener">Window C/C++ Crypto API Examples and tips</a></p>
-</li>
-<li><p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa379942(v=vs.85).aspx" target="_blank" rel="noopener">CryptGenRandom function</a></p>
-</li>
-<li><p><a href="http://egd.sourceforge.net" target="_blank" rel="noopener">EGD: The Entropy Gathering Daemon</a></p>
-</li>
-</ul>
-<h2 id="C-and-C"><a href="#C-and-C" class="headerlink" title="C and C++"></a>C and C++</h2><p>Since pjsip, rtpproxy and kamailio are all C and C++ code. I needed to have a good understanding about them, especially pointer and memory handling. We also needed to learn about compile flags for debug and release builds, how to use Make, how to make static and dynamic libraries.</p>
-<ul>
-<li><p><a href="https://stackoverflow.com/questions/336585/what-does-a-const-pointer-to-pointer-mean-in-c-and-in-c" target="_blank" rel="noopener">What does a const pointer-to-pointer mean in C and in C++?</a></p>
-</li>
-<li><p><a href="http://c-faq.com/index.html" target="_blank" rel="noopener">comp.lang.c Frequently Asked Questions</a>: there’s lot of things about C we haven’t known about</p>
-</li>
-<li><p><a href="https://stackoverflow.com/questions/1358400/what-is-external-linkage-and-internal-linkage" target="_blank" rel="noopener">What is external linkage and internal linkage?</a></p>
-</li>
-<li><p><a href="http://graphics.stanford.edu/~seander/bithacks.html" target="_blank" rel="noopener">Bit Twiddling Hacks</a>: how to apply clever hacks with bit operators. Really really good reading here</p>
-</li>
-<li><p><a href="https://www.cprogramming.com/c++11/c++11-nullptr-strongly-typed-enum-class.html" target="_blank" rel="noopener">Better types in C++11 — nullptr, enum classes (strongly typed enumerations) and cstdint</a></p>
-</li>
-<li><p><a href="https://www.codeproject.com/Articles/85391/Microsoft-Visual-C-Static-and-Dynamic-Libraries" target="_blank" rel="noopener">Microsoft Visual C++ Static and Dynamic Libraries</a></p>
-</li>
-<li><p><a href="https://www.codeproject.com/Articles/11634/Managed-C-Learn-by-Example-Part-1" target="_blank" rel="noopener">Managed C++ — Learn by Example</a></p>
-</li>
-<li><p><a href="http://www.cplusplus.com/doc/tutorial/preprocessor/" target="_blank" rel="noopener">Preprocessor directives</a></p>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/voip/">voip</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-deal-with-CSS-responsiveness-in-Wordpress"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-deal-with-CSS-responsiveness-in-Wordpress/">How to deal with CSS responsiveness in Wordpress</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-deal-with-CSS-responsiveness-in-Wordpress/" class="article-date">
-	  <time datetime="2019-05-23T16:28:14.000Z" itemprop="datePublished">May 23, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/283" target="_blank" rel="noopener">#283</a></strong></p>
-<p>Original post <a href="https://medium.com/fantageek/dealing-with-css-responsiveness-in-wordpress-5ad24b088b8b" target="_blank" rel="noopener">https://medium.com/fantageek/dealing-with-css-responsiveness-in-wordpress-5ad24b088b8b</a></p>
-<hr>
-<p>During the alpha test of <a href="https://medium.com/swlh/introducing-learn-talks-awesome-conference-and-meetup-talks-e97c8cf7e0f" target="_blank" rel="noopener">LearnTalks</a>, some of my friends reported that the screen is completely blank in search page, and this happened in mobile only. This article is how I identify the problem and found a workaround for the issue, it may not be the solution, but at least the screen does not appear blank anymore.</p>
-<p>As someone who likes to keep up with tech via watching conference videos, I thought it might be a good idea to collect all of these to better search and explore later. So I built a web app with React and Firebase, it is a work in progress for now. Due to time constraints, I decided to go first with Wordpress to quickly play with the idea. So there is <a href="http://learntalks.com/" target="_blank" rel="noopener">LearnTalks</a>.</p>
-<p>The theme Marinate that I used didn’t want to render the search page correctly. So I head over to <a href="https://developers.google.com/web/tools/chrome-devtools/device-mode/" target="_blank" rel="noopener">Chrome Dev Tool</a> for Responsive Viewport Mode and Safari for <a href="https://webdesign.tutsplus.com/articles/quick-tip-using-web-inspector-to-debug-mobile-safari--webdesign-8787" target="_blank" rel="noopener">Web Inspector</a></p>
-<p><img src="https://cdn-images-1.medium.com/max/3880/0*PfnFpNU4mXD6MoH3.png" alt></p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*DMJqF2scPbxwABx3.png" alt></p>
-<p>The tests showed that the problem only happened on certain screen resolutions. This must be due to <a href="https://en.support.wordpress.com/custom-design/custom-css-media-queries/" target="_blank" rel="noopener">CSS @media query</a> which display different layouts for different screen sizes. And somehow it didn’t work for some sizes.</p>
-<pre><code>[@media](http://twitter.com/media) screen and (max-width: 800px) {
- #site-header {
- display: none;
- }
-}</code></pre><h2 id="A-bit-about-the-rules"><a href="#A-bit-about-the-rules" class="headerlink" title="A bit about the rules"></a>A bit about the <a href="https://www.w3schools.com/cssref/css3_pr_mediaquery.asp" target="_blank" rel="noopener">rules</a></h2><p>The @media rule is used in media queries to apply different styles for different media types/devices.</p>
-<p>Media queries can be used to check many things, such as:</p>
-<ul>
-<li><p>width and height of the viewport</p>
-</li>
-<li><p>width and height of the device</p>
-</li>
-<li><p>orientation (is the tablet/phone in landscape or portrait mode?)</p>
-</li>
-<li><p>resolution</p>
-</li>
-</ul>
-<p>Using media queries are a popular technique for delivering a tailored style sheet (responsive web design) to desktops, laptops, tablets, and mobile phones.</p>
-<p>So I go to Wordpress Dashboard -&gt; Appearance -&gt; Editor to examine CSS files. Unsurprisingly, there are a bunch of media queries</p>
-<pre><code>[@media](http://twitter.com/media) (min-width: 600px) and (max-width: 767px) {
- .main-navigation {
- padding: 0;
- }
- .site-header .pushmenu {
- margin-top:0px; 
- } 
- .social-networks li a {
- line-height:2.1em !Important; 
- } 
- .search {
- display: none !important;
- }
- .customer blockquote {
- padding: 10px;
- text-align: justify;
- }
-}</code></pre><p>The .search selector is suspicious display: none !important;</p>
-<p>The important directive is, well, quite <a href="https://stackoverflow.com/questions/9245353/what-does-important-mean-in-css" target="_blank" rel="noopener">important</a></p>
-<blockquote>
-<p>It means, essentially, what it says; that ‘this is important, ignore subsequent rules, and any usual specificity issues, apply <em>this</em> rule!’<br>In normal use a rule defined in an external stylesheet is overruled by a style defined in the head of the document, which, in turn, is overruled by an in-line style within the element itself (assuming equal specificity of the selectors). Defining a rule with the !important ‘attribute’ (?) discards the normal concerns as regards the ‘later’ rule overriding the ‘earlier’ ones.</p>
-</blockquote>
-<p>Luckily, this theme allows the ability to Edit CSS , so I can override that to a block attribute to always show search page</p>
-<p><img src="https://cdn-images-1.medium.com/max/5400/1*lBuQOg5RE0vhzTOaFkgDcg.png" alt></p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tech/">tech</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -3070,6 +2466,42 @@ if (packet != NULL)
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/Links-for-Catalyst/">Links for Catalyst</a></h6>
+              <span>November 13, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-make-simple-Redux-for-SwiftUI/">How to make simple Redux for SwiftUI</a></h6>
+              <span>November 13, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-Firebase-in-macOS/">How to use Firebase in macOS</a></h6>
+              <span>November 12, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/Links-for-accessibility/">Links for accessibility</a></h6>
               <span>November 12, 2019</span>
             </div>
@@ -3100,42 +2532,6 @@ if (packet != NULL)
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-access-view-in-fragment-in-Kotlin/">How to access view in fragment in Kotlin</a></h6>
-              <span>November 10, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-refresh-receipt-and-restore-in-app-purchase-in-iOS/">How to refresh receipt and restore in app purchase in iOS</a></h6>
-              <span>November 10, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/Links-for-Auto-Layout/">Links for Auto Layout</a></h6>
-              <span>November 9, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -3148,7 +2544,7 @@ if (packet != NULL)
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/accessibility/">accessibility</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">134</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">66</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">181</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">10</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/accessibility/">accessibility</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">134</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">67</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">182</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">10</span></li></ul>
     </div>
   </div>
 
@@ -3158,7 +2554,7 @@ if (packet != NULL)
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/accessibility/" style="font-size: 10px;">accessibility</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.65px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.18px;">apple script</a> <a href="/tags/ci/" style="font-size: 11.18px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.59px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.76px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.59px;">css</a> <a href="/tags/dart/" style="font-size: 11.76px;">dart</a> <a href="/tags/database/" style="font-size: 10.59px;">database</a> <a href="/tags/design/" style="font-size: 10.59px;">design</a> <a href="/tags/electron/" style="font-size: 11.76px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.18px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.76px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.76px;">github</a> <a href="/tags/go/" style="font-size: 10.59px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.41px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.24px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.06px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.76px;">layout</a> <a href="/tags/life/" style="font-size: 14.12px;">life</a> <a href="/tags/links/" style="font-size: 14.71px;">links</a> <a href="/tags/macOS/" style="font-size: 18.82px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.59px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.76px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.53px;">node</a> <a href="/tags/objc/" style="font-size: 10.59px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 11.18px;">react</a> <a href="/tags/react-native/" style="font-size: 15.29px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.18px;">rx</a> <a href="/tags/script/" style="font-size: 10.59px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.47px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.88px;">tech</a> <a href="/tags/terminal/" style="font-size: 10.59px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.35px;">testing</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.76px;">voip</a> <a href="/tags/watchOS/" style="font-size: 12.94px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.59px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.59px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 14.12px;">xcode</a>
+      <a href="/tags/accessibility/" style="font-size: 10px;">accessibility</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.65px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.18px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.18px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.59px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.76px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.59px;">css</a> <a href="/tags/dart/" style="font-size: 11.76px;">dart</a> <a href="/tags/database/" style="font-size: 10.59px;">database</a> <a href="/tags/design/" style="font-size: 10.59px;">design</a> <a href="/tags/electron/" style="font-size: 11.76px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.76px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.76px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.76px;">github</a> <a href="/tags/go/" style="font-size: 10.59px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.41px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.24px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.06px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.76px;">layout</a> <a href="/tags/life/" style="font-size: 14.12px;">life</a> <a href="/tags/links/" style="font-size: 14.71px;">links</a> <a href="/tags/macOS/" style="font-size: 18.82px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.59px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.76px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.53px;">node</a> <a href="/tags/objc/" style="font-size: 10.59px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 11.18px;">react</a> <a href="/tags/react-native/" style="font-size: 15.29px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.18px;">rx</a> <a href="/tags/script/" style="font-size: 10.59px;">script</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.47px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.88px;">tech</a> <a href="/tags/terminal/" style="font-size: 10.59px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.35px;">testing</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.76px;">voip</a> <a href="/tags/watchOS/" style="font-size: 12.94px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.59px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.59px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 14.12px;">xcode</a>
     </div>
   </div>
 
@@ -3168,7 +2564,7 @@ if (packet != NULL)
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">46</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">46</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
