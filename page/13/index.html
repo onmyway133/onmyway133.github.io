@@ -179,6 +179,162 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-make-simple-Binding-in-MVVM-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-make-simple-Binding-in-MVVM-in-iOS/">How to make simple Binding in MVVM in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-make-simple-Binding-in-MVVM-in-iOS/" class="article-date">
+	  <time datetime="2017-11-10T09:22:19.000Z" itemprop="datePublished">November 10, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/103" target="_blank" rel="noopener">#103</a></strong></p>
+<p>If you use <code>MVVM</code> or any other kinds of helper classes, then there’s need to report back the result to the caller. In simple cases, without asynchronous chaining, <code>RxSwift</code> is a bit overkill, you can just implement your own <code>Binding</code>. Basically, it is just observer pattern, or closure in its simplest form.</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Binding</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> value: <span class="type">T</span> &#123;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">      listener?(value)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> listener: ((<span class="type">T</span>) -&gt; <span class="type">Void</span>)?</span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(value: <span class="type">T</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.value = value</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">bind</span><span class="params">(<span class="number">_</span> closure: @escaping <span class="params">(T)</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">    closure(value)</span><br><span class="line">    listener = closure</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Then you can declare it like</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ViewModel</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> friends = <span class="type">Binding</span>&lt;[<span class="type">User</span>]&gt;(value: [])</span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>() &#123;</span><br><span class="line">    getFacebookFriends &#123;</span><br><span class="line">      friends.value = $<span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">getFacebookFriends</span><span class="params">(completion: <span class="params">([User])</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">  	<span class="comment">// Do the work</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Finally, this is how you listen to the result via callback</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">  viewModel.friends.bind &#123; friends <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">self</span>.friendsCountLabel.text = <span class="string">"\(friends.count)"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-use-custom-UINavigationBar-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-custom-UINavigationBar-in-iOS/">How to use custom UINavigationBar in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-custom-UINavigationBar-in-iOS/" class="article-date">
+	  <time datetime="2017-11-08T11:09:04.000Z" itemprop="datePublished">November 8, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/102" target="_blank" rel="noopener">#102</a></strong></p>
+<p>Today I was reading the project in <a href="https://www.raywenderlich.com/147162/iglistkit-tutorial-better-uicollectionviews" target="_blank" rel="noopener">IGListKit Tutorial: Better UICollectionViews</a>, I encounter something I often overlook</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> nav = <span class="type">UINavigationController</span>(navigationBarClass: <span class="type">CustomNavigationBar</span>.<span class="keyword">self</span>, toolbarClass: <span class="literal">nil</span>)</span><br><span class="line">nav.pushViewController(<span class="type">FeedViewController</span>(), animated: <span class="literal">false</span>)</span><br></pre></td></tr></table></figure>
+
+<p>So we can provide custom <code>navigationBarClass</code> and <code>toolbarClass</code> for <code>UINavigationController</code>. This <a href="https://github.com/remirobert/RRMaterialNavigationBar" target="_blank" rel="noopener">RRMaterialNavigationBar</a> also has cool implementation of a material <code>UINavigationBar</code>.</p>
+<p>Together with <code>UINavigationBarDelegate</code> we can do some cool things</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-It&#39;s-good-to-have-a-CI"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/It's-good-to-have-a-CI/">It&#39;s good to have a CI</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/It's-good-to-have-a-CI/" class="article-date">
+	  <time datetime="2017-11-02T09:42:34.000Z" itemprop="datePublished">November 2, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/101" target="_blank" rel="noopener">#101</a></strong></p>
+<p>I have Unit tests and UI tests pass on my simulator and device, locally. But when I make the build on Buddybuild, it fails with the reason <code>Activity cannot be used after its scope has completed</code>. People seem to have <a href="https://forums.developer.apple.com/thread/87463" target="_blank" rel="noopener">the</a> <a href="https://stackoverflow.com/questions/46318833/how-can-i-avoid-nsinternalinconsistencyexception-when-tapping-on-ui-elements-wit" target="_blank" rel="noopener">same</a> issue too.</p>
+<p>Taking a look at the log in Buddybuild </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"> t =     8.89s     Staging: UIStatusBarWindow</span><br><span class="line">t =     8.95s     Staging: (CoreFoundation) Sending Updated Preferences to System CFPrefsD</span><br><span class="line">t =     8.95s     Staging: Setup BuddybuildSDK</span><br><span class="line">t =     8.98s     Staging: [BuddyBuildSDK] In app store - Instant Replay Disabled</span><br><span class="line">t =     8.98s     Staging: Setting up the remote notifications for UI Tests video recording</span><br><span class="line">t =     9.07s     CL: CLLocationManager</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;CLLocationManager&quot;, &quot;event&quot;:activity, &quot;_cmd&quot;:initWithEffectiveBundleIdentifier:bundle:, &quot;self&quot;:&quot;0x600000205140&quot;, &quot;identifier&quot;:(null), &quot;bundle&quot;:(null)&#125;</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Core] &#123;&quot;msg&quot;:&quot;state transition&quot;, &quot;event&quot;:state_transition, &quot;state&quot;:LocationManager, &quot;id&quot;:&quot;0x600000205140&quot;, &quot;property&quot;:init, &quot;new&quot;:&apos;00 00 00 00 00 00 F0 BF 00 00 00 00 00 00 F0 BF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F0 3F 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00&apos;&#125;</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Core] &#123;&quot;msg&quot;:&quot;state transition&quot;, &quot;event&quot;:state_transition, &quot;state&quot;:LocationManager, &quot;id&quot;:&quot;0x600000205140&quot;, &quot;property&quot;:lifecycle, &quot;old&quot;:&quot;0x0&quot;, &quot;new&quot;:&quot;0x6040000ddd50&quot;&#125;</span><br><span class="line">t =     9.07s     CL: _CLClientCreateWithBundleIdentifierAndPath</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;_CLClientCreateWithBundleIdentifierAndPath&quot;, &quot;event&quot;:activity, &quot;effectiveBundleIdentifier&quot;:(null), &quot;effectiveBundlePath&quot;:(null)&#125;</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;client allocated&quot;, &quot;client&quot;:&quot;0x7f84c64e0990&quot;&#125;</span><br><span class="line">t =     9.07s     CL: _CLClientCreateConnection</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;_CLClientCreateConnection&quot;, &quot;event&quot;:activity, &quot;client&quot;:&quot;0x7f84c64e0990&quot;&#125;</span><br><span class="line">t =     9.07s     CL: Sending cached messages to daemon</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;Sending cached messages to daemon&quot;, &quot;event&quot;:activity&#125;</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] #Warning No cached registration message</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Core] &#123;&quot;msg&quot;:&quot;state transition&quot;, &quot;event&quot;:state_transition, &quot;state&quot;:LocationManager, &quot;id&quot;:&quot;0x600000205140&quot;, &quot;property&quot;:pausesLocationUpdatesAutomatically, &quot;old&quot;:0, &quot;new&quot;:1&#125;</span><br><span class="line">t =     9.10s     CL: CLLocationManager</span><br><span class="line">t =     9.11s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;CLLocationManager&quot;, &quot;event&quot;:activity, &quot;_cmd&quot;:setDelegate:, &quot;self&quot;:&quot;0x600000205140&quot;, &quot;delegate&quot;:&quot;0x60400028bef0&quot;&#125;</span><br><span class="line">t =     9.12s     error: unexpectedly found nil while unwrapping an Optional value</span><br><span class="line">t =     9.12s             Unable to monitor event loop</span><br><span class="line">t =    10.13s Tap &quot;Onboarding.Continue&quot; Button</span><br><span class="line">t =    10.13s     Wait for no.hyper.MyApp-Staging to idle</span><br><span class="line">t =    10.16s     Find the &quot;Onboarding.Continue&quot; Button</span><br><span class="line">t =    11.28s         Assertion Failure: &lt;unknown&gt;:0: no.hyper.MyApp-Staging crashed in MyApp_Staging.AppDelegate.(makeDependencyContainer in _5D394B3D7D393F9C3C550E61780517BB)() -&gt; MyApp_Staging.DependencyContainer</span><br><span class="line">t =    11.33s Wait for com.apple.springboard to idle</span><br></pre></td></tr></table></figure>
+
+<p>Did you see <code>unexpectedly found nil while unwrapping an Optional value</code>?  It crashed in <code>CLLocationManager</code>. It is because when location changes, <code>CLLocationManager</code> needs to report it via <code>didUpdateLocations</code> function, but we haven’t implemented it. Strangely that it didn’t happen when testing locally.</p>
+<p>The proposed fix is to implement a dummy method with no operation</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">locationManager</span><span class="params">(<span class="number">_</span> manager: CLLocationManager, didUpdateLocations locations: [CLLocation])</span></span> &#123;</span><br><span class="line">  <span class="comment">// No op</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>But it is not the solution. It appears that <code>BuddyBuild</code> is doing some hacks with how <code>push notification</code> and <code>UIWindow</code>, hence causing the issue.  </p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Why-native"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1868,205 +2024,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-How-to-use-Given-When-Then-in-Swift-tests"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-Given-When-Then-in-Swift-tests/">How to use Given When Then in Swift tests</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-Given-When-Then-in-Swift-tests/" class="article-date">
-	  <time datetime="2017-09-13T08:58:16.000Z" itemprop="datePublished">September 13, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/73" target="_blank" rel="noopener">#73</a></strong></p>
-<h3 id="Spec"><a href="#Spec" class="headerlink" title="Spec"></a>Spec</h3><p>Using <code>spec</code> testing framework like <a href="https://github.com/Quick/Quick" target="_blank" rel="noopener">Quick</a> is nice, which enables <code>BDD</code> style.</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">describe(<span class="string">"the 'Documentation' directory"</span>) &#123;</span><br><span class="line">  it(<span class="string">"has everything you need to get started"</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> sections = <span class="type">Directory</span>(<span class="string">"Documentation"</span>).sections</span><br><span class="line">    expect(sections).to(contain(<span class="string">"Organized Tests with Quick Examples and Example Groups"</span>))</span><br><span class="line">    expect(sections).to(contain(<span class="string">"Installing Quick"</span>))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  context(<span class="string">"if it doesn't have what you're looking for"</span>) &#123;</span><br><span class="line">    it(<span class="string">"needs to be updated"</span>) &#123;</span><br><span class="line">      <span class="keyword">let</span> you = <span class="type">You</span>(awesome: <span class="literal">true</span>)</span><br><span class="line">      expect&#123;you.submittedAnIssue&#125;.toEventually(beTruthy())</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>But in case you don’t want additional frameworks, and want to live closer to Apple SDKs as much as possible, here are few tips.</p>
-<h3 id="Naming"><a href="#Naming" class="headerlink" title="Naming"></a>Naming</h3><p>This is from the book that I really like <a href="http://artofunittesting.com/" target="_blank" rel="noopener">The Art of Unit Testing</a>. If you don’t mind the underscore, you can follow <a href="http://osherove.com/blog/2005/4/3/naming-standards-for-unit-tests.html" target="_blank" rel="noopener">UnitOfWork_StateUnderTest_ExpectedBehavior</a> structure</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func testSum_NegativeNumberAs1stParam_ExceptionThrown()</span><br><span class="line">func testSum_NegativeNumberAs2ndParam_ExceptionThrown()</span><br><span class="line">func testSum_simpleValues_Calculated()</span><br></pre></td></tr></table></figure>
-
-<h3 id="Given-When-Then"><a href="#Given-When-Then" class="headerlink" title="Given When Then"></a>Given When Then</h3><p>This is from BDD, and practised a lot in <a href="https://github.com/cucumber/cucumber/wiki/Given-When-Then" target="_blank" rel="noopener">Cucumber</a>. You can read more on <a href="https://martinfowler.com/bliki/GivenWhenThen.html" target="_blank" rel="noopener">https://martinfowler.com/bliki/GivenWhenThen.html</a>.</p>
-<p>First, add some more extensions to <code>XCTestCase</code></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> XCTest</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">given</span><span class="params">(<span class="number">_</span> description: String, closure: <span class="params">()</span></span></span> <span class="keyword">throws</span> -&gt; <span class="type">Void</span>) <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> closure()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">when</span><span class="params">(<span class="number">_</span> description: String, closure: <span class="params">()</span></span></span> <span class="keyword">throws</span> -&gt; <span class="type">Void</span>) <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> closure()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">then</span><span class="params">(<span class="number">_</span> description: String, closure: <span class="params">()</span></span></span> <span class="keyword">throws</span> -&gt; <span class="type">Void</span>) <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> closure()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Then, in order to test, just follow <code>given when then</code></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testRemoveObject</span><span class="params">()</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">  <span class="keyword">try</span> given(<span class="string">"set to storage"</span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> storage.setObject(testObject, forKey: key)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span> when(<span class="string">"remove object from storage"</span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> storage.removeObject(forKey: key)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span> then(<span class="string">"there is no object in memory"</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> memoryObject = <span class="keyword">try</span>? storage.memoryCache.object(forKey: key) <span class="keyword">as</span> <span class="type">User</span></span><br><span class="line">    <span class="type">XCTAssertNil</span>(memoryObject)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span> then(<span class="string">"there is no object on disk"</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> diskObject = <span class="keyword">try</span>? storage.diskCache.object(forKey: key) <span class="keyword">as</span> <span class="type">User</span></span><br><span class="line">    <span class="type">XCTAssertNil</span>(diskObject)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>I find this more interesting than comments. All are code and descriptive. It can also be developed further to throw the <code>description</code> text.</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/testing/">testing</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Understanding-Instance-property-vs-parameter-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Understanding-Instance-property-vs-parameter-in-Swift/">Understanding Instance property vs parameter in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Understanding-Instance-property-vs-parameter-in-Swift/" class="article-date">
-	  <time datetime="2017-09-06T12:06:58.000Z" itemprop="datePublished">September 6, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/72" target="_blank" rel="noopener">#72</a></strong></p>
-<p>The other day I was refactor my code. I have</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">MainController</span>: <span class="title">TabBarViewDelegate</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">buttonDidPress</span> <span class="title">index</span>: <span class="title">Int</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> initialIndex = tabBarView.selectedIndex</span><br><span class="line">    <span class="keyword">let</span> wholeAppContentView = updateWholeAppContentView()</span><br><span class="line">    view.addSubview(wholeAppContentView)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The delegate method does not look right, as it’s hard to tell between required delegate method, or just instance method. Also it lacks a subject. I like this post <a href="https://mattgemmell.com/api-design/" target="_blank" rel="noopener">API Design</a>, you can read section <code>Rule 19: Always say who’s talking</code></p>
-<blockquote>
-<p>This is a simple rule, and an equally simple mistake to make. In your delegate methods, always pass the sender as a parameter. Always. Even for singletons. Even for things you cannot conceive would ever be used more than once simultaneously. No exceptions.</p>
-</blockquote>
-<p>So I refactor the delegate, and conform to it.</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">MainController</span>: <span class="title">TabBarViewDelegate</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">tabBarView</span><span class="params">(<span class="number">_</span> view: TabBarView, buttonDidPress index: Int)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> initialIndex = tabBarView.selectedIndex</span><br><span class="line">    <span class="keyword">let</span> wholeAppContentView = updateWholeAppContentView()</span><br><span class="line">    view.addSubview(wholeAppContentView) <span class="comment">// This is the culprit ⚠️</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Even with just 1 line change in <code>MainController.swift</code>, the whole UI breaks, as all the views were added to the tab bar. Strange 😡 .</p>
-<p>It didn’t take long until I remember that <code>parameter</code> takes precedence over <code>instance property</code> if they have same name. So in this case, the compiler, without warning, assume you’re dealing with <code>view</code> from <code>TabBarView</code> ⚠️ </p>
-<p>That’s why you often use <code>self</code> to disambiguate. </p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">User</span>: <span class="title">Codable</span>, <span class="title">Equatable</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> firstName: <span class="type">String</span></span><br><span class="line">  <span class="keyword">let</span> lastName: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(firstName: <span class="type">String</span>, lastName: <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.firstName = firstName</span><br><span class="line">    <span class="keyword">self</span>.lastName = lastName</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Back to our code. The workaround is to specify <code>self</code> to specify <code>view</code> of <code>MainController</code></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">self</span>.view.addSubview(wholeAppContentView)</span><br></pre></td></tr></table></figure>
-
-<p>Well, you may say, who should add view again in case of tab bar changes 😬  This is a bad example, but the lesson is  learned 😇 </p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-push-to-GitHub-gist"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-push-to-GitHub-gist/">How to push to GitHub gist</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-push-to-GitHub-gist/" class="article-date">
-	  <time datetime="2017-09-04T06:54:10.000Z" itemprop="datePublished">September 4, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/71" target="_blank" rel="noopener">#71</a></strong></p>
-<h3 id="Creating-a-new-gist"><a href="#Creating-a-new-gist" class="headerlink" title="Creating a new gist"></a>Creating a new gist</h3><ul>
-<li>Go to <a href="https://gist.github.com/" target="_blank" rel="noopener">https://gist.github.com/</a> and create a new gist</li>
-<li>Note that you need to include <code>filename</code> + <code>extension</code> to enable automatic language markup</li>
-<li>Click <code>Add file</code> to add more files</li>
-</ul>
-<h3 id="Cloning-the-gist"><a href="#Cloning-the-gist" class="headerlink" title="Cloning the gist"></a>Cloning the gist</h3><ul>
-<li>If you’ve enabled <code>2 factor authentication</code>, you need to use <code>personal acccess token</code> with <code>https</code>, or use <code>ssh</code>. </li>
-</ul>
-<blockquote>
-<p>If you have enabled two-factor authentication, or if you are accessing an organization that uses SAML single sign-on, you must provide a personal access token instead of entering your password for HTTPS Git.</p>
-<ul>
-<li>You should enable <code>2 factor authentication</code>. Read more <a href="https://help.github.com/articles/https-cloning-errors/#provide-access-token-if-2fa-enabled" target="_blank" rel="noopener">https://help.github.com/articles/https-cloning-errors/#provide-access-token-if-2fa-enabled</a></li>
-<li>For example with my gist <a href="https://gist.github.com/onmyway133/c486939f82fc4d3a8ed4be21538fdd32" target="_blank" rel="noopener">https://gist.github.com/onmyway133/c486939f82fc4d3a8ed4be21538fdd32</a> the <code>ssh url</code> is <code>git@gist.github.com:c486939f82fc4d3a8ed4be21538fdd32.git</code></li>
-<li>Run git commands as normal</li>
-</ul>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin git@gist.github.com:c486939f82fc4d3a8ed4be21538fdd32.git</span><br><span class="line">git clone</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>You have branch <code>master</code> by default</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin master</span><br></pre></td></tr></table></figure>
-
-<h3 id="Ignoring-directories"><a href="#Ignoring-directories" class="headerlink" title="Ignoring directories"></a>Ignoring directories</h3><blockquote>
-<p>remote: Gist does not support directories.</p>
-</blockquote>
-<ul>
-<li>In my cases I’m using node, so I need to ignore <code>node_modules</code> directory</li>
-<li>Also need to untrack if necessary </li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git rm --cached -r .</span><br><span class="line">git add .</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2171,6 +2128,42 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-make-full-screen-TabView-in-SwiftUI/">How to make full screen TabView in SwiftUI</a></h6>
+              <span>November 14, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-map-error-in-Combine/">How to map error in Combine</a></h6>
+              <span>November 14, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-fix-unable-to-infer-complex-closure-return-type-in-SwiftUI/">How to fix unable to infer complex closure return type in SwiftUI</a></h6>
+              <span>November 13, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-make-Swift-Package-Manager-package-for-multiple-platforms/">How to make Swift Package Manager package for multiple platforms</a></h6>
               <span>November 13, 2019</span>
             </div>
@@ -2201,42 +2194,6 @@ var themeMenus = {};
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-Firebase-in-macOS/">How to use Firebase in macOS</a></h6>
-              <span>November 12, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/Links-for-accessibility/">Links for accessibility</a></h6>
-              <span>November 12, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/Links-for-Xcode/">Links for Xcode</a></h6>
-              <span>November 12, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2249,7 +2206,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/accessibility/">accessibility</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">135</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">68</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">183</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">10</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/accessibility/">accessibility</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">135</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">68</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">184</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">10</span></li></ul>
     </div>
   </div>
 
@@ -2259,7 +2216,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/accessibility/" style="font-size: 10px;">accessibility</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.5px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.25px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10.63px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.25px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.63px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.88px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.63px;">css</a> <a href="/tags/dart/" style="font-size: 11.88px;">dart</a> <a href="/tags/database/" style="font-size: 10.63px;">database</a> <a href="/tags/design/" style="font-size: 10.63px;">design</a> <a href="/tags/electron/" style="font-size: 11.88px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.88px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.88px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.88px;">github</a> <a href="/tags/go/" style="font-size: 10.63px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.38px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.13px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.88px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.88px;">layout</a> <a href="/tags/life/" style="font-size: 13.75px;">life</a> <a href="/tags/links/" style="font-size: 14.38px;">links</a> <a href="/tags/macOS/" style="font-size: 18.75px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.63px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.88px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.13px;">node</a> <a href="/tags/objc/" style="font-size: 10.63px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 11.25px;">react</a> <a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.25px;">rx</a> <a href="/tags/script/" style="font-size: 10.63px;">script</a> <a href="/tags/spm/" style="font-size: 10px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.25px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.63px;">tech</a> <a href="/tags/terminal/" style="font-size: 10.63px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.5px;">testing</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.88px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.13px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.63px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.63px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 13.75px;">xcode</a>
+      <a href="/tags/accessibility/" style="font-size: 10px;">accessibility</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.5px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.25px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10.63px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.25px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.63px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.88px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10.63px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.63px;">css</a> <a href="/tags/dart/" style="font-size: 11.88px;">dart</a> <a href="/tags/database/" style="font-size: 10.63px;">database</a> <a href="/tags/design/" style="font-size: 10.63px;">design</a> <a href="/tags/electron/" style="font-size: 11.88px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.88px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.88px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.88px;">github</a> <a href="/tags/go/" style="font-size: 10.63px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.38px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.13px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.88px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.88px;">layout</a> <a href="/tags/life/" style="font-size: 13.75px;">life</a> <a href="/tags/links/" style="font-size: 14.38px;">links</a> <a href="/tags/macOS/" style="font-size: 18.75px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.63px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.88px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.13px;">node</a> <a href="/tags/objc/" style="font-size: 10.63px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 11.25px;">react</a> <a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.25px;">rx</a> <a href="/tags/script/" style="font-size: 10.63px;">script</a> <a href="/tags/spm/" style="font-size: 10px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.25px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.63px;">tech</a> <a href="/tags/terminal/" style="font-size: 10.63px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.5px;">testing</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.88px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.13px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.63px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.63px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 13.75px;">xcode</a>
     </div>
   </div>
 
@@ -2269,7 +2226,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">46</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">46</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
