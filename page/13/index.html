@@ -179,6 +179,347 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-BuddyBuild-and-gradle.properties"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/BuddyBuild-and-gradle.properties/">BuddyBuild and gradle.properties</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/BuddyBuild-and-gradle.properties/" class="article-date">
+	  <time datetime="2017-11-23T09:37:59.000Z" itemprop="datePublished">November 23, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/109" target="_blank" rel="noopener">#109</a></strong></p>
+<p>People advise against storing keys inside <code>build.gradles</code>. We should store them on 1Password and populate our <code>gradle.properties</code>, so don’t track this file in git. Here is <code>.gitignore</code> file</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">*.iml</span><br><span class="line"></span><br><span class="line">/build</span><br><span class="line">/gradle.properties</span><br><span class="line">/local.properties</span><br><span class="line"></span><br><span class="line">.gradle</span><br><span class="line">.idea</span><br></pre></td></tr></table></figure>
+
+<p>There are several ways to help <code>BuddyBuild</code> know about our <code>gradle.properties</code></p>
+<h2 id="1-Using-Environment-variables"><a href="#1-Using-Environment-variables" class="headerlink" title="1. Using Environment variables"></a>1. Using Environment variables</h2><p>But when configuring the project on <code>BuddyBuild</code>, it complains about key not found. The solution is to use <code>Environment variables</code></p>
+<p><img src="https://user-images.githubusercontent.com/2284279/33169496-36f92542-d045-11e7-8435-9a1f5d5dd24d.png" alt="key"></p>
+<p>Then in your <code>build.gradle</code>, you can </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buildConfigField &apos;String&apos;, &apos;MY_KEY&apos;, System.getenv(&quot;MY_KEY&quot;) ?: MY_KEY</span><br></pre></td></tr></table></figure>
+
+<p>This is because gradle does not know about environment variables. The <code>System.getenv(&quot;MY_KEY&quot;)</code> is for BuddyBuild, and the default <code>MY_KEY</code> is for <code>gradle.properties</code>. </p>
+<p>Next is to remove this duplication. We can use Groovy <a href="http://docs.groovy-lang.org/latest/html/api/groovy/lang/Binding.html" target="_blank" rel="noopener">Binding</a>. <code>build.gradle</code> does the import <code>import groovy.lang.Binding</code> automatically for us</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">String environmentKey(variable) &#123;</span><br><span class="line">    <span class="keyword">for</span> (Object <span class="string">var :</span> binding.variables) &#123;</span><br><span class="line">        <span class="keyword">if</span> (var.value == variable) &#123;</span><br><span class="line">            <span class="keyword">return</span> System.getenv(var.key) ?: variable</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">""</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buildConfigField &apos;String&apos;, &apos;MY_KEY&apos;, environmentKey(MY_KEY)</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-Using-Secured-File-👍"><a href="#2-Using-Secured-File-👍" class="headerlink" title="2. Using Secured File 👍"></a>2. Using Secured File 👍</h2><p>BuddyBuild allows us to define Secured File, here we can upload our <code>gradle.properties</code></p>
+<p><img src="https://user-images.githubusercontent.com/2284279/33172691-69e83392-d051-11e7-87a9-6c1afc4b544e.png" alt="secure files"></p>
+<p>And we can use <a href="https://docs.buddybuild.com/builds/custom_build_steps.html#prebuild" target="_blank" rel="noopener">Prebuild script</a> to copy this secured file to our project. BuddyBuild suggests using <code>buddybuild_prebuild.sh</code> but then build fails in <code>Build file &#39;/tmp/sandbox/workspace/app/build.gradle&#39;</code></p>
+<p>So, create a script called <code>buddybuild_postclone.sh</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"></span><br><span class="line">cp <span class="variable">$BUDDYBUILD_SECURE_FILES</span>/gradle.properties <span class="variable">$BUDDYBUILD_WORKSPACE</span>/gradle.properties</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Communication-between-Fragment-and-Activity"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Communication-between-Fragment-and-Activity/">Communication between Fragment and Activity</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Communication-between-Fragment-and-Activity/" class="article-date">
+	  <time datetime="2017-11-21T13:24:04.000Z" itemprop="datePublished">November 21, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/108" target="_blank" rel="noopener">#108</a></strong></p>
+<p>There’s always need for communication, right 😉 Suppose we have <code>OnboardingActivity</code> that has several <code>OnboardingFragment</code>. Each <code>Fragment</code> has a <code>startButton</code> telling that the onboarding flow has finished, and only the last <code>Fragment</code> shows this button.</p>
+<p>Here are several ways you can do that</p>
+<h2 id="1-EventBus-🙄"><a href="#1-EventBus-🙄" class="headerlink" title="1. EventBus 🙄"></a>1. EventBus 🙄</h2><p>Nearly all articles I found propose this <a href="https://github.com/greenrobot/EventBus" target="_blank" rel="noopener">https://github.com/greenrobot/EventBus</a>, but I personally don’t like this idea because components are loosely coupled, every component and broadcast can listen to event from a singleton, which makes it very hard to reason when the project scales</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">OnboardingFinishEvent</span></span>()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OnboardingActivity</span>: <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onStart</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onStart()</span><br><span class="line"></span><br><span class="line">        EventBus.getDefault().register(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onStop</span><span class="params">()</span></span> &#123;</span><br><span class="line">        EventBus.getDefault().unregister(<span class="keyword">this</span>)</span><br><span class="line">        <span class="keyword">super</span>.onStop()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Subscribe(threadMode = ThreadMode.MAIN)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">onOnboardingFinishEvent</span><span class="params">(event: <span class="type">OnboardingFinishEvent</span>)</span></span> &#123;</span><br><span class="line">        <span class="comment">// finish</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OnboardingFragment</span>: <span class="type">Fragment</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onViewCreated</span><span class="params">(view: <span class="type">View</span>?, savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onViewCreated(view, savedInstanceState)</span><br><span class="line"></span><br><span class="line">        startButton.onClick &#123;</span><br><span class="line">            EventBus.getDefault().post(OnboardingFinishEvent())</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Read more</p>
+<ul>
+<li><a href="https://gunhansancar.com/ease-communication-between-activities-fragments-services/" target="_blank" rel="noopener">https://gunhansancar.com/ease-communication-between-activities-fragments-services/</a></li>
+</ul>
+<h2 id="2-Otto-🙄"><a href="#2-Otto-🙄" class="headerlink" title="2. Otto 🙄"></a>2. Otto 🙄</h2><p>This <a href="https://github.com/square/otto" target="_blank" rel="noopener">https://github.com/square/otto</a> was deprecated in favor of RxJava and RxAndroid</p>
+<h2 id="3-RxJava-🙄"><a href="#3-RxJava-🙄" class="headerlink" title="3. RxJava 🙄"></a>3. RxJava 🙄</h2><p>We can use simple <code>PublishSubject</code> to create our own <a href="https://android.jlelse.eu/super-simple-event-bus-with-rxjava-and-kotlin-f1f969b21003" target="_blank" rel="noopener">RxBus</a></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.reactivex.Observable</span><br><span class="line"><span class="keyword">import</span> io.reactivex.subjects.PublishSubject</span><br><span class="line"></span><br><span class="line"><span class="comment">// Use object so we have a singleton instance</span></span><br><span class="line"><span class="keyword">object</span> RxBus &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> publisher = PublishSubject.create&lt;Any&gt;()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">publish</span><span class="params">(event: <span class="type">Any</span>)</span></span> &#123;</span><br><span class="line">        publisher.onNext(event)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Listen should return an Observable and not the publisher</span></span><br><span class="line">    <span class="comment">// Using ofType we filter only events that match that class type</span></span><br><span class="line">    fun &lt;T&gt; listen(eventType: Class&lt;T&gt;): Observable&lt;T&gt; = publisher.ofType(eventType)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// OnboardingFragment.kt</span></span><br><span class="line">startButton.onClick &#123;</span><br><span class="line">    RxBus.publish(OnboardingFinishEvent())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// OnboardingActivity.kt</span></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        </span><br><span class="line">    RxBus.listen(OnboardingFinishEvent::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>).<span class="title">subscribe</span></span>(&#123;</span><br><span class="line">        <span class="comment">// finish</span></span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Interface"><a href="#4-Interface" class="headerlink" title="4. Interface"></a>4. Interface</h2><p>This is advised here <a href="https://developer.android.com/training/basics/fragments/communicating.html#DefineInterface" target="_blank" rel="noopener">Communicating with Other Fragments</a>. Basically you define an interface <code>OnboardingFragmentDelegate</code> that whoever conforms to that, can be informed by the <code>Fragment</code> of events. This is similar to <code>Delegate</code> pattern in iOS 😉 </p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">OnboardingFragmentDelegate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">onboardingFragmentDidClickStartButton</span><span class="params">(fragment: <span class="type">OnboardingFragment</span>)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OnboardingFragment</span>: <span class="type">Fragment</span></span>() &#123;</span><br><span class="line">    <span class="keyword">var</span> delegate: OnboardingFragmentDelegate? = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onAttach</span><span class="params">(context: <span class="type">Context</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onAttach(context)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (context <span class="keyword">is</span> OnboardingFragmentDelegate) &#123;</span><br><span class="line">            delegate = context</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onViewCreated</span><span class="params">(view: <span class="type">View</span>?, savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onViewCreated(view, savedInstanceState)</span><br><span class="line"></span><br><span class="line">        startButton.onClick &#123;</span><br><span class="line">            delegate?.onboardingFragmentDidClickStartButton(<span class="keyword">this</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OnboardingActivity</span>: <span class="type">AppCompatActivity</span></span>(), OnboardingFragmentDelegate &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onboardingFragmentDidClickStartButton</span><span class="params">(fragment: <span class="type">OnboardingFragment</span>)</span></span> &#123;</span><br><span class="line">        onboardingService.hasShown = <span class="literal">true</span></span><br><span class="line">        startActivity&lt;LoginActivity&gt;()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-ViewModel"><a href="#5-ViewModel" class="headerlink" title="5. ViewModel"></a>5. ViewModel</h2><p>We can learn from <a href="https://developer.android.com/topic/libraries/architecture/viewmodel.html" target="_blank" rel="noopener">Share data between fragments</a> to to communication between Fragment and Activity, by using a shared <code>ViewModel</code> that is scoped to the activity. This is a bit overkill</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OnboardingSharedViewModel</span>: <span class="type">ViewModel</span></span>() &#123;</span><br><span class="line">    <span class="keyword">val</span> finish = MutableLiveData&lt;<span class="built_in">Unit</span>&gt;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OnboardingActivity</span>: <span class="type">AppCompatActivity</span></span>(), OnboardingFragmentDelegate &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        <span class="keyword">val</span> viewModel = ViewModelProviders.of(<span class="keyword">this</span>).<span class="keyword">get</span>(OnboardingSharedViewModel::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line"></span><br><span class="line">        viewModel.finish.observe(<span class="keyword">this</span>, Observer &#123;</span><br><span class="line">            startActivity&lt;LoginActivity&gt;()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Note that we need to call <code>ViewModelProviders.of(activity)</code> to get the same <code>ViewModel</code> with the <code>activity</code></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OnboardingFragment</span>: <span class="type">Fragment</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onViewCreated</span><span class="params">(view: <span class="type">View</span>?, savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onViewCreated(view, savedInstanceState)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> viewModel = ViewModelProviders.of(activity).<span class="keyword">get</span>(OnboardingSharedViewModel::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        startButton.onClick(&#123;</span><br><span class="line">            viewModel.finish.value = <span class="built_in">Unit</span></span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-Lambda"><a href="#7-Lambda" class="headerlink" title="7. Lambda"></a>7. Lambda</h2><p>Create a lambda in <code>Fragment</code>, then set it on <code>onAttachFragment</code>. It does not work for now as there is no <code>OnboardingFragment</code> in <code>onAttachFragment</code> 😢 </p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OnboardingFragment</span>: <span class="type">Fragment</span></span>() &#123;</span><br><span class="line">    <span class="keyword">var</span> didClickStartButton: (() -&gt; <span class="built_in">Unit</span>)? = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onViewCreated</span><span class="params">(view: <span class="type">View</span>?, savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onViewCreated(view, savedInstanceState)</span><br><span class="line"></span><br><span class="line">        startButton.onClick &#123;</span><br><span class="line">            didClickStartButton?.invoke()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OnboardingActivity</span>: <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onAttachFragment</span><span class="params">(fragment: <span class="type">Fragment</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onAttachFragment(fragment)</span><br><span class="line"></span><br><span class="line">        (fragment <span class="keyword">as</span>? OnboardingFragment).let &#123;</span><br><span class="line">            it?.didClickStartButton = &#123;</span><br><span class="line">                <span class="comment">// finish</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-Listener-in-Bundle-🙄"><a href="#8-Listener-in-Bundle-🙄" class="headerlink" title="8. Listener in Bundle 🙄"></a>8. Listener in Bundle 🙄</h2><p>Read more</p>
+<ul>
+<li><a href="https://medium.com/groupon-eng/from-fragments-to-activity-the-lambda-way-32c768c72aa9" target="_blank" rel="noopener">https://medium.com/groupon-eng/from-fragments-to-activity-the-lambda-way-32c768c72aa9</a></li>
+<li><a href="https://medium.com/mindorks/how-to-communicate-between-fragments-and-activity-using-viewmodel-ca733233a51c" target="_blank" rel="noopener">How to communicate between fragments and activity using ViewModel</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Coordinator-and-FlowController"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Coordinator-and-FlowController/">Coordinator and FlowController</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Coordinator-and-FlowController/" class="article-date">
+	  <time datetime="2017-11-14T13:40:31.000Z" itemprop="datePublished">November 14, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/106" target="_blank" rel="noopener">#106</a></strong></p>
+<p>Every new architecture that comes out, either <a href="https://github.com/onmyway133/fantastic-ios-architecture" target="_blank" rel="noopener">iOS</a> or <a href="https://github.com/onmyway133/fantastic-android-architecture" target="_blank" rel="noopener">Android</a>, makes me very excited. I’m always looking for ways to structure apps in a better way. But after some times, I see that we’re too creative in creating architecture, aka constraint, that is too far away from the platform that we’re building. I often think “If we’re going too far from the system, then it’s very hard to go back”</p>
+<p>I like things that embrace the system. One of them is <a href="http://khanlou.com/2015/10/coordinators-redux/" target="_blank" rel="noopener">Coordinator</a> which helps in encapsulation and navigation. Thanks to my friend <a href="https://github.com/vadymmarkov/" target="_blank" rel="noopener">Vadym</a> for showing me <code>Coordinator</code> in action.</p>
+<p>The below screenshot from @khanlou ‘s <a href="https://www.youtube.com/watch?v=a1g3k3NObkE" target="_blank" rel="noopener">talk</a> at CocoaHeads Stockholm clearly says many things about <code>Coordinator</code></p>
+<div align="center">
+<img src="https://user-images.githubusercontent.com/2284279/32828592-d03ad9a0-c9ef-11e7-8759-cb0292d668df.png">
+<br>
+</div>
+
+<p>But after reading <a href="https://davedelong.com/blog/2017/11/06/a-better-mvc-part-3-fixing-massive-view-controller/" target="_blank" rel="noopener">A Better MVC</a>, I think we can leverage view controller containment to do navigation using <code>UIViewController</code> only.</p>
+<p>Since I tend to call view controllers as <code>LoginController, ProfileController, ...</code> and the term <code>flow</code> to group those related screens, what should we call a <code>Coordinator</code> that inherits from <code>UIViewController</code> 🤔 Let’s call it <code>FlowController</code> 😎 . </p>
+<p>The name is not that important, but the concept is simple. <code>FlowController</code> was also inspired by this <a href="http://albertodebortoli.com/blog/2014/09/03/flow-controllers-on-ios-for-a-better-navigation-control/" target="_blank" rel="noopener">Flow Controllers on iOS for a Better Navigation Control</a> back in 2014. The idea is from awesome iOS people, this is just a sum up from my experience 😇 </p>
+<p>So <code>FlowController</code> can just a <code>UIViewController</code> friendly version of <code>Coordinator</code>. Let see how <code>FlowController</code> fits better into <code>MVC</code></p>
+<blockquote class="twitter-tweet" data-lang="no"><p lang="en" dir="ltr">«UIViewController is the center of the universe.»<br><br>— <a href="https://twitter.com/onmyway133?ref_src=twsrc%5Etfw" target="_blank" rel="noopener">@onmyway133</a></p>&mdash; Elvis Nuñez (@3lvis) <a href="https://twitter.com/3lvis/status/916234962357153792?ref_src=twsrc%5Etfw" target="_blank" rel="noopener">6. oktober 2017</a></blockquote>
+
+<h2 id="1-FlowController-and-AppDelegate"><a href="#1-FlowController-and-AppDelegate" class="headerlink" title="1. FlowController and AppDelegate"></a>1. FlowController and AppDelegate</h2><p>Your application starts from <code>AppDelegate</code>, in that you setup <code>UIWindow</code>. So we should follow the same “top down” approach for <code>FlowController</code>, starting with <code>AppFlowController</code>. You can construct all dependencies that your app need for <code>AppFlowController</code>, so that it can pass to other child <code>FlowController</code>.</p>
+<p><code>AppDelegate</code> is also considered <a href="http://blog.ploeh.dk/2011/07/28/CompositionRoot/" target="_blank" rel="noopener">Composition Root</a></p>
+<p>Here is how to declare <code>AppFlowController</code> in <code>AppDelegate</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">DependencyContainer</span>: <span class="title">AuthServiceContainer</span>, <span class="title">PhoneServiceContainer</span>, <span class="title">NetworkingServiceContainer</span>,</span></span><br><span class="line"><span class="class">  <span class="title">LocationServiceContainer</span>, <span class="title">MapServiceContainer</span>, <span class="title">HealthServiceContainer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> authService: <span class="type">AuthServiceProtocol</span></span><br><span class="line">  <span class="keyword">let</span> phoneService: <span class="type">PhoneService</span></span><br><span class="line">  <span class="keyword">let</span> networkingService: <span class="type">NetworkingService</span></span><br><span class="line">  <span class="keyword">let</span> locationService: <span class="type">LocationService</span></span><br><span class="line">  <span class="keyword">let</span> mapService: <span class="type">MapService</span></span><br><span class="line">  <span class="keyword">let</span> healthService: <span class="type">HealthService</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">make</span><span class="params">()</span></span> -&gt; <span class="type">DependencyContainer</span> &#123;</span><br><span class="line">    <span class="comment">// Configure and make DependencyContainer here</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@UIApplicationMain</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AppDelegate</span>: <span class="title">UIResponder</span>, <span class="title">UIApplicationDelegate</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> window: <span class="type">UIWindow?</span></span><br><span class="line">  <span class="keyword">var</span> appFlowController: <span class="type">AppFlowController!</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(<span class="number">_</span> application: UIApplication,</span></span></span><br><span class="line"><span class="function"><span class="params">                   didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: <span class="keyword">Any</span>]?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    appFlowController = <span class="type">AppFlowController</span>(</span><br><span class="line">      dependencyContainer: <span class="type">DependencyContainer</span>.make()</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    window = <span class="type">UIWindow</span>(frame: <span class="type">UIScreen</span>.main.bounds)</span><br><span class="line">    window?.rootViewController = appFlowController</span><br><span class="line">    window?.makeKeyAndVisible()</span><br><span class="line"></span><br><span class="line">    appFlowController.start()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here are some hypothetical <code>FlowController</code> that you may encounter</p>
+<ul>
+<li>AppFlowController: manages UIWindow and check whether to show onboarding, login or main depending on authentication state<ul>
+<li>OnboardingFlowController: manages <code>UIPageViewController</code> and maybe ask for some permissions</li>
+<li>LoginFlowController: manages <code>UINavigationController</code> to show login, sms verification, forget password, and optionally start <code>SignUpFlowController</code></li>
+<li>MainFlowController: manages <code>UITabBarController</code> with each tab serving main features<ul>
+<li>FeedFlowController: show feed with list of items</li>
+<li>ProfileFlowController: show profile</li>
+<li>SettingsFlowController: show settings, and maybe call logout, this will delegates up the <code>FlowController</code> chain.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>The cool thing about <code>FlowController</code> is it makes your code very self contained, and grouped by features. So it’s easy to move all related things to its own package if you like.</p>
+<h2 id="2-FlowController-as-container-view-controller"><a href="#2-FlowController-as-container-view-controller" class="headerlink" title="2. FlowController as container view controller"></a>2. FlowController as container view controller</h2><blockquote>
+<p>In general, a view controller should manage either sequence or UI, but not both.</p>
+</blockquote>
+<p>Basically, <code>FlowController</code> is just a container view controller to solve the <code>sequence</code>, based on a simple concept called <code>composition</code>. It manages many child view controllers in its flow. Let’ say we have a <code>ProductFlowController</code> that groups together flow related to displaying products, <code>ProductListController</code>, <code>ProductDetailController</code>, <code>ProductAuthorController</code>, <code>ProductMapController</code>, … Each can delegate to the <code>ProductFlowController</code> to express its intent, like <code>ProductListController</code> can delegate to say “product did tap”, so that <code>ProductFlowController</code> can construct and present the next screen in the flow, based on the embedded <code>UINavigationController</code> inside it.</p>
+<p>Normally, a <code>FlowController</code> just displays 1 child <code>FlowController</code> at a time, so normally we can just update its frame</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">AppFlowController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLayoutSubviews</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewDidLayoutSubviews()</span><br><span class="line"></span><br><span class="line">    childViewControllers.first?.view.frame = view.bounds</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-FlowController-as-dependency-container"><a href="#3-FlowController-as-dependency-container" class="headerlink" title="3. FlowController as dependency container"></a>3. FlowController as dependency container</h2><p>Each view controller inside the flow can have different dependencies, so it’s not fair if the first view controller needs to carry all the stuff just to be able to pass down to the next view controllers. Here are some dependencies</p>
+<ul>
+<li>ProductListController: ProductNetworkingService</li>
+<li>ProductDetailController: ProductNetworkingService, ImageDowloaderService, ProductEditService</li>
+<li>ProductAuthorController: AuthorNetworkingService, ImageDowloaderService</li>
+<li>ProductMapController: LocationService, MapService</li>
+</ul>
+<p>Instead the <code>FlowController</code> can carry all the dependencies needed for that whole flow, so it can pass down to the view controller if needed.</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ProductDependencyContainer</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> productNetworkingService: <span class="type">ProductNetworkingService</span></span><br><span class="line">  <span class="keyword">let</span> imageDownloaderService: <span class="type">ImageDownloaderService</span></span><br><span class="line">  <span class="keyword">let</span> productEditService: <span class="type">ProductEditService</span></span><br><span class="line">  <span class="keyword">let</span> authorNetworkingService: <span class="type">AuthorNetworkingService</span></span><br><span class="line">  <span class="keyword">let</span> locationService: <span class="type">LocationService</span></span><br><span class="line">  <span class="keyword">let</span> mapService: <span class="type">MapService</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProductFlowController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> dependencyContainer: <span class="type">ProductDependencyContainer</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(dependencyContainer: <span class="type">ProductDependencyContainer</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.dependencyContainer = dependencyContainer</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ProductFlowController</span>: <span class="title">ProductListControllerDelegate</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">productListController</span><span class="params">(<span class="number">_</span> controller: ProductListController, didSelect product: Product)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> productDetailController = <span class="type">ProductDetailController</span>(</span><br><span class="line">      productNetworkingService: dependencyContainer.productNetworkingService,</span><br><span class="line">      productEditService: dependencyContainer.productEditService,</span><br><span class="line">      imageDownloaderService: dependencyContainer.imageDownloaderService</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    productDetailController.delegate = <span class="keyword">self</span></span><br><span class="line">    embeddedNavigationController.pushViewController(productDetailController, animated: <span class="literal">true</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here are some ways that you can use to pass dependencies into <code>FlowController</code></p>
+<ul>
+<li><a href="http://merowing.info/2017/04/using-protocol-compositon-for-dependency-injection/" target="_blank" rel="noopener">Using protocol compositon for dependency injection</a></li>
+<li><a href="https://www.swiftbysundell.com/posts/dependency-injection-using-factories-in-swift" target="_blank" rel="noopener">Dependency injection using factories in Swift</a></li>
+</ul>
+<h2 id="4-Adding-or-removing-child-FlowController"><a href="#4-Adding-or-removing-child-FlowController" class="headerlink" title="4. Adding or removing child FlowController"></a>4. Adding or removing child FlowController</h2><p><strong>Coordinator</strong></p>
+<p>With <code>Coordinator</code>, you need to keep an array of child <code>Coordinators</code>, and maybe use address (<code>===</code> operator) to identify them</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Coordinator</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> children: [<span class="type">Coordinator</span>] = []</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(child: Coordinator)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> !children.<span class="built_in">contains</span>(<span class="keyword">where</span>: &#123; $<span class="number">0</span> === child &#125;) <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    children.append(child)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">remove</span><span class="params">(child: Coordinator)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> index = children.index(<span class="keyword">where</span>: &#123; $<span class="number">0</span> === child &#125;) <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    children.remove(at: index)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">removeAll</span><span class="params">()</span></span> &#123;</span><br><span class="line">    children.removeAll()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>FlowController</strong></p>
+<p>With <code>FlowController</code>, since it is <code>UIViewController</code> subclass, it has <code>viewControllers</code> to hold all those child <code>FlowController</code>. Just add these extensions to simplify your adding or removing of child <code>UIViewController</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(childController: UIViewController)</span></span> &#123;</span><br><span class="line">    addChildViewController(childController)</span><br><span class="line">    view.addSubview(childController.view)</span><br><span class="line">    childController.didMove(toParentViewController: <span class="keyword">self</span>)</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">remove</span><span class="params">(childController: UIViewController)</span></span> &#123;</span><br><span class="line">    childController.willMove(toParentViewController: <span class="literal">nil</span>)</span><br><span class="line">    childController.view.removeFromSuperview()</span><br><span class="line">    childController.removeFromParentViewController()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And see in action how <code>AppFlowController</code> work with adding</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">AppFlowController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">start</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> authService.isAuthenticated &#123;</span><br><span class="line">      startMain()</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      startLogin()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">startLogin</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> loginFlowController = <span class="type">LoginFlowController</span>(</span><br><span class="line">    loginFlowController.delegate = <span class="keyword">self</span></span><br><span class="line">    add(childController: loginFlowController)</span><br><span class="line">    loginFlowController.start()</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">fileprivate</span> <span class="function"><span class="keyword">func</span> <span class="title">startMain</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> mainFlowController = <span class="type">MainFlowController</span>()</span><br><span class="line">    mainFlowController.delegate = <span class="keyword">self</span></span><br><span class="line">    add(childController: mainFlowController)</span><br><span class="line">    mainFlowController.start()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>and with removing when the child <code>FlowController</code> finishes</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">AppFlowController</span>: <span class="title">LoginFlowControllerDelegate</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">loginFlowControllerDidFinish</span><span class="params">(<span class="number">_</span> flowController: LoginFlowController)</span></span> &#123;</span><br><span class="line">    remove(childController: flowController)</span><br><span class="line">    startMain()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-AppFlowController-does-not-need-to-know-about-UIWindow"><a href="#5-AppFlowController-does-not-need-to-know-about-UIWindow" class="headerlink" title="5. AppFlowController does not need to know about UIWindow"></a>5. AppFlowController does not need to know about UIWindow</h2><p><strong>Coordinator</strong></p>
+<p>Usually you have an <code>AppCoordinator</code>, which is held by <code>AppDelegate</code>, as the root of your <code>Coordinator</code> chain. Based on login status, it will determine which <code>LoginController</code> or <code>MainController</code> will be set as the <code>rootViewController</code>, in order to do that, it needs to be injected a <code>UIWindow</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">window = <span class="type">UIWindow</span>(frame: <span class="type">UIScreen</span>.main.bounds)</span><br><span class="line">appCoordinator = <span class="type">AppCoordinator</span>(window: window!)</span><br><span class="line">appCoordinator.start()</span><br><span class="line">window?.makeKeyAndVisible()</span><br></pre></td></tr></table></figure>
+
+<p>You can guess that in the <code>start</code> method of <code>AppCoordinator</code>, it must set <code>rootViewController</code> before <code>window?.makeKeyAndVisible()</code> is called.</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">AppCoordinator</span>: <span class="title">Coordinator</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> window: <span class="type">UIWindow</span></span><br><span class="line"> </span><br><span class="line">  <span class="keyword">init</span>(window: <span class="type">UIWindow</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.window = window</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">start</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> dependencyContainer.authService.isAuthenticated &#123;</span><br><span class="line">      startMain()</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      startLogin()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>FlowController</strong></p>
+<p>But with <code>AppFlowController</code>, you can treat it like a normal <code>UIViewController</code>, so just setting it as the <code>rootViewController</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">appFlowController = <span class="type">AppFlowController</span>(</span><br><span class="line">window = <span class="type">UIWindow</span>(frame: <span class="type">UIScreen</span>.main.bounds)</span><br><span class="line">window?.rootViewController = appFlowController</span><br><span class="line">window?.makeKeyAndVisible()</span><br><span class="line"></span><br><span class="line">appFlowController.start()</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-LoginFlowController-can-manage-its-own-flow"><a href="#6-LoginFlowController-can-manage-its-own-flow" class="headerlink" title="6. LoginFlowController can manage its own flow"></a>6. LoginFlowController can manage its own flow</h2><p>Supposed we have login flow based on <code>UINavigationController</code> that can display <code>LoginController</code>, <code>ForgetPasswordController</code>, <code>SignUpController</code></p>
+<p><strong>Coordinator</strong></p>
+<p>What should we do in the <code>start</code> method of <code>LoginCoordinator</code>? Construct the initial controller <code>LoginController</code> and set it as the <code>rootViewController</code> of the <code>UINavigationController</code>? <code>LoginCoordinator</code> can create this embedded <code>UINavigationController</code> internally, but then it is not attached to the <code>rootViewController</code> of <code>UIWindow</code>, because <code>UIWindow</code> is kept privately inside the parent <code>AppCoordinator</code>.</p>
+<p>We can pass <code>UIWindow</code> to <code>LoginCoordinator</code> but then it knows too much. One way is to construct <code>UINavigationController</code> from <code>AppCoordinator</code> and pass that to <code>LoginCoordinator</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">AppCoordinator</span>: <span class="title">Coordinator</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> window: <span class="type">UIWindow</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">startLogin</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> navigationController = <span class="type">UINavigationController</span>()</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">let</span> loginCoordinator = <span class="type">LoginCoordinator</span>(navigationController: navigationController)</span><br><span class="line"> </span><br><span class="line">    loginCoordinator.delegate = <span class="keyword">self</span></span><br><span class="line">    add(child: loginCoordinator)</span><br><span class="line">    window.rootViewController = navigationController</span><br><span class="line">    loginCoordinator.start()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginCoordinator</span>: <span class="title">Coordinator</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> navigationController: <span class="type">UINavigationController</span></span><br><span class="line"> </span><br><span class="line">  <span class="keyword">init</span>(navigationController: <span class="type">UINavigationController</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.navigationController = navigationController</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">start</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> loginController = <span class="type">LoginController</span>(dependencyContainer: dependencyContainer)</span><br><span class="line">    loginController.delegate = <span class="keyword">self</span></span><br><span class="line"> </span><br><span class="line">    navigationController.viewControllers = [loginController]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>FlowController</strong></p>
+<p><code>LoginFlowController</code> leverages <code>container view controller</code> so it fits nicely with the way <code>UIKit</code> works. Here <code>AppFlowController</code> can just add <code>LoginFlowController</code> and <code>LoginFlowController</code> can just create its own <code>embeddedNavigationController</code>.</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">AppFlowController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">startLogin</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> loginFlowController = <span class="type">LoginFlowController</span>(</span><br><span class="line">      dependencyContainer: dependencyContainer</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    loginFlowController.delegate = <span class="keyword">self</span></span><br><span class="line">    add(childController: loginFlowController)</span><br><span class="line">    loginFlowController.start()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginFlowController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> dependencyContainer: <span class="type">DependencyContainer</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> embeddedNavigationController: <span class="type">UINavigationController!</span></span><br><span class="line">  <span class="keyword">weak</span> <span class="keyword">var</span> delegate: <span class="type">LoginFlowControllerDelegate?</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(dependencyContainer: <span class="type">DependencyContainer</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.dependencyContainer = dependencyContainer</span><br><span class="line">    <span class="keyword">super</span>.<span class="keyword">init</span>(nibName: <span class="literal">nil</span>, bundle: <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">    embeddedNavigationController = <span class="type">UINavigationController</span>()</span><br><span class="line">    add(childController: embeddedNavigationController)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">start</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> loginController = <span class="type">LoginController</span>(dependencyContainer: dependencyContainer)</span><br><span class="line">    loginController.delegate = <span class="keyword">self</span></span><br><span class="line"></span><br><span class="line">    embeddedNavigationController.viewControllers = [loginController]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-FlowController-and-responder-chain"><a href="#7-FlowController-and-responder-chain" class="headerlink" title="7. FlowController and responder chain"></a>7. FlowController and responder chain</h2><p><strong>Coordinator</strong></p>
+<p>Sometimes we want a quick way to bubble up message to parent <code>Coordinator</code>, one way to do that is to replicate <code>UIResponder</code> chain using <code>associated object</code> and protocol extensions, like <a href="http://aplus.rs/2017/highly-maintainable-app-architecture/" target="_blank" rel="noopener">Inter-connect with Coordinator</a></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="class"><span class="keyword">struct</span> <span class="title">AssociatedKeys</span> </span>&#123;</span><br><span class="line">		<span class="keyword">static</span> <span class="keyword">var</span> <span class="type">ParentCoordinator</span> = <span class="string">"ParentCoordinator"</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">var</span> parentCoordinator: <span class="type">Any?</span> &#123;</span><br><span class="line">		<span class="keyword">get</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> objc_getAssociatedObject(<span class="keyword">self</span>, &amp;<span class="type">AssociatedKeys</span>.<span class="type">ParentCoordinator</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">set</span> &#123;</span><br><span class="line">			objc_setAssociatedObject(<span class="keyword">self</span>, &amp;<span class="type">AssociatedKeys</span>.<span class="type">ParentCoordinator</span>, newValue, .<span class="type">OBJC_ASSOCIATION_ASSIGN</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Coordinator</span>&lt;<span class="title">T</span>: <span class="title">UIViewController</span>&gt;: <span class="title">UIResponder</span>, <span class="title">Coordinating</span> </span>&#123;</span><br><span class="line">	<span class="keyword">open</span> <span class="keyword">var</span> parent: <span class="type">Coordinating?</span>	</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">override</span> <span class="keyword">open</span> <span class="keyword">var</span> coordinatingResponder: <span class="type">UIResponder?</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> parent <span class="keyword">as</span>? <span class="type">UIResponder</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>FlowController</strong></p>
+<p>Since <code>FlowController</code> is <code>UIViewController</code>, which inherits from <code>UIResponder</code>, responder chain happens out of the box</p>
+<blockquote>
+<p>Responder objects—that is, instances of UIResponder—constitute the event-handling backbone of a UIKit app. Many key objects are also responders, including the UIApplication object, UIViewController objects, and all UIView objects (which includes UIWindow). As events occur, UIKit dispatches them to your app’s responder objects for handling.</p>
+</blockquote>
+<h2 id="8-FlowController-and-trait-collection"><a href="#8-FlowController-and-trait-collection" class="headerlink" title="8. FlowController and trait collection"></a>8. FlowController and trait collection</h2><p><strong>FlowController</strong></p>
+<p>I very much like how <a href="https://github.com/kickstarter/ios-oss/blob/master/Kickstarter-iOS.playground/Sources/playgroundController.swift#L43" target="_blank" rel="noopener">Kickstarter</a> uses trait collection in testing. Well, since <code>FlowController</code> is a parent view controller, we can just override its trait collection, and that will affect the size classes of all view controllers inside that flow.</p>
+<p>As in <a href="https://davedelong.com/blog/2017/11/06/a-better-mvc-part-2-fixing-encapsulation/" target="_blank" rel="noopener">A Better MVC, Part 2: Fixing Encapsulation</a></p>
+<blockquote>
+<p>The huge advantage of this approach is that system features come free. Trait collection propagation is free. View lifecycle callbacks are free. Safe area layout margins are generally free. The responder chain and preferred UI state callbacks are free. And future additions to UIViewController are also free.</p>
+</blockquote>
+<p>From <a href="https://developer.apple.com/documentation/uikit/uiviewcontroller/1621406-setoverridetraitcollection" target="_blank" rel="noopener">setOverrideTraitCollection</a></p>
+<blockquote>
+<p>When implementing a custom container view controller, you can use this method to change the traits of any embedded child view controllers to something more appropriate for your layout. Making such a change alters other view controller behaviors associated with that child</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> trait = <span class="type">UITraitCollection</span>(traitsFrom: [</span><br><span class="line">  .<span class="keyword">init</span>(horizontalSizeClass: .compact),</span><br><span class="line">  .<span class="keyword">init</span>(verticalSizeClass: .regular),</span><br><span class="line">  .<span class="keyword">init</span>(userInterfaceIdiom: .phone)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">appFlowController.setOverrideTraitCollection(trait, forChildViewController: loginFlowController)</span><br></pre></td></tr></table></figure>
+
+<h2 id="9-FlowController-and-back-button"><a href="#9-FlowController-and-back-button" class="headerlink" title="9. FlowController and back button"></a>9. FlowController and back button</h2><p><strong>Coordinator</strong></p>
+<p>One problem with <code>UINavigationController</code> is that clicking on the default <code>back button</code> pops the view controller out of the navigation stack, so <code>Coordinator</code> is not aware of that. With <code>Coordinator</code> you needs to keep <code>Coordinator</code> and <code>UIViewController</code> in sync, add try to hook up <code>UINavigationControllerDelegate</code> in order to clean up. Like in <a href="http://khanlou.com/2017/05/back-buttons-and-coordinators/" target="_blank" rel="noopener">Back Buttons and Coordinators</a></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Coordinator</span>: <span class="title">UINavigationControllerDelegate</span> </span>&#123;    </span><br><span class="line">	<span class="function"><span class="keyword">func</span> <span class="title">navigationController</span><span class="params">(navigationController: UINavigationController,</span></span></span><br><span class="line"><span class="function"><span class="params">		didShowViewController viewController: UIViewController, animated: Bool)</span></span> &#123;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// ensure the view controller is popping</span></span><br><span class="line">		<span class="keyword">guard</span></span><br><span class="line">		  <span class="keyword">let</span> fromViewController = navigationController.transitionCoordinator?.viewController(forKey: .from),</span><br><span class="line">		  !navigationController.viewControllers.<span class="built_in">contains</span>(fromViewController) <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">    	&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// and it's the right type</span></span><br><span class="line">		<span class="keyword">if</span> fromViewController <span class="keyword">is</span> <span class="type">FirstViewControllerInCoordinator</span>) &#123;</span><br><span class="line">			<span class="comment">//deallocate the relevant coordinator</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Or creating a class called <code>NavigationController</code> that inside manages a list of child coordinators. Like in <a href="http://irace.me/navigation-coordinators" target="_blank" rel="noopener">Navigation coordinators</a></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">NavigationController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="comment">// MARK: - Inputs</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> rootViewController: <span class="type">UIViewController</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// MARK: - Mutable state</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> viewControllersToChildCoordinators: [<span class="type">UIViewController</span>: <span class="type">Coordinator</span>] = [:]</span><br><span class="line"></span><br><span class="line">  <span class="comment">// MARK: - Lazy views</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="built_in">lazy</span> <span class="keyword">var</span> childNavigationController: <span class="type">UINavigationController</span> =</span><br><span class="line">      <span class="type">UINavigationController</span>(rootViewController: <span class="keyword">self</span>.rootViewController)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// MARK: - Initialization</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(rootViewController: <span class="type">UIViewController</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.rootViewController = rootViewController</span><br><span class="line"></span><br><span class="line">    <span class="keyword">super</span>.<span class="keyword">init</span>(nibName: <span class="literal">nil</span>, bundle: <span class="literal">nil</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>FlowController</strong></p>
+<p>Since <code>FlowController</code> is just plain <code>UIViewController</code>, you don’t need to manually manage child <code>FlowController</code>. The child <code>FlowController</code> is gone when you pop or dismiss. If we want to listen to <code>UINavigationController</code> events, we can just handle that inside the <code>FlowController</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginFlowController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> dependencyContainer: <span class="type">DependencyContainer</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> embeddedNavigationController: <span class="type">UINavigationController!</span></span><br><span class="line">  <span class="keyword">weak</span> <span class="keyword">var</span> delegate: <span class="type">LoginFlowControllerDelegate?</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(dependencyContainer: <span class="type">DependencyContainer</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.dependencyContainer = dependencyContainer</span><br><span class="line">    <span class="keyword">super</span>.<span class="keyword">init</span>(nibName: <span class="literal">nil</span>, bundle: <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">    embeddedNavigationController = <span class="type">UINavigationController</span>()</span><br><span class="line">    embeddedNavigationController.delegate = <span class="keyword">self</span></span><br><span class="line">    add(childController: embeddedNavigationController)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">LoginFlowController</span>: <span class="title">UINavigationControllerDelegate</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">navigationController</span><span class="params">(<span class="number">_</span> navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool)</span></span> &#123;</span><br><span class="line">    </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="10-FlowController-and-callback"><a href="#10-FlowController-and-callback" class="headerlink" title="10. FlowController and callback"></a>10. FlowController and callback</h2><p>We can use <code>delegate</code> pattern to notify <code>FlowController</code> to show another view controller in the flow</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ProductFlowController</span>: <span class="title">ProductListControllerDelegate</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">productListController</span><span class="params">(<span class="number">_</span> controller: ProductListController, didSelect product: Product)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> productDetailController = <span class="type">ProductDetailController</span>(</span><br><span class="line">      productNetworkingService: dependencyContainer.productNetworkingService,</span><br><span class="line">      productEditService: dependencyContainer.productEditService,</span><br><span class="line">      imageDownloaderService: dependencyContainer.imageDownloaderService</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    productDetailController.delegate = <span class="keyword">self</span></span><br><span class="line">    embeddedNavigationController.pushViewController(productDetailController, animated: <span class="literal">true</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Another approach is to use <code>closure</code> as callback, as proposed by <a href="https://twitter.com/merowing_/status/930755494502981632" target="_blank" rel="noopener">@merowing_</a>, and also in his post <a href="http://merowing.info/2016/01/improve-your-ios-architecture-with-flowcontrollers/" target="_blank" rel="noopener">Improve your iOS Architecture with FlowControllers</a></p>
+<blockquote>
+<p>Using closures as triggers rather than delegate allows for more readable and specialized implementation, and multiple contexts</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductFlowController</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">start</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> productListController = <span class="type">ProductListController</span>(</span><br><span class="line">      productNetworkingService: dependencyContainer.productNetworkingService</span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    productListController.didSelectProduct = &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] product <span class="keyword">in</span></span><br><span class="line">      <span class="keyword">self</span>?.showDetail(<span class="keyword">for</span>: product)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    embeddedNavigationController.viewControllers = [productListController]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="11-FlowController-and-deep-linking"><a href="#11-FlowController-and-deep-linking" class="headerlink" title="11. FlowController and deep linking"></a>11. FlowController and deep linking</h2><p>TBD. In the mean while, here are some readings about the UX</p>
+<ul>
+<li><a href="https://developer.android.com/design/patterns/navigation.html" target="_blank" rel="noopener">Navigation with Back and Up</a></li>
+<li><a href="https://developer.apple.com/documentation/usernotifications/unusernotificationcenterdelegate/1649518-usernotificationcenter" target="_blank" rel="noopener">UserNotification</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Please-reconsidering-your-choice-of-libraries"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1783,280 +2124,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-Reading-list"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Reading-list/">Reading list</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Reading-list/" class="article-date">
-	  <time datetime="2017-09-21T10:06:35.000Z" itemprop="datePublished">September 21, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/78" target="_blank" rel="noopener">#78</a></strong></p>
-<p>These are my favorite books, screencasts, languages, tech and services that I have been exploring</p>
-<h2 id="Books"><a href="#Books" class="headerlink" title="Books"></a>Books</h2><h4 id="Programming"><a href="#Programming" class="headerlink" title="Programming"></a>Programming</h4><ul>
-<li><input checked disabled type="checkbox"> <a href="http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882" target="_blank" rel="noopener">Clean Code: A Handbook of Agile Software Craftsmanship</a></li>
-<li><input checked disabled type="checkbox"> <a href="http://www.amazon.com/Pragmatic-Programmer-Journeyman-Master/dp/020161622X" target="_blank" rel="noopener">The Pragmatic Programmer: From Journeyman to Master</a></li>
-<li><input checked disabled type="checkbox"> <a href="http://www.amazon.com/Code-Complete-Practical-Handbook-Construction/dp/0735619670" target="_blank" rel="noopener">Code Complete: A Practical Handbook of Software Construction, Second Edition 2nd Edition</a></li>
-<li><input checked disabled type="checkbox"> <a href="http://www.amazon.com/Clean-Coder-Conduct-Professional-Programmers/dp/0137081073" target="_blank" rel="noopener">The Clean Coder: A Code of Conduct for Professional Programmers</a></li>
-<li><input checked disabled type="checkbox"> <a href="http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672" target="_blank" rel="noopener">Refactoring: Improving the Design of Existing Code</a></li>
-<li><input checked disabled type="checkbox"> <a href="http://www.amazon.com/Agile-Principles-Patterns-Practices-C/dp/0131857258" target="_blank" rel="noopener">Agile Principles, Patterns, and Practices in C#</a></li>
-<li><input checked disabled type="checkbox"> <a href="http://www.amazon.com/Refactoring-Patterns-Joshua-Kerievsky/dp/0321213351" target="_blank" rel="noopener">Refactoring to Patterns</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://www.amazon.com/Art-Unit-Testing-examples/dp/1617290890" target="_blank" rel="noopener">The Art of Unit Testing: with examples in C#</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://www.amazon.co.uk/Clean-Architecture-Craftsmans-Software-Structure/dp/0134494164" target="_blank" rel="noopener">Clean Architecture: A Craftsman’s Guide to Software Structure and Design </a></li>
-<li><input checked disabled type="checkbox"> <a href="https://www.amazon.com/Head-First-Design-Patterns-Brain-Friendly/dp/0596007124" target="_blank" rel="noopener">Head First Design Patterns</a></li>
-<li><input disabled type="checkbox"> <a href="https://www.amazon.com/Clean-Architecture-Craftsmans-Software-Structure/dp/0134494164" target="_blank" rel="noopener">Clean Architecture: A Craftsman’s Guide to Software Structure and Design</a></li>
-<li><a href="https://www.amazon.com/Living-Code-First-Developers-Innovators/dp/1942878826/" target="_blank" rel="noopener">Living by the Code</a></li>
-</ul>
-<h4 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h4><ul>
-<li><input checked disabled type="checkbox"> <a href="https://www.amazon.com/Effective-Java-3rd-Joshua-Bloch/dp/0134685997" target="_blank" rel="noopener">Effective Java (3rd Edition) </a></li>
-</ul>
-<h4 id="Javascript"><a href="#Javascript" class="headerlink" title="Javascript"></a>Javascript</h4><ul>
-<li><input checked disabled type="checkbox"> <a href="https://eloquentjavascript.net/" target="_blank" rel="noopener">Eloquent Javascript</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://github.com/MostlyAdequate/mostly-adequate-guide" target="_blank" rel="noopener">Mostly adequate guide to Functional Programming in Javascript</a></li>
-</ul>
-<h4 id="iOS"><a href="#iOS" class="headerlink" title="iOS"></a>iOS</h4><ul>
-<li><input checked disabled type="checkbox"> <a href="http://www.effectiveobjectivec.com/" target="_blank" rel="noopener">Effective Objective-C 2.0</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://www.objc.io/books/advanced-swift/" target="_blank" rel="noopener">Advanced Swift</a></li>
-<li><input disabled type="checkbox"> <a href="https://store.raywenderlich.com/products/design-patterns-by-tutorials" target="_blank" rel="noopener">Design Patterns by Tutorials</a></li>
-<li><input disabled type="checkbox"> <a href="https://www.objc.io/books/app-architecture/" target="_blank" rel="noopener">App Architecture</a></li>
-</ul>
-<h4 id="Haskell"><a href="#Haskell" class="headerlink" title="Haskell"></a>Haskell</h4><ul>
-<li><input checked disabled type="checkbox"> <a href="http://learnyouahaskell.com/" target="_blank" rel="noopener">Learn you a Haskell for great good</a></li>
-</ul>
-<h4 id="Life"><a href="#Life" class="headerlink" title="Life"></a>Life</h4><ul>
-<li><input checked disabled type="checkbox"> <a href="https://www.amazon.com/Smart-Gets-Things-Done-Technical/dp/1590598385" target="_blank" rel="noopener">Smart and Gets Things Done: Joel Spolsky’s Concise Guide to Finding the Best Technical Talent</a></li>
-<li><input disabled type="checkbox"> <a href="https://www.amazon.com/Power-Habit-What-Life-Business/dp/081298160X" target="_blank" rel="noopener">The Power of Habit: Why We Do What We Do in Life and Business</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://www.kokev.in/hired-fast" target="_blank" rel="noopener">Hired fast</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://www.amazon.com/Never-Eat-Alone-Expanded-Updated/dp/0385346654" target="_blank" rel="noopener">Never Eat Alone</a></li>
-<li><input disabled type="checkbox"> <a href="http://www.abramsbooks.com/product/shape-of-ideas_9781419723179/" target="_blank" rel="noopener">The shape of ideas</a></li>
-<li><input disabled type="checkbox"> <a href="https://www.amazon.ca/Good-They-Cant-Ignore-You/dp/1455509124" target="_blank" rel="noopener">So Good They Can’t Ignore You: Why Skills Trump Passion in the Quest for Work You Love</a></li>
-</ul>
-<h2 id="Screencasts"><a href="#Screencasts" class="headerlink" title="Screencasts"></a>Screencasts</h2><ul>
-<li><input checked disabled type="checkbox"> <a href="https://www.pointfree.co/" target="_blank" rel="noopener">Pointfree</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://cleancoders.com/" target="_blank" rel="noopener">Clean coders</a></li>
-<li><input disabled type="checkbox"> <a href="https://basecodefieldguide.com/" target="_blank" rel="noopener">BaseCode</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://www.destroyallsoftware.com/screencasts" target="_blank" rel="noopener">Destroy All Software</a></li>
-<li><input disabled type="checkbox"> <a href="https://www.youtube.com/playlist?list=PLkOyNuxGl9jx02vhWRCSPwbcSRvV9wWh1" target="_blank" rel="noopener">Can it be done in React Native?</a></li>
-</ul>
-<h2 id="Blog"><a href="#Blog" class="headerlink" title="Blog"></a>Blog</h2><ul>
-<li><input checked disabled type="checkbox"> <a href="https://www.pointfree.co/blog" target="_blank" rel="noopener">Pointfree</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://nshipster.com/" target="_blank" rel="noopener">NSHipster</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://www.objc.io/blog/" target="_blank" rel="noopener">Objc.io</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://www.swiftbysundell.com/" target="_blank" rel="noopener">Swift by Sundell</a></li>
-<li><input checked disabled type="checkbox"> <a href="http://khanlou.com/" target="_blank" rel="noopener">Khanlou</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://oleb.net/" target="_blank" rel="noopener">Ole Begemann</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://matt.diephouse.com/" target="_blank" rel="noopener">Matt Diephouse</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://overreacted.io/" target="_blank" rel="noopener">Overreacted</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://www.kode24.no/" target="_blank" rel="noopener">kode24</a></li>
-<li><input checked disabled type="checkbox"> <a href="https://sandofsky.com/" target="_blank" rel="noopener">Ben Sandofsky</a></li>
-</ul>
-<h2 id="Language"><a href="#Language" class="headerlink" title="Language"></a>Language</h2><ul>
-<li><input checked disabled type="checkbox"> C</li>
-<li><input checked disabled type="checkbox"> C++</li>
-<li><input checked disabled type="checkbox"> Objective C</li>
-<li><input checked disabled type="checkbox"> Swift</li>
-<li><input checked disabled type="checkbox"> C#</li>
-<li><input checked disabled type="checkbox"> Java</li>
-<li><input checked disabled type="checkbox"> Kotlin</li>
-<li><input checked disabled type="checkbox"> Javascript</li>
-<li><input checked disabled type="checkbox"> Applescript</li>
-<li><input checked disabled type="checkbox"> Dart</li>
-<li><input checked disabled type="checkbox"> Go</li>
-<li><input checked disabled type="checkbox"> Haskell</li>
-</ul>
-<h2 id="Tech-amp-Service"><a href="#Tech-amp-Service" class="headerlink" title="Tech &amp; Service"></a>Tech &amp; Service</h2><ul>
-<li><input checked disabled type="checkbox"> iOS, macOS</li>
-<li><input disabled type="checkbox"> tvOS, watchOS</li>
-<li><input checked disabled type="checkbox"> react.js</li>
-<li><input checked disabled type="checkbox"> electron.js</li>
-<li><input checked disabled type="checkbox"> Android</li>
-<li><input checked disabled type="checkbox"> Flutter</li>
-<li><input checked disabled type="checkbox"> React Native</li>
-<li><input checked disabled type="checkbox"> Chrome extension</li>
-<li><input checked disabled type="checkbox"> Sketch plugin</li>
-<li><input checked disabled type="checkbox"> Xcode extension</li>
-<li><input checked disabled type="checkbox"> Slack bot</li>
-<li><input checked disabled type="checkbox"> Windows Phone</li>
-<li><input checked disabled type="checkbox"> Windows Mobile 6</li>
-<li><input checked disabled type="checkbox"> Symbian</li>
-<li><input checked disabled type="checkbox"> J2ME</li>
-<li><input checked disabled type="checkbox"> Windows Metro</li>
-<li><input checked disabled type="checkbox"> ASP.NET</li>
-<li><input checked disabled type="checkbox"> XNA</li>
-<li><input checked disabled type="checkbox"> Unity</li>
-<li><input checked disabled type="checkbox"> node.js</li>
-<li><input disabled type="checkbox"> Docker</li>
-<li><input disabled type="checkbox"> Kubernetes</li>
-<li><input disabled type="checkbox"> Heroku</li>
-<li><input disabled type="checkbox"> Google Cloud</li>
-<li><input checked disabled type="checkbox"> Firebase</li>
-<li><input checked disabled type="checkbox"> TravisCI, CircleCI, Bitrise, BuddyBuild, Jenkins</li>
-<li><input checked disabled type="checkbox"> GitHub, Bitbucket</li>
-<li><input checked disabled type="checkbox"> JIRA, Pivotal, Trello</li>
-<li><input checked disabled type="checkbox"> Sketch</li>
-<li><input checked disabled type="checkbox"> GRPC</li>
-<li><input checked disabled type="checkbox"> Protobuf</li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tech/">tech</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-What-if-there-is-no-inheritance"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/What-if-there-is-no-inheritance/">What if there is no inheritance?</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/What-if-there-is-no-inheritance/" class="article-date">
-	  <time datetime="2017-09-21T06:56:40.000Z" itemprop="datePublished">September 21, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/77" target="_blank" rel="noopener">#77</a></strong></p>
-<p>My question </p>
-<blockquote>
-<p>What if there is no inheritance, so that everybody has the same start, does that make life fairer?</p>
-</blockquote>
-<ul>
-<li>Hacker News <a href="https://news.ycombinator.com/item?id=13857327" target="_blank" rel="noopener">https://news.ycombinator.com/item?id=13857327</a></li>
-<li>Quora <a href="https://www.quora.com/What-if-there-is-no-inheritance-so-that-everybody-has-the-same-start-does-that-make-life-fairer" target="_blank" rel="noopener">https://www.quora.com/What-if-there-is-no-inheritance-so-that-everybody-has-the-same-start-does-that-make-life-fairer</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/life/">life</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Ad-Hominem"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Ad-Hominem/">Ad Hominem</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Ad-Hominem/" class="article-date">
-	  <time datetime="2017-09-21T06:51:11.000Z" itemprop="datePublished">September 21, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/76" target="_blank" rel="noopener">#76</a></strong></p>
-<p>I use <a href="https://twitter.com/" target="_blank" rel="noopener">Twitter</a> a lot, mostly to follow people I like. They tweet cool things about tech and life. I learned a lot.</p>
-<blockquote>
-<p>Please don’t show me the evil sides of the world ~ Michael Learn To Rock - How Many Hours</p>
-</blockquote>
-<p>But there’s also bad side of the story. I see many retweets of people saying bad things about others, mostly in form of <a href="https://www.logicallyfallacious.com/tools/lp/Bo/LogicalFallacies/1/Ad-Hominem-Abusive" target="_blank" rel="noopener">Ad Hominem</a></p>
-<blockquote>
-<p>Attacking the person making the argument, rather than the argument itself, when the attack on the person is completely irrelevant to the argument the person is making.</p>
-</blockquote>
-<p>From <a href="http://wiki.c2.com/?AdHominem" target="_blank" rel="noopener">Ad Hominem on c2.com</a></p>
-<blockquote>
-<p>An argumentum ad hominem is any kind of argument that criticizes an idea by pointing something out about the people who hold the idea rather than directly addressing the merits of the idea. ‘’Ad hominem’’ is Latin for “directed toward the man (as opposed to the issue at hand)”. An alternative expression is “playing the man and not the ball”.</p>
-</blockquote>
-<p>Most of these people have the <a href="https://support.twitter.com/groups/31-twitter-basics/topics/111-features/articles/119135-about-verified-accounts" target="_blank" rel="noopener">Twitter verified badge</a>. They complain that they have so many followers while they themselves follow hundreds of thousands. They say bad things about others’ hair style and appearance while actively supporting equality. They argue who owns the original gif. They follow one person just to be the first to insult them.</p>
-<blockquote>
-<p>The blue verified badge  on Twitter lets people know that an account of public interest is authentic.</p>
-</blockquote>
-<blockquote>
-<p>Blowing out someone else’s candle doesn’t make yours shine any brighter ~ Anonymous</p>
-</blockquote>
-<p>The only thing I can do is <code>I don&#39;t like this tweet</code> 😞</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/life/">life</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2161,6 +2228,30 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-show-list-with-section-in-SwiftUI/">How to show list with section in SwiftUI</a></h6>
+              <span>November 16, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-group-array-by-property-in-Swift/">How to  group array by property in  Swift</a></h6>
+              <span>November 16, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/Links-for-tools/">Links for tools</a></h6>
               <span>November 15, 2019</span>
             </div>
@@ -2203,30 +2294,6 @@ var themeMenus = {};
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-fix-unable-to-infer-complex-closure-return-type-in-SwiftUI/">How to fix unable to infer complex closure return type in SwiftUI</a></h6>
-              <span>November 13, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-make-Swift-Package-Manager-package-for-multiple-platforms/">How to make Swift Package Manager package for multiple platforms</a></h6>
-              <span>November 13, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2239,7 +2306,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/accessibility/" style="font-size: 10px;">accessibility</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.65px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.18px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10.59px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.18px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.59px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.76px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10.59px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.59px;">css</a> <a href="/tags/dart/" style="font-size: 11.76px;">dart</a> <a href="/tags/database/" style="font-size: 10.59px;">database</a> <a href="/tags/design/" style="font-size: 10.59px;">design</a> <a href="/tags/electron/" style="font-size: 11.76px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.76px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.76px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.76px;">github</a> <a href="/tags/go/" style="font-size: 10.59px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.41px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.24px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.06px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.76px;">layout</a> <a href="/tags/life/" style="font-size: 13.53px;">life</a> <a href="/tags/links/" style="font-size: 14.71px;">links</a> <a href="/tags/macOS/" style="font-size: 18.82px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.59px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.76px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 12.94px;">node</a> <a href="/tags/objc/" style="font-size: 10.59px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 11.18px;">react</a> <a href="/tags/react-native/" style="font-size: 15.29px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.18px;">rx</a> <a href="/tags/script/" style="font-size: 10.59px;">script</a> <a href="/tags/spm/" style="font-size: 10px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.47px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.88px;">tech</a> <a href="/tags/terminal/" style="font-size: 10.59px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.35px;">testing</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.76px;">voip</a> <a href="/tags/watchOS/" style="font-size: 12.94px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.59px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.59px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 14.12px;">xcode</a>
+      <a href="/tags/accessibility/" style="font-size: 10px;">accessibility</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.5px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.25px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10.63px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.25px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.63px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.88px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 10.63px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.63px;">css</a> <a href="/tags/dart/" style="font-size: 11.88px;">dart</a> <a href="/tags/database/" style="font-size: 10.63px;">database</a> <a href="/tags/design/" style="font-size: 10.63px;">design</a> <a href="/tags/electron/" style="font-size: 11.88px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.88px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.88px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.88px;">github</a> <a href="/tags/go/" style="font-size: 10.63px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.38px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.13px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.88px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.88px;">layout</a> <a href="/tags/life/" style="font-size: 13.75px;">life</a> <a href="/tags/links/" style="font-size: 15px;">links</a> <a href="/tags/macOS/" style="font-size: 18.75px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.63px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.88px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.13px;">node</a> <a href="/tags/objc/" style="font-size: 10.63px;">objc</a> <a href="/tags/push-notification/" style="font-size: 10px;">push notification</a> <a href="/tags/react/" style="font-size: 11.25px;">react</a> <a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.25px;">rx</a> <a href="/tags/script/" style="font-size: 10.63px;">script</a> <a href="/tags/spm/" style="font-size: 10px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.25px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.63px;">tech</a> <a href="/tags/terminal/" style="font-size: 10.63px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.5px;">testing</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.88px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.75px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.63px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.63px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 14.38px;">xcode</a>
     </div>
   </div>
 
@@ -2249,7 +2316,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">26</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">46</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">28</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">46</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2259,7 +2326,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/accessibility/">accessibility</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">135</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">68</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">184</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">11</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/accessibility/">accessibility</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">136</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">68</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push-notification/">push notification</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">185</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">20</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">11</span></li></ul>
     </div>
   </div>
 
