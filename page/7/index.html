@@ -179,6 +179,256 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-use-moveItem-in-NSCollectionView-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-moveItem-in-NSCollectionView-in-AppKit/">How to use moveItem in NSCollectionView in AppKit</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-moveItem-in-NSCollectionView-in-AppKit/" class="article-date">
+	  <time datetime="2019-06-27T07:15:08.000Z" itemprop="datePublished">June 27, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/332" target="_blank" rel="noopener">#332</a></strong></p>
+<p>From <a href="https://developer.apple.com/documentation/appkit/nscollectionview/1528159-moveitem" target="_blank" rel="noopener">moveItem(at:to:)</a></p>
+<blockquote>
+<p>Moves an item from one location to another in the collection view.</p>
+</blockquote>
+<blockquote>
+<p>After rearranging items in your data source object, use this method to synchronize those changes with the collection view. Calling this method lets the collection view know that it must update its internal data structures and possibly update its visual appearance. You can move the item to a different section or to a new location in the same section. The collection view updates the layout as needed to account for the move, animating cells into position in response.</p>
+</blockquote>
+<blockquote>
+<p>When inserting or deleting multiple sections and items, you can animate all of your changes at once using the performBatchUpdates(_:completionHandler:) method.</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">notes.swapAt(index, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">collectionView.animator().moveItem(</span><br><span class="line">    at: index.toIndexPath(),</span><br><span class="line">    to: <span class="number">0</span>.toIndexPath()</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>There may be unknown reasons or bug that make other cells stay in incorrect state. The fix is to reload the rest cells</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">set</span> = <span class="type">Set</span>((<span class="number">1</span>..&lt;notes.<span class="built_in">count</span>).<span class="built_in">map</span>(&#123; $<span class="number">0</span>.toIndexPath() &#125;))</span><br><span class="line">collectionView.reloadItems(at: <span class="keyword">set</span>)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-show-dropdown-from-NSSegmentedControl-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-show-dropdown-from-NSSegmentedControl-in-AppKit/">How to show dropdown from NSSegmentedControl in AppKit</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-show-dropdown-from-NSSegmentedControl-in-AppKit/" class="article-date">
+	  <time datetime="2019-06-27T07:04:13.000Z" itemprop="datePublished">June 27, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/331" target="_blank" rel="noopener">#331</a></strong></p>
+<p>From <a href="https://developer.apple.com/documentation/appkit/nssegmentedcontrol?language=objc" target="_blank" rel="noopener">NSSegmentedControl</a></p>
+<blockquote>
+<p>The features of a segmented control include the following:<br>A segment can have an image, text (label), menu, tooltip, and tag.<br>A segmented control can contain images or text, but not both.</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> languageMenu = <span class="type">NSMenu</span>(title: <span class="string">""</span>)</span><br><span class="line"><span class="keyword">let</span> languages = [<span class="string">"Swift"</span>, <span class="string">"Javascript"</span>]</span><br><span class="line">languages.forEach &#123;</span><br><span class="line">    <span class="keyword">let</span> item = <span class="type">NSMenuItem</span>(title: $<span class="number">0</span>, action: #selector(handleSelectLanguage(<span class="number">_</span>:)), keyEquivalent: <span class="string">""</span>)</span><br><span class="line">    item.target = <span class="keyword">self</span></span><br><span class="line">    item.isEnabled = <span class="literal">true</span></span><br><span class="line">    languageMenu.addItem(item)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> themeMenu = <span class="type">NSMenu</span>(title: <span class="string">""</span>)</span><br><span class="line"><span class="keyword">let</span> themes = [<span class="string">"one dark"</span>, <span class="string">"one light"</span>]</span><br><span class="line">themes.forEach &#123;</span><br><span class="line">    <span class="keyword">let</span> item = <span class="type">NSMenuItem</span>(title: $<span class="number">0</span>, action: #selector(handleSelectLanguage(<span class="number">_</span>:)), keyEquivalent: <span class="string">""</span>)</span><br><span class="line">    item.target = <span class="keyword">self</span></span><br><span class="line">    item.isEnabled = <span class="literal">true</span></span><br><span class="line">    themeMenu.addItem(item)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">segment.segmentCount = <span class="number">2</span></span><br><span class="line">segment.selectedSegmentBezelColor = <span class="type">NSColor</span>.red</span><br><span class="line"></span><br><span class="line">segment.setLabel(<span class="string">"Language"</span>, forSegment: <span class="number">0</span>)</span><br><span class="line">segment.setLabel(<span class="string">"Theme"</span>, forSegment: <span class="number">1</span></span><br><span class="line"></span><br><span class="line">segment.setMenu(languageMenu, forSegment: <span class="number">0</span>)</span><br><span class="line">segment.setMenu(themeMenu, forSegment: <span class="number">1</span></span><br><span class="line"></span><br><span class="line">segment.showsMenuIndicator(forSegment: <span class="number">0</span>)</span><br><span class="line">segment.showsMenuIndicator(forSegment: <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-make-scrollable-NSTextView-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-make-scrollable-NSTextView-in-AppKit/">How to make scrollable NSTextView in AppKit</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-make-scrollable-NSTextView-in-AppKit/" class="article-date">
+	  <time datetime="2019-06-26T18:07:38.000Z" itemprop="datePublished">June 26, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/330" target="_blank" rel="noopener">#330</a></strong></p>
+<p>When adding <code>NSTextView</code> in xib, we see it is embedded under <code>NSClipView</code>. But if we try to use <code>NSClipView</code> to replicate what’s in the xib, it does not scroll. </p>
+<p>To make it work, we can follow <a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/TextUILayer/Tasks/TextInScrollView.html" target="_blank" rel="noopener">Putting an NSTextView Object in an NSScrollView</a> and <a href="https://github.com/onmyway133/blog/issues/173" target="_blank" rel="noopener">How to make scrollable vertical NSStackView</a> to make our <code>ScrollableInput</code></p>
+<p>For easy Auto Layout, we use <a href="https://github.com/onmyway133/Anchors" target="_blank" rel="noopener">Anchors</a> for <code>UIScrollView</code>. </p>
+<p>Things worth mentioned for vertical scrolling</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">textContainer.heightTracksTextView = <span class="literal">false</span></span><br><span class="line">textView.autoresizingMask = [.width]</span><br><span class="line">textView.isVerticallyResizable = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ScrollableInput</span>: <span class="title">NSView</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> scrollView = <span class="type">NSScrollView</span>()</span><br><span class="line">    <span class="keyword">let</span> textView = <span class="type">NSTextView</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>(frame frameRect: <span class="type">NSRect</span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(frame: frameRect)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> rect = <span class="type">CGRect</span>(</span><br><span class="line">            x: <span class="number">0</span>, y: <span class="number">0</span>,</span><br><span class="line">            width: <span class="number">0</span>, height: <span class="type">CGFloat</span>.greatestFiniteMagnitude</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">		<span class="keyword">let</span> layoutManager = <span class="type">NSLayoutManager</span>()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> textContainer = <span class="type">NSTextContainer</span>(size: rect.size)</span><br><span class="line">        layoutManager.addTextContainer(textContainer)</span><br><span class="line">        textView = <span class="type">NSTextView</span>(frame: rect, textContainer: textContainer)</span><br><span class="line">        textView.maxSize = <span class="type">NSSize</span>(width: <span class="number">0</span>, height: <span class="type">CGFloat</span>.greatestFiniteMagnitude)</span><br><span class="line"></span><br><span class="line">        textContainer.heightTracksTextView = <span class="literal">false</span></span><br><span class="line">        textContainer.widthTracksTextView = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">        textView.isRichText = <span class="literal">false</span></span><br><span class="line">        textView.importsGraphics = <span class="literal">false</span></span><br><span class="line">        textView.isEditable = <span class="literal">true</span></span><br><span class="line">        textView.isSelectable = <span class="literal">true</span></span><br><span class="line">        textView.font = <span class="type">R</span>.font.text</span><br><span class="line">        textView.textColor = <span class="type">R</span>.color.text</span><br><span class="line">        textView.isVerticallyResizable = <span class="literal">true</span></span><br><span class="line">        textView.isHorizontallyResizable = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">        addSubview(scrollView)</span><br><span class="line">        scrollView.hasVerticalScroller = <span class="literal">true</span></span><br><span class="line">        scrollView.drawsBackground = <span class="literal">false</span></span><br><span class="line">        scrollView.drawsBackground = <span class="literal">false</span></span><br><span class="line">        textView.drawsBackground = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">        activate(</span><br><span class="line">            scrollView.anchor.edges</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        scrollView.documentView = textView</span><br><span class="line">        textView.autoresizingMask = [.width]</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>?(coder decoder: <span class="type">NSCoder</span>) &#123;</span><br><span class="line">        <span class="built_in">fatalError</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-handle-keyboard-for-UITextField-in-scrolling-UIStackView-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-handle-keyboard-for-UITextField-in-scrolling-UIStackView-in-iOS/">How to handle keyboard for UITextField in scrolling UIStackView in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-handle-keyboard-for-UITextField-in-scrolling-UIStackView-in-iOS/" class="article-date">
+	  <time datetime="2019-06-26T08:36:04.000Z" itemprop="datePublished">June 26, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/329" target="_blank" rel="noopener">#329</a></strong></p>
+<p>Firstly, to make UIStackView scrollable, embed it inside UIScrollView. Read <a href="https://github.com/onmyway133/blog/issues/324" target="_blank" rel="noopener">How to embed UIStackView inside UIScrollView in iOS</a></p>
+<p>It’s best to listen to <code>keyboardWillChangeFrameNotification</code> as it contains frame changes for Keyboard in different situation like custom keyboard, languages.</p>
+<blockquote>
+<p>Posted immediately prior to a change in the keyboard’s frame.</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KeyboardHandler</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> scrollView: <span class="type">UIScrollView</span></span><br><span class="line">    <span class="keyword">let</span> stackView: <span class="type">UIStackView</span></span><br><span class="line">    <span class="keyword">var</span> observer: <span class="type">AnyObject?</span></span><br><span class="line">    <span class="keyword">var</span> keyboardHeightConstraint: <span class="type">NSLayoutConstraint!</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Info</span> </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> frame: <span class="type">CGRect</span></span><br><span class="line">        <span class="keyword">let</span> duration: <span class="type">Double</span></span><br><span class="line">        <span class="keyword">let</span> animationOptions: <span class="type">UIView</span>.<span class="type">AnimationOptions</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>(scrollView: <span class="type">UIScrollView</span>, stackView: <span class="type">UIStackView</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.scrollView = scrollView</span><br><span class="line">        <span class="keyword">self</span>.stackView = stackView</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To make scrollView scroll beyond its <code>contentSize</code>, we can change its <code>contentInset.bottom</code>. Another way is to add a dummy view with certain height to <code>UIStackView</code> and alter its <code>NSLayoutConstraint</code> <code>constant</code></p>
+<p>We can’t access <code>self</code> inside init, so it’s best to have setup function</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> space = <span class="type">UIView</span>()</span><br><span class="line">    keyboardHeightConstraint = space.heightAnchor.constraint(equalToConstant: <span class="number">0</span>)</span><br><span class="line">    <span class="type">NSLayoutConstraint</span>.on([keyboardHeightConstraint])</span><br><span class="line">    stackView.addArrangedSubview(spa</span><br><span class="line">    observer = <span class="type">NotificationCenter</span>.<span class="keyword">default</span>.addObserver(</span><br><span class="line">        forName: <span class="type">UIResponder</span>.keyboardWillChangeFrameNotification,</span><br><span class="line">        object: <span class="literal">nil</span>,</span><br><span class="line">        queue: .main,</span><br><span class="line">        using: &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] notification <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">self</span>?.handle(notification)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Convert <code>Notification</code> to a convenient <code>Info</code> struct</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">convert</span><span class="params">(notification: Notification)</span></span> -&gt; <span class="type">Info?</span> &#123;</span><br><span class="line">    <span class="keyword">guard</span></span><br><span class="line">        <span class="keyword">let</span> frameValue = notification.userInfo?[<span class="type">UIResponder</span>.keyboardFrameEndUserInfoKey] <span class="type">NSValue</span>,</span><br><span class="line">        <span class="keyword">let</span> durationotification.userInfo?[<span class="type">UIResponder</span>.keyboardAnimationDurationUserInfoKey] <span class="keyword">as</span>? <span class="type">NSNumber</span>,</span><br><span class="line">        <span class="keyword">let</span> raw = notification.userInfo?[<span class="type">UIResponder</span>.keyboardAnimationCurveUserInfoKey] <span class="type">NSNumber</span></span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> <span class="type">Info</span>(</span><br><span class="line">        frame: frameValue.cgRectValue,</span><br><span class="line">        duration: duration.doubleValue,</span><br><span class="line">        animationOptions: <span class="type">UIView</span>.<span class="type">AnimationOptions</span>(rawValue: raw.uintValue)</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Then we can compare with UIScreen to check if Keyboard is showing or hiding</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handle</span><span class="params">(<span class="number">_</span> notification: Notification)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> info = convert(notification: notification) <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">  </span><br><span class="line">    <span class="keyword">let</span> isHiding = info.frame.origin.y == <span class="type">UIScreen</span>.main.bounds.height</span><br><span class="line">    keyboardHeightConstraint.constant = isHiding ? <span class="number">0</span> : info.frame.hei</span><br><span class="line">    <span class="type">UIView</span>.animate(</span><br><span class="line">        withDuration: info.duration,</span><br><span class="line">        delay: <span class="number">0</span>,</span><br><span class="line">        options: info.animationOptions,</span><br><span class="line">        animations: &#123;</span><br><span class="line">            <span class="keyword">self</span>.scrollView.layoutIfNeeded()</span><br><span class="line">            <span class="keyword">self</span>.moveTextFieldIfNeeded(info: info)</span><br><span class="line">    &#125;, completion: <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To move <code>UITextField</code> we can use <a href="https://developer.apple.com/documentation/uikit/uiscrollview/1619439-scrollrecttovisible" target="_blank" rel="noopener"><code>scrollRectToVisible(_:animated:)</code></a> but we have little control over how much we want to scroll</p>
+<blockquote>
+<p>This method scrolls the content view so that the area defined by rect is just visible inside the scroll view. If the area is already visible, the method does nothing.</p>
+</blockquote>
+<p>Another way is to check if keyboard overlaps <code>UITextField</code>. To do that we use <a href="https://developer.apple.com/documentation/uikit/uiview/1622504-convertrect" target="_blank" rel="noopener"><code>convertRect:toView:</code></a> with <code>nil</code> target so it uses window coordinates. Since keyboard frame is always relative to window, we have frames in same coordinate space.</p>
+<blockquote>
+<p>Converts a rectangle from the receiver’s coordinate system to that of another view.</p>
+</blockquote>
+<blockquote>
+<p>rect: A rectangle specified in the local coordinate system (bounds) of the receiver.<br>view: The view that is the target of the conversion operation. If view is nil, this method instead converts to window base coordinates. Otherwise, both view and the receiver must belong to the same UIWindow object.</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">moveTextFieldIfNeeded</span><span class="params">(info: Info)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> input = stackView.arrangedSubviews</span><br><span class="line">        .compactMap(&#123; $<span class="number">0</span> <span class="keyword">as</span>? <span class="type">UITextField</span> &#125;)</span><br><span class="line">        .first(<span class="keyword">where</span>: &#123; $<span class="number">0</span>.isFirstResponder &#125;)</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">  </span><br><span class="line">    <span class="keyword">let</span> inputFrame = input.convert(input.bounds, to: <span class="literal">nil</span>)</span><br><span class="line">    <span class="keyword">if</span> inputFrame.intersects(info.frame) &#123;</span><br><span class="line">        scrollView.setContentOffset(<span class="type">CGPoint</span>(x: <span class="number">0</span>, y: inputFrame.height), animated: <span class="literal">true</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        scrollView.setContentOffset(.zero, animated: <span class="literal">true</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Move-up-the-entire-view"><a href="#Move-up-the-entire-view" class="headerlink" title="Move up the entire view"></a>Move up the entire view</h3><p>For simplicity, we can move up the entire view</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">move</span><span class="params">(info: Info)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> isHiding = info.frame.origin.y == <span class="type">UIScreen</span>.main.bounds.height</span><br><span class="line">    <span class="keyword">let</span> moveUp = <span class="type">CGAffineTransform</span>(translationX: <span class="number">0</span>, y: -info.frame.height)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (view.transform, isHiding) &#123;</span><br><span class="line">    <span class="keyword">case</span> (.identity, <span class="literal">false</span>):</span><br><span class="line">        view.transform = moveUp</span><br><span class="line">    <span class="keyword">case</span> (moveUp, <span class="literal">true</span>):</span><br><span class="line">        view.transform = .identity</span><br><span class="line">     <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Prefer-willShow-and-willHide"><a href="#Prefer-willShow-and-willHide" class="headerlink" title="Prefer willShow and willHide"></a>Prefer willShow and willHide</h3><p>There ‘s an edge case with the above switch on <code>view.transform</code> and <code>isHiding</code> with one time verification sms code, which make it into the correct <code>case</code> handling. It’s safe to just set view.transform depending on <code>show</code> with <code>willHide</code> and <code>willShow</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KeyboardHandler</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> view: <span class="type">UIView</span></span><br><span class="line">    <span class="keyword">var</span> observerForWillShow: <span class="type">AnyObject?</span></span><br><span class="line">    <span class="keyword">var</span> observerForWillHide: <span class="type">AnyObject?</span></span><br><span class="line">    <span class="keyword">var</span> keyboardHeightConstraint: <span class="type">NSLayoutConstraint!</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Info</span> </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> frame: <span class="type">CGRect</span></span><br><span class="line">        <span class="keyword">let</span> duration: <span class="type">Double</span></span><br><span class="line">        <span class="keyword">let</span> animationOptions: <span class="type">UIView</span>.<span class="type">AnimationOptions</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">init</span>(view: <span class="type">UIView</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.view = view</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">        observerForWillShow = <span class="type">NotificationCenter</span>.<span class="keyword">default</span>.addObserver(</span><br><span class="line">            forName: <span class="type">UIResponder</span>.keyboardWillShowNotification,</span><br><span class="line">            object: <span class="literal">nil</span>,</span><br><span class="line">            queue: .main,</span><br><span class="line">            using: &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] notification <span class="keyword">in</span></span><br><span class="line">                <span class="keyword">self</span>?.handle(notification, show: <span class="literal">true</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        observerForWillHide = <span class="type">NotificationCenter</span>.<span class="keyword">default</span>.addObserver(</span><br><span class="line">            forName: <span class="type">UIResponder</span>.keyboardWillHideNotification,</span><br><span class="line">            object: <span class="literal">nil</span>,</span><br><span class="line">            queue: .main,</span><br><span class="line">            using: &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] notification <span class="keyword">in</span></span><br><span class="line">                <span class="keyword">self</span>?.handle(notification, show: <span class="literal">false</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">handle</span><span class="params">(<span class="number">_</span> notification: Notification, show: Bool)</span></span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> info = convert(notification: notification) <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">UIView</span>.animate(</span><br><span class="line">            withDuration: info.duration,</span><br><span class="line">            delay: <span class="number">0</span>,</span><br><span class="line">            options: info.animationOptions,</span><br><span class="line">            animations: &#123;</span><br><span class="line">				<span class="keyword">self</span>.move(info: info, show: show)</span><br><span class="line">        &#125;, completion: <span class="literal">nil</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">move</span><span class="params">(info: Info, show: Bool)</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> moveUp = <span class="type">CGAffineTransform</span>(translationX: <span class="number">0</span>, y: -info.frame.height)</span><br><span class="line">        <span class="keyword">if</span> show &#123;</span><br><span class="line">            view.transform = moveUp</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            view.transform = .identity</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">convert</span><span class="params">(notification: Notification)</span></span> -&gt; <span class="type">Info?</span> &#123;</span><br><span class="line">        <span class="keyword">guard</span></span><br><span class="line">            <span class="keyword">let</span> frameValue = notification.userInfo?[<span class="type">UIResponder</span>.keyboardFrameEndUserInfoKey] <span class="keyword">as</span>? <span class="type">NSValue</span>,</span><br><span class="line">            <span class="keyword">let</span> duration = notification.userInfo?[<span class="type">UIResponder</span>.keyboardAnimationDurationUserInfoKey] <span class="keyword">as</span>? <span class="type">NSNumber</span>,</span><br><span class="line">            <span class="keyword">let</span> raw = notification.userInfo?[<span class="type">UIResponder</span>.keyboardAnimationCurveUserInfoKey] <span class="keyword">as</span>? <span class="type">NSNumber</span></span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="type">Info</span>(</span><br><span class="line">            frame: frameValue.cgRectValue,</span><br><span class="line">            duration: duration.doubleValue,</span><br><span class="line">            animationOptions: <span class="type">UIView</span>.<span class="type">AnimationOptions</span>(rawValue: raw.uintValue)</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://developer.apple.com/library/archive/documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/KeyboardManagement/KeyboardManagement.html#//apple_ref/doc/uid/TP40009542-CH5-SW16" target="_blank" rel="noopener">Managing the Keyboard</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-make-simple-form-validator-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -770,75 +1020,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-A-bit-about-Design"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/A-bit-about-Design/">A bit about Design</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/A-bit-about-Design/" class="article-date">
-	  <time datetime="2019-06-18T09:20:19.000Z" itemprop="datePublished">June 18, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/317" target="_blank" rel="noopener">#317</a></strong></p>
-<h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><ul>
-<li><a href="https://medium.com/@nathangitter/why-your-app-looks-better-in-sketch-3a01b22c43d7" target="_blank" rel="noopener">Why Your App Looks Better in Sketch</a></li>
-<li><a href="https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6" target="_blank" rel="noopener">8 Tips for Dark Theme Design</a></li>
-</ul>
-<h2 id="UX"><a href="#UX" class="headerlink" title="UX"></a>UX</h2><ul>
-<li><a href="https://growth.design/case-studies/duolingo-user-retention/" target="_blank" rel="noopener">Duolingo User Retention</a></li>
-<li><a href="https://brianlovin.com/design-details" target="_blank" rel="noopener">Design Details</a></li>
-<li><a href="https://uxplanet.org/30-things-we-often-forget-when-designing-mobile-apps-ae30cc3b2c6b" target="_blank" rel="noopener">30 Things We Often Forget When Designing Mobile Apps</a></li>
-<li><a href="https://www.casestudy.club/" target="_blank" rel="noopener">Case study club</a></li>
-</ul>
-<h2 id="Showcase"><a href="#Showcase" class="headerlink" title="Showcase"></a>Showcase</h2><ul>
-<li><a href="https://saaspages.xyz/" target="_blank" rel="noopener">https://saaspages.xyz/</a></li>
-</ul>
-<h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul>
-<li><a href="https://shape.so/" target="_blank" rel="noopener">https://shape.so/</a></li>
-<li><a href="https://icons8.com/" target="_blank" rel="noopener">https://icons8.com/</a></li>
-<li><a href="https://icons8.com/animated-icons" target="_blank" rel="noopener">https://icons8.com/animated-icons</a></li>
-<li><a href="https://icons8.com/vector-creator" target="_blank" rel="noopener">https://icons8.com/vector-creator</a></li>
-<li><a href="https://feathericons.com/" target="_blank" rel="noopener">https://feathericons.com/</a></li>
-<li><a href="https://iconstore.co/" target="_blank" rel="noopener">https://iconstore.co/</a></li>
-<li><a href="https://streamlineicons.com/" target="_blank" rel="noopener">https://streamlineicons.com/</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design/">design</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
     <article id="post-Links-for-Design"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -895,6 +1076,75 @@ var themeMenus = {};
       
   <span class="ico-tags"></span>
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design/">design</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-A-bit-about-Design"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/A-bit-about-Design/">A bit about Design</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/A-bit-about-Design/" class="article-date">
+	  <time datetime="2019-06-18T09:20:19.000Z" itemprop="datePublished">June 18, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/317" target="_blank" rel="noopener">#317</a></strong></p>
+<h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><ul>
+<li><a href="https://medium.com/@nathangitter/why-your-app-looks-better-in-sketch-3a01b22c43d7" target="_blank" rel="noopener">Why Your App Looks Better in Sketch</a></li>
+<li><a href="https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6" target="_blank" rel="noopener">8 Tips for Dark Theme Design</a></li>
+</ul>
+<h2 id="UX"><a href="#UX" class="headerlink" title="UX"></a>UX</h2><ul>
+<li><a href="https://growth.design/case-studies/duolingo-user-retention/" target="_blank" rel="noopener">Duolingo User Retention</a></li>
+<li><a href="https://brianlovin.com/design-details" target="_blank" rel="noopener">Design Details</a></li>
+<li><a href="https://uxplanet.org/30-things-we-often-forget-when-designing-mobile-apps-ae30cc3b2c6b" target="_blank" rel="noopener">30 Things We Often Forget When Designing Mobile Apps</a></li>
+<li><a href="https://www.casestudy.club/" target="_blank" rel="noopener">Case study club</a></li>
+</ul>
+<h2 id="Showcase"><a href="#Showcase" class="headerlink" title="Showcase"></a>Showcase</h2><ul>
+<li><a href="https://saaspages.xyz/" target="_blank" rel="noopener">https://saaspages.xyz/</a></li>
+</ul>
+<h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul>
+<li><a href="https://shape.so/" target="_blank" rel="noopener">https://shape.so/</a></li>
+<li><a href="https://icons8.com/" target="_blank" rel="noopener">https://icons8.com/</a></li>
+<li><a href="https://icons8.com/animated-icons" target="_blank" rel="noopener">https://icons8.com/animated-icons</a></li>
+<li><a href="https://icons8.com/vector-creator" target="_blank" rel="noopener">https://icons8.com/vector-creator</a></li>
+<li><a href="https://feathericons.com/" target="_blank" rel="noopener">https://feathericons.com/</a></li>
+<li><a href="https://iconstore.co/" target="_blank" rel="noopener">https://iconstore.co/</a></li>
+<li><a href="https://streamlineicons.com/" target="_blank" rel="noopener">https://streamlineicons.com/</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design/">design</a></li></ul>
 
       
             
@@ -1038,130 +1288,6 @@ var themeMenus = {};
     <footer class="entry-meta entry-footer">
       
       
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-What-is-new-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/What-is-new-in-iOS/">What is new in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/What-is-new-in-iOS/" class="article-date">
-	  <time datetime="2019-06-17T10:53:31.000Z" itemprop="datePublished">June 17, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p>
-<h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p>
-<blockquote>
-<p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p>
-<blockquote>
-<p>A class that animates changes to views and allows the dynamic modification of those animations.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p>
-<blockquote>
-<p>A container that encapsulates the Core Data stack in your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p>
-<blockquote>
-<p>The abstract superclass for all feedback generators.</p>
-</blockquote>
-<h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p>
-<blockquote>
-<p>An object that controls the process of requesting App Store ratings and reviews from users.</p>
-</blockquote>
-<h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p>
-<blockquote>
-<p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p>
-<blockquote>
-<p>Integrate machine learning models into your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p>
-<blockquote>
-<p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p>
-<blockquote>
-<p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p>
-<blockquote>
-<p>Access per-device, per-developer data that your associated server can use in its business logic.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p>
-<blockquote>
-<p>Bring drag and drop to your app by using interaction APIs with your views.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p>
-<blockquote>
-<p>Detect NFC tags and read messages that contain NDEF data.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p>
-<blockquote>
-<p>Animatable corner radius</p>
-</blockquote>
-<h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p>
-<blockquote>
-<p>Make it easy for users to log into apps and services.</p>
-</blockquote>
-<h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><ul>
-<li><a href="https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13</a></li>
-<li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/</a></li>
-</ul>
-<p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p>
-<blockquote>
-<p>Declare the user interface and behavior for your app on every platform.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p>
-<blockquote>
-<p>Customize handling of asynchronous events by combining event-processing operators.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p>
-<blockquote>
-<p>Perform cryptographic operations securely and efficiently.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p>
-<blockquote>
-<p>Expose UISearchTextField on UISearchBar</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
-
       
             
       
@@ -1385,6 +1511,130 @@ var themeMenus = {};
 <p>Make it easy for users to log into apps and services.</p>
 </blockquote>
 <h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p>
+<blockquote>
+<p>Declare the user interface and behavior for your app on every platform.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p>
+<blockquote>
+<p>Customize handling of asynchronous events by combining event-processing operators.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p>
+<blockquote>
+<p>Perform cryptographic operations securely and efficiently.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p>
+<blockquote>
+<p>Expose UISearchTextField on UISearchBar</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-What-is-new-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/What-is-new-in-iOS/">What is new in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/What-is-new-in-iOS/" class="article-date">
+	  <time datetime="2019-06-17T10:53:31.000Z" itemprop="datePublished">June 17, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p>
+<h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p>
+<blockquote>
+<p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p>
+<blockquote>
+<p>A class that animates changes to views and allows the dynamic modification of those animations.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p>
+<blockquote>
+<p>A container that encapsulates the Core Data stack in your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p>
+<blockquote>
+<p>The abstract superclass for all feedback generators.</p>
+</blockquote>
+<h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p>
+<blockquote>
+<p>An object that controls the process of requesting App Store ratings and reviews from users.</p>
+</blockquote>
+<h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p>
+<blockquote>
+<p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p>
+<blockquote>
+<p>Integrate machine learning models into your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p>
+<blockquote>
+<p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p>
+<blockquote>
+<p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p>
+<blockquote>
+<p>Access per-device, per-developer data that your associated server can use in its business logic.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p>
+<blockquote>
+<p>Bring drag and drop to your app by using interaction APIs with your views.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p>
+<blockquote>
+<p>Detect NFC tags and read messages that contain NDEF data.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p>
+<blockquote>
+<p>Animatable corner radius</p>
+</blockquote>
+<h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p>
+<blockquote>
+<p>Make it easy for users to log into apps and services.</p>
+</blockquote>
+<h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><ul>
+<li><a href="https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13</a></li>
+<li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/</a></li>
+</ul>
+<p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p>
 <blockquote>
 <p>Declare the user interface and behavior for your app on every platform.</p>
 </blockquote>
@@ -1779,470 +2029,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-Favorite-WWDC-2019-sessions"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Favorite-WWDC-2019-sessions/">Favorite WWDC 2019 sessions</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Favorite-WWDC-2019-sessions/" class="article-date">
-	  <time datetime="2019-06-12T20:12:46.000Z" itemprop="datePublished">June 12, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/305" target="_blank" rel="noopener">#305</a></strong></p>
-<p><img src="https://user-images.githubusercontent.com/2284279/59388887-40d28180-8d6d-11e9-9a02-582ce19d6f81.jpeg" alt="w1"></p>
-<p>This year I’m lucky enough to get the ticket to WWDC and I couldn’t be more satisfied. 5 conference days full of awesomeness, talks, labs and networking, all make WWDC special and memorial conference for every attendee.</p>
-<p>As predicted by many, Marzipan (now officially called Project Catalyst) a technology that could allow iOS apps to be ported to macOS, would be the main topic for this year. But WWDC went more spectacular than that, with dark mode on iOS, independent watchOS apps, and SwiftUI being the star of the show. With over 150 sessions and extra videos, it can be a bit overwhelming to catch up, so I sum up 10 essential sessions to get started. It’s good to catch up with the latest technology, but be aware that frameworks and APIs come and get deprecated very often. It’s better to understand why they are introduced, how to learn the skills and mindset so we can apply them in our apps to delight user experience.</p>
-<p>Firstly, a little tip to get the most of WWDC videos. Although you can watch on <a href="https://developer.apple.com/videos/wwdc2019" target="_blank" rel="noopener">Apple developer website</a>, there’s <a href="https://wwdc.io/" target="_blank" rel="noopener">WWDC for macOS app</a> that allows much more comfortable watching experience. There we can tweak playing speed, picture in picture view mode, favorite and download videos for offline watching. </p>
-<p>Secondly, for those of you who want to search some texts in the talks, there is <a href="https://asciiwwdc.com/" target="_blank" rel="noopener">ASCIIwwdc</a> that provides full transcripts of all the talks.</p>
-<h2 id="1-Platform-State-of-the-Union"><a href="#1-Platform-State-of-the-Union" class="headerlink" title="1. Platform State of the Union"></a>1. <a href="https://developer.apple.com/videos/play/wwdc2019/103/" target="_blank" rel="noopener">Platform State of the Union</a></h2><p>If you only have time for 1 video, this is it. Right after the <a href="https://developer.apple.com/videos/play/wwdc2019/101/" target="_blank" rel="noopener">Keynote</a>, Platform State of the Union is like keynote for developers as it highlights important development changes.</p>
-<ul>
-<li>macOS 10.15, iOS 13, watchOS 6 and tvOS 13: As usual we get version bumps on all major platforms, which brings lots of new features and enhancement. macOS 10.15 is caleld Catalina and there’s a whole new platform for iPad called iPadOS.</li>
-<li>Security and Privacy: Adding to security enhancement from last year, this year shows how Apple really commits into this. There are one-time location permission, signing with Apple, security protocol for HomeKit, new crypto framework which marks MD5 as insecure. Also, apps that target kids can’t display ad or include analytics.</li>
-<li>tvOS 13 gets multiple user support</li>
-<li>watchOS 6 makes way for independent watch apps, which does not require accompanying iOS apps. There’s also dedicated watch appstore.</li>
-<li>iOS 13 now can live in the dark, but dropping support for iPhone 5S, 6 and below. Also, there is ability to toggle language setting per app only.</li>
-<li>iPadOS is a spinoff version of iOS for now, they look the same but they are expected to take different paths. It includes mouse support and requires iPad Air 2 and newer devices.</li>
-<li>macOS 10.15 introduces a replacement of bash with zsh. It also supports SideCar which allows iPad as an external display. Last but not least, there is Project Catalyst that enables iPad apps to run on the mac.</li>
-<li>Xcode 11 includes Swift 5.1 that can target latest SDKs. It brings a new look and feel with tons of features like minimap, Xcode preview, official support for Swift Package Manager, source control enhancement and test plan.</li>
-</ul>
-<h2 id="2-What’s-New-in-Swift"><a href="#2-What’s-New-in-Swift" class="headerlink" title="2. What’s New in Swift"></a>2. <a href="https://developer.apple.com/videos/play/wwdc2019/402/" target="_blank" rel="noopener">What’s New in Swift</a></h2><p>Although <a href="https://github.com/apple/swift" target="_blank" rel="noopener">Swift is developed in the open</a>, it’s easy to lose track of in tons of proposals and changes. Swift 5.1 brings lots of cool features that power SwiftUI and Combine, so it’s a prerequisite. </p>
-<ul>
-<li>Module stability: This looks unimportant but this may be the most key feature of Swift 5.1. Unlike ABI stability we get in Swift 5, module stability helps resolves differences at compile time. In other words, this ensures a Swift 5 library will work with the future Swift compilers.</li>
-</ul>
-<img width="682" alt="a1" src="https://user-images.githubusercontent.com/2284279/59390812-a8d79680-8d72-11e9-8503-1266788e9177.png">
-
-<ul>
-<li>A single expression can be declared without return keyword</li>
-<li>Function builder, with marker <code>@_functionBuilder</code> which works pretty much like function with receiver in Kotlin, allows for some very neat DSL syntax.</li>
-<li>Property wrapper, a counterpart of Kotlin delegated property, allows property accessors to be used in a convenient way. Shipped with Swift 5.1, we can use that with <code>@propertyWrapper</code> annotation.</li>
-<li>Opaque return type with <code>some</code> keyword remedies limitation of Swift protocol with Self or associcated types requirements.</li>
-<li>Among other things, there are other cool features like universal <code>Self</code>, static subscripts, collection diffing and matching against optional.</li>
-</ul>
-<h2 id="3-Introducing-SwiftUI-Building-Your-First-App"><a href="#3-Introducing-SwiftUI-Building-Your-First-App" class="headerlink" title="3. Introducing SwiftUI: Building Your First App"></a>3. <a href="https://developer.apple.com/videos/play/wwdc2019/204/" target="_blank" rel="noopener">Introducing SwiftUI: Building Your First App</a></h2><p>Welcome to the spotlight of WWDC 2019, SwiftUI. It may be the most exciting announcement since Swift was introduced in 2014. SwiftUI is not just a new framework, it’s a complete paradigm shift from imperative programming with UIKit/AppKit to a declarative world. I was amazed by how quickly React and Flutter allows fast prototyping and developing, so I’m very happy Apple finally makes this available natively on all platforms.</p>
-<img width="1063" alt="w2" src="https://user-images.githubusercontent.com/2284279/59391590-0a990000-8d75-11e9-90bd-3926f7fbc1b9.png">
-
-<p>The cool thing about SwiftUI is that it is expressive and has consistent syntax across platforms. So it is a learn once, write anywhere concept. Together with hot reloading of Xcode Preview, this ends the long debate among iOS community about whether to write UI in code or Storyboard, as the source of truth is now the concise code, but users are free to change any UI details via interactive Preview.</p>
-<p>Not only SwiftUI handles consistent UI according to Apple design guideline, it also provides many features for free like accessibility, dark mode and other bookkeeping.</p>
-<p>SwiftUI supports latest platform versions and no backward compatibility, so some of us have to wait 1 or 2 more years until iOS 13 is widely adopted. To learn more about SwiftUI, there are other advanced sesions like </p>
-<ul>
-<li><a href="https://developer.apple.com/videos/play/wwdc2019/216/" target="_blank" rel="noopener">SwiftUI Essentials</a></li>
-<li><a href="https://developer.apple.com/videos/play/wwdc2019/237/" target="_blank" rel="noopener">Building Custom Views with SwiftUI</a></li>
-<li><a href="https://developer.apple.com/videos/play/wwdc2019/226/" target="_blank" rel="noopener">Data Flow Through SwiftUI</a> </li>
-<li><a href="https://developer.apple.com/videos/play/wwdc2019/240/" target="_blank" rel="noopener">SwiftUI On All Devices</a></li>
-<li><a href="https://developer.apple.com/videos/play/wwdc2019/231/" target="_blank" rel="noopener">Integrating SwiftUI</a></li>
-</ul>
-<h2 id="4-Implementing-Dark-Mode-on-iOS"><a href="#4-Implementing-Dark-Mode-on-iOS" class="headerlink" title="4. Implementing Dark Mode on iOS"></a>4. <a href="https://developer.apple.com/videos/play/wwdc2019/214/" target="_blank" rel="noopener">Implementing Dark Mode on iOS</a></h2><p>As much as I was excited about Dark theme in Android Q, Dark Mode in iOS is something that eases my eyes. Some apps also support Dark theme by their owns, but with iOS 13, supporting Dark mode to our apps is not a daunting task. There are more vibrancy materials, system colors that adapts automatically to dark and light modes. We can also select images for each mode in Asset Catalog easily.</p>
-<img width="1110" alt="w4" src="https://user-images.githubusercontent.com/2284279/59392111-c9a1eb00-8d76-11e9-8083-6ba6e9054410.png">
-
-<h2 id="5-Introducing-Combine-and-Advances-in-Foundation"><a href="#5-Introducing-Combine-and-Advances-in-Foundation" class="headerlink" title="5. Introducing Combine and Advances in Foundation"></a>5. <a href="https://developer.apple.com/videos/play/wwdc2019/711/" target="_blank" rel="noopener">Introducing Combine and Advances in Foundation</a></h2><p>Combine is a unified declarative framework for processing values over time. As a huge fan of Rx, Combine looks like home. It was thrilled to see this finnaly get supported official by Apple. This simplifying asyncrhonous programming a lot, also streamline other communication patterns like KVO and notification center.</p>
-<img width="1159" alt="w5" src="https://user-images.githubusercontent.com/2284279/59392379-be02f400-8d77-11e9-8daa-923cbb20caa0.png">
-
-<p>Combine is the force the powers reactive nature in SwiftUI with <code>Binding</code> and <code>BindableObject</code>. There’s also lots of improvements to Foundation like collection diffing, new list and relative formatters, and notably Combine syntax for <code>URLSession</code>, which makes networking a breeze.</p>
-<p>To learn more about Combine, there’s <a href="https://developer.apple.com/videos/play/wwdc2019/721/" target="_blank" rel="noopener">Combine in Practice</a> where we can learn more about error handling, schedule work and many operators on streams.</p>
-<img width="1001" alt="w6" src="https://user-images.githubusercontent.com/2284279/59392558-55684700-8d78-11e9-8c52-27e2ecd18d89.png">
-
-
-<h2 id="6-Modernizing-Your-UI-for-iOS-13"><a href="#6-Modernizing-Your-UI-for-iOS-13" class="headerlink" title="6. Modernizing Your UI for iOS 13"></a>6. <a href="https://developer.apple.com/videos/play/wwdc2019/224/" target="_blank" rel="noopener">Modernizing Your UI for iOS 13</a></h2><p>Take a look at this talk to learn about new features in iOS 13 that we should be aware in our apps. Newly in iOS 13, we can take advantage of card style modal presentation that is very cumbersome to replicate ourselves. There’s also new <code>UISearchBarTextField</code> with advanced customizations for token and inputs. Lastly, the new <code>UIMenu</code> makes showing context menu trivial and make way for iPad apps to behave like native on the mac.</p>
-<img width="996" alt="w8" src="https://user-images.githubusercontent.com/2284279/59392862-7c734880-8d79-11e9-9281-0c164b0876bb.png">
-
-<h2 id="7-Modern-Swift-API-Design"><a href="#7-Modern-Swift-API-Design" class="headerlink" title="7. Modern Swift API Design"></a>7. <a href="https://developer.apple.com/videos/play/wwdc2019/415/" target="_blank" rel="noopener">Modern Swift API Design</a></h2><p>If you’re developing iOS apps, chances are that you have already stumbled upon <a href="https://swift.org/documentation/api-design-guidelines/" target="_blank" rel="noopener">API Design Guidelines</a> which contains valuable guides to structuring our Swift code.</p>
-<img width="933" alt="w7" src="https://user-images.githubusercontent.com/2284279/59392647-b263fd00-8d78-11e9-9c70-ec3d4686f98c.png">
-
-<p>This highlights my most favorite programming advice “Clarity at the point of use”, because things we declare are written only once, but read many many times, so we should make those concise and clear. There’s also mention of preferring generic over protocol which reminds me of protocol witness technique.</p>
-<p>This talk details how Apple engineers themselves design Swift code in their RealityKit and SwiftUI frameworks.</p>
-<h2 id="8-Optimizing-App-Launch"><a href="#8-Optimizing-App-Launch" class="headerlink" title="8. Optimizing App Launch"></a>8. <a href="https://developer.apple.com/videos/play/wwdc2019/423/" target="_blank" rel="noopener">Optimizing App Launch</a></h2><p>The launch time of your app can be decisive in user experience, it needs to be fast and do just the necessary things. With enhancements via shared and cached frameworks, apps now load faster on iOS 13. But there’s more thing we can do to improve this, thanks to the new App Launch profiler in Xcode 11, together with app launch time measurement in XCTests. The 3 words we can take away from this talk is minimize, prioritize, and optimize work at this critical launch time.</p>
-<img width="887" alt="w9" src="https://user-images.githubusercontent.com/2284279/59392966-d96efe80-8d79-11e9-98ab-eecaaf363db2.png">
-
-<h2 id="9-Introducing-iPad-Apps-for-Mac"><a href="#9-Introducing-iPad-Apps-for-Mac" class="headerlink" title="9. Introducing iPad Apps for Mac"></a>9. <a href="https://developer.apple.com/videos/play/wwdc2019/205/" target="_blank" rel="noopener">Introducing iPad Apps for Mac</a></h2><p>Starting with iOS 13 with Project Catalyst, there’s a new target environment check called UIKitForMac, which allows iPad apps to target the mac while using the same code base. Most of the UI after porting have the correct look and feel like a native macOS app with many features provided for free like window management. There are, kind of obviously, some frameworks that are designed specifically for phone and tablet experience, can’t be supported in macOS.</p>
-<img width="1147" alt="w11" src="https://user-images.githubusercontent.com/2284279/59393110-729e1500-8d7a-11e9-9ed8-f6b91ccd03f1.png">
-
-<p>There are other sesions like <a href="https://developer.apple.com/videos/play/wwdc2019/235/" target="_blank" rel="noopener">Taking iPad Apps for Mac to the Next Level</a> where we can learn more about this.</p>
-<h2 id="10-Creating-Independent-Watch-Apps"><a href="#10-Creating-Independent-Watch-Apps" class="headerlink" title="10. Creating Independent Watch Apps"></a>10. <a href="https://developer.apple.com/videos/play/wwdc2019/208/" target="_blank" rel="noopener">Creating Independent Watch Apps</a></h2><img width="1088" alt="w13" src="https://user-images.githubusercontent.com/2284279/59393274-21daec00-8d7b-11e9-8ddf-0fd809b0570c.png">
-
-<p>watchOS finally gets its own Appstore and the ability to run independent watchOS apps without a companying iOS app. With the introduction of URLSession and streaming APIs for the watch, together with enhancements in push notifications, Apple sign in, debugging, this can’t be a better time to start developing for the watch.</p>
-<hr>
-<p>It is stunning to see how Apple comes up with so many cool announcements this year while keeping innovation and quality high. There are more sessions to explore, head over to <a href="https://developer.apple.com/videos/wwdc2019" target="_blank" rel="noopener">WWDC 2019 developer website</a> to learn more.</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Support-IP-handover-in-rtpproxy-for-VoIP-applications"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Support-IP-handover-in-rtpproxy-for-VoIP-applications/">Support IP handover in rtpproxy for VoIP applications</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Support-IP-handover-in-rtpproxy-for-VoIP-applications/" class="article-date">
-	  <time datetime="2019-06-12T19:33:28.000Z" itemprop="datePublished">June 12, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/304" target="_blank" rel="noopener">#304</a></strong></p>
-<p>If you do <a href="https://github.com/onmyway133/blog/issues/284" target="_blank" rel="noopener">VoIP applications</a>, especially with open sources like pjsip, you may encounter <a href="https://www.kamailio.org/w/" target="_blank" rel="noopener">kamalio</a> and <a href="http://www.rtpproxy.org/" target="_blank" rel="noopener">rtpproxy</a> to serve SIP requests. Due to limitation of NAT traversals, rtpproxy is needed to work around NAT. All SIP handshake requests go through a proxy server, but rtpproxy can also relay voice, video or any RTP stream of data. When I played with rtpproxy, it was before version <a href="http://www.rtpproxy.org/post/v2release/" target="_blank" rel="noopener">2.0</a> and I need to handle IP handover. This refers to the scenario when user switches between different network, for example from Wifi to 4G and they get new IP. Normally this means ending in the SIP call, but the expectation is that we can retry and continue the call if possible for users.</p>
-<p>That’s why I forked rtpproxy and add IP handover support. You can check the GitHub repo at <a href="https://github.com/onmyway133/rtpproxy" target="_blank" rel="noopener">rtpproxy</a>.</p>
-<p>Use src_cnt to track the number of consecutive packets from different address. When this number exceeds THRESHOLD (10 for RTP and 2 for RTCP), I switch to this new address</p>
-<p>This way</p>
-<ul>
-<li><p>Client can ALWAYS change IP when he switches from 3G to Wifi, or from this Wifi hotspot to another</p>
-</li>
-<li><p>There’s no chance for attack, unless attacker sends &gt; 10 (RTP THRESHOLD) packets in 20ms (supposed my client sends packets every 20ms)</p>
-</li>
-</ul>
-<p>This idea is borrowed from <a href="http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__CONFIG.htm" target="_blank" rel="noopener">http://www.pjsip.org/pjmedia/docs/html/group__PJMEDIA__CONFIG.htm</a></p>
-<p>There is a macro PJMEDIA_RTP_NAT_PROBATION_CNT. Basically, it is</p>
-<blockquote>
-<p><em>“See if source address of RTP packet is different than the configured address, and switch RTP remote address to source packet address after several consecutive packets have been received.”</em></p>
-</blockquote>
-<p>Mobile clients now change IP frequently, from these hotspots to those. So if rtpproxy can support this feature, it would be nicer.</p>
-<p>Take a look at <a href="https://github.com/onmyway133/rtpproxy/blob/master/rtpp_session.h" target="_blank" rel="noopener">https://github.com/onmyway133/rtpproxy/blob/master/rtpp_session.h</a></p>
-<pre><code>// IP Handover Count how many consecutive different packets are received, 0 is for callee, 1 is for caller    unsigned int src_count[2];</code></pre><p>And how it actions in <a href="https://github.com/onmyway133/rtpproxy/blob/master/main.c" target="_blank" rel="noopener">https://github.com/onmyway133/rtpproxy/blob/master/main.c</a></p>
-<pre><code>static void
-rxmit_packets(struct cfg *cf, struct rtpp_session *sp, int ridx,
-  double dtime)
-{
-    int ndrain, i, port;
-    struct rtp_packet *packet = NULL;
-
-/* Repeat since we may have several packets queued on the same socket */
-    for (ndrain = 0; ndrain &lt; 5; ndrain++) {
- if (packet != NULL)
-     rtp_packet_free(packet);
-
-packet = rtp_recv(sp-&gt;fds[ridx]);
- if (packet == NULL)
-     break;
- packet-&gt;laddr = sp-&gt;laddr[ridx];
- packet-&gt;rport = sp-&gt;ports[ridx];
- packet-&gt;rtime = dtime;
-
-i = 0;
- // IP Handover do not need canupdate
- // Use src_count
- if (sp-&gt;addr[ridx] != NULL) {
-     /* Check that the packet is authentic, drop if it isn&apos;t */
-     if (sp-&gt;asymmetric[ridx] == 0) {
-  /*
-  if (memcmp(sp-&gt;addr[ridx], &amp;packet-&gt;raddr, packet-&gt;rlen) != 0) {
-      if (sp-&gt;canupdate[ridx] == 0) {
-   //
-   // Continue, since there could be good packets in
-   // queue.
-   //
-   continue;
-      }
-
-      // Signal that an address has to be updated
-      rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover Set i 1st ridx %d&quot;,ridx);
-      i = 1;
-  } else if (sp-&gt;canupdate[ridx] != 0 &amp;&amp;
-    sp-&gt;last_update[ridx] != 0 &amp;&amp;
-    dtime - sp-&gt;last_update[ridx] &gt; UPDATE_WINDOW) 
-  {
-      sp-&gt;canupdate[ridx] = 0;
-      rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover Set canupdate to 0 1st ridx %d&quot;,ridx);
-  }
-  */
-
-  if (memcmp(sp-&gt;addr[ridx], &amp;packet-&gt;raddr, packet-&gt;rlen) == 0) { 
-   sp-&gt;src_count[ridx] = 0;
-  } 
-  else {
-   sp-&gt;src_count[ridx]++;
-   // IP Handover RTCP packet sends at larger interval, so must use smaller THRESHOLD
-   // Check to see if port is odd or even
-   if(sp-&gt;ports[ridx] % 2 == 0) {
-    if(sp-&gt;src_count[ridx] &gt;= 10) {
-     i = 1;
-    } 
-   }
-   else {
-    if(sp-&gt;src_count[ridx] &gt;= 2) {
-     i = 1;
-    }
-   }
-
-  }
-
-} else {
-  /*
-   * For asymmetric clients don&apos;t check
-   * source port since it may be different.
-   */
-  rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover We are in asymmetric ridx %d&quot;,ridx);
-  if (!ishostseq(sp-&gt;addr[ridx], sstosa(&amp;packet-&gt;raddr)))
-      /*
-       * Continue, since there could be good packets in
-       * queue.
-       */
-      continue;
-     }
-     sp-&gt;pcount[ridx]++;
- } else {
-     sp-&gt;pcount[ridx]++;
-     sp-&gt;addr[ridx] = malloc(packet-&gt;rlen);
-     if (sp-&gt;addr[ridx] == NULL) {
-  sp-&gt;pcount[3]++;
-  rtpp_log_write(RTPP_LOG_ERR, sp-&gt;log,
-    &quot;can&apos;t allocate memory for remote address - &quot;
-    &quot;removing session&quot;);
-  remove_session(cf, GET_RTP(sp));
-  /* Break, sp is invalid now */
-  break;
-     }
-     /* Signal that an address have to be updated. */
-     rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover Set i 2nd ridx %d&quot;,ridx); 
-     i = 1;
- }
-
-/*
-  * Update recorded address if it&apos;s necessary. Set &quot;untrusted address&quot;
-  * flag in the session state, so that possible future address updates
-  * from that client won&apos;t get address changed immediately to some
-  * bogus one.
-  */
- if (i != 0) {
-     sp-&gt;untrusted_addr[ridx] = 1;
-     memcpy(sp-&gt;addr[ridx], &amp;packet-&gt;raddr, packet-&gt;rlen);
-
-     // IP Handover Do not use canupdate
-     // After update, reset src_count
-     /*
-     if (sp-&gt;prev_addr[ridx] == NULL || memcmp(sp-&gt;prev_addr[ridx],
-       &amp;packet-&gt;raddr, packet-&gt;rlen) != 0) 
-     {
-         sp-&gt;canupdate[ridx] = 0;
-  if(sp-&gt;prev_addr[ridx] == NULL)
-  {
-     rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover prev_addr NULL ridx %d&quot;,ridx); 
-  }
-  rtpp_log_write(RTPP_LOG_ERR, cf-&gt;glog, &quot;IP Handover Set canupdate to 0 2nd ridx %d&quot;,ridx);
-     }
-     */
-
-sp-&gt;src_count[ridx] = 0;
-
-port = ntohs(satosin(&amp;packet-&gt;raddr)-&gt;sin_port);
-
-rtpp_log_write(RTPP_LOG_INFO, sp-&gt;log,
-       &quot;%s&apos;s address filled in: %s:%d (%s)&quot;,
-       (ridx == 0) ? &quot;callee&quot; : &quot;caller&quot;,
-       addr2char(sstosa(&amp;packet-&gt;raddr)), port,
-       (sp-&gt;rtp == NULL) ? &quot;RTP&quot; : &quot;RTCP&quot;);
-
-/*
-      * Check if we have updated RTP while RTCP is still
-      * empty or contains address that differs from one we
-      * used when updating RTP. Try to guess RTCP if so,
-      * should be handy for non-NAT&apos;ed clients, and some
-      * NATed as well.
-      */
-     if (sp-&gt;rtcp != NULL &amp;&amp; (sp-&gt;rtcp-&gt;addr[ridx] == NULL ||
-       !ishostseq(sp-&gt;rtcp-&gt;addr[ridx], sstosa(&amp;packet-&gt;raddr)))) {
-  if (sp-&gt;rtcp-&gt;addr[ridx] == NULL) {
-      sp-&gt;rtcp-&gt;addr[ridx] = malloc(packet-&gt;rlen);
-      if (sp-&gt;rtcp-&gt;addr[ridx] == NULL) {
-   sp-&gt;pcount[3]++;
-   rtpp_log_write(RTPP_LOG_ERR, sp-&gt;log,
-     &quot;can&apos;t allocate memory for remote address - &quot;
-     &quot;removing session&quot;);
-   remove_session(cf, sp);
-   /* Break, sp is invalid now */
-   break;
-      }
-  }
-  memcpy(sp-&gt;rtcp-&gt;addr[ridx], &amp;packet-&gt;raddr, packet-&gt;rlen);
-  satosin(sp-&gt;rtcp-&gt;addr[ridx])-&gt;sin_port = htons(port + 1);
-  /* Use guessed value as the only true one for asymmetric clients */
-  sp-&gt;rtcp-&gt;canupdate[ridx] = NOT(sp-&gt;rtcp-&gt;asymmetric[ridx]);
-  rtpp_log_write(RTPP_LOG_INFO, sp-&gt;log, &quot;guessing RTCP port &quot;
-    &quot;for %s to be %d&quot;,
-    (ridx == 0) ? &quot;callee&quot; : &quot;caller&quot;, port + 1);
-     }
- }
-
-if (sp-&gt;resizers[ridx].output_nsamples &gt; 0)
-     rtp_resizer_enqueue(&amp;sp-&gt;resizers[ridx], &amp;packet);
- if (packet != NULL)
-     send_packet(cf, sp, ridx, packet);
-    }
-
-if (packet != NULL)
- rtp_packet_free(packet);
-}</code></pre><p>Here are some useful resources that I read</p>
-<ul>
-<li><a href="http://stackoverflow.com/questions/18200089/how-does-rtpproxy-handle-handover" target="_blank" rel="noopener">http://stackoverflow.com/questions/18200089/how-does-rtpproxy-handle-handover</a></li>
-<li><a href="http://lists.sip-router.org/pipermail/sr-users/2008-March/062795.html" target="_blank" rel="noopener">http://lists.sip-router.org/pipermail/sr-users/2008-March/062795.html</a></li>
-<li><a href="http://sourceforge.net/p/sippy/rtpproxy/ci/c71201d897ee7c5620d88bb7d56412cd9dc3362a/tree//main.c?diff=5d030295ce90f2f6ff292b0d65bae1d4318db02a" target="_blank" rel="noopener">http://sourceforge.net/p/sippy/rtpproxy/ci/c71201d897ee7c5620d88bb7d56412cd9dc3362a/tree//main.c?diff=5d030295ce90f2f6ff292b0d65bae1d4318db02a</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/voip/">voip</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-test-drive-view-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-test-drive-view-in-iOS/">How to test drive view in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-test-drive-view-in-iOS/" class="article-date">
-	  <time datetime="2019-06-12T09:11:26.000Z" itemprop="datePublished">June 12, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/303" target="_blank" rel="noopener">#303</a></strong></p>
-<p>Instead of setting up custom framework and Playground, we can just display that specific view as root view controller</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">window.rootViewController = makeTestPlayground()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeTestPlayground</span><span class="params">()</span></span> -&gt; <span class="type">UIViewController</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> content = <span class="type">UserCell</span>()</span><br><span class="line">    content.nameLabel.text = <span class="string">"Thor"</span></span><br><span class="line">    content.streetLabel.text = <span class="string">"Asgard"</span></span><br><span class="line">    content.weaponLabel.text = <span class="string">"Hammer"</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> viewController = <span class="type">UIViewController</span>()</span><br><span class="line">    viewController.view.backgroundColor = .white</span><br><span class="line">    viewController.view.addSubview(content)</span><br><span class="line"></span><br><span class="line">    <span class="type">NSLayoutConstraint</span>.on([</span><br><span class="line">        content.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor),</span><br><span class="line">        content.centerYAnchor.constraint(equalTo: viewController.view.centerYAnchor),</span><br><span class="line">        content.widthAnchor.constraint(equalTo: viewController.view.widthAnchor, multiplier0.<span class="number">9</span>),</span><br><span class="line">        content.heightAnchor.constraint(equalToConstant: <span class="number">200</span>)</span><br><span class="line">    ]</span><br><span class="line">    <span class="keyword">return</span> viewController</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-make-carousel-layout-for-UICollectionView-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-make-carousel-layout-for-UICollectionView-in-iOS/">How to make carousel layout for UICollectionView in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-make-carousel-layout-for-UICollectionView-in-iOS/" class="article-date">
-	  <time datetime="2019-06-12T08:35:42.000Z" itemprop="datePublished">June 12, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/302" target="_blank" rel="noopener">#302</a></strong></p>
-<h3 id="Based-on-AnimatedCollectionViewLayout"><a href="#Based-on-AnimatedCollectionViewLayout" class="headerlink" title="Based on AnimatedCollectionViewLayout"></a>Based on <a href="https://github.com/KelvinJin/AnimatedCollectionViewLayout" target="_blank" rel="noopener">AnimatedCollectionViewLayout</a></h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">CarouselLayout</span>: <span class="title">UICollectionViewFlowLayout</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">layoutAttributesForElements</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span> -&gt; [<span class="type">UICollectionViewLayoutAttributes</span>]? &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> attributes = <span class="keyword">super</span>.layoutAttributesForElements(<span class="keyword">in</span>: rect) <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> collectionView = collectionView <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</span><br><span class="line">        <span class="keyword">return</span> attributes.<span class="built_in">map</span>(&#123; transform(collectionView: collectionView, attribute: $<span class="number">0</span>) &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">shouldInvalidateLayout</span><span class="params">(forBoundsChange newBounds: CGRect)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">transform</span><span class="params">(collectionView: UICollectionView, attribute: UICollectionViewLayoutAttributes)</span></span> -&gt; <span class="type">UICollectionViewLayoutAttributes</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> a = attribute</span><br><span class="line">        <span class="keyword">let</span> width = collectionView.frame.size.width</span><br><span class="line">        <span class="keyword">let</span> itemOffset = a.center.x - collectionView.contentOffset.x</span><br><span class="line">        <span class="keyword">let</span> middleOffset = (itemOffset / width) - <span class="number">0.5</span></span><br><span class="line"></span><br><span class="line">        change(</span><br><span class="line">            width: collectionView.frame.size.width,</span><br><span class="line">            attribute: attribute,</span><br><span class="line">            middleOffset: middleOffset</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> attribute</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">change</span><span class="params">(width: CGFloat, attribute: UICollectionViewLayoutAttributes, middleOffset: CGFloat)</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> alpha: <span class="type">CGFloat</span> = <span class="number">0.8</span></span><br><span class="line">        <span class="keyword">let</span> itemSpacing: <span class="type">CGFloat</span> = <span class="number">0.21</span></span><br><span class="line">        <span class="keyword">let</span> scale: <span class="type">CGFloat</span> = <span class="number">1.0</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> scaleFactor = scale - <span class="number">0.1</span> * <span class="built_in">abs</span>(middleOffset)</span><br><span class="line">        <span class="keyword">let</span> scaleTransform = <span class="type">CGAffineTransform</span>(scaleX: scaleFactor, y: scaleFactor)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> translationX = -(width * itemSpacing * middleOffset)</span><br><span class="line">        <span class="keyword">let</span> translationTransform = <span class="type">CGAffineTransform</span>(translationX: translationX, y: <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        attribute.alpha = <span class="number">1.0</span> - <span class="built_in">abs</span>(middleOffset) + alpha</span><br><span class="line">        attribute.transform = translationTransform.concatenating(scaleTransform)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>How to use</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> layout = <span class="type">CarouselLayout</span>()</span><br><span class="line"></span><br><span class="line">layout.scrollDirection = .horizontal</span><br><span class="line">layout.sectionInset = .zero</span><br><span class="line">layout.minimumInteritemSpacing = <span class="number">0</span></span><br><span class="line">layout.minimumLineSpacing = <span class="number">0</span></span><br></pre></td></tr></table></figure>
-
-<p>We can inset cell content and use <code>let scale: CGFloat = 1.0</code> to avoid scaling down center cell</p>
-<h3 id="Based-on-CityCollectionViewFlowLayout"><a href="#Based-on-CityCollectionViewFlowLayout" class="headerlink" title="Based on CityCollectionViewFlowLayout"></a>Based on <a href="https://github.com/appcoda/Interactive-Animation/blob/master/CityGuide/Layout/CityCollectionViewFlowLayout.swift" target="_blank" rel="noopener">CityCollectionViewFlowLayout</a></h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CityCollectionViewFlowLayout</span>: <span class="title">UICollectionViewFlowLayout</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fileprivate</span> <span class="keyword">var</span> lastCollectionViewSize: <span class="type">CGSize</span> = <span class="type">CGSize</span>.zero</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> scaleOffset: <span class="type">CGFloat</span> = <span class="number">200</span></span><br><span class="line">    <span class="keyword">var</span> scaleFactor: <span class="type">CGFloat</span> = <span class="number">0.9</span></span><br><span class="line">    <span class="keyword">var</span> alphaFactor: <span class="type">CGFloat</span> = <span class="number">0.3</span></span><br><span class="line">    <span class="keyword">var</span> lineSpacing: <span class="type">CGFloat</span> = <span class="number">25.0</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>?(coder <span class="number">_</span>: <span class="type">NSCoder</span>) &#123;</span><br><span class="line">        <span class="built_in">fatalError</span>()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span>(itemSize: <span class="type">CGSize</span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>()</span><br><span class="line">        <span class="keyword">self</span>.itemSize = itemSize</span><br><span class="line">        minimumLineSpacing = lineSpacing</span><br><span class="line">        scrollDirection = .horizontal</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">setItemSize</span><span class="params">(itemSize: CGSize)</span></span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.itemSize = itemSize</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">invalidateLayout</span><span class="params">(with context: UICollectionViewLayoutInvalidationContext)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.invalidateLayout(with: context)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> collectionView = <span class="keyword">self</span>.collectionView <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> collectionView.bounds.size != lastCollectionViewSize &#123;</span><br><span class="line">            configureContentInset()</span><br><span class="line">            lastCollectionViewSize = collectionView.bounds.size</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">targetContentOffset</span><span class="params">(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint)</span></span> -&gt; <span class="type">CGPoint</span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> collectionView = <span class="keyword">self</span>.collectionView <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> proposedContentOffset</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> proposedRect = <span class="type">CGRect</span>(x: proposedContentOffset.x, y: <span class="number">0</span>, width: collectionView.bounds.width, height: collectionView.bounds.height)</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> layoutAttributes = <span class="keyword">self</span>.layoutAttributesForElements(<span class="keyword">in</span>: proposedRect) <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> proposedContentOffset</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">var</span> candidateAttributes: <span class="type">UICollectionViewLayoutAttributes?</span></span><br><span class="line">        <span class="keyword">let</span> proposedContentOffsetCenterX = proposedContentOffset.x + collectionView.bounds.width / <span class="number">2</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> attributes <span class="keyword">in</span> layoutAttributes &#123;</span><br><span class="line">            <span class="keyword">if</span> attributes.representedElementCategory != .cell &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> candidateAttributes == <span class="literal">nil</span> &#123;</span><br><span class="line">                candidateAttributes = attributes</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">abs</span>(attributes.center.x - proposedContentOffsetCenterX) &lt; <span class="built_in">abs</span>(candidateAttributes!.center.x - proposedContentOffsetCenterX) &#123;</span><br><span class="line">                candidateAttributes = attributes</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> aCandidateAttributes = candidateAttributes <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> proposedContentOffset</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">var</span> newOffsetX = aCandidateAttributes.center.x - collectionView.bounds.size.width / <span class="number">2</span></span><br><span class="line">        <span class="keyword">let</span> offset = newOffsetX - collectionView.contentOffset.x</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (velocity.x &lt; <span class="number">0</span> &amp;&amp; offset &gt; <span class="number">0</span>) || (velocity.x &gt; <span class="number">0</span> &amp;&amp; offset &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">let</span> pageWidth = itemSize.width + minimumLineSpacing</span><br><span class="line">            newOffsetX += velocity.x &gt; <span class="number">0</span> ? pageWidth : -pageWidth</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="type">CGPoint</span>(x: newOffsetX, y: proposedContentOffset.y)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">shouldInvalidateLayout</span><span class="params">(forBoundsChange <span class="number">_</span>: CGRect)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">layoutAttributesForElements</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span> -&gt; [<span class="type">UICollectionViewLayoutAttributes</span>]? &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> collectionView = <span class="keyword">self</span>.collectionView,</span><br><span class="line">            <span class="keyword">let</span> superAttributes = <span class="keyword">super</span>.layoutAttributesForElements(<span class="keyword">in</span>: rect) <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">super</span>.layoutAttributesForElements(<span class="keyword">in</span>: rect)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> contentOffset = collectionView.contentOffset</span><br><span class="line">        <span class="keyword">let</span> size = collectionView.bounds.size</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> visibleRect = <span class="type">CGRect</span>(x: contentOffset.x, y: contentOffset.y, width: size.width, height: size.height)</span><br><span class="line">        <span class="keyword">let</span> visibleCenterX = visibleRect.midX</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">case</span> <span class="keyword">let</span> newAttributesArray <span class="keyword">as</span> [<span class="type">UICollectionViewLayoutAttributes</span>] = <span class="type">NSArray</span>(array: superAttributes, copyItems: <span class="literal">true</span>) <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        newAttributesArray.forEach &#123;</span><br><span class="line">            <span class="keyword">let</span> distanceFromCenter = visibleCenterX - $<span class="number">0</span>.center.x</span><br><span class="line">            <span class="keyword">let</span> absDistanceFromCenter = <span class="built_in">min</span>(<span class="built_in">abs</span>(distanceFromCenter), <span class="keyword">self</span>.scaleOffset)</span><br><span class="line">            <span class="keyword">let</span> scale = absDistanceFromCenter * (<span class="keyword">self</span>.scaleFactor - <span class="number">1</span>) / <span class="keyword">self</span>.scaleOffset + <span class="number">1</span></span><br><span class="line">            $<span class="number">0</span>.transform3D = <span class="type">CATransform3DScale</span>(<span class="type">CATransform3DIdentity</span>, scale, scale, <span class="number">1</span>)</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">let</span> alpha = absDistanceFromCenter * (<span class="keyword">self</span>.alphaFactor - <span class="number">1</span>) / <span class="keyword">self</span>.scaleOffset + <span class="number">1</span></span><br><span class="line">            $<span class="number">0</span>.alpha = alpha</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> newAttributesArray</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">configureContentInset</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> collectionView = <span class="keyword">self</span>.collectionView <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> inset = collectionView.bounds.size.width / <span class="number">2</span> - itemSize.width / <span class="number">2</span></span><br><span class="line">        collectionView.contentInset = <span class="type">UIEdgeInsets</span>.<span class="keyword">init</span>(top: <span class="number">0</span>, <span class="keyword">left</span>: inset, bottom: <span class="number">0</span>, <span class="keyword">right</span>: inset)</span><br><span class="line">        collectionView.contentOffset = <span class="type">CGPoint</span>(x: -inset, y: <span class="number">0</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">resetContentInset</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> collectionView = <span class="keyword">self</span>.collectionView <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        collectionView.contentInset = <span class="type">UIEdgeInsets</span>.<span class="keyword">init</span>(top: <span class="number">0</span>, <span class="keyword">left</span>: <span class="number">0</span>, bottom: <span class="number">0</span>, <span class="keyword">right</span>: <span class="number">0</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2347,6 +2133,54 @@ if (packet != NULL)
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-ForEach-with-ScrollView-in-SwiftUI/">How to use ForEach with ScrollView in SwiftUI</a></h6>
+              <span>November 22, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-modify-data-inside-array-in-SwiftUI/">How to modify data inside array in SwiftUI</a></h6>
+              <span>November 22, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-index-in-SwiftUI-list/">How to use index in SwiftUI list</a></h6>
+              <span>November 22, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-setup-multiple-git-accounts-for-GitHub-and-Bitbucket/">How to setup multiple git accounts for GitHub and Bitbucket</a></h6>
+              <span>November 22, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-use-objectWillChange-in-Combine/">How to use objectWillChange in Combine</a></h6>
               <span>November 21, 2019</span>
             </div>
@@ -2365,54 +2199,6 @@ if (packet != NULL)
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-show-list-with-section-in-SwiftUI/">How to show list with section in SwiftUI</a></h6>
-              <span>November 16, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-group-array-by-property-in-Swift/">How to  group array by property in  Swift</a></h6>
-              <span>November 16, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/Links-for-tools/">Links for tools</a></h6>
-              <span>November 15, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-make-full-width-list-row-in-SwiftUI/">How to make full width list row in SwiftUI</a></h6>
-              <span>November 14, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2425,7 +2211,7 @@ if (packet != NULL)
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.5px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.25px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.25px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.63px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.88px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 11.25px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.63px;">css</a> <a href="/tags/dart/" style="font-size: 11.88px;">dart</a> <a href="/tags/database/" style="font-size: 10.63px;">database</a> <a href="/tags/design/" style="font-size: 10.63px;">design</a> <a href="/tags/electron/" style="font-size: 11.88px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.88px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.88px;">flutter</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.88px;">github</a> <a href="/tags/go/" style="font-size: 10.63px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.38px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.13px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.88px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.25px;">layout</a> <a href="/tags/life/" style="font-size: 13.75px;">life</a> <a href="/tags/links/" style="font-size: 14.38px;">links</a> <a href="/tags/macOS/" style="font-size: 18.75px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.63px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.88px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.13px;">node</a> <a href="/tags/objc/" style="font-size: 10.63px;">objc</a> <a href="/tags/react/" style="font-size: 11.25px;">react</a> <a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.25px;">rx</a> <a href="/tags/script/" style="font-size: 10.63px;">script</a> <a href="/tags/spm/" style="font-size: 10px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.25px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.63px;">tech</a> <a href="/tags/terminal/" style="font-size: 11.88px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.5px;">testing</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.88px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.75px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.63px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.63px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 14.38px;">xcode</a>
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.65px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.18px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.18px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.59px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.76px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 11.18px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.59px;">css</a> <a href="/tags/dart/" style="font-size: 11.76px;">dart</a> <a href="/tags/database/" style="font-size: 10.59px;">database</a> <a href="/tags/design/" style="font-size: 10.59px;">design</a> <a href="/tags/electron/" style="font-size: 11.76px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.76px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.76px;">flutter</a> <a href="/tags/git/" style="font-size: 10.59px;">git</a> <a href="/tags/github/" style="font-size: 12.35px;">github</a> <a href="/tags/go/" style="font-size: 10.59px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.41px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.24px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.06px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.18px;">layout</a> <a href="/tags/life/" style="font-size: 14.12px;">life</a> <a href="/tags/links/" style="font-size: 14.71px;">links</a> <a href="/tags/macOS/" style="font-size: 18.82px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.59px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.76px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.53px;">node</a> <a href="/tags/objc/" style="font-size: 10.59px;">objc</a> <a href="/tags/react/" style="font-size: 11.18px;">react</a> <a href="/tags/react-native/" style="font-size: 15.29px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.18px;">rx</a> <a href="/tags/script/" style="font-size: 10.59px;">script</a> <a href="/tags/spm/" style="font-size: 10px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.47px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.88px;">tech</a> <a href="/tags/terminal/" style="font-size: 12.35px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.94px;">testing</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.76px;">voip</a> <a href="/tags/watchOS/" style="font-size: 14.12px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.59px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.59px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 14.71px;">xcode</a>
     </div>
   </div>
 
@@ -2435,7 +2221,7 @@ if (packet != NULL)
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">26</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2445,7 +2231,7 @@ if (packet != NULL)
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">134</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">68</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">185</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">20</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">11</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">134</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">68</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">185</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">11</span></li></ul>
     </div>
   </div>
 
