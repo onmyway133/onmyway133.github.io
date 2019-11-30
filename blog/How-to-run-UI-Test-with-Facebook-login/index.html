@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    <script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+    <link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>how to run ui test with facebook login | onmyway133</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  
+  <meta name="description" content="Issue #44 Today I’m trying to run some UITest on my app, which uses Facebook login. And here are some of my notes on it.     Challenges The challenges with Facebook is it uses Safari controller, we we">
+<meta name="keywords" content="ios, android,javascript, react">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to run UI Test with Facebook login">
+<meta property="og:url" content="https://onmyway133.github.io/blog/How-to-run-UI-Test-with-Facebook-login/index.html">
+<meta property="og:site_name" content="onmyway133">
+<meta property="og:description" content="Issue #44 Today I’m trying to run some UITest on my app, which uses Facebook login. And here are some of my notes on it.     Challenges The challenges with Facebook is it uses Safari controller, we we">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://cloud.githubusercontent.com/assets/2284279/26590229/49c0c782-455a-11e7-876d-bf4bec92fdea.gif">
+<meta property="og:image" content="https://cloud.githubusercontent.com/assets/2284279/26590445/e032fe1a-455a-11e7-8e6d-84dce3b21152.png">
+<meta property="og:image" content="https://cloud.githubusercontent.com/assets/2284279/26590675/8168357a-455b-11e7-831d-0df899ea51c5.png">
+<meta property="og:image" content="https://cloud.githubusercontent.com/assets/2284279/26591784/015636a8-455f-11e7-9b37-c02cc7a072b2.png">
+<meta property="og:updated_time" content="2019-05-23T16:30:35.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to run UI Test with Facebook login">
+<meta name="twitter:description" content="Issue #44 Today I’m trying to run some UITest on my app, which uses Facebook login. And here are some of my notes on it.     Challenges The challenges with Facebook is it uses Safari controller, we we">
+<meta name="twitter:image" content="https://cloud.githubusercontent.com/assets/2284279/26590229/49c0c782-455a-11e7-876d-bf4bec92fdea.gif">
+  
+    <link rel="alternate" href="/atom.xml" title="onmyway133" type="application/atom+xml">
+  
+  <link rel="icon" href="/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/hiero.css">
+  <link rel="stylesheet" href="/css/glyphs.css">
+  
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/my.css">
+  <!-- Google Adsense -->
+  
+</head>
+</html>
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "Home"; 
+
+  themeMenus["/about/"] = "About"; 
+
+  themeMenus["/writing/"] = "writing"; 
+
+  themeMenus["/archives"] = "Archives"; 
+
+  themeMenus["/speaking/"] = "speaking"; 
+
+  themeMenus["/opensource/"] = "open source"; 
+
+  themeMenus["/projects/"] = "projects"; 
+
+  themeMenus["/news/"] = "news"; 
+
+  themeMenus["/gumroad/"] = "gumroad"; 
+
+  themeMenus["/atom.xml"] = "rss"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" title="onmyway133" rel="home"> onmyway133 </a>
+            
+          </h1>
+
+          
+            <div class="site-description">What you don&#39;t know is what you haven&#39;t learned</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">About</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/writing/">writing</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/speaking/">speaking</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/opensource/">open source</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/projects/">projects</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/news/">news</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/gumroad/">gumroad</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/atom.xml">rss</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="originBgDiv" style="background: #fff; width: 100%;">
+
+      <div style="max-height:600px; overflow: hidden;  display: flex; display: -webkit-flex; align-items: center;">
+        <img id="originBg" width="100%" alt="" src="">
+      </div>
+
+  </div>
+
+  <script>
+  function setAboutIMG(){
+      var imgUrls = "https://avatars1.githubusercontent.com/u/2284279?s=460&v=4".split(",");
+      var random = Math.floor((Math.random() * imgUrls.length ));
+      if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+        document.getElementById("originBg").src=imgUrls[random];
+      } else {
+        document.getElementById("originBg").src='/' + imgUrls[random];
+      }
+  }
+  bgDiv=document.getElementById("originBgDiv");
+  if(location.pathname.match('about')){
+    setAboutIMG();
+    bgDiv.style.display='block';
+  }else{
+    bgDiv.style.display='none';
+  }
+  </script>
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-How-to-run-UI-Test-with-Facebook-login" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      How to run UI Test with Facebook login
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-run-UI-Test-with-Facebook-login/" class="article-date">
+	  <time datetime="2017-05-30T13:32:17.000Z" itemprop="datePublished">May 30, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/44" target="_blank" rel="noopener">#44</a></strong></p>
+<p>Today I’m trying to run some UITest on my app, which uses Facebook login. And here are some of my notes on it.</p>
+<div align="center">
+<img src="https://cloud.githubusercontent.com/assets/2284279/26590229/49c0c782-455a-11e7-876d-bf4bec92fdea.gif" width="300" height="510">
+</div>
+
+<h3 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h3><ul>
+<li>The challenges with Facebook is it uses <code>Safari controller</code>, we we deal mostly with <code>web view</code> for now. Starting from iOS 9+, Facebook decided to use <code>safari</code> instead of <code>native facebook app</code> to avoid app switching. You can read the detail here <a href="https://developers.facebook.com/blog/post/2015/10/29/Facebook-Login-iOS9/" target="_blank" rel="noopener">Building the Best Facebook Login Experience for People on iOS 9</a></li>
+<li>It does not have wanted <code>accessibilityIdentifier</code> or <code>accessibilityLabel</code></li>
+<li>The webview content may change in the future 😸 </li>
+</ul>
+<h3 id="Create-a-Facebook-test-user"><a href="#Create-a-Facebook-test-user" class="headerlink" title="Create a Facebook test user"></a>Create a Facebook test user</h3><p>Luckily, you don’t have to create your own Facebook user to test. Facebook supports test users that you can manage permissions and friends, very handy</p>
+<p><img src="https://cloud.githubusercontent.com/assets/2284279/26590445/e032fe1a-455a-11e7-8e6d-84dce3b21152.png" alt="test user"></p>
+<p>When creating the test user, you have the option to select language. That will be the displayed language in Safari web view. I choose <code>Norwegian</code> 🇳🇴  for now</p>
+<p><img src="https://cloud.githubusercontent.com/assets/2284279/26590675/8168357a-455b-11e7-831d-0df899ea51c5.png" alt="language"></p>
+<h3 id="Click-the-login-button-and-show-Facebook-login"><a href="#Click-the-login-button-and-show-Facebook-login" class="headerlink" title="Click the login button and show Facebook login"></a>Click the login button and show Facebook login</h3><p>Here we use the default <code>FBSDKLoginButton</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> showFacebookLoginFormButton: <span class="type">XCUIElement</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> buttons[<span class="string">"Continue with Facebook"</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And then tap it</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.showFacebookLoginFormButton.tap()</span><br></pre></td></tr></table></figure>
+
+<h3 id="Check-login-status"><a href="#Check-login-status" class="headerlink" title="Check login status"></a>Check login status</h3><p>When going to safari Facebook form, user may have already logged in or not. So we need to handle these 2 cases. When user has logged in, Facebook will say something like “you have already logged in” or the <code>OK</code> button.</p>
+<p>The advice here is to put breakpoint and <code>po app.staticTexts</code>, <code>po app.buttons</code> to see which UI elements are at a certain point.</p>
+<p>You can check for the static text, or simply just the <code>OK</code> button</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> isAlreadyLoggedInSafari: <span class="type">Bool</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> buttons[<span class="string">"OK"</span>].exists || staticTexts[<span class="string">"Du har allerede godkjent Blue Sea."</span>].exists</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Wait-and-refresh"><a href="#Wait-and-refresh" class="headerlink" title="Wait and refresh"></a>Wait and refresh</h3><p>But Facebook form is a webview, so its content is a bit dynamic. And UITest seems to cache content for fast query, so before checking <code>staticTexts</code>, we need to <code>wait</code> and <code>refresh the cache</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.clearCachedStaticTexts()</span><br></pre></td></tr></table></figure>
+
+<p>This is the <code>wait</code> function</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">wait</span><span class="params">(<span class="keyword">for</span> duration: TimeInterval)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> waitExpectation = expectation(description: <span class="string">"Waiting"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> when = <span class="type">DispatchTime</span>.now() + duration</span><br><span class="line">    <span class="type">DispatchQueue</span>.main.asyncAfter(deadline: when) &#123;</span><br><span class="line">      waitExpectation.fulfill()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We use a buffer here to avoid flakiness with Timer on CI</span></span><br><span class="line">    waitForExpectations(timeout: duration + <span class="number">0.5</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Wait-for-element-to-appear"><a href="#Wait-for-element-to-appear" class="headerlink" title="Wait for element to appear"></a>Wait for element to appear</h3><p>But a more solid approach would be to wait for element to appear. For Facebook login form, they should display a <code>Facebook</code> label after loading. So we should wait for this element</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">  <span class="comment">/// Wait for element to appear</span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">wait</span><span class="params">(<span class="keyword">for</span> element: XCUIElement, timeout duration: TimeInterval)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> predicate = <span class="type">NSPredicate</span>(format: <span class="string">"exists == true"</span>)</span><br><span class="line">    <span class="keyword">let</span> <span class="number">_</span> = expectation(<span class="keyword">for</span>: predicate, evaluatedWith: element, handler: <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Here we don't need to call `waitExpectation.fulfill()`</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// We use a buffer here to avoid flakiness with Timer on CI</span></span><br><span class="line">    waitForExpectations(timeout: duration + <span class="number">0.5</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And call this before you do any further inspection on elements in Facebook login form</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wait(<span class="keyword">for</span>: app.staticTexts[<span class="string">"Facebook"</span>], timeout: <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="If-user-is-logged-in"><a href="#If-user-is-logged-in" class="headerlink" title="If user is logged in"></a>If user is logged in</h3><p>After login, my app shows the main controller with a map view inside. So a basic test would be to check the existence of that map</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> app.isAlreadyLoggedInSafari &#123;</span><br><span class="line">  app.okButton.tap()</span><br><span class="line"></span><br><span class="line">  handleLocationPermission()</span><br><span class="line">  <span class="comment">// Check for the map</span></span><br><span class="line">  <span class="type">XCTAssertTrue</span>(app.maps.element(boundBy: <span class="number">0</span>).exists)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Handle-interruption"><a href="#Handle-interruption" class="headerlink" title="Handle interruption"></a>Handle interruption</h3><p>You know that when showing the map with location, <code>Core Location</code> will ask for permission. So we need to handle that interruption as well. You need to ensure to call it early before the alert happens</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fileprivate</span> <span class="function"><span class="keyword">func</span> <span class="title">handleLocationPermission</span><span class="params">()</span></span> &#123;</span><br><span class="line">  addUIInterruptionMonitor(withDescription: <span class="string">"Location permission"</span>, handler: &#123; alert <span class="keyword">in</span></span><br><span class="line">    alert.buttons.element(boundBy: <span class="number">1</span>).tap()</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>There is another problem, this <code>monitor</code> won’t be called. So the workaround is to call <code>app.tap()</code> again when the alert will happen. In my case, I call <code>app.tap()</code> when my <code>map</code> has been shown for 1,2 seconds, just to make sure <code>app.tap()</code> is called after alert is shown</p>
+<p>For a more detailed guide, please read <a href="https://github.com/onmyway133/blog/issues/48" target="_blank" rel="noopener">https://github.com/onmyway133/blog/issues/48</a></p>
+<h3 id="If-user-is-not-logged-in"><a href="#If-user-is-not-logged-in" class="headerlink" title="If user is not logged in"></a>If user is not logged in</h3><p>In this case, we need to fill in email and password. You can take a look at the <code>The full source code</code> section below. When things don’t work or <code>po</code> does not show you the elements you needed, it’s probably because of caching or you need to wait until dynamic content finishes rendering. </p>
+<p>You need to wait for element to appear</p>
+<h3 id="Tap-on-the-text-field"><a href="#Tap-on-the-text-field" class="headerlink" title="Tap on the text field"></a>Tap on the text field</h3><p>You may get <code>Neither element nor any descendant has keyboard focus</code>, here are the workaround</p>
+<ul>
+<li>If you test on Simulator, make sure <code>Simulator -&gt; Hardware -&gt; Keyboard -&gt; Connect Hardware Keyboard</code> is not checked</li>
+<li><code>wait</code> a bit after tap</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.emailTextField.tap()</span><br></pre></td></tr></table></figure>
+
+<h3 id="Clear-all-the-text"><a href="#Clear-all-the-text" class="headerlink" title="Clear all the text"></a>Clear all the text</h3><p>The idea is to move the caret to the end of the textField, then apply each <code>delete key</code> for each character, then type the next text</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">XCUIElement</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">deleteAllText</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> string = value <span class="keyword">as</span>? <span class="type">String</span> <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> lowerRightCorner = coordinate(withNormalizedOffset: <span class="type">CGVector</span>(dx: <span class="number">0.9</span>, dy: <span class="number">0.9</span>))</span><br><span class="line">    lowerRightCorner.tap()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> deletes = string.characters.<span class="built_in">map</span>(&#123; <span class="number">_</span> <span class="keyword">in</span> <span class="type">XCUIKeyboardKeyDelete</span> &#125;).joined(separator: <span class="string">""</span>)</span><br><span class="line">    typeText(deletes)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Change-language"><a href="#Change-language" class="headerlink" title="Change language"></a>Change language</h3><p>For my case, I want to test in Norwegian, so we need to find the <code>Norwegian</code> option and tap on that. It is identified as <code>static text</code> by <code>UI Test</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> norwegianText: <span class="type">XCUIElement</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> staticTexts[<span class="string">"Norsk (bokmål)"</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wait(<span class="keyword">for</span>: app.norwegianText, timeout: <span class="number">1</span>)</span><br><span class="line">app.norwegianText.tap()</span><br></pre></td></tr></table></figure>
+
+<h3 id="The-email-text-field"><a href="#The-email-text-field" class="headerlink" title="The email text field"></a>The email text field</h3><p>Luckily, email text field is detected by <code>UI Test</code> as <code>text field</code> element, so we can query for that. This uses predicate</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> emailTextField: <span class="type">XCUIElement</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> predicate = <span class="type">NSPredicate</span>(format: <span class="string">"placeholderValue == %@"</span>, <span class="string">"E-post eller mobil"</span>)</span><br><span class="line">  <span class="keyword">return</span> textFields.element(matching: predicate)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="The-password-text-field"><a href="#The-password-text-field" class="headerlink" title="The password text field"></a>The password text field</h3><p><code>UI Test</code> can’t seem to identify the password text field, so we need to search for it by <code>coordinate</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> passwordCoordinate: <span class="type">XCUICoordinate</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> vector = <span class="type">CGVector</span>(dx: <span class="number">1</span>, dy: <span class="number">1.5</span>)</span><br><span class="line">  <span class="keyword">return</span> emailTextField.coordinate(withNormalizedOffset: vector)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This is the document for <code>func coordinate(withNormalizedOffset normalizedOffset: CGVector) -&gt; XCUICoordinate</code></p>
+<blockquote>
+<p>Creates and returns a new coordinate with a normalized offset.<br>The coordinate’s screen point is computed by adding normalizedOffset multiplied by the size of the element’s frame to the origin of the element’s frame.</p>
+</blockquote>
+<p>Then type the password</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">app.passwordCoordinate.tap()</span><br><span class="line">app.typeText(<span class="string">"My password"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>We should not use <code>app.passwordCoordinate.referencedElement</code> because it will point to email text field ❗️ 😢 </p>
+<h3 id="Run-that-test-again"><a href="#Run-that-test-again" class="headerlink" title="Run that test again"></a>Run that test again</h3><p>Go to <code>Xcode -&gt; Product -&gt; Perform Actions -&gt; Test Again</code> to run the previous test again</p>
+<p><img src="https://cloud.githubusercontent.com/assets/2284279/26591784/015636a8-455f-11e7-9b37-c02cc7a072b2.png" alt="again"></p>
+<h3 id="The-full-source-code"><a href="#The-full-source-code" class="headerlink" title="The full source code"></a>The full source code</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> XCTest</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginTests</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> app: <span class="type">XCUIApplication!</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">testLogin</span><span class="params">()</span></span> &#123;</span><br><span class="line">    continueAfterFailure = <span class="literal">false</span></span><br><span class="line">    app = <span class="type">XCUIApplication</span>()</span><br><span class="line">    app.launch()</span><br><span class="line"></span><br><span class="line">    passLogin()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">LoginTests</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">passLogin</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Tap login</span></span><br><span class="line">    app.showFacebookLoginFormButton.tap()</span><br><span class="line">    wait(<span class="keyword">for</span>: app.staticTexts[<span class="string">"Facebook"</span>], timeout: <span class="number">5</span>) <span class="comment">// This requires a high timeout</span></span><br><span class="line">     </span><br><span class="line">    <span class="comment">// There may be location permission popup when showing map</span></span><br><span class="line">    handleLocationPermission()    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> app.isAlreadyLoggedInSafari &#123;</span><br><span class="line">      app.okButton.tap()</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Show map</span></span><br><span class="line">      <span class="keyword">let</span> <span class="built_in">map</span> = app.maps.element(boundBy: <span class="number">0</span>)</span><br><span class="line">      wait(<span class="keyword">for</span>: <span class="built_in">map</span>, timeout: <span class="number">2</span>)</span><br><span class="line">      <span class="type">XCTAssertTrue</span>(<span class="built_in">map</span>.exists)</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Need to interact with the app for interruption monitor to work</span></span><br><span class="line">      app.tap()</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// Choose norsk</span></span><br><span class="line">     wait(<span class="keyword">for</span>: app.norwegianText, timeout: <span class="number">1</span>)</span><br><span class="line">      app.norwegianText.tap()</span><br><span class="line"></span><br><span class="line">      app.emailTextField.tap()</span><br><span class="line">      app.emailTextField.deleteAllText()</span><br><span class="line">      app.emailTextField.typeText(<span class="string">"mujyhwhbby_1496155833@tfbnw.net"</span>)</span><br><span class="line"></span><br><span class="line">      app.passwordCoordinate.tap()</span><br><span class="line">      app.typeText(<span class="string">"Bob Alageaiecghfb Sharpeman"</span>)</span><br><span class="line"></span><br><span class="line">      <span class="comment">// login</span></span><br><span class="line">      app.facebookLoginButton.tap()</span><br><span class="line"></span><br><span class="line">      <span class="comment">// press OK</span></span><br><span class="line">      app.okButton.tap()</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Show map</span></span><br><span class="line">      <span class="keyword">let</span> <span class="built_in">map</span> = app.maps.element(boundBy: <span class="number">0</span>)</span><br><span class="line">      wait(<span class="keyword">for</span>: <span class="built_in">map</span>, timeout: <span class="number">2</span>)</span><br><span class="line">      <span class="type">XCTAssertTrue</span>(<span class="built_in">map</span>.exists)</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Need to interact with the app for interruption monitor to work</span></span><br><span class="line">      app.tap()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">fileprivate</span> <span class="function"><span class="keyword">func</span> <span class="title">handleLocationPermission</span><span class="params">()</span></span> &#123;</span><br><span class="line">    addUIInterruptionMonitor(withDescription: <span class="string">"Location permission"</span>, handler: &#123; alert <span class="keyword">in</span></span><br><span class="line">      alert.buttons.element(boundBy: <span class="number">1</span>).tap()</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fileprivate</span> <span class="class"><span class="keyword">extension</span> <span class="title">XCUIApplication</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> showFacebookLoginFormButton: <span class="type">XCUIElement</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> buttons[<span class="string">"Continue with Facebook"</span>]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> isAlreadyLoggedInSafari: <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> buttons[<span class="string">"OK"</span>].exists || staticTexts[<span class="string">"Du har allerede godkjent Blue Sea."</span>].exists</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> okButton: <span class="type">XCUIElement</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> buttons[<span class="string">"OK"</span>]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> norwegianText: <span class="type">XCUIElement</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> staticTexts[<span class="string">"Norsk (bokmål)"</span>]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> emailTextField: <span class="type">XCUIElement</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> predicate = <span class="type">NSPredicate</span>(format: <span class="string">"placeholderValue == %@"</span>, <span class="string">"E-post eller mobil"</span>)</span><br><span class="line">    <span class="keyword">return</span> textFields.element(matching: predicate)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> passwordCoordinate: <span class="type">XCUICoordinate</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> vector = <span class="type">CGVector</span>(dx: <span class="number">1</span>, dy: <span class="number">1.5</span>)</span><br><span class="line">    <span class="keyword">return</span> emailTextField.coordinate(withNormalizedOffset: vector)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> facebookLoginButton: <span class="type">XCUIElement</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> buttons[<span class="string">"Logg inn"</span>]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">wait</span><span class="params">(<span class="keyword">for</span> duration: TimeInterval)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> waitExpectation = expectation(description: <span class="string">"Waiting"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> when = <span class="type">DispatchTime</span>.now() + duration</span><br><span class="line">    <span class="type">DispatchQueue</span>.main.asyncAfter(deadline: when) &#123;</span><br><span class="line">      waitExpectation.fulfill()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We use a buffer here to avoid flakiness with Timer on CI</span></span><br><span class="line">    waitForExpectations(timeout: duration + <span class="number">0.5</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// Wait for element to appear</span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">wait</span><span class="params">(<span class="keyword">for</span> element: XCUIElement, timeout duration: TimeInterval)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> predicate = <span class="type">NSPredicate</span>(format: <span class="string">"exists == true"</span>)</span><br><span class="line">    <span class="keyword">let</span> <span class="number">_</span> = expectation(<span class="keyword">for</span>: predicate, evaluatedWith: element, handler: <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We use a buffer here to avoid flakiness with Timer on CI</span></span><br><span class="line">    waitForExpectations(timeout: duration + <span class="number">0.5</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">XCUIApplication</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Because of "Use cached accessibility hierarchy"</span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">clearCachedStaticTexts</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="number">_</span> = staticTexts.<span class="built_in">count</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">clearCachedTextFields</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="number">_</span> = textFields.<span class="built_in">count</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">clearCachedTextViews</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="number">_</span> = textViews.<span class="built_in">count</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">XCUIElement</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">deleteAllText</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> string = value <span class="keyword">as</span>? <span class="type">String</span> <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> lowerRightCorner = coordinate(withNormalizedOffset: <span class="type">CGVector</span>(dx: <span class="number">0.9</span>, dy: <span class="number">0.9</span>))</span><br><span class="line">    lowerRightCorner.tap()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> deletes = string.characters.<span class="built_in">map</span>(&#123; <span class="number">_</span> <span class="keyword">in</span> <span class="type">XCUIKeyboardKeyDelete</span> &#125;).joined(separator: <span class="string">""</span>)</span><br><span class="line">    typeText(deletes)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h3><p>I found these guides to cover many aspects of UITests, worth taking a look</p>
+<ul>
+<li><a href="https://github.com/joemasilotti/UI-Testing-Cheat-Sheet" target="_blank" rel="noopener">UI-Testing-Cheat-Sheet</a></li>
+<li><a href="http://samwize.com/2016/02/28/everything-about-xcode-ui-testing-snapshot/" target="_blank" rel="noopener">Everything About Xcode UI Testing</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blog/How-to-run-UITests-with-map-view-in-iOS/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          How to run UITests with map view in iOS
+        
+      </div>
+    </a>
+  
+  
+    <a href="/blog/Debugging-iOS-app/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Debugging iOS app</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Challenges"><span class="nav-number">1.</span> <span class="nav-text">Challenges</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-Facebook-test-user"><span class="nav-number">2.</span> <span class="nav-text">Create a Facebook test user</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Click-the-login-button-and-show-Facebook-login"><span class="nav-number">3.</span> <span class="nav-text">Click the login button and show Facebook login</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Check-login-status"><span class="nav-number">4.</span> <span class="nav-text">Check login status</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Wait-and-refresh"><span class="nav-number">5.</span> <span class="nav-text">Wait and refresh</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Wait-for-element-to-appear"><span class="nav-number">6.</span> <span class="nav-text">Wait for element to appear</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#If-user-is-logged-in"><span class="nav-number">7.</span> <span class="nav-text">If user is logged in</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handle-interruption"><span class="nav-number">8.</span> <span class="nav-text">Handle interruption</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#If-user-is-not-logged-in"><span class="nav-number">9.</span> <span class="nav-text">If user is not logged in</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tap-on-the-text-field"><span class="nav-number">10.</span> <span class="nav-text">Tap on the text field</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Clear-all-the-text"><span class="nav-number">11.</span> <span class="nav-text">Clear all the text</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Change-language"><span class="nav-number">12.</span> <span class="nav-text">Change language</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-email-text-field"><span class="nav-number">13.</span> <span class="nav-text">The email text field</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-password-text-field"><span class="nav-number">14.</span> <span class="nav-text">The password text field</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-that-test-again"><span class="nav-number">15.</span> <span class="nav-text">Run that test again</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-full-source-code"><span class="nav-number">16.</span> <span class="nav-text">The full source code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Read-more"><span class="nav-number">17.</span> <span class="nav-text">Read more</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2019 onmyway133 All Rights Reserved.
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+<script src="/js/my.js"></script>
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/about/" class="mobile-nav-link">About</a>
+  
+    <a href="/writing/" class="mobile-nav-link">Writing</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/speaking/" class="mobile-nav-link">Speaking</a>
+  
+    <a href="/opensource/" class="mobile-nav-link">Open Source</a>
+  
+    <a href="/projects/" class="mobile-nav-link">Projects</a>
+  
+    <a href="/news/" class="mobile-nav-link">News</a>
+  
+    <a href="/gumroad/" class="mobile-nav-link">Gumroad</a>
+  
+    <a href="/atom.xml" class="mobile-nav-link">RSS</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+<script src="/js/scripts.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-40119591-5', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
