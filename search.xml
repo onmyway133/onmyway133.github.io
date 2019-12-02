@@ -4,11 +4,51 @@
   
     
     <entry>
+      <title>How to convert from callback to Future Publisher in Combine</title>
+      <link href="/blog/How-to-convert-from-callback-to-Future-Publisher-in-Combine/"/>
+      <url>/blog/How-to-convert-from-callback-to-Future-Publisher-in-Combine/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/527" target="_blank" rel="noopener">#527</a></strong></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">import</span> Combine</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">typealias</span> <span class="type">TaskCompletion</span> = (<span class="type">Result</span>&lt;(), <span class="type">Error</span>&gt;) -&gt; <span class="type">Void</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Task</span>: <span class="title">AnyObject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> name: <span class="type">String</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(workflow: Workflow, completion: TaskCompletion)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">extension</span> <span class="title">Task</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">asPublisher</span><span class="params">(workflow: Workflow)</span></span> -&gt; <span class="type">AnyPublisher</span>&lt;(), <span class="type">Error</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Future</span>(&#123; completion <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">self</span>.run(workflow: workflow, completion: completion)</span><br><span class="line">        &#125;).eraseToAnyPublisher()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> swift </tag>
+            
+            <tag> combine </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>How to make init with closure in Swift</title>
+      <link href="/blog/How-to-make-init-with-closure-in-Swift/"/>
+      <url>/blog/How-to-make-init-with-closure-in-Swift/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/526" target="_blank" rel="noopener">#526</a></strong></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Build</span>: <span class="title">UsesXcodeBuild</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> arguments = [<span class="type">String</span>]()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">init</span>(<span class="number">_</span> closure: (<span class="type">Build</span>) -&gt; <span class="type">Void</span> = &#123; <span class="number">_</span> <span class="keyword">in</span> &#125;) &#123;</span><br><span class="line">        closure(<span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="Use-function-builder"><a href="#Use-function-builder" class="headerlink" title="Use function builder"></a>Use function builder</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Workflow</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> workingDirectory: <span class="type">String</span> = <span class="string">"."</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">let</span> tasks: [<span class="type">Task</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">init</span>(@<span class="type">TaskBuilder</span> builder: () -&gt; [<span class="type">Task</span>]) &#123;</span><br><span class="line">        <span class="keyword">self</span>.tasks = builder()</span><br><span class="line">        <span class="keyword">self</span>.tasks.forEach &#123; task <span class="keyword">in</span></span><br><span class="line">            task.workflow = <span class="keyword">self</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">init</span>(@<span class="type">TaskBuilder</span> builder: () -&gt; <span class="type">Task</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.tasks = [builder()]</span><br><span class="line">        <span class="keyword">self</span>.tasks.forEach &#123; task <span class="keyword">in</span></span><br><span class="line">            task.workflow = <span class="keyword">self</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(@TaskBuilder builder: <span class="params">()</span></span></span> -&gt; [<span class="type">Task</span>]) &#123;</span><br><span class="line">    <span class="keyword">let</span> workflow = <span class="type">Workflow</span>(builder: builder)</span><br><span class="line">    workflow.run()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(@TaskBuilder builder: <span class="params">()</span></span></span> -&gt; <span class="type">Task</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> workflow = <span class="type">Workflow</span>(builder: builder)</span><br><span class="line">    workflow.run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> swift </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>How to test a developing package with Swift Package Manager</title>
       <link href="/blog/How-to-test-a-developing-package-with-Swift-Package-Manager/"/>
       <url>/blog/How-to-test-a-developing-package-with-Swift-Package-Manager/</url>
       
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/525" target="_blank" rel="noopener">#525</a></strong></p><p>Example <a href="https://github.com/pumaswift/Puma" target="_blank" rel="noopener">Puma</a></p><ul><li>Create a new macOS project, select Command Line Tool<img width="749" alt="Screenshot 2019-11-30 at 22 40 35" src="https://user-images.githubusercontent.com/2284279/69906344-6d816080-13c2-11ea-9592-43c037e6a226.png"></li><li>Drag <code>Puma.xcodeproj</code> as a sub project of our test project</li><li>Go to our TestPuma target, under <code>Link Binary with Libraries</code>, select Puma framework</li></ul><img width="1679" alt="Screenshot 2019-11-30 at 22 41 18" src="https://user-images.githubusercontent.com/2284279/69906361-97d31e00-13c2-11ea-9102-f75b66458fda.png"><ul><li><p>Puma has dependencies on PumaCore and PumaiOS, but in Xcode we only need to select Puma framework</p></li><li><p>In code, we need to explicitly import PumaiOS framework if we use any of its classes</p></li></ul><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">import</span> Puma</span><br><span class="line"><span class="keyword">import</span> PumaiOS</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testDrive</span><span class="params">()</span></span> &#123;</span><br><span class="line">    run &#123;</span><br><span class="line">        <span class="type">SetVersionNumber</span> &#123;</span><br><span class="line">            $<span class="number">0</span>.buildNumberForAllTarget(<span class="string">"1.1"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ul><li>As our Puma.xcodeproj is inside this test project, we can drill down into our Puma.xcodeproj and update the code.</li></ul><h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><p>To avoid signing issue, we need to select a Team for all  frameworks</p><blockquote><p>not valid for use in process using Library Validation: mapped file has no Team ID and is not a platform binary (signed with custom identity or adhoc?</p></blockquote>]]></content>
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/525" target="_blank" rel="noopener">#525</a></strong></p><h2 id="Use-macOS-Command-Line-project"><a href="#Use-macOS-Command-Line-project" class="headerlink" title="Use macOS Command Line project"></a>Use macOS Command Line project</h2><p>Example <a href="https://github.com/pumaswift/Puma" target="_blank" rel="noopener">Puma</a></p><ul><li>Create a new macOS project, select Command Line Tool<img width="749" alt="Screenshot 2019-11-30 at 22 40 35" src="https://user-images.githubusercontent.com/2284279/69906344-6d816080-13c2-11ea-9592-43c037e6a226.png"></li><li>Drag <code>Puma.xcodeproj</code> as a sub project of our test project</li><li>Go to our TestPuma target, under <code>Link Binary with Libraries</code>, select Puma framework</li></ul><img width="1679" alt="Screenshot 2019-11-30 at 22 41 18" src="https://user-images.githubusercontent.com/2284279/69906361-97d31e00-13c2-11ea-9102-f75b66458fda.png"><ul><li><p>Puma has dependencies on PumaCore and PumaiOS, but in Xcode we only need to select Puma framework</p></li><li><p>In code, we need to explicitly import PumaiOS framework if we use any of its classes</p></li></ul><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">import</span> Puma</span><br><span class="line"><span class="keyword">import</span> PumaiOS</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testDrive</span><span class="params">()</span></span> &#123;</span><br><span class="line">    run &#123;</span><br><span class="line">        <span class="type">SetVersionNumber</span> &#123;</span><br><span class="line">            $<span class="number">0</span>.buildNumberForAllTarget(<span class="string">"1.1"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ul><li>As our Puma.xcodeproj is inside this test project, we can drill down into our Puma.xcodeproj and update the code.</li></ul><h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><h3 id="Code-signing-for-frameworks"><a href="#Code-signing-for-frameworks" class="headerlink" title="Code signing for frameworks"></a>Code signing for frameworks</h3><p>To avoid signing issue, we need to select a Team for all  frameworks</p><blockquote><p>not valid for use in process using Library Validation: mapped file has no Team ID and is not a platform binary (signed with custom identity or adhoc?</p></blockquote><h3 id="Library-not-loaded"><a href="#Library-not-loaded" class="headerlink" title="Library not loaded"></a>Library not loaded</h3><p>Need to set runpath search path, read <a href="https://stackoverflow.com/questions/28577692/macos-command-line-tool-with-swift-cocoa-framework-library-not-loaded" target="_blank" rel="noopener">https://stackoverflow.com/questions/28577692/macos-command-line-tool-with-swift-cocoa-framework-library-not-loaded</a></p><p>Specify <code>LD_RUNPATH_SEARCH_PATHS = @executable_path</code> in Build Settings</p>]]></content>
       
       
       
@@ -252,9 +292,9 @@
       
         <tags>
             
-            <tag> swiftUI </tag>
-            
             <tag> combine </tag>
+            
+            <tag> swiftUI </tag>
             
         </tags>
       
@@ -4262,6 +4302,25 @@
     
     
     <entry>
+      <title>What&#39;s new in iOS</title>
+      <link href="/blog/What&#39;s-new-in-iOS/"/>
+      <url>/blog/What&#39;s-new-in-iOS/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p><h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p><blockquote><p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p><blockquote><p>A class that animates changes to views and allows the dynamic modification of those animations.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p><blockquote><p>A container that encapsulates the Core Data stack in your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p><blockquote><p>The abstract superclass for all feedback generators.</p></blockquote><h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p><blockquote><p>An object that controls the process of requesting App Store ratings and reviews from users.</p></blockquote><h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p><blockquote><p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p><blockquote><p>Integrate machine learning models into your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p><blockquote><p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p><blockquote><p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p><blockquote><p>Access per-device, per-developer data that your associated server can use in its business logic.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p><blockquote><p>Bring drag and drop to your app by using interaction APIs with your views.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p><blockquote><p>Detect NFC tags and read messages that contain NDEF data.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p><blockquote><p>Animatable corner radius</p></blockquote><h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p><blockquote><p>Make it easy for users to log into apps and services.</p></blockquote><h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p><blockquote><p>Declare the user interface and behavior for your app on every platform.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p><blockquote><p>Customize handling of asynchronous events by combining event-processing operators.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p><blockquote><p>Perform cryptographic operations securely and efficiently.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p><blockquote><p>Expose UISearchTextField on UISearchBar</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> iOS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Links for WWDC</title>
       <link href="/blog/Links-for-WWDC/"/>
       <url>/blog/Links-for-WWDC/</url>
@@ -4275,25 +4334,6 @@
             <tag> iOS </tag>
             
             <tag> links </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>What&#39;s new in iOS</title>
-      <link href="/blog/What&#39;s-new-in-iOS/"/>
-      <url>/blog/What&#39;s-new-in-iOS/</url>
-      
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p><h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p><blockquote><p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p><blockquote><p>A class that animates changes to views and allows the dynamic modification of those animations.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p><blockquote><p>A container that encapsulates the Core Data stack in your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p><blockquote><p>The abstract superclass for all feedback generators.</p></blockquote><h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p><blockquote><p>An object that controls the process of requesting App Store ratings and reviews from users.</p></blockquote><h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p><blockquote><p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p><blockquote><p>Integrate machine learning models into your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p><blockquote><p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p><blockquote><p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p><blockquote><p>Access per-device, per-developer data that your associated server can use in its business logic.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p><blockquote><p>Bring drag and drop to your app by using interaction APIs with your views.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p><blockquote><p>Detect NFC tags and read messages that contain NDEF data.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p><blockquote><p>Animatable corner radius</p></blockquote><h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p><blockquote><p>Make it easy for users to log into apps and services.</p></blockquote><h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p><blockquote><p>Declare the user interface and behavior for your app on every platform.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p><blockquote><p>Customize handling of asynchronous events by combining event-processing operators.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p><blockquote><p>Perform cryptographic operations securely and efficiently.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p><blockquote><p>Expose UISearchTextField on UISearchBar</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>]]></content>
-      
-      
-      
-        <tags>
-            
-            <tag> iOS </tag>
             
         </tags>
       
@@ -5311,9 +5351,9 @@
       
         <tags>
             
-            <tag> git </tag>
-            
             <tag> links </tag>
+            
+            <tag> git </tag>
             
         </tags>
       
@@ -6146,6 +6186,19 @@
     
     
     <entry>
+      <title>OSS</title>
+      <link href="/blog/OSS/"/>
+      <url>/blog/OSS/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/189" target="_blank" rel="noopener">#189</a></strong></p><ul><li><a href="https://github.com/digipost/ios" target="_blank" rel="noopener">https://github.com/digipost/ios</a></li><li><a href="https://github.com/wwdc/2019" target="_blank" rel="noopener">https://github.com/wwdc/2019</a></li><li><a href="https://github.com/google/science-journal-ios" target="_blank" rel="noopener">https://github.com/google/science-journal-ios</a></li></ul>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Links for OSS</title>
       <link href="/blog/Links-for-OSS/"/>
       <url>/blog/Links-for-OSS/</url>
@@ -6159,19 +6212,6 @@
             <tag> links </tag>
             
         </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>OSS</title>
-      <link href="/blog/OSS/"/>
-      <url>/blog/OSS/</url>
-      
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/189" target="_blank" rel="noopener">#189</a></strong></p><ul><li><a href="https://github.com/digipost/ios" target="_blank" rel="noopener">https://github.com/digipost/ios</a></li><li><a href="https://github.com/wwdc/2019" target="_blank" rel="noopener">https://github.com/wwdc/2019</a></li><li><a href="https://github.com/google/science-journal-ios" target="_blank" rel="noopener">https://github.com/google/science-journal-ios</a></li></ul>]]></content>
-      
-      
       
     </entry>
     
