@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>How to do lense in Swift</title>
+      <link href="/blog/How-to-do-lense-in-Swift/"/>
+      <url>/blog/How-to-do-lense-in-Swift/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/528" target="_blank" rel="noopener">#528</a></strong></p><h2 id="What-is-lense"><a href="#What-is-lense" class="headerlink" title="What is lense"></a>What is lense</h2><p><a href="https://www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial" target="_blank" rel="noopener">https://www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial</a></p><blockquote><p>A lens is a first-class reference to a subpart of some data type. For instance, we have _1 which is the lens that “focuses on” the first element of a pair. Given a lens there are essentially three things you might want to do</p></blockquote><blockquote><p>View the subpart<br>Modify the whole by changing the subpart<br>Combine this lens with another lens to look even deeper</p></blockquote><h2 id="Before-use-functional-approach"><a href="#Before-use-functional-approach" class="headerlink" title="Before, use functional approach"></a>Before, use functional approach</h2><p><a href="http://chris.eidhof.nl/post/lenses-in-swift/" target="_blank" rel="noopener">http://chris.eidhof.nl/post/lenses-in-swift/</a></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> name_ : <span class="type">String</span></span><br><span class="line">    <span class="keyword">let</span> address_ : <span class="type">Address</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Address</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> street_ : <span class="type">String</span></span><br><span class="line">    <span class="keyword">let</span> city_ : <span class="type">String</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Lens</span>&lt;<span class="title">A</span>,<span class="title">B</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> from : <span class="type">A</span> -&gt; <span class="type">B</span></span><br><span class="line">    <span class="keyword">let</span> to : (<span class="type">B</span>, <span class="type">A</span>) -&gt; <span class="type">A</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> address : <span class="type">Lens</span>&lt;<span class="type">Person</span>,<span class="type">Address</span>&gt; = <span class="type">Lens</span>(from: &#123; $<span class="number">0</span>.address_ &#125;, to: &#123;</span><br><span class="line">    <span class="type">Person</span>(name_: $<span class="number">1</span>.name_, address_: $<span class="number">0</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> street : <span class="type">Lens</span>&lt;<span class="type">Address</span>,<span class="type">String</span>&gt; = <span class="type">Lens</span>(from: &#123; $<span class="number">0</span>.street_ &#125;, to: &#123;</span><br><span class="line">    <span class="type">Address</span>(street_: $<span class="number">0</span>, city_: $<span class="number">1</span>.city_)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> newAddress = street.to(<span class="string">"My new street name"</span>, existingAddress)</span><br></pre></td></tr></table></figure><h2 id="Now-with-Keypath"><a href="#Now-with-Keypath" class="headerlink" title="Now, with Keypath"></a>Now, with Keypath</h2><p><a href="https://iankeen.tech/2018/06/05/type-safe-temporary-models/" target="_blank" rel="noopener">https://iankeen.tech/2018/06/05/type-safe-temporary-models/</a><br><a href="https://swiftbysundell.com/articles/defining-testing-data-in-swift/" target="_blank" rel="noopener">https://swiftbysundell.com/articles/defining-testing-data-in-swift/</a></p><p>Use KeyPath to modify struct data</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Stubbable</span>: <span class="title">Identifiable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">stub</span><span class="params">(withID id: Identifier&lt;<span class="keyword">Self</span>&gt;)</span></span> -&gt; <span class="type">Self</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Stubbable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">setting</span>&lt;T&gt;<span class="params">(<span class="number">_</span> keyPath: WritableKeyPath&lt;<span class="keyword">Self</span>, T&gt;,</span></span></span><br><span class="line"><span class="function"><span class="params">                    to value: T)</span></span> -&gt; <span class="type">Self</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> stub = <span class="keyword">self</span></span><br><span class="line">        stub[keyPath: keyPath] = value</span><br><span class="line">        <span class="keyword">return</span> stub</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> swift </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>How to convert from callback to Future Publisher in Combine</title>
       <link href="/blog/How-to-convert-from-callback-to-Future-Publisher-in-Combine/"/>
       <url>/blog/How-to-convert-from-callback-to-Future-Publisher-in-Combine/</url>
@@ -191,9 +210,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -471,9 +490,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
             <tag> macOS </tag>
             
@@ -706,9 +725,9 @@
       
         <tags>
             
-            <tag> machine learning </tag>
-            
             <tag> cloud </tag>
+            
+            <tag> machine learning </tag>
             
         </tags>
       
@@ -1030,9 +1049,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1051,9 +1070,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
             <tag> android </tag>
             
@@ -1074,9 +1093,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1095,9 +1114,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1116,9 +1135,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1238,9 +1257,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1259,9 +1278,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1280,9 +1299,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1301,9 +1320,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1383,9 +1402,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1404,9 +1423,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1463,9 +1482,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1629,9 +1648,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -1833,9 +1852,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2081,9 +2100,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2102,9 +2121,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2245,9 +2264,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
             <tag> macOS </tag>
             
@@ -2287,9 +2306,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2308,9 +2327,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2497,9 +2516,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
             <tag> testing </tag>
             
@@ -2638,9 +2657,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -2837,7 +2856,7 @@
       <link href="/blog/Links-for-iOS/"/>
       <url>/blog/Links-for-iOS/</url>
       
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/384" target="_blank" rel="noopener">#384</a></strong></p><h1 id="General"><a href="#General" class="headerlink" title="General"></a>General</h1><ul><li><a href="https://developer.apple.com/library/archive/documentation/DeviceInformation/Reference/iOSDeviceCompatibility/Displays/Displays.html" target="_blank" rel="noopener">iOS Device Display Summary</a></li><li><a href="https://developer.apple.com/documentation/bundleresources/information_property_list" target="_blank" rel="noopener">Information Property List</a></li><li><a href="https://help.apple.com/app-store-connect/#/devd274dd925" target="_blank" rel="noopener">Screenshot specifications</a></li></ul><h3 id="Blog"><a href="#Blog" class="headerlink" title="Blog"></a>Blog</h3><ul><li><a href="https://www.pointfree.co/" target="_blank" rel="noopener">https://www.pointfree.co/</a></li><li><a href="https://nshipster.com/" target="_blank" rel="noopener">https://nshipster.com/</a></li><li><a href="https://www.swiftbysundell.com/" target="_blank" rel="noopener">https://www.swiftbysundell.com/</a></li></ul><h3 id="Convention"><a href="#Convention" class="headerlink" title="Convention"></a>Convention</h3><ul><li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingIvarsAndTypes.html" target="_blank" rel="noopener">Naming Properties and Data Types</a></li><li><a href="https://swift.org/documentation/api-design-guidelines/" target="_blank" rel="noopener">Swift API Design Guidelines</a></li></ul><h3 id="iOS-Adoption"><a href="#iOS-Adoption" class="headerlink" title="iOS Adoption"></a>iOS Adoption</h3><ul><li><a href="https://mixpanel.com/trends/" target="_blank" rel="noopener">https://mixpanel.com/trends/</a></li><li><a href="https://developer.apple.com/support/app-store/" target="_blank" rel="noopener">https://developer.apple.com/support/app-store/</a></li></ul><h3 id="Push-notification"><a href="#Push-notification" class="headerlink" title="Push notification"></a>Push notification</h3><ul><li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">iOS 13 and Xcode 11 Changes That Affect Push Notifications</a></li><li><a href="https://developer.apple.com/news/?id=11042019a" target="_blank" rel="noopener">Apple Push Notification Service Update</a></li><li><a href="https://medium.com/@tonisucic/pitfalls-to-avoid-when-implementing-push-notifications-784965f078ab" target="_blank" rel="noopener">https://medium.com/@tonisucic/pitfalls-to-avoid-when-implementing-push-notifications-784965f078ab</a></li></ul><h3 id="Accessibility"><a href="#Accessibility" class="headerlink" title="Accessibility"></a>Accessibility</h3><ul><li><a href="https://rwapp.co.uk/2019/11/06/SwiftUI-Accessibility/" target="_blank" rel="noopener">SwiftUI Accessibility</a></li></ul><h3 id="Auto-Layout"><a href="#Auto-Layout" class="headerlink" title="Auto Layout"></a>Auto Layout</h3><ul><li><a href="https://vimeo.com/362202970" target="_blank" rel="noopener">Detail-oriented UI with Layout Margins</a></li><li><a href="https://useyourloaf.com/assets/docs/Modern%20Auto%20Layout%20Preview.pdf" target="_blank" rel="noopener">Modern Auto Layout</a></li><li><a href="https://useyourloaf.com/blog/easier-scrolling-with-layout-guides/" target="_blank" rel="noopener">Easier Scrolling With Layout Guides</a></li><li><a href="https://www.vadimbulavin.com/collection-view-cells-self-sizing/" target="_blank" rel="noopener">https://www.vadimbulavin.com/collection-view-cells-self-sizing/</a></li></ul><h3 id="Catalyst"><a href="#Catalyst" class="headerlink" title="Catalyst"></a>Catalyst</h3><ul><li><a href="https://www.highcaffeinecontent.com/blog/20190607-Beyond-the-Checkbox-with-Catalyst-and-AppKit" target="_blank" rel="noopener">Beyond the Checkbox with Catalyst and AppKit</a></li></ul><h3 id="Operation"><a href="#Operation" class="headerlink" title="Operation"></a>Operation</h3><ul><li><a href="https://williamboles.me/building-a-networking-layer-with-operations/" target="_blank" rel="noopener">https://williamboles.me/building-a-networking-layer-with-operations/</a></li><li><a href="https://gist.github.com/ole/5034ce19c62d248018581b1db0eabb2b" target="_blank" rel="noopener">AsyncOperation.swift</a></li></ul><h3 id="Security"><a href="#Security" class="headerlink" title="Security"></a>Security</h3><ul><li><a href="https://talk.objc.io/episodes/S01E57-certificate-pinning" target="_blank" rel="noopener">https://talk.objc.io/episodes/S01E57-certificate-pinning</a></li><li><a href="https://developer.apple.com/library/archive/technotes/tn2232/_index.html" target="_blank" rel="noopener">HTTPS Server Trust Evaluation</a></li><li><a href="https://promon.co/security-news/ios-jailbreak/" target="_blank" rel="noopener">https://promon.co/security-news/ios-jailbreak/</a></li><li><a href="https://blog.datatheorem.com/blog/sleeping-with-the-friend-enemy-mobile-apps-and-their-sdks" target="_blank" rel="noopener">https://blog.datatheorem.com/blog/sleeping-with-the-friend-enemy-mobile-apps-and-their-sdks</a></li><li><a href="https://nshipster.com/secrets/" target="_blank" rel="noopener">Secret Management on iOS</a></li><li><a href="https://krausefx.com/blog/trusting-sdks" target="_blank" rel="noopener">Trusting third party SDKs</a></li></ul><h3 id="Review"><a href="#Review" class="headerlink" title="Review"></a>Review</h3><ul><li><a href="https://daringfireball.net/2017/01/new_app_store_review_features" target="_blank" rel="noopener">Additional Details on the New App Store Review Features</a></li><li><a href="https://developer.apple.com/design/human-interface-guidelines/ios/system-capabilities/ratings-and-reviews/" target="_blank" rel="noopener">https://developer.apple.com/design/human-interface-guidelines/ios/system-capabilities/ratings-and-reviews/</a></li><li><a href="https://developer.apple.com/app-store/ratings-and-reviews/" target="_blank" rel="noopener">https://developer.apple.com/app-store/ratings-and-reviews/</a></li></ul><h3 id="Compile-time"><a href="#Compile-time" class="headerlink" title="Compile time"></a>Compile time</h3><ul><li><a href="https://medium.com/flawless-app-stories/optimize-swift-build-and-compile-times-in-xcode-8a212e2e7d86" target="_blank" rel="noopener">https://medium.com/flawless-app-stories/optimize-swift-build-and-compile-times-in-xcode-8a212e2e7d86</a></li><li><a href="https://github.com/fastred/Optimizing-Swift-Build-Times" target="_blank" rel="noopener">https://github.com/fastred/Optimizing-Swift-Build-Times</a></li><li><a href="https://shashikantjagtap.net/xcode-new-build-system-speedy-swift-builds/" target="_blank" rel="noopener">https://shashikantjagtap.net/xcode-new-build-system-speedy-swift-builds/</a></li></ul><h3 id="Safe-area"><a href="#Safe-area" class="headerlink" title="Safe area"></a>Safe area</h3><ul><li><a href="https://developer.apple.com/documentation/uikit/uiview/positioning_content_relative_to_the_safe_area" target="_blank" rel="noopener">Positioning Content Relative to the Safe Area</a></li></ul><h3 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h3><ul><li><a href="https://github.com/layoutBox/LayoutFrameworkBenchmark" target="_blank" rel="noopener">https://github.com/layoutBox/LayoutFrameworkBenchmark</a></li><li><a href="https://github.com/bwhiteley/JSONShootout" target="_blank" rel="noopener">https://github.com/bwhiteley/JSONShootout</a></li></ul><h1 id="Swift"><a href="#Swift" class="headerlink" title="Swift"></a>Swift</h1><h3 id="Keypath"><a href="#Keypath" class="headerlink" title="Keypath"></a>Keypath</h3><ul><li><a href="https://www.klundberg.com/blog/swift-4-keypaths-and-you/" target="_blank" rel="noopener">Swift 4 KeyPaths and You</a></li></ul><h1 id="SwiftUI"><a href="#SwiftUI" class="headerlink" title="SwiftUI"></a>SwiftUI</h1><ul><li><a href="https://mecid.github.io/2019/09/18/redux-like-state-container-in-swiftui/" target="_blank" rel="noopener">Redux-like state container in SwiftUI</a></li><li><a href="https://www.objc.io/blog/2019/10/29/swiftui-environment/" target="_blank" rel="noopener">SwiftUI: Setting Environment Values</a></li><li><a href="https://kean.github.io/post/swiftui-layout-system" target="_blank" rel="noopener">SwiftUI Layout System</a></li><li><a href="https://www.hackingwithswift.com/quick-start/swiftui/swiftui-tips-and-tricks" target="_blank" rel="noopener">SwiftUI tips and tricks</a></li><li><a href="https://medium.com/better-programming/understanding-swiftui-data-flow-79429a49ae35" target="_blank" rel="noopener">Understanding SwiftUI Data Flow</a></li><li><a href="https://rwapp.co.uk/2019/11/06/SwiftUI-Accessibility/" target="_blank" rel="noopener">SwiftUI Accessibility</a></li><li><a href="https://troz.net/post/2019/swiftui-data-flow/" target="_blank" rel="noopener">SwiftUI Data Flow</a></li><li><a href="https://www.pointfree.co/blog/posts/30-swiftui-and-state-management-corrections" target="_blank" rel="noopener">SwiftUI and State Management Corrections</a></li><li><a href="https://www.hackingwithswift.com/quick-start/swiftui/whats-the-difference-between-observedobject-state-and-environmentobject" target="_blank" rel="noopener">What’s the difference between @ObservedObject, @State, and @EnvironmentObject?</a></li><li><a href="https://engineering.q42.nl/swiftui-optionals/" target="_blank" rel="noopener">SwiftUI optionals</a></li></ul><p>Tips</p><ul><li><a href="https://www.hackingwithswift.com/quick-start/swiftui/how-to-create-3d-effects-like-cover-flow-using-scrollview-and-geometryreader" target="_blank" rel="noopener">How to create 3D effects like Cover Flow using ScrollView and GeometryReader</a></li></ul><p>Talks</p><ul><li><a href="https://learntalks.com/FrenchKit/2019/FrenchKit-2019-Animations-with-SwiftUI-Chris-Eidhof/" target="_blank" rel="noopener">Animations with SwiftUI - Chris Eidhof</a></li><li><a href="https://learntalks.com/Pragma-Mark/2019/Pragma-Mark-2019-Pragma-Conference-2019-Paul-Hudson-SwiftUI-Everywhere/" target="_blank" rel="noopener">SwiftUI Everywhere</a></li></ul><p>Code</p><ul><li><a href="https://github.com/xtabbas/calculator-checklist" target="_blank" rel="noopener">https://github.com/xtabbas/calculator-checklist</a></li><li><a href="https://github.com/alfianlosari/SwiftUI-MovieDB" target="_blank" rel="noopener">https://github.com/alfianlosari/SwiftUI-MovieDB</a></li><li><a href="https://github.com/unixzii/SwiftUI-2048" target="_blank" rel="noopener">https://github.com/unixzii/SwiftUI-2048</a></li><li><a href="https://github.com/mecid/swiftui-recipes-app" target="_blank" rel="noopener">https://github.com/mecid/swiftui-recipes-app</a></li><li><a href="https://github.com/nickffox/KeyboardObserving" target="_blank" rel="noopener">https://github.com/nickffox/KeyboardObserving</a></li><li><a href="https://github.com/aaronbrethorst/SemanticUI" target="_blank" rel="noopener">SemanticUI</a></li></ul><h3 id="Combine"><a href="#Combine" class="headerlink" title="Combine"></a>Combine</h3><ul><li><a href="https://github.com/learncombine/Combine101" target="_blank" rel="noopener">https://github.com/learncombine/Combine101</a></li></ul><h3 id="Property-wrapper"><a href="#Property-wrapper" class="headerlink" title="Property wrapper"></a>Property wrapper</h3><ul><li><a href="https://basememara.com/swift-dependency-injection-via-property-wrapper/" target="_blank" rel="noopener">Swift Dependency Injection via Property Wrapper</a></li></ul>]]></content>
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/384" target="_blank" rel="noopener">#384</a></strong></p><h1 id="General"><a href="#General" class="headerlink" title="General"></a>General</h1><ul><li><a href="https://developer.apple.com/library/archive/documentation/DeviceInformation/Reference/iOSDeviceCompatibility/Displays/Displays.html" target="_blank" rel="noopener">iOS Device Display Summary</a></li><li><a href="https://developer.apple.com/documentation/bundleresources/information_property_list" target="_blank" rel="noopener">Information Property List</a></li><li><a href="https://help.apple.com/app-store-connect/#/devd274dd925" target="_blank" rel="noopener">Screenshot specifications</a></li></ul><h3 id="Blog"><a href="#Blog" class="headerlink" title="Blog"></a>Blog</h3><ul><li><a href="https://www.pointfree.co/" target="_blank" rel="noopener">https://www.pointfree.co/</a></li><li><a href="https://nshipster.com/" target="_blank" rel="noopener">https://nshipster.com/</a></li><li><a href="https://www.swiftbysundell.com/" target="_blank" rel="noopener">https://www.swiftbysundell.com/</a></li></ul><h3 id="Convention"><a href="#Convention" class="headerlink" title="Convention"></a>Convention</h3><ul><li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingIvarsAndTypes.html" target="_blank" rel="noopener">Naming Properties and Data Types</a></li><li><a href="https://swift.org/documentation/api-design-guidelines/" target="_blank" rel="noopener">Swift API Design Guidelines</a></li></ul><h3 id="iOS-Adoption"><a href="#iOS-Adoption" class="headerlink" title="iOS Adoption"></a>iOS Adoption</h3><ul><li><a href="https://mixpanel.com/trends/" target="_blank" rel="noopener">https://mixpanel.com/trends/</a></li><li><a href="https://developer.apple.com/support/app-store/" target="_blank" rel="noopener">https://developer.apple.com/support/app-store/</a></li></ul><h3 id="Push-notification"><a href="#Push-notification" class="headerlink" title="Push notification"></a>Push notification</h3><ul><li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">iOS 13 and Xcode 11 Changes That Affect Push Notifications</a></li><li><a href="https://developer.apple.com/news/?id=11042019a" target="_blank" rel="noopener">Apple Push Notification Service Update</a></li><li><a href="https://medium.com/@tonisucic/pitfalls-to-avoid-when-implementing-push-notifications-784965f078ab" target="_blank" rel="noopener">https://medium.com/@tonisucic/pitfalls-to-avoid-when-implementing-push-notifications-784965f078ab</a></li></ul><h3 id="Accessibility"><a href="#Accessibility" class="headerlink" title="Accessibility"></a>Accessibility</h3><ul><li><a href="https://rwapp.co.uk/2019/11/06/SwiftUI-Accessibility/" target="_blank" rel="noopener">SwiftUI Accessibility</a></li></ul><h3 id="Auto-Layout"><a href="#Auto-Layout" class="headerlink" title="Auto Layout"></a>Auto Layout</h3><ul><li><a href="https://vimeo.com/362202970" target="_blank" rel="noopener">Detail-oriented UI with Layout Margins</a></li><li><a href="https://useyourloaf.com/assets/docs/Modern%20Auto%20Layout%20Preview.pdf" target="_blank" rel="noopener">Modern Auto Layout</a></li><li><a href="https://useyourloaf.com/blog/easier-scrolling-with-layout-guides/" target="_blank" rel="noopener">Easier Scrolling With Layout Guides</a></li><li><a href="https://www.vadimbulavin.com/collection-view-cells-self-sizing/" target="_blank" rel="noopener">https://www.vadimbulavin.com/collection-view-cells-self-sizing/</a></li></ul><h3 id="Catalyst"><a href="#Catalyst" class="headerlink" title="Catalyst"></a>Catalyst</h3><ul><li><a href="https://www.highcaffeinecontent.com/blog/20190607-Beyond-the-Checkbox-with-Catalyst-and-AppKit" target="_blank" rel="noopener">Beyond the Checkbox with Catalyst and AppKit</a></li></ul><h3 id="Operation"><a href="#Operation" class="headerlink" title="Operation"></a>Operation</h3><ul><li><a href="https://williamboles.me/building-a-networking-layer-with-operations/" target="_blank" rel="noopener">https://williamboles.me/building-a-networking-layer-with-operations/</a></li><li><a href="https://gist.github.com/ole/5034ce19c62d248018581b1db0eabb2b" target="_blank" rel="noopener">AsyncOperation.swift</a></li></ul><h3 id="Security"><a href="#Security" class="headerlink" title="Security"></a>Security</h3><ul><li><a href="https://talk.objc.io/episodes/S01E57-certificate-pinning" target="_blank" rel="noopener">https://talk.objc.io/episodes/S01E57-certificate-pinning</a></li><li><a href="https://developer.apple.com/library/archive/technotes/tn2232/_index.html" target="_blank" rel="noopener">HTTPS Server Trust Evaluation</a></li><li><a href="https://promon.co/security-news/ios-jailbreak/" target="_blank" rel="noopener">https://promon.co/security-news/ios-jailbreak/</a></li><li><a href="https://blog.datatheorem.com/blog/sleeping-with-the-friend-enemy-mobile-apps-and-their-sdks" target="_blank" rel="noopener">https://blog.datatheorem.com/blog/sleeping-with-the-friend-enemy-mobile-apps-and-their-sdks</a></li><li><a href="https://nshipster.com/secrets/" target="_blank" rel="noopener">Secret Management on iOS</a></li><li><a href="https://krausefx.com/blog/trusting-sdks" target="_blank" rel="noopener">Trusting third party SDKs</a></li></ul><h3 id="Review"><a href="#Review" class="headerlink" title="Review"></a>Review</h3><ul><li><a href="https://daringfireball.net/2017/01/new_app_store_review_features" target="_blank" rel="noopener">Additional Details on the New App Store Review Features</a></li><li><a href="https://developer.apple.com/design/human-interface-guidelines/ios/system-capabilities/ratings-and-reviews/" target="_blank" rel="noopener">https://developer.apple.com/design/human-interface-guidelines/ios/system-capabilities/ratings-and-reviews/</a></li><li><a href="https://developer.apple.com/app-store/ratings-and-reviews/" target="_blank" rel="noopener">https://developer.apple.com/app-store/ratings-and-reviews/</a></li></ul><h3 id="Compile-time"><a href="#Compile-time" class="headerlink" title="Compile time"></a>Compile time</h3><ul><li><a href="https://medium.com/flawless-app-stories/optimize-swift-build-and-compile-times-in-xcode-8a212e2e7d86" target="_blank" rel="noopener">https://medium.com/flawless-app-stories/optimize-swift-build-and-compile-times-in-xcode-8a212e2e7d86</a></li><li><a href="https://github.com/fastred/Optimizing-Swift-Build-Times" target="_blank" rel="noopener">https://github.com/fastred/Optimizing-Swift-Build-Times</a></li><li><a href="https://shashikantjagtap.net/xcode-new-build-system-speedy-swift-builds/" target="_blank" rel="noopener">https://shashikantjagtap.net/xcode-new-build-system-speedy-swift-builds/</a></li></ul><h3 id="Safe-area"><a href="#Safe-area" class="headerlink" title="Safe area"></a>Safe area</h3><ul><li><a href="https://developer.apple.com/documentation/uikit/uiview/positioning_content_relative_to_the_safe_area" target="_blank" rel="noopener">Positioning Content Relative to the Safe Area</a></li></ul><h3 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h3><ul><li><a href="https://github.com/layoutBox/LayoutFrameworkBenchmark" target="_blank" rel="noopener">https://github.com/layoutBox/LayoutFrameworkBenchmark</a></li><li><a href="https://github.com/bwhiteley/JSONShootout" target="_blank" rel="noopener">https://github.com/bwhiteley/JSONShootout</a></li></ul><h3 id="Frameworks"><a href="#Frameworks" class="headerlink" title="Frameworks"></a>Frameworks</h3><ul><li><a href="https://instabug.com/blog/ios-binary-framework/" target="_blank" rel="noopener">https://instabug.com/blog/ios-binary-framework/</a></li></ul><h1 id="Swift"><a href="#Swift" class="headerlink" title="Swift"></a>Swift</h1><h3 id="Keypath"><a href="#Keypath" class="headerlink" title="Keypath"></a>Keypath</h3><ul><li><a href="https://www.klundberg.com/blog/swift-4-keypaths-and-you/" target="_blank" rel="noopener">Swift 4 KeyPaths and You</a></li></ul><h1 id="SwiftUI"><a href="#SwiftUI" class="headerlink" title="SwiftUI"></a>SwiftUI</h1><ul><li><a href="https://mecid.github.io/2019/09/18/redux-like-state-container-in-swiftui/" target="_blank" rel="noopener">Redux-like state container in SwiftUI</a></li><li><a href="https://www.objc.io/blog/2019/10/29/swiftui-environment/" target="_blank" rel="noopener">SwiftUI: Setting Environment Values</a></li><li><a href="https://kean.github.io/post/swiftui-layout-system" target="_blank" rel="noopener">SwiftUI Layout System</a></li><li><a href="https://www.hackingwithswift.com/quick-start/swiftui/swiftui-tips-and-tricks" target="_blank" rel="noopener">SwiftUI tips and tricks</a></li><li><a href="https://medium.com/better-programming/understanding-swiftui-data-flow-79429a49ae35" target="_blank" rel="noopener">Understanding SwiftUI Data Flow</a></li><li><a href="https://rwapp.co.uk/2019/11/06/SwiftUI-Accessibility/" target="_blank" rel="noopener">SwiftUI Accessibility</a></li><li><a href="https://troz.net/post/2019/swiftui-data-flow/" target="_blank" rel="noopener">SwiftUI Data Flow</a></li><li><a href="https://www.pointfree.co/blog/posts/30-swiftui-and-state-management-corrections" target="_blank" rel="noopener">SwiftUI and State Management Corrections</a></li><li><a href="https://www.hackingwithswift.com/quick-start/swiftui/whats-the-difference-between-observedobject-state-and-environmentobject" target="_blank" rel="noopener">What’s the difference between @ObservedObject, @State, and @EnvironmentObject?</a></li><li><a href="https://engineering.q42.nl/swiftui-optionals/" target="_blank" rel="noopener">SwiftUI optionals</a></li></ul><p>Tips</p><ul><li><a href="https://www.hackingwithswift.com/quick-start/swiftui/how-to-create-3d-effects-like-cover-flow-using-scrollview-and-geometryreader" target="_blank" rel="noopener">How to create 3D effects like Cover Flow using ScrollView and GeometryReader</a></li></ul><p>Talks</p><ul><li><a href="https://learntalks.com/FrenchKit/2019/FrenchKit-2019-Animations-with-SwiftUI-Chris-Eidhof/" target="_blank" rel="noopener">Animations with SwiftUI - Chris Eidhof</a></li><li><a href="https://learntalks.com/Pragma-Mark/2019/Pragma-Mark-2019-Pragma-Conference-2019-Paul-Hudson-SwiftUI-Everywhere/" target="_blank" rel="noopener">SwiftUI Everywhere</a></li></ul><p>Code</p><ul><li><a href="https://github.com/xtabbas/calculator-checklist" target="_blank" rel="noopener">https://github.com/xtabbas/calculator-checklist</a></li><li><a href="https://github.com/alfianlosari/SwiftUI-MovieDB" target="_blank" rel="noopener">https://github.com/alfianlosari/SwiftUI-MovieDB</a></li><li><a href="https://github.com/unixzii/SwiftUI-2048" target="_blank" rel="noopener">https://github.com/unixzii/SwiftUI-2048</a></li><li><a href="https://github.com/mecid/swiftui-recipes-app" target="_blank" rel="noopener">https://github.com/mecid/swiftui-recipes-app</a></li><li><a href="https://github.com/nickffox/KeyboardObserving" target="_blank" rel="noopener">https://github.com/nickffox/KeyboardObserving</a></li><li><a href="https://github.com/aaronbrethorst/SemanticUI" target="_blank" rel="noopener">SemanticUI</a></li></ul><h3 id="Combine"><a href="#Combine" class="headerlink" title="Combine"></a>Combine</h3><ul><li><a href="https://github.com/learncombine/Combine101" target="_blank" rel="noopener">https://github.com/learncombine/Combine101</a></li></ul><h3 id="Property-wrapper"><a href="#Property-wrapper" class="headerlink" title="Property wrapper"></a>Property wrapper</h3><ul><li><a href="https://basememara.com/swift-dependency-injection-via-property-wrapper/" target="_blank" rel="noopener">Swift Dependency Injection via Property Wrapper</a></li></ul>]]></content>
       
       
       
@@ -2990,9 +3009,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3011,9 +3030,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3032,9 +3051,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3053,9 +3072,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3074,9 +3093,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3116,9 +3135,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3177,9 +3196,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3240,9 +3259,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3261,9 +3280,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3301,9 +3320,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3423,9 +3442,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3543,9 +3562,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3606,9 +3625,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3627,9 +3646,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3648,9 +3667,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3669,9 +3688,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3791,9 +3810,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3852,9 +3871,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
             <tag> macOS </tag>
             
@@ -3875,9 +3894,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3959,9 +3978,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -3980,9 +3999,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
             <tag> macOS </tag>
             
@@ -4028,9 +4047,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4049,9 +4068,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4070,9 +4089,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4196,28 +4215,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
             
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>A bit about Design</title>
-      <link href="/blog/A-bit-about-Design/"/>
-      <url>/blog/A-bit-about-Design/</url>
-      
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/317" target="_blank" rel="noopener">#317</a></strong></p><h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><ul><li><a href="https://medium.com/@nathangitter/why-your-app-looks-better-in-sketch-3a01b22c43d7" target="_blank" rel="noopener">Why Your App Looks Better in Sketch</a></li><li><a href="https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6" target="_blank" rel="noopener">8 Tips for Dark Theme Design</a></li></ul><h2 id="UX"><a href="#UX" class="headerlink" title="UX"></a>UX</h2><ul><li><a href="https://growth.design/case-studies/duolingo-user-retention/" target="_blank" rel="noopener">Duolingo User Retention</a></li><li><a href="https://brianlovin.com/design-details" target="_blank" rel="noopener">Design Details</a></li><li><a href="https://uxplanet.org/30-things-we-often-forget-when-designing-mobile-apps-ae30cc3b2c6b" target="_blank" rel="noopener">30 Things We Often Forget When Designing Mobile Apps</a></li><li><a href="https://www.casestudy.club/" target="_blank" rel="noopener">Case study club</a></li></ul><h2 id="Showcase"><a href="#Showcase" class="headerlink" title="Showcase"></a>Showcase</h2><ul><li><a href="https://saaspages.xyz/" target="_blank" rel="noopener">https://saaspages.xyz/</a></li></ul><h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul><li><a href="https://shape.so/" target="_blank" rel="noopener">https://shape.so/</a></li><li><a href="https://icons8.com/" target="_blank" rel="noopener">https://icons8.com/</a></li><li><a href="https://icons8.com/animated-icons" target="_blank" rel="noopener">https://icons8.com/animated-icons</a></li><li><a href="https://icons8.com/vector-creator" target="_blank" rel="noopener">https://icons8.com/vector-creator</a></li><li><a href="https://feathericons.com/" target="_blank" rel="noopener">https://feathericons.com/</a></li><li><a href="https://iconstore.co/" target="_blank" rel="noopener">https://iconstore.co/</a></li><li><a href="https://streamlineicons.com/" target="_blank" rel="noopener">https://streamlineicons.com/</a></li></ul>]]></content>
-      
-      
-      
-        <tags>
-            
-            <tag> design </tag>
+            <tag> swift </tag>
             
         </tags>
       
@@ -4239,6 +4239,25 @@
             <tag> design </tag>
             
             <tag> links </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>A bit about Design</title>
+      <link href="/blog/A-bit-about-Design/"/>
+      <url>/blog/A-bit-about-Design/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/317" target="_blank" rel="noopener">#317</a></strong></p><h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><ul><li><a href="https://medium.com/@nathangitter/why-your-app-looks-better-in-sketch-3a01b22c43d7" target="_blank" rel="noopener">Why Your App Looks Better in Sketch</a></li><li><a href="https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6" target="_blank" rel="noopener">8 Tips for Dark Theme Design</a></li></ul><h2 id="UX"><a href="#UX" class="headerlink" title="UX"></a>UX</h2><ul><li><a href="https://growth.design/case-studies/duolingo-user-retention/" target="_blank" rel="noopener">Duolingo User Retention</a></li><li><a href="https://brianlovin.com/design-details" target="_blank" rel="noopener">Design Details</a></li><li><a href="https://uxplanet.org/30-things-we-often-forget-when-designing-mobile-apps-ae30cc3b2c6b" target="_blank" rel="noopener">30 Things We Often Forget When Designing Mobile Apps</a></li><li><a href="https://www.casestudy.club/" target="_blank" rel="noopener">Case study club</a></li></ul><h2 id="Showcase"><a href="#Showcase" class="headerlink" title="Showcase"></a>Showcase</h2><ul><li><a href="https://saaspages.xyz/" target="_blank" rel="noopener">https://saaspages.xyz/</a></li></ul><h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul><li><a href="https://shape.so/" target="_blank" rel="noopener">https://shape.so/</a></li><li><a href="https://icons8.com/" target="_blank" rel="noopener">https://icons8.com/</a></li><li><a href="https://icons8.com/animated-icons" target="_blank" rel="noopener">https://icons8.com/animated-icons</a></li><li><a href="https://icons8.com/vector-creator" target="_blank" rel="noopener">https://icons8.com/vector-creator</a></li><li><a href="https://feathericons.com/" target="_blank" rel="noopener">https://feathericons.com/</a></li><li><a href="https://iconstore.co/" target="_blank" rel="noopener">https://iconstore.co/</a></li><li><a href="https://streamlineicons.com/" target="_blank" rel="noopener">https://streamlineicons.com/</a></li></ul>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> design </tag>
             
         </tags>
       
@@ -4278,9 +4297,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4392,9 +4411,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4413,9 +4432,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4434,9 +4453,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4474,9 +4493,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4552,9 +4571,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4573,9 +4592,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4594,9 +4613,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -4676,9 +4695,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5406,9 +5425,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5427,9 +5446,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5448,9 +5467,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5469,9 +5488,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5490,9 +5509,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5511,9 +5530,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5532,9 +5551,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -5633,9 +5652,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -6103,9 +6122,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -6186,6 +6205,19 @@
     
     
     <entry>
+      <title>OSS</title>
+      <link href="/blog/OSS/"/>
+      <url>/blog/OSS/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/189" target="_blank" rel="noopener">#189</a></strong></p><ul><li><a href="https://github.com/digipost/ios" target="_blank" rel="noopener">https://github.com/digipost/ios</a></li><li><a href="https://github.com/wwdc/2019" target="_blank" rel="noopener">https://github.com/wwdc/2019</a></li><li><a href="https://github.com/google/science-journal-ios" target="_blank" rel="noopener">https://github.com/google/science-journal-ios</a></li></ul>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Links for OSS</title>
       <link href="/blog/Links-for-OSS/"/>
       <url>/blog/Links-for-OSS/</url>
@@ -6199,19 +6231,6 @@
             <tag> links </tag>
             
         </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>OSS</title>
-      <link href="/blog/OSS/"/>
-      <url>/blog/OSS/</url>
-      
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/189" target="_blank" rel="noopener">#189</a></strong></p><ul><li><a href="https://github.com/digipost/ios" target="_blank" rel="noopener">https://github.com/digipost/ios</a></li><li><a href="https://github.com/wwdc/2019" target="_blank" rel="noopener">https://github.com/wwdc/2019</a></li><li><a href="https://github.com/google/science-journal-ios" target="_blank" rel="noopener">https://github.com/google/science-journal-ios</a></li></ul>]]></content>
-      
-      
       
     </entry>
     
@@ -6759,9 +6778,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -6871,9 +6890,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -6945,9 +6964,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -7046,9 +7065,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -7196,9 +7215,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -7295,9 +7314,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -7392,9 +7411,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -7445,9 +7464,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -7506,9 +7525,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -7625,9 +7644,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
             <tag> algorithm </tag>
             
@@ -7648,9 +7667,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -7669,9 +7688,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -7690,9 +7709,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -7724,9 +7743,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
             <tag> macOS </tag>
             
@@ -8480,6 +8499,19 @@
     
     
     <entry>
+      <title>Getting started with Swift</title>
+      <link href="/blog/Getting-started-with-Swift/"/>
+      <url>/blog/Getting-started-with-Swift/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/46" target="_blank" rel="noopener">#46</a></strong></p><p>Hi, here are some materials I found that are useful for learning Swift and iOS</p><ul><li><a href="https://itunes.apple.com/us/book/app-development-with-swift/id1219117996?mt=11" target="_blank" rel="noopener">App Development with Swift</a></li><li><a href="https://www.hackingwithswift.com/read" target="_blank" rel="noopener">Hacking with Swift</a></li><li><a href="https://swifteducation.github.io/teaching_app_development_with_swift/" target="_blank" rel="noopener">Teaching App Development with Swift</a></li><li><a href="http://guides.codepath.com/ios" target="_blank" rel="noopener">CodePath iOS Guides</a></li><li><a href="https://github.com/nettlep/learn-swift" target="_blank" rel="noopener">learn-swift</a></li><li><a href="https://developer.apple.com/library/content/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html" target="_blank" rel="noopener">About iOS App Architecture</a></li><li><a href="https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/index.html#//apple_ref/doc/uid/TP40015214-CH2-SW1" target="_blank" rel="noopener">Start Developing iOS Apps (Swift)</a></li></ul>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Links for Swift</title>
       <link href="/blog/Links-for-Swift/"/>
       <url>/blog/Links-for-Swift/</url>
@@ -8499,19 +8531,6 @@
     
     
     <entry>
-      <title>Getting started with Swift</title>
-      <link href="/blog/Getting-started-with-Swift/"/>
-      <url>/blog/Getting-started-with-Swift/</url>
-      
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/46" target="_blank" rel="noopener">#46</a></strong></p><p>Hi, here are some materials I found that are useful for learning Swift and iOS</p><ul><li><a href="https://itunes.apple.com/us/book/app-development-with-swift/id1219117996?mt=11" target="_blank" rel="noopener">App Development with Swift</a></li><li><a href="https://www.hackingwithswift.com/read" target="_blank" rel="noopener">Hacking with Swift</a></li><li><a href="https://swifteducation.github.io/teaching_app_development_with_swift/" target="_blank" rel="noopener">Teaching App Development with Swift</a></li><li><a href="http://guides.codepath.com/ios" target="_blank" rel="noopener">CodePath iOS Guides</a></li><li><a href="https://github.com/nettlep/learn-swift" target="_blank" rel="noopener">learn-swift</a></li><li><a href="https://developer.apple.com/library/content/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html" target="_blank" rel="noopener">About iOS App Architecture</a></li><li><a href="https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/index.html#//apple_ref/doc/uid/TP40015214-CH2-SW1" target="_blank" rel="noopener">Start Developing iOS Apps (Swift)</a></li></ul>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>How to run UITests with map view in iOS</title>
       <link href="/blog/How-to-run-UITests-with-map-view-in-iOS/"/>
       <url>/blog/How-to-run-UITests-with-map-view-in-iOS/</url>
@@ -8522,9 +8541,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -8627,9 +8646,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -8648,9 +8667,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -8827,9 +8846,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
@@ -8909,9 +8928,9 @@
       
         <tags>
             
-            <tag> swift </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> swift </tag>
             
         </tags>
       
