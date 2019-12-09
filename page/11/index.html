@@ -179,6 +179,275 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-parse-json-in-Go"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-parse-json-in-Go/">How to parse json in Go</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-parse-json-in-Go/" class="article-date">
+	  <time datetime="2019-04-09T06:29:22.000Z" itemprop="datePublished">April 9, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/199" target="_blank" rel="noopener">#199</a></strong></p>
+<h2 id="Unmarshal-using-encoding-json"><a href="#Unmarshal-using-encoding-json" class="headerlink" title="Unmarshal using encoding/json"></a>Unmarshal using encoding/json</h2><ul>
+<li>property in struct needs to be first letter capitalized</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line">	<span class="string">"encoding/json"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> MyJsonObject <span class="keyword">struct</span> &#123;</span><br><span class="line">	Id <span class="keyword">string</span> <span class="string">`json:"id"`</span></span><br><span class="line">	Name <span class="keyword">string</span> <span class="string">`json:"name"`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> MyJsonArray <span class="keyword">struct</span> &#123;</span><br><span class="line">	Data []MyJsonObject <span class="string">`json:"data"`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">FetchJson</span><span class="params">()</span></span> &#123;</span><br><span class="line">	url := <span class="string">"https://myapp.com/json"</span></span><br><span class="line">	client := http.Client&#123;</span><br><span class="line">		Timeout: time.Second * <span class="number">10</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	request, requestError := http.NewRequest(http.MethodGet, url, <span class="literal">nil</span>)</span><br><span class="line">	request.Header.Set(<span class="string">"User-Agent"</span>, <span class="string">"myapp"</span>)</span><br><span class="line">	response, responseError := client.Do(request)</span><br><span class="line">	body, readError := ioutil.ReadAll(response.Body)</span><br><span class="line"> </span><br><span class="line">	fmt.Println(requestError, responseError, readError)</span><br><span class="line">	</span><br><span class="line">	myJsonArray := MyJsonArray&#123;&#125;</span><br><span class="line">	marshalError := json.Unmarshal(body, &amp;myJsonArray)</span><br><span class="line">	fmt.Println(jsonResponse, marshalError)	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>And how to map to another struct<br><a href="https://gobyexample.com/collection-functions" target="_blank" rel="noopener">https://gobyexample.com/collection-functions</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Map</span><span class="params">(vs []JsonStop, f <span class="keyword">func</span>(JsonStop)</span> *<span class="title">api</span>.<span class="title">Stop</span>) []*<span class="title">api</span>.<span class="title">Stop</span></span> &#123;</span><br><span class="line">    vsm := <span class="built_in">make</span>([]*api.Stop, <span class="built_in">len</span>(vs))</span><br><span class="line">    <span class="keyword">for</span> i, v := <span class="keyword">range</span> vs &#123;</span><br><span class="line">        vsm[i] = f(v)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> vsm</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">stops := Map(jsonResponse.Data, <span class="function"><span class="keyword">func</span><span class="params">(jsonStop JsonStop)</span> *<span class="title">api</span>.<span class="title">Stop</span></span> &#123;</span><br><span class="line">		stop := api.Stop&#123;</span><br><span class="line">			Id: jsonStop.Id, </span><br><span class="line">			Name: jsonStop.Name,</span><br><span class="line">			Address: jsonStop.Address,</span><br><span class="line">			Lat: jsonStop.Lat,</span><br><span class="line">			Long: jsonStop.Long&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> &amp;stop</span><br><span class="line">	&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="json-to-protobuf"><a href="#json-to-protobuf" class="headerlink" title="json to protobuf"></a>json to protobuf</h2><ul>
+<li>Use <a href="https://godoc.org/github.com/golang/protobuf/jsonpb" target="_blank" rel="noopener">https://godoc.org/github.com/golang/protobuf/jsonpb</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-resolve-deep-json-object-in-Dart"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-resolve-deep-json-object-in-Dart/">How to resolve deep json object in Dart</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-resolve-deep-json-object-in-Dart/" class="article-date">
+	  <time datetime="2019-04-08T19:50:13.000Z" itemprop="datePublished">April 8, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/198" target="_blank" rel="noopener">#198</a></strong></p>
+<p>If we are not on the edge with GRPC and Protocol Buffer, then most likely we are going to deal with Restful and JSON. In one of my <a href="https://speakerdeck.com/onmyway133/getting-started-with-flutter" target="_blank" rel="noopener">Flutter</a> apps I needed to consume JSON</p>
+<h2 id="JSON-and-serialization"><a href="#JSON-and-serialization" class="headerlink" title="JSON and serialization"></a>JSON and serialization</h2><p>The guide at <a href="https://flutter.dev/docs/development/data-and-backend/json" target="_blank" rel="noopener">https://flutter.dev/docs/development/data-and-backend/json</a> is definitely the way to go.</p>
+<p>Currently there are 2 ways. One is to manually use <code>dart:convert</code> package </p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt; user = jsonDecode(jsonString);</span><br></pre></td></tr></table></figure>
+
+<p>The other way is to use <a href="https://pub.dartlang.org/packages/json_serializable" target="_blank" rel="noopener">json_serializable</a> to generate parsing code</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'package:json_annotation/json_annotation.dart'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="markdown">/// This allows </span>the<span class="markdown"> <span class="code">`User`</span> class to access private members in</span></span></span><br><span class="line"><span class="comment"><span class="markdown">/// </span>the<span class="markdown"> generated file. The value for this is *.g.dart, where</span></span></span><br><span class="line"><span class="comment"><span class="markdown">/// </span>the<span class="markdown"> star denotes </span>the<span class="markdown"> source file name.</span></span></span><br><span class="line"><span class="keyword">part</span> <span class="string">'user.g.dart'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="markdown">/// An annotation for </span>the<span class="markdown"> code generator to know that this class needs </span>the<span class="markdown"></span></span></span><br><span class="line"><span class="comment"><span class="markdown">/// JSON serialization logic to be generated.</span></span></span><br><span class="line"><span class="meta">@JsonSerializable</span>()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">  User(<span class="keyword">this</span>.name, <span class="keyword">this</span>.email);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">String</span> name;</span><br><span class="line">  <span class="built_in">String</span> email;</span><br><span class="line"></span><br><span class="line">  <span class="comment"><span class="markdown">/// A necessary factory constructor for creating </span>a<span class="markdown"> new User instance</span></span></span><br><span class="line">  <span class="comment"><span class="markdown">/// from </span>a<span class="markdown"> map. Pass </span>the<span class="markdown"> map to </span>the<span class="markdown"> generated <span class="code">`_$UserFromJson()`</span> constructor.</span></span></span><br><span class="line">  <span class="comment"><span class="markdown">/// The constructor is named after </span>the<span class="markdown"> source class, in this case User.</span></span></span><br><span class="line">  <span class="keyword">factory</span> User.fromJson(<span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt; json) =&gt; _$UserFromJson(json);</span><br><span class="line"></span><br><span class="line">  <span class="comment"><span class="markdown">/// <span class="code">`toJson`</span> is </span>the<span class="markdown"> convention for </span>a<span class="markdown"> class to declare support for serialization</span></span></span><br><span class="line">  <span class="comment"><span class="markdown">/// to JSON. The implementation </span>simply<span class="markdown"> calls </span>the<span class="markdown"> private, generated</span></span></span><br><span class="line">  <span class="comment"><span class="markdown">/// helper method <span class="code">`_$UserToJson`</span>.</span></span></span><br><span class="line">  <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt; toJson() =&gt; _$UserToJson(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="json-resolve"><a href="#json-resolve" class="headerlink" title="json_resolve"></a>json_resolve</h2><p>The problem with manual approach is that it involves lot of boilerplate code, especially when accessing property inside deeply nested json. The problem with code generation approach is that it does not always fit our need and may lack of customization.</p>
+<p>Therefore I created <a href="https://github.com/onmyway133/json_resolve" target="_blank" rel="noopener">json_resolve</a> which allows us to access json using keypath, with type checking and safety in mind. The code is small, simple to reason and tested.</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="built_in">String</span> byProperty = resolve(json: json, path: <span class="string">"movie"</span>, defaultValue: <span class="string">"error"</span>);</span><br><span class="line">expect(byProperty, <span class="string">"isFun"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="built_in">int</span> byInt = resolve(json: json, path: <span class="string">"earth"</span>, defaultValue: <span class="number">0</span>);</span><br><span class="line">expect(byInt, <span class="number">199999</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="built_in">String</span> byIndex = resolve(json: json, path: <span class="string">"dc.2.name"</span>, defaultValue: <span class="string">"error"</span>);</span><br><span class="line">expect(byIndex, <span class="string">"Wonder Woman"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="built_in">String</span> byIndexThenProperty = resolve(json: json, path: <span class="string">"marvel.0.appear.1.title"</span>, defaultValue: <span class="string">"error"</span>);</span><br><span class="line">expect(byIndexThenProperty, <span class="string">"The Dark World"</span>);</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dart/">dart</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flutter/">flutter</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-generate-grpc-protobuf-files"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-generate-grpc-protobuf-files/">How to generate grpc protobuf files</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-generate-grpc-protobuf-files/" class="article-date">
+	  <time datetime="2019-04-08T08:40:12.000Z" itemprop="datePublished">April 8, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/197" target="_blank" rel="noopener">#197</a></strong></p>
+<h2 id="protoc"><a href="#protoc" class="headerlink" title="protoc"></a>protoc</h2><p><a href="https://grpc.io/docs/quickstart/go.html" target="_blank" rel="noopener">https://grpc.io/docs/quickstart/go.html</a></p>
+<blockquote>
+<p>Install the protoc compiler that is used to generate gRPC service code. The simplest way to do this is to download pre-compiled binaries for your platform(protoc-<version>-<platform>.zip) from here: <a href="https://github.com/google/protobuf/releases" target="_blank" rel="noopener">https://github.com/google/protobuf/releases</a></platform></version></p>
+</blockquote>
+<blockquote>
+<p>Unzip this file.<br>Update the environment variable PATH to include the path to the protoc binary file.</p>
+</blockquote>
+<h2 id="Go-protoc-plugin"><a href="#Go-protoc-plugin" class="headerlink" title="Go protoc plugin"></a>Go protoc plugin</h2><p><a href="https://github.com/golang/protobuf" target="_blank" rel="noopener">https://github.com/golang/protobuf</a></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com/golang/protobuf/protoc-gen-go</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$GOPATH</span>/bin</span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<h2 id="Swift-protoc-plugin"><a href="#Swift-protoc-plugin" class="headerlink" title="Swift protoc plugin"></a>Swift protoc plugin</h2><p><a href="https://github.com/grpc/grpc-swift" target="_blank" rel="noopener">https://github.com/grpc/grpc-swift</a></p>
+<blockquote>
+<p>The recommended way to use Swift gRPC is to first define an API using the<br><a href="https://developers.google.com/protocol-buffers/" target="_blank" rel="noopener">Protocol Buffer</a><br>language and then use the<br><a href="https://github.com/google/protobuf" target="_blank" rel="noopener">Protocol Buffer Compiler</a><br>and the <a href="https://github.com/apple/swift-protobuf" target="_blank" rel="noopener">Swift Protobuf</a><br>and <a href="https://github.com/grpc/grpc-swift" target="_blank" rel="noopener">Swift gRPC</a> plugins to<br>generate the necessary support code.</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/grpc/grpc-swift.git</span><br><span class="line"><span class="built_in">cd</span> grpc-swift</span><br><span class="line">make</span><br><span class="line">sudo cp protoc-gen-swift protoc-gen-swiftgrpc /usr/<span class="built_in">local</span>/bin</span><br></pre></td></tr></table></figure>
+
+<h2 id="Generate"><a href="#Generate" class="headerlink" title="Generate"></a>Generate</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protoc --swift_out=MyApp/Api --swiftgrpc_out=Client=<span class="literal">true</span>,Server=<span class="literal">false</span>:MyApp/Api --go_out=plugins=grpc:server/api api.proto</span><br></pre></td></tr></table></figure>
+
+<p>In case we need to cd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd MyApp/Library/Models/Proto</span><br><span class="line"></span><br><span class="line">protoc --swift_out=../Generated --swiftgrpc_out=Client=true,Server=false:../Generated api.proto</span><br></pre></td></tr></table></figure>
+
+<h3 id="Empty"><a href="#Empty" class="headerlink" title="Empty"></a>Empty</h3><p>If remote import is needed, then the workaround is to download the that proto locally, for example empty.proto <a href="https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/empty.proto" target="_blank" rel="noopener">https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/empty.proto</a></p>
+<p>Inside SwiftProtobuf pod, there is generated <code>empty.pb.swift</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">Google_Protobuf_Empty</span> </span>&#123;</span><br><span class="line">  <span class="comment">// SwiftProtobuf.Message conformance is added in an extension below. See the</span></span><br><span class="line">  <span class="comment">// `Message` and `Message+*Additions` files in the SwiftProtobuf library for</span></span><br><span class="line">  <span class="comment">// methods supported on all messages.</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">var</span> unknownFields = <span class="type">SwiftProtobuf</span>.<span class="type">UnknownStorage</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">init</span>() &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To consume, we can </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftProtobuf</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> empty = <span class="type">Google_Protobuf_Empty</span>()</span><br></pre></td></tr></table></figure>
+
+<h3 id="oneof-mode"><a href="#oneof-mode" class="headerlink" title="oneof mode"></a>oneof mode</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">message Person &#123;</span><br><span class="line">  oneof mode &#123;</span><br><span class="line">    Human human = 1;</span><br><span class="line">    Superman superman = 2;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Cannot convert value of type ‘Server_Person.OneOf_Mode’ to expected argument type ‘Server_Human’</p>
+</blockquote>
+<p>Need to assign the mode</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person = <span class="type">Person</span>()</span><br><span class="line">person.mode = <span class="type">Person</span>.<span class="type">OneOf_Mode</span>.<span class="type">Human</span>()</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-cache-CocoaPods"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-cache-CocoaPods/">How to cache CocoaPods</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-cache-CocoaPods/" class="article-date">
+	  <time datetime="2019-04-05T08:08:09.000Z" itemprop="datePublished">April 5, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/196" target="_blank" rel="noopener">#196</a></strong></p>
+<h2 id="CocoaPods-vs-Carthage"><a href="#CocoaPods-vs-Carthage" class="headerlink" title="CocoaPods vs Carthage"></a>CocoaPods vs Carthage</h2><ul>
+<li><a href="https://shashikantjagtap.net/carthage-cocoapods-question/" target="_blank" rel="noopener">Carthage or CocoaPods: That is the question</a></li>
+</ul>
+<blockquote>
+<p>CocoaPods will build and compile our frameworks every time whenever you are doing the clean build or run pod install or pod update for the project.</p>
+</blockquote>
+<h2 id="Cache-Carthage"><a href="#Cache-Carthage" class="headerlink" title="Cache Carthage"></a>Cache Carthage</h2><ul>
+<li><a href="https://medium.com/@rajatvig/speeding-up-carthage-for-ios-applications-50e8d0a197e1" target="_blank" rel="noopener">Speeding up Carthage for iOS Applications</a></li>
+<li><a href="https://medium.com/getpulse/improving-the-xcode-project-build-times-with-carthage-296deec9ebb4" target="_blank" rel="noopener">Faster builds in Xcode with Carthage</a></li>
+</ul>
+<h2 id="Cache-CocoaPods"><a href="#Cache-CocoaPods" class="headerlink" title="Cache CocoaPods"></a>Cache CocoaPods</h2><ul>
+<li><a href="https://blog.takescoop.com/improve-ios-ci-build-time-with-cocoapods-caching-4a049ee45e63" target="_blank" rel="noopener">Improve iOS CI build times with CocoaPods caching</a> 👍 </li>
+<li><a href="https://stackoverflow.com/questions/41891333/any-way-to-clean-only-current-xcode-project-but-not-cocoapods-dependencies" target="_blank" rel="noopener">Any way to clean only current Xcode project but not Cocoapods dependencies?</a></li>
+<li><a href="https://guides.cocoapods.org/plugins/pre-compiling-dependencies.html" target="_blank" rel="noopener">Pre-compiling dependencies</a></li>
+<li><a href="https://github.com/leavez/cocoapods-binary" target="_blank" rel="noopener">cocoapods-binary</a> 🚀 </li>
+</ul>
+<blockquote>
+<p>It will compile the source code of pods during the pod install process, and make CocoaPods use them. Which pod should be compiled is controlled by the flag in Podfile.</p>
+</blockquote>
+<h2 id="Xcode-10-new-build-system"><a href="#Xcode-10-new-build-system" class="headerlink" title="Xcode 10 new build system"></a>Xcode 10 new build system</h2><ul>
+<li><a href="https://www.ralfebert.de/ios/blog/cocoapods-clean-input-output-files/" target="_blank" rel="noopener">CocoaPods and the new Xcode build system</a></li>
+<li><a href="https://forums.developer.apple.com/thread/108729" target="_blank" rel="noopener">Xcode 10 - Clean (missing) vs Clean Build Folder</a></li>
+</ul>
+<h2 id="Understanding-framework"><a href="#Understanding-framework" class="headerlink" title="Understanding framework"></a>Understanding framework</h2><ul>
+<li><a href="https://www.bignerdranch.com/blog/it-looks-like-you-are-trying-to-use-a-framework/" target="_blank" rel="noopener">It Looks Like You Are Trying to Use a Framework</a> 🚀 </li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocoapods/">cocoapods</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-build-a-networking-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -538,6 +807,55 @@ var themeMenus = {};
     
 
   
+    <article id="post-OSS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/OSS/">OSS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/OSS/" class="article-date">
+	  <time datetime="2019-03-25T07:19:13.000Z" itemprop="datePublished">March 25, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/189" target="_blank" rel="noopener">#189</a></strong></p>
+<ul>
+<li><a href="https://github.com/digipost/ios" target="_blank" rel="noopener">https://github.com/digipost/ios</a></li>
+<li><a href="https://github.com/wwdc/2019" target="_blank" rel="noopener">https://github.com/wwdc/2019</a></li>
+<li><a href="https://github.com/google/science-journal-ios" target="_blank" rel="noopener">https://github.com/google/science-journal-ios</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Links-for-OSS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -577,55 +895,6 @@ var themeMenus = {};
   <span class="ico-tags"></span>
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li></ul>
 
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-OSS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/OSS/">OSS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/OSS/" class="article-date">
-	  <time datetime="2019-03-25T07:19:13.000Z" itemprop="datePublished">March 25, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/189" target="_blank" rel="noopener">#189</a></strong></p>
-<ul>
-<li><a href="https://github.com/digipost/ios" target="_blank" rel="noopener">https://github.com/digipost/ios</a></li>
-<li><a href="https://github.com/wwdc/2019" target="_blank" rel="noopener">https://github.com/wwdc/2019</a></li>
-<li><a href="https://github.com/google/science-journal-ios" target="_blank" rel="noopener">https://github.com/google/science-journal-ios</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
       
             
       
@@ -1787,274 +2056,11 @@ const workouts = await toPromise(readWorkout)</code></pre><h2 id="Where-to-go-fr
     
 
   
-    <article id="post-How-to-fix-MethodError-undefined-method-real_path-with-CocoaPods"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-fix-MethodError-undefined-method-real_path-with-CocoaPods/">How to fix MethodError - undefined method `real_path` with CocoaPods?</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-fix-MethodError-undefined-method-real_path-with-CocoaPods/" class="article-date">
-	  <time datetime="2019-02-25T13:55:08.000Z" itemprop="datePublished">February 25, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/170" target="_blank" rel="noopener">#170</a></strong></p>
-<p><img src="https://user-images.githubusercontent.com/2284279/53346190-d3622880-3916-11e9-9028-ad0a6a37b277.jpg" alt="abc"></p>
-<p>I’m using cocoapods 1.6.0.beta.2 in a React Native apps and it has been working fine. The pods that I need is <code>Firebase</code> and <code>FacebookSDK</code>. Today after pod install, I got error</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NoMethodError - undefined method `real_path&apos; for nil:NilClass</span><br></pre></td></tr></table></figure>
-
-<p>I then tried running <code>pod deintegrate</code> to start from scratch, but that command fails as well.</p>
-<p>My next try is with <code>cocoapods 1.6.0</code> and <code>cocoapods 1.6.1</code> but the problem still persists.</p>
-<p><code>undefined method</code> in Ruby means that we are calling a method on an object that is nil. I like to track down problems via reading code, but this error is very vague.</p>
-<p>Looking thorough at the log, I see CocoaPods has done fetching dependencies, but fails at the integration step, so it must be something wrong with my project file.</p>
-<p>Then I trace back commits to <code>project.pbxproj</code> to see if there’s anything wrong. It turns out that there was a commit that accidentally removes <code>Pods-MyApp Staging.release.xcconfig</code> from project. That also comes with removal of</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">baseConfigurationReference = B7FC69316CC27F11022F8A82 /* Pods-MyApp Staging.release.xcconfig */;</span><br></pre></td></tr></table></figure>
-
-<h2 id="CocoaPods-uses-xcconfig"><a href="#CocoaPods-uses-xcconfig" class="headerlink" title="CocoaPods uses xcconfig"></a>CocoaPods uses xcconfig</h2><p>As you know, CocoaPods uses <code>xcconfig</code> files to declare pod related information like  <code>FRAMEWORK_SEARCH_PATHS</code>, <code>OTHER_LDFLAGS</code> and other variables like</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PODS_BUILD_DIR = $&#123;BUILD_DIR&#125;</span><br><span class="line">PODS_CONFIGURATION_BUILD_DIR = $&#123;PODS_BUILD_DIR&#125;/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)</span><br><span class="line">PODS_PODFILE_DIR_PATH = $&#123;SRCROOT&#125;/.</span><br><span class="line">PODS_ROOT = $&#123;SRCROOT&#125;/Pods</span><br></pre></td></tr></table></figure>
-
-<p>And for a normal <code>pod install</code>, CocoaPods adds some <code>xcconfig</code> files to your project, and the path is <code>Pods/Target Support Files/Pods-DeepDiffDemo</code>. There will always be <code>debug.xcconfig</code> and <code>release.xcconfig</code> for each of your project target.</p>
-<img width="1678" alt="xcconfig" src="https://user-images.githubusercontent.com/2284279/53345363-0dcac600-3915-11e9-975f-e6a7207912d0.png">
-
-<p>If your project MyApp has a production target called <code>MyApp Production</code> and <code>MyApp Staging</code>, then you should have these files</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Pods-MyApp Staging.debug.xcconfig</span><br><span class="line">Pods-MyApp Staging.release.xcconfig</span><br><span class="line">Pods-MyApp Production.debug.xcconfig</span><br><span class="line">Pods-MyApp Production.release.xcconfig</span><br></pre></td></tr></table></figure>
-
-<p>These are added to projects but not checked to any targets. Just like plist, you don’t need to add xcconfig files to target.</p>
-<p>If you go to project Info page, you will see that these xcconfig files are selected</p>
-<img width="824" alt="project" src="https://user-images.githubusercontent.com/2284279/53345592-93e70c80-3915-11e9-9826-3d1b9f30b900.png">
-
-<h2 id="Missing-xcconfig"><a href="#Missing-xcconfig" class="headerlink" title="Missing xcconfig"></a>Missing xcconfig</h2><p>In my case, <code>Pods-MyApp Staging.release.xcconfig</code> was somehow missing from project, hence all pod commands fail.</p>
-<p>The fix is to re-add that file and select that xcconfig in project Info page</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocoapods/">cocoapods</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Testimonial"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Testimonial/">Testimonial</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Testimonial/" class="article-date">
-	  <time datetime="2018-12-18T16:16:33.000Z" itemprop="datePublished">December 18, 2018</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/169" target="_blank" rel="noopener">#169</a></strong></p>
-<p><a href="https://medium.com/@kylpo/wow-i-learned-so-much-from-this-article-thank-you-595f29077633" target="_blank" rel="noopener">https://medium.com/@kylpo/wow-i-learned-so-much-from-this-article-thank-you-595f29077633</a></p>
-<img width="534" alt="xcode" src="https://user-images.githubusercontent.com/2284279/50170685-ca3e5500-02f0-11e9-81fe-86aa08207735.png">
-
-<p><a href="https://stackoverflow.com/questions/34990175/test-target-x-encountered-an-error-early-unexpected-exit-operation-never-finis/36343395?noredirect=1#comment94467666_36343395" target="_blank" rel="noopener">https://stackoverflow.com/questions/34990175/test-target-x-encountered-an-error-early-unexpected-exit-operation-never-finis/36343395?noredirect=1#comment94467666_36343395</a></p>
-<img width="690" alt="test" src="https://user-images.githubusercontent.com/2284279/50170737-e5a96000-02f0-11e9-8608-ee434869e232.png">
-
-<p><a href="https://github.com/onmyway133/notes/issues/2" target="_blank" rel="noopener">https://github.com/onmyway133/notes/issues/2</a></p>
-<img width="581" alt="rotation" src="https://user-images.githubusercontent.com/2284279/50170776-feb21100-02f0-11e9-9bd0-e88703c84abf.png">
-
-<p><a href="https://stackoverflow.com/questions/49478/git-ignore-file-for-xcode-projects/26034755#26034755" target="_blank" rel="noopener">https://stackoverflow.com/questions/49478/git-ignore-file-for-xcode-projects/26034755#26034755</a></p>
-<img width="695" alt="example" src="https://user-images.githubusercontent.com/2284279/50208156-c0f4cd00-0370-11e9-8926-05cf66f39bc5.png">
-
-<p><a href="https://stackoverflow.com/a/46122458/1418457" target="_blank" rel="noopener">https://stackoverflow.com/a/46122458/1418457</a></p>
-<img width="719" alt="push" src="https://user-images.githubusercontent.com/2284279/52259951-ad072980-2924-11e9-8756-ada74e1f739e.png">
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Understanding-weak-and-strong-in-Objective-C"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Understanding-weak-and-strong-in-Objective-C/">Understanding weak and strong in Objective C</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Understanding-weak-and-strong-in-Objective-C/" class="article-date">
-	  <time datetime="2018-05-31T10:41:57.000Z" itemprop="datePublished">May 31, 2018</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/164" target="_blank" rel="noopener">#164</a></strong></p>
-<p>From my own blog post <a href="https://github.com/Fantageek/fantageek.github.io/blob/source/source/_posts/2014-06-27-understanding-weak-self-and-strong-self.markdown" target="_blank" rel="noopener">https://github.com/Fantageek/fantageek.github.io/blob/source/source/_posts/2014-06-27-understanding-weak-self-and-strong-self.markdown</a></p>
-<hr>
-<p>Blocks are wonderful. To avoid retain cycle you often see the weakSelf - strongSelf dance like this</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__<span class="keyword">weak</span> __typeof__(<span class="keyword">self</span>) weakSelf = <span class="keyword">self</span>;</span><br><span class="line">    <span class="keyword">self</span>.block = ^&#123;</span><br><span class="line">        __typeof__(<span class="keyword">self</span>) strongSelf = weakSelf;</span><br><span class="line">        [strongSelf doSomething];</span><br><span class="line">        [strongSelf doSomethingElse];</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
-
-<h2 id="When-block-is-created"><a href="#When-block-is-created" class="headerlink" title="When block is created"></a>When block is created</h2><h4 id="Block-is-object-when-it-is-copied"><a href="#Block-is-object-when-it-is-copied" class="headerlink" title="Block is object when it is copied"></a>Block is object when it is copied</h4><p>Blocks are created on the stack and will go away when their stack frame returns. While on the stack, a block has no effect on the storage or lifetime of anything it accesses.</p>
-<p>If blocks need to exist after the stack frame returns, they can be copied to the heap and this action is an explicit operation. This way, a block will gain reference-counting as all objects in Cocoa. When they are copied, they take their captured scope with them, retaining any objects they refer</p>
-<h4 id="Blocks-can-capture-values-from-the-enclosing-scope"><a href="#Blocks-can-capture-values-from-the-enclosing-scope" class="headerlink" title="Blocks can capture values from the enclosing scope"></a>Blocks can capture values from the enclosing scope</h4><p>As well as containing executable code, a block also has the ability to capture state from its enclosing scope. Note that block captures the variable along with its decorators (i.e. weak qualifier),</p>
-<p>=&gt; This explains why you need to declare self as __weak</p>
-<h2 id="When-block-is-executed"><a href="#When-block-is-executed" class="headerlink" title="When block is executed"></a>When block is executed</h2><p>When block is executed, it is possible for weakSelf to be non-nil for the first method (doSomething), but not for the second (doSomethingElse)</p>
-<p>You may think, at first, this is a trick to use self inside the block avoiding the retain cycle warning. This is not the case. The strong reference to self is created at block execution time while using self in the block is evaluated at block declaration time, thus retaining the object.</p>
-<p>For best practice, however, you should create a strong reference of your object using the weak one. This won’t create a retain cycle either as the strong pointer within the block will only exist until the block completes (it’s only scope is the block itself).</p>
-<p>=&gt; This explains why you need to declare another __strong self</p>
-<h2 id="More-explanation"><a href="#More-explanation" class="headerlink" title="More explanation"></a>More explanation</h2><p>This is my answer to reader Nikita</p>
-<ol>
-<li><p>As many people point out, “Blocks are created on the stack and will go away when their stack frame returns. While on the stack, a block has no effect on the storage or lifetime of anything it accesses.”<br>Even if block (declared on the stack) increase reference count to all the object it accesses, this would be useless, because this block will be discard when function returns</p>
-</li>
-<li><p>When block are copied (You see that people usually declare property (copy) for block), it will increase reference count to all the objects it accesses.</p>
-</li>
-</ol>
-<p>Why? because block are mean to be executed at a later time, so it need to keep strong reference to all the object it access. Block can be executed MANY TIMES, so IT WON’T RELEASE self AFTER this ran.</p>
-<p>When you nil out the block, it will be dealloc, hence it will decrease the reference count to all the objects it access.</p>
-<p>AFNetworking nil out the block after it is called, so you don’t have to use weakself inside block <a href="http://www.fantageek.com/1376/afnetworking-gotcha-2/" target="_blank" rel="noopener">http://www.fantageek.com/1376/afnetworking-gotcha-2/</a></p>
-<ol>
-<li>So there are cases when you don’t have to use weakself inside block<br>a. Make sure the block is not copied, you simply declare and run it<br>b. Make sure the block is nil out after it is called</li>
-</ol>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
-<li><a href="http://dhoerl.wordpress.com/2013/04/23/i-finally-figured-out-weakself-and-strongself/" target="_blank" rel="noopener">I finally figured out weakSelf and strongSelf</a></li>
-<li><a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithBlocks/WorkingwithBlocks.html" target="_blank" rel="noopener">Working with Blocks</a></li>
-<li><a href="http://albertodebortoli.github.io/blog/2013/08/03/objective-c-blocks-caveat/" target="_blank" rel="noopener">Objective-C Blocks Caveat</a></li>
-<li><a href="http://albertodebortoli.github.io/blog/2013/04/21/objective-c-blocks-under-the-hood/" target="_blank" rel="noopener">Objective-C Blocks Under the Hood</a></li>
-<li><a href="http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-1/" target="_blank" rel="noopener">A look inside blocks: Episode 1</a></li>
-<li><a href="http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-2/" target="_blank" rel="noopener">A look inside blocks: Episode 2</a></li>
-<li><a href="http://www.galloway.me.uk/2013/05/a-look-inside-blocks-episode-3-block-copy/" target="_blank" rel="noopener">A look inside blocks: Episode 3</a></li>
-<li><a href="http://nilsou.com/blog/2013/08/21/objective-c-blocks-syntax/" target="_blank" rel="noopener">From C Declarators to Objective-C Blocks Syntax</a></li>
-<li><a href="http://arigrant.com/blog/2014/1/18/the-syntax-of-objective-c-blocks" target="_blank" rel="noopener">The Syntax of Objective-C Blocks</a></li>
-<li><a href="http://stackoverflow.com/a/17105368/1418457" target="_blank" rel="noopener">Referring to weak self inside a nested block</a></li>
-<li><a href="http://blackpixel.com/blog/2014/03/capturing-myself.html" target="_blank" rel="noopener">Capturing My(self)</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/objc/">objc</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Interesting-how-did-you-managed-to-plug-GitHub-issues-into-the-dev.to-platform"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Interesting-how-did-you-managed-to-plug-GitHub-issues-into-the-dev.to-platform/">Interesting, how did you managed to plug GitHub issues into the dev.to platform</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Interesting-how-did-you-managed-to-plug-GitHub-issues-into-the-dev.to-platform/" class="article-date">
-	  <time datetime="2018-05-26T20:14:56.000Z" itemprop="datePublished">May 26, 2018</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/163" target="_blank" rel="noopener">#163</a></strong></p>
-<p>I’ve found your post <a href="https://dev.to/onmyway133/changing-electron-app-icon" target="_blank" rel="noopener">https://dev.to/onmyway133/changing-electron-app-icon</a> and fist thought there is some static site generator which uses GitHub’s issues as a datasource.</p>
-<p>Am I right?</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/10/">Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/12/">Next</a>
+    <a class="extend prev" rel="prev" href="/page/10/">Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/12/">Next</a>
   </nav>
 
 </section>
@@ -2154,6 +2160,54 @@ const workouts = await toPromise(readWorkout)</code></pre><h2 id="Where-to-go-fr
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-show-localized-text-in-SwiftUi/">How to show localized text in SwiftUi</a></h6>
+              <span>December 9, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-show-flag-emoji-from-country-code-in-Swift/">How to show flag emoji from country code in Swift</a></h6>
+              <span>December 9, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-work-with-git/">How to work with git</a></h6>
+              <span>December 9, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-fix-cropped-image-in-UIImageView/">How to fix cropped image in UIImageView</a></h6>
+              <span>December 6, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-use-decoration-view-in-UICollectionView/">How to use decoration view in UICollectionView</a></h6>
               <span>December 5, 2019</span>
             </div>
@@ -2172,54 +2226,6 @@ const workouts = await toPromise(readWorkout)</code></pre><h2 id="Where-to-go-fr
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-convert-from-callback-to-Future-Publisher-in-Combine/">How to convert from callback to Future Publisher in Combine</a></h6>
-              <span>December 2, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-make-init-with-closure-in-Swift/">How to make init with closure in Swift</a></h6>
-              <span>December 1, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-test-a-developing-package-with-Swift-Package-Manager/">How to test a developing package with Swift Package Manager</a></h6>
-              <span>November 30, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-method-from-protocol-extension-in-Swift/">How to use method from protocol extension in Swift</a></h6>
-              <span>November 30, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2232,7 +2238,7 @@ const workouts = await toPromise(readWorkout)</code></pre><h2 id="Where-to-go-fr
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.65px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.18px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.18px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.59px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.76px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 11.76px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.59px;">css</a> <a href="/tags/dart/" style="font-size: 11.76px;">dart</a> <a href="/tags/database/" style="font-size: 10.59px;">database</a> <a href="/tags/design/" style="font-size: 10.59px;">design</a> <a href="/tags/electron/" style="font-size: 11.76px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.76px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.76px;">flutter</a> <a href="/tags/git/" style="font-size: 10.59px;">git</a> <a href="/tags/github/" style="font-size: 12.35px;">github</a> <a href="/tags/go/" style="font-size: 10.59px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.41px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.24px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.06px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.18px;">layout</a> <a href="/tags/life/" style="font-size: 14.12px;">life</a> <a href="/tags/links/" style="font-size: 14.12px;">links</a> <a href="/tags/macOS/" style="font-size: 18.82px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.59px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.76px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.53px;">node</a> <a href="/tags/objc/" style="font-size: 10.59px;">objc</a> <a href="/tags/react/" style="font-size: 11.18px;">react</a> <a href="/tags/react-native/" style="font-size: 15.29px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.18px;">rx</a> <a href="/tags/script/" style="font-size: 10.59px;">script</a> <a href="/tags/spm/" style="font-size: 11.18px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.47px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.88px;">tech</a> <a href="/tags/terminal/" style="font-size: 12.35px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.94px;">testing</a> <a href="/tags/tool/" style="font-size: 10px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.76px;">voip</a> <a href="/tags/watchOS/" style="font-size: 14.12px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.59px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.59px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 14.71px;">xcode</a>
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.65px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.18px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.18px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.59px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.76px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 11.76px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.59px;">css</a> <a href="/tags/dart/" style="font-size: 11.76px;">dart</a> <a href="/tags/database/" style="font-size: 10.59px;">database</a> <a href="/tags/design/" style="font-size: 10.59px;">design</a> <a href="/tags/electron/" style="font-size: 11.76px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.76px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.76px;">flutter</a> <a href="/tags/git/" style="font-size: 11.18px;">git</a> <a href="/tags/github/" style="font-size: 12.35px;">github</a> <a href="/tags/go/" style="font-size: 10.59px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.41px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.24px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.06px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.18px;">layout</a> <a href="/tags/life/" style="font-size: 14.12px;">life</a> <a href="/tags/links/" style="font-size: 14.12px;">links</a> <a href="/tags/macOS/" style="font-size: 18.82px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.59px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.76px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.53px;">node</a> <a href="/tags/objc/" style="font-size: 10.59px;">objc</a> <a href="/tags/react/" style="font-size: 11.18px;">react</a> <a href="/tags/react-native/" style="font-size: 15.29px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.18px;">rx</a> <a href="/tags/script/" style="font-size: 10.59px;">script</a> <a href="/tags/spm/" style="font-size: 11.18px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.47px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.88px;">tech</a> <a href="/tags/terminal/" style="font-size: 12.35px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.94px;">testing</a> <a href="/tags/tool/" style="font-size: 10px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.76px;">voip</a> <a href="/tags/watchOS/" style="font-size: 14.12px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.59px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.59px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 14.71px;">xcode</a>
     </div>
   </div>
 
@@ -2242,7 +2248,7 @@ const workouts = await toPromise(readWorkout)</code></pre><h2 id="Where-to-go-fr
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2252,7 +2258,7 @@ const workouts = await toPromise(readWorkout)</code></pre><h2 id="Where-to-go-fr
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">136</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">192</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">22</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">11</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">34</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">137</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">36</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">24</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">194</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">11</span></li></ul>
     </div>
   </div>
 
