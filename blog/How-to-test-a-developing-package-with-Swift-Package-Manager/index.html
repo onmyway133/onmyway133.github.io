@@ -31,7 +31,10 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://user-images.githubusercontent.com/2284279/69906344-6d816080-13c2-11ea-9592-43c037e6a226.png">
 <meta property="og:image" content="https://user-images.githubusercontent.com/2284279/69906361-97d31e00-13c2-11ea-9102-f75b66458fda.png">
-<meta property="og:updated_time" content="2019-12-01T20:22:52.000Z">
+<meta property="og:image" content="https://user-images.githubusercontent.com/2284279/70854277-d33d1480-1eb9-11ea-90be-734f150ce418.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/2284279/70854478-9888ab80-1ebc-11ea-8020-2389ae32a987.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/2284279/70854477-9292ca80-1ebc-11ea-900d-57b2419f9d41.png">
+<meta property="og:updated_time" content="2019-12-14T19:56:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to test a developing package with Swift Package Manager">
 <meta name="twitter:description" content="Issue #525 Use macOS Command Line projectExample Puma  Create a new macOS project, select Command Line Tool Drag Puma.xcodeproj as a sub project of our test project Go to our TestPuma target, under Li">
@@ -227,12 +230,31 @@ var themeMenus = {};
 <ul>
 <li>As our Puma.xcodeproj is inside this test project, we can drill down into our Puma.xcodeproj and update the code.</li>
 </ul>
+<h2 id="Workspace"><a href="#Workspace" class="headerlink" title="Workspace"></a>Workspace</h2><p>Instead of dragging Puma as a subproject of TestPuma, we can use workspace, and link Puma frameworks</p>
+<img width="1680" alt="Screenshot 2019-12-14 at 21 36 32" src="https://user-images.githubusercontent.com/2284279/70854277-d33d1480-1eb9-11ea-90be-734f150ce418.png">
+
 <h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><h3 id="Code-signing-for-frameworks"><a href="#Code-signing-for-frameworks" class="headerlink" title="Code signing for frameworks"></a>Code signing for frameworks</h3><p>To avoid signing issue, we need to select a Team for all  frameworks</p>
 <blockquote>
 <p>not valid for use in process using Library Validation: mapped file has no Team ID and is not a platform binary (signed with custom identity or adhoc?</p>
 </blockquote>
 <h3 id="Library-not-loaded"><a href="#Library-not-loaded" class="headerlink" title="Library not loaded"></a>Library not loaded</h3><p>Need to set runpath search path, read <a href="https://stackoverflow.com/questions/28577692/macos-command-line-tool-with-swift-cocoa-framework-library-not-loaded" target="_blank" rel="noopener">https://stackoverflow.com/questions/28577692/macos-command-line-tool-with-swift-cocoa-framework-library-not-loaded</a></p>
 <p>Specify <code>LD_RUNPATH_SEARCH_PATHS = @executable_path</code> in Build Settings</p>
+<h3 id="missing-required-module-‘clibc’"><a href="#missing-required-module-‘clibc’" class="headerlink" title="missing required module ‘clibc’"></a>missing required module ‘clibc’</h3><p>Take a look at Puma -&gt; SPMLibc, there’s header search path</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(SRCROOT)/.build/checkouts/swift-package-manager/Sources/clibc/include</span><br></pre></td></tr></table></figure>
+
+<p>which is at the <code>.build</code> folder inside root</p>
+<img width="897" alt="Screenshot 2019-12-14 at 21 55 30" src="https://user-images.githubusercontent.com/2284279/70854478-9888ab80-1ebc-11ea-8020-2389ae32a987.png">
+
+
+<p>So for our TestPuma target, we need to add this header search path with the correct path</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(SRCROOT)/../../.build/checkouts/swift-package-manager/Sources/clibc/include</span><br></pre></td></tr></table></figure>
+
+<img width="1680" alt="Screenshot 2019-12-14 at 21 55 55" src="https://user-images.githubusercontent.com/2284279/70854477-9292ca80-1ebc-11ea-900d-57b2419f9d41.png">
+
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://github.com/apple/swift-package-manager/blob/master/Documentation/Development.md#developing-using-xcode" target="_blank" rel="noopener">Swift Package Manager Developing using Xcode</a></li>
+</ul>
 
       
     </div>
@@ -277,7 +299,7 @@ var themeMenus = {};
     <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
     <strong class="toc-title">Contents</strong>
     
-      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-macOS-Command-Line-project"><span class="nav-number">1.</span> <span class="nav-text">Use macOS Command Line project</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Troubleshooting"><span class="nav-number">2.</span> <span class="nav-text">Troubleshooting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Code-signing-for-frameworks"><span class="nav-number">2.1.</span> <span class="nav-text">Code signing for frameworks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Library-not-loaded"><span class="nav-number">2.2.</span> <span class="nav-text">Library not loaded</span></a></li></ol></li></ol>
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-macOS-Command-Line-project"><span class="nav-number">1.</span> <span class="nav-text">Use macOS Command Line project</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Workspace"><span class="nav-number">2.</span> <span class="nav-text">Workspace</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Troubleshooting"><span class="nav-number">3.</span> <span class="nav-text">Troubleshooting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Code-signing-for-frameworks"><span class="nav-number">3.1.</span> <span class="nav-text">Code signing for frameworks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Library-not-loaded"><span class="nav-number">3.2.</span> <span class="nav-text">Library not loaded</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#missing-required-module-‘clibc’"><span class="nav-number">3.3.</span> <span class="nav-text">missing required module ‘clibc’</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Read-more"><span class="nav-number">4.</span> <span class="nav-text">Read more</span></a></li></ol>
     
     </div>
   </aside>
