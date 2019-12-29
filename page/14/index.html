@@ -179,6 +179,310 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-prevent-UIVisualEffectView-crash"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-prevent-UIVisualEffectView-crash/">How to prevent UIVisualEffectView crash</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-prevent-UIVisualEffectView-crash/" class="article-date">
+	  <time datetime="2017-12-20T09:40:35.000Z" itemprop="datePublished">December 20, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/124" target="_blank" rel="noopener">#124</a></strong></p>
+<p>We all know that there’s a potential crash with <code>UIVisualEffectView</code> on iOS 11. The fix is to not add sub views directly to <code>UIVisualEffectView</code>, but to its <code>contentView</code>. So we should change</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">effectView.addSubview(button)</span><br></pre></td></tr></table></figure>
+
+<p>to </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">effectView.contentView.addubView(button)</span><br></pre></td></tr></table></figure>
+
+<p>Here we don’t need to perform iOS version check, because <code>effectView.contentView</code> works for any iOS versions.</p>
+<h3 id="Potential-cases-for-crashes"><a href="#Potential-cases-for-crashes" class="headerlink" title="Potential cases for crashes"></a>Potential cases for crashes</h3><p>Here are some cases you can potentially cause the crashes</p>
+<p><strong><em>Strange namings</em></strong></p>
+<p>Normally we name our <code>UIVisualEffectView</code> as <code>blurView</code>, <code>effectView</code>. But there’s times we name it differently like <code>navigationView</code>, <code>containerView</code>, <code>boxView</code>, … This way we may completely forget that it’s a <code>UIVisualEffectView</code> 🙀 </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">containerView.addSubview(button)</span><br><span class="line">boxView.insertSubview(label, at: <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>Custom loadView</em></strong></p>
+<p>Sometimes it’s convenient to have our <code>UIViewController &#39;s view</code> as a whole blur view, so that all things inside have a nice blur effect background</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OverlayController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> blurView = <span class="type">UIVisualEffectView</span>(effect: <span class="type">UIBlurEffect</span>(style: .dark))</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">loadView</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.loadView()</span><br><span class="line">    <span class="keyword">self</span>.view = blurView</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">    view.addSubview(button)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>By setting our <code>blurView</code> as <code>view</code> in <code>loadView</code>, we have no idea afterwards that <code>view</code> is actually a <code>UIVisualEffectView</code> 🙀 </p>
+<p><strong><em>Inheritance</em></strong></p>
+<p>What happen if we have another <code>UIViewController</code> that inherits from our <code>OverlayController</code>, all it knows about <code>view</code> is <code>UIView</code>, it does not know that it is a disguising <code>UIVisualEffectView</code> 🙀 </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClocksController</span>: <span class="title">OverlayController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">    view.addSubview(timeLabel)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>Superclass type</em></strong></p>
+<p>Sometimes declare our things but with protocol or superclass types. Consumers of our API have no clue to know that it is <code>UIVisualEffectView</code> 🙀 </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> view: <span class="type">UIView</span> = <span class="type">UIVisualEffectView</span>(effect: <span class="type">UIBlurEffect</span>(style: .dark))</span><br></pre></td></tr></table></figure>
+
+<p>Here it appears to us that <code>view</code> is of type <code>UIView</code></p>
+<p><strong><em>Legacy codebase</em></strong></p>
+<p>Now imagine you ‘ve handled a legacy codebase to deal with. Perform finding and replacing all those things related to <code>UIVisualEffectView</code> is very hard task. Especially since we tend to write less tests for UI</p>
+<h3 id="Making-it-impossible-to-crash"><a href="#Making-it-impossible-to-crash" class="headerlink" title="Making it impossible to crash"></a>Making it impossible to crash</h3><p>I like concept like <a href="https://wiki.haskell.org/Phantom_type" target="_blank" rel="noopener">Phantom type</a> to limit interface. Here we’re not using type but a wrapper </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">BlurView</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> effectView: <span class="type">UIVisualEffectView</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(style: <span class="type">UIBlurEffectStyle</span>, backgroundColor: <span class="type">UIColor?</span> = <span class="literal">nil</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.effectView = <span class="type">UIVisualEffectView</span>(effect: <span class="type">UIBlurEffect</span>(style: style))</span><br><span class="line">    <span class="keyword">self</span>.effectView.backgroundColor = backgroundColor</span><br><span class="line">    <span class="keyword">super</span>.<span class="keyword">init</span>(frame: .zero)</span><br><span class="line">    insertSubview(effectView, at: <span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">required</span> <span class="keyword">init</span>?(coder aDecoder: <span class="type">NSCoder</span>) &#123;</span><br><span class="line">    <span class="built_in">fatalError</span>()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">addSubview</span><span class="params">(<span class="number">_</span> view: UIView)</span></span> &#123;</span><br><span class="line">    effectView.contentView.addSubview(view)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">layoutSubviews</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.layoutSubviews()</span><br><span class="line"></span><br><span class="line">    effectView.frame = bounds</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here we override <code>addSubview</code> to always add views to <code>effectView.contentView</code>. In the <code>init</code> method, we need to call <code>insertSubview</code> instead because of our overriden <code>addSubview</code></p>
+<p>Now <code>BlurView</code> has a blur effect thanks to is underlying <code>UIVisualEffectView</code>, but expose only <code>addSubview</code> because of its <code>UIView</code> interface. This way it is impossible to cause crashes 😎 </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> blurView = <span class="type">BlurView</span>(style: .dark)</span><br><span class="line">blurView.addSubview(button(</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Understanding-suspend-function-in-Kotlin-Coroutine-in-Android"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Understanding-suspend-function-in-Kotlin-Coroutine-in-Android/">Understanding suspend function in Kotlin Coroutine in Android</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Understanding-suspend-function-in-Kotlin-Coroutine-in-Android/" class="article-date">
+	  <time datetime="2017-12-18T14:41:21.000Z" itemprop="datePublished">December 18, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/123" target="_blank" rel="noopener">#123</a></strong></p>
+<h2 id="Getting-to-know-Coroutine"><a href="#Getting-to-know-Coroutine" class="headerlink" title="Getting to know Coroutine"></a>Getting to know Coroutine</h2><p>From <a href="https://kotlinlang.org/docs/reference/coroutines.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/reference/coroutines.html</a></p>
+<blockquote>
+<p>To continue the analogy, await() can be a suspending function (hence also callable from within an async {} block) that suspends a coroutine until some computation is done and returns its result:</p>
+</blockquote>
+<p>From <a href="https://kotlinlang.org/docs/tutorials/coroutines-basic-jvm.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/tutorials/coroutines-basic-jvm.html</a></p>
+<blockquote>
+<p>We are using the delay() function that’s like Thread.sleep(), but better: it doesn’t block a thread, but only suspends the coroutine itself. The thread is returned to the pool while the coroutine is waiting, and when the waiting is done, the coroutine resumes on a free thread in the pool.</p>
+</blockquote>
+<blockquote>
+<p>await() can not be called outside a coroutine, because it needs to suspend until the computation finishes, and only coroutines can suspend in a non-blocking way</p>
+</blockquote>
+<h2 id="What-does-suspend-function-mean-in-Kotlin-Coroutine-🤔"><a href="#What-does-suspend-function-mean-in-Kotlin-Coroutine-🤔" class="headerlink" title="What does suspend function mean in Kotlin Coroutine 🤔"></a>What does suspend function mean in Kotlin Coroutine 🤔</h2><p><a href="https://stackoverflow.com/questions/47871868/what-does-suspend-function-mean-in-kotlin-coroutine" target="_blank" rel="noopener">https://stackoverflow.com/questions/47871868/what-does-suspend-function-mean-in-kotlin-coroutine</a></p>
+<p>I’m reading Kotlin Coroutine and know that it is based on suspend function. But what does suspend mean?</p>
+<p>Coroutine or function gets suspended?</p>
+<p>From <a href="https://kotlinlang.org/docs/reference/coroutines.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/reference/coroutines.html</a></p>
+<p>Basically, coroutines are computations that can be suspended without blocking a thread</p>
+<p>I heard people often say “suspend function”. But I think it is the coroutine who gets suspended because it is waiting for the function to finished? “suspend” usually means “cease operation”, in this case the coroutine is idle.</p>
+<p>Should we say the coroutine is suspended ?</p>
+<p>Which coroutine gets suspended?</p>
+<p>From <a href="https://kotlinlang.org/docs/reference/coroutines.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/reference/coroutines.html</a></p>
+<p>To continue the analogy, await() can be a suspending function (hence also callable from within an async {} block) that suspends a coroutine until some computation is done and returns its result:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">async &#123; <span class="comment">// Here I call it the outer async coroutine</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// Here I call computation the inner coroutine</span></span><br><span class="line">    <span class="keyword">val</span> result = computation.await()</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>🤔 It says “that suspends a coroutine until some computation is done”, but coroutine is like a lightweight thread. So if the coroutine is suspended, how can the computation is done ?</p>
+<p>We see await is called on computation, so it might be async that returns Deferred, which means it can start another coroutine</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">computation</span><span class="params">()</span></span>: Deferred&lt;<span class="built_in">Boolean</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> async &#123;</span><br><span class="line">        <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>🤔 The quote say that suspends a coroutine. Does it mean suspend the outer async coroutine, or suspend the inner computation coroutine?</p>
+<p>Does suspend mean that while outer async coroutine is waiting (await) for the inner computation coroutine to finish, it (the outer async coroutine) idles (hence the name suspend) and returns thread to the thread pool, and when the child computation coroutine finishes, it (the outer async coroutine) wakes up, takes another thread from the pool and continues?</p>
+<p>The reason I mention the thread is because of <a href="https://kotlinlang.org/docs/tutorials/coroutines-basic-jvm.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/tutorials/coroutines-basic-jvm.html</a></p>
+<p>The thread is returned to the pool while the coroutine is waiting, and when the waiting is done, the coroutine resumes on a free thread in the pool</p>
+<h2 id="Understanding-async"><a href="#Understanding-async" class="headerlink" title="Understanding async"></a>Understanding async</h2><p>From <a href="https://github.com/Kotlin/kotlinx.coroutines/blob/master/coroutines-guide.md" target="_blank" rel="noopener">https://github.com/Kotlin/kotlinx.coroutines/blob/master/coroutines-guide.md</a></p>
+<blockquote>
+<p>Conceptually, async is just like launch. It starts a separate coroutine which is a light-weight thread that works concurrently with all the other coroutines. The difference is that launch returns a Job and does not carry any resulting value, while async returns a Deferred – a light-weight non-blocking future that represents a promise to provide a result later. You can use .await() on a deferred value to get its eventual result, but Deferred is also a Job, so you can cancel it if needed.</p>
+</blockquote>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        <span class="keyword">val</span> one = async &#123; doSomethingUsefulOne() &#125;</span><br><span class="line">        <span class="keyword">val</span> two = async &#123; doSomethingUsefulTwo() &#125;</span><br><span class="line">        println(<span class="string">"The answer is <span class="subst">$&#123;one.await() + two.await()&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Completed in <span class="variable">$time</span> ms"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>There is a laziness option to async using an optional start parameter with a value of CoroutineStart.LAZY. It starts coroutine only when its result is needed by some await or if a start function is invoked. Run the following example that differs from the previous one only by this option:</p>
+</blockquote>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        <span class="keyword">val</span> one = async(start = CoroutineStart.LAZY) &#123; doSomethingUsefulOne() &#125;</span><br><span class="line">        <span class="keyword">val</span> two = async(start = CoroutineStart.LAZY) &#123; doSomethingUsefulTwo() &#125;</span><br><span class="line">        println(<span class="string">"The answer is <span class="subst">$&#123;one.await() + two.await()&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Completed in <span class="variable">$time</span> ms"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="What-is-the-difference-between-launch-join-and-async-await-in-Kotlin-coroutines"><a href="#What-is-the-difference-between-launch-join-and-async-await-in-Kotlin-coroutines" class="headerlink" title="What is the difference between launch/join and async/await in Kotlin coroutines"></a>What is the difference between launch/join and async/await in Kotlin coroutines</h2><p><a href="https://stackoverflow.com/a/48079738/1418457" target="_blank" rel="noopener">https://stackoverflow.com/a/48079738/1418457</a></p>
+<p>I find this guide <a href="https://github.com/Kotlin/kotlinx.coroutines/blob/master/coroutines-guide.md" target="_blank" rel="noopener">https://github.com/Kotlin/kotlinx.coroutines/blob/master/coroutines-guide.md</a> to be useful. I will quote the essential parts</p>
+<p>🦄 coroutine</p>
+<p>Essentially, coroutines are light-weight threads.</p>
+<p>So you can think of coroutine as something that manages thread in a very efficient way.</p>
+<p>🐤 launch</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    launch &#123; <span class="comment">// launch new coroutine in background and continue</span></span><br><span class="line">        delay(<span class="number">1000L</span>) <span class="comment">// non-blocking delay for 1 second (default time unit is ms)</span></span><br><span class="line">        println(<span class="string">"World!"</span>) <span class="comment">// print after delay</span></span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Hello,"</span>) <span class="comment">// main thread continues while coroutine is delayed</span></span><br><span class="line">    Thread.sleep(<span class="number">2000L</span>) <span class="comment">// block main thread for 2 seconds to keep JVM alive</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>So launch starts a background thread, does something, and returns a token immediately as Job. You can call join on this Job to block until this launch thread completes</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> job = launch &#123; <span class="comment">// launch new coroutine and keep a reference to its Job</span></span><br><span class="line">        delay(<span class="number">1000L</span>)</span><br><span class="line">        println(<span class="string">"World!"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Hello,"</span>)</span><br><span class="line">    job.join() <span class="comment">// wait until child coroutine completes</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>🦆 async</p>
+<p>Conceptually, async is just like launch. It starts a separate coroutine which is a light-weight thread that works concurrently with all the other coroutines. The difference is that launch returns a Job and does not carry any resulting value, while async returns a Deferred – a light-weight non-blocking future that represents a promise to provide a result later.</p>
+<p>So async starts a background thread, does something, and returns a token immediately as Deferred.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        <span class="keyword">val</span> one = async &#123; doSomethingUsefulOne() &#125;</span><br><span class="line">        <span class="keyword">val</span> two = async &#123; doSomethingUsefulTwo() &#125;</span><br><span class="line">        println(<span class="string">"The answer is <span class="subst">$&#123;one.await() + two.await()&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Completed in <span class="variable">$time</span> ms"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can use .await() on a deferred value to get its eventual result, but Deferred is also a Job, so you can cancel it if needed.</p>
+<p>So Deferred is actually a Job. See <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/-deferred/index.html" target="_blank" rel="noopener">https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/-deferred/index.html</a></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Deferred</span>&lt;<span class="type">out T</span>&gt; : <span class="type">Job </span></span>(source)</span><br></pre></td></tr></table></figure>
+
+<p>🦋 async is eager by default</p>
+<p>There is a laziness option to async using an optional start parameter with a value of CoroutineStart.LAZY. It starts coroutine only when its result is needed by some await or if a start function is invoked.</p>
+<h2 id="Understand-Kotlin-Coroutines-on-Android-Google-I-O’19"><a href="#Understand-Kotlin-Coroutines-on-Android-Google-I-O’19" class="headerlink" title="Understand Kotlin Coroutines on Android (Google I/O’19)"></a>Understand Kotlin Coroutines on Android (Google I/O’19)</h2><p><a href="https://www.youtube.com/watch?v=BOHK_w09pVA" target="_blank" rel="noopener">https://www.youtube.com/watch?v=BOHK_w09pVA</a></p>
+<img width="1176" alt="cor" src="https://user-images.githubusercontent.com/2284279/57587873-6836f400-750c-11e9-9944-2c00b8d83a87.png">
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Hashable-and-Set-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Hashable-and-Set-in-Swift/">Hashable and Set in Swift</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Hashable-and-Set-in-Swift/" class="article-date">
+	  <time datetime="2017-12-13T14:10:40.000Z" itemprop="datePublished">December 13, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/122" target="_blank" rel="noopener">#122</a></strong></p>
+<p>From <a href="https://developer.apple.com/documentation/swift/set" target="_blank" rel="noopener">Set</a></p>
+<blockquote>
+<p>You can create a set with any element type that conforms to the Hashable protocol. By default, most types in the standard library are hashable, including strings, numeric and Boolean types, enumeration cases without associated values, and even sets themselves.</p>
+</blockquote>
+<p>From <a href="https://developer.apple.com/documentation/swift/hashable" target="_blank" rel="noopener">Hashable</a></p>
+<blockquote>
+<p>The Hashable protocol inherits from the Equatable protocol, so you must also add an equal-to operator (==) function for your custom type.</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Hashable</span> : <span class="title">Equatable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The hash value.</span></span><br><span class="line">    <span class="comment">///</span></span><br><span class="line">    <span class="comment">/// Hash values are not guaranteed to be equal across different executions of</span></span><br><span class="line">    <span class="comment">/// your program. Do not save hash values to use during a future execution.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> hashValue: <span class="type">Int</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://useyourloaf.com/blog/swift-hashable/" target="_blank" rel="noopener">https://useyourloaf.com/blog/swift-hashable/</a></li>
+<li><a href="http://kelan.io/2015/swift-hashable-for-sets/" target="_blank" rel="noopener">http://kelan.io/2015/swift-hashable-for-sets/</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Generic-declaration-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Generic-declaration-in-Swift/">Generic declaration in Swift</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Generic-declaration-in-Swift/" class="article-date">
+	  <time datetime="2017-12-13T11:53:23.000Z" itemprop="datePublished">December 13, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/121" target="_blank" rel="noopener">#121</a></strong></p>
+<p>These are different</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DiffService</span>&lt;<span class="title">T</span>: <span class="title">MKAnnotation</span> &amp; <span class="title">Equatable</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DiffService</span>&lt;<span class="title">T</span>: <span class="title">MKAnnotation</span>, <span class="title">Equatable</span>&gt;</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-A-taste-of-MVVM-and-Reactive-paradigm"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -2485,222 +2789,6 @@ signal.map { value in
     
 
   
-    <article id="post-Testing-keychain-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Testing-keychain-in-iOS/">Testing keychain in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Testing-keychain-in-iOS/" class="article-date">
-	  <time datetime="2017-10-20T08:23:25.000Z" itemprop="datePublished">October 20, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/92" target="_blank" rel="noopener">#92</a></strong></p>
-<p>Today I was upgrading <a href="https://github.com/hyperoslo/Keychains" target="_blank" rel="noopener">Keychain</a> to swift 4, and take this opportunity to fix the test. The tests pass on macOS, but on iOS, I get <code>-25300</code> error for</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> status = <span class="type">SecItemCopyMatching</span>(query <span class="keyword">as</span> <span class="type">CFDictionary</span>, <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure>
-
-<p>It is because there is no Keychain entitlement for test target. But this is a framework, how can I add entitlement 🤔 The solution is to use a <a href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/05-running_tests.html" target="_blank" rel="noopener">Test Host</a> to host the <code>XCTest</code> tests. See my <a href="https://github.com/hyperoslo/Keychains/pull/14" target="_blank" rel="noopener">pull request</a></p>
-<p><strong>Create test host target</strong></p>
-<p><img src="https://user-images.githubusercontent.com/2284279/31816541-059750f6-b591-11e7-9348-4119d07e57ca.png" alt="target"></p>
-<p>First create an iOS app to act as a test host, you can name it <code>TestHost_iOS</code></p>
-<p><strong>Enable Keychain capability</strong></p>
-<p>Then enable Keychain capability to let Xcode automatically create an entitlement file for you. Note that you can just enter the <code>Keychain group</code>. You don’t need go to <code>Apple Developer dashboard</code> to configure anything </p>
-<p><img src="https://user-images.githubusercontent.com/2284279/31816756-ce3155c0-b591-11e7-916e-8ebc06e9a847.png" alt="keychain"></p>
-<p><strong>Specify Test Host</strong></p>
-<p>Then in you test target, specify <code>Test Host</code> by using <code>$(BUILT_PRODUCTS_DIR)/TestHost_iOS.app/TestHost_iOS</code></p>
-<p><img src="https://user-images.githubusercontent.com/2284279/31816646-68d8c7c6-b591-11e7-8ae8-e04d52e41e09.png" alt="test host"></p>
-<p>Now run your test again, it should pass 🎉 </p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Learning-from-Open-Source-Making-macOS-app-in-code"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Learning-from-Open-Source-Making-macOS-app-in-code/">Learning from Open Source  Making macOS app in code</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Learning-from-Open-Source-Making-macOS-app-in-code/" class="article-date">
-	  <time datetime="2017-10-19T12:20:19.000Z" itemprop="datePublished">October 19, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/91" target="_blank" rel="noopener">#91</a></strong></p>
-<p>I’m familiar with the whole app structure that Xcode gives me when I’m creating new macOS project, together with Storyboard. The other day I was reading <a href="https://github.com/sindresorhus/touch-bar-simulator" target="_blank" rel="noopener">touch-bar-simulator</a> and see how it declares app using only code. See this <a href="https://github.com/sindresorhus/touch-bar-simulator/blob/master/Touch%20Bar%20Simulator/main.swift" target="_blank" rel="noopener">main.swift</a></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> app = <span class="type">NSApplication</span>.shared</span><br><span class="line"><span class="keyword">let</span> delegate = <span class="type">AppDelegate</span>()</span><br><span class="line">app.delegate = delegate</span><br><span class="line">app.run()</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">AppDelegate</span>: <span class="title">NSObject</span>, <span class="title">NSApplicationDelegate</span>, <span class="title">NSWindowDelegate</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> controller = <span class="type">IDETouchBarSimulatorHostWindowController</span>.simulatorHostWindowController()!</span><br><span class="line">  <span class="built_in">lazy</span> <span class="keyword">var</span> window: <span class="type">NSWindow</span> = <span class="keyword">self</span>.controller.window!</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Designing-for-iPhone-X"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Designing-for-iPhone-X/">Designing for iPhone X</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Designing-for-iPhone-X/" class="article-date">
-	  <time datetime="2017-10-19T08:58:13.000Z" itemprop="datePublished">October 19, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/90" target="_blank" rel="noopener">#90</a></strong></p>
-<ul>
-<li><a href="http://blog.maxrudberg.com/post/166045445103/ui-design-for-iphone-x-top-elements-and-the-notch" target="_blank" rel="noopener">http://blog.maxrudberg.com/post/166045445103/ui-design-for-iphone-x-top-elements-and-the-notch</a></li>
-<li><a href="https://designcode.io/ios11-iphone-x" target="_blank" rel="noopener">https://designcode.io/ios11-iphone-x</a></li>
-<li><a href="https://medium.muz.li/ui-design-tips-for-iphone-x-2652b2b248ce" target="_blank" rel="noopener">https://medium.muz.li/ui-design-tips-for-iphone-x-2652b2b248ce</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-String-manipulation-in-Apple-Script"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/String-manipulation-in-Apple-Script/">String manipulation in Apple Script</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/String-manipulation-in-Apple-Script/" class="article-date">
-	  <time datetime="2017-10-18T11:13:53.000Z" itemprop="datePublished">October 18, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/89" target="_blank" rel="noopener">#89</a></strong></p>
-<p>Today I find that <code>AppleScript</code> allows us to import <code>Foundation</code>, with that we have lots of power, including <code>NSString</code>. See <a href="https://github.com/onmyway133/XcodeWay/blob/master/XcodeWayExtensions/Script/XcodeWayScript.scpt" target="_blank" rel="noopener">my script</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use scripting additions</span><br><span class="line">use framework &quot;Foundation&quot;</span><br><span class="line">property NSString : a reference to current application&apos;s NSString</span><br></pre></td></tr></table></figure>
-
-<p>Here is how I can remove last path component from a string</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">on myRemoveLastPath(myPath)</span><br><span class="line">  set myString to NSString&apos;s stringWithString:myPath</span><br><span class="line">  set removedLastPathString to myString&apos;s stringByDeletingLastPathComponent</span><br><span class="line">  removedLastPathString as text</span><br><span class="line">end myRemoveLastPath</span><br></pre></td></tr></table></figure>
-
-<p>You need to cast to <code>NSString</code> with <code>NSString&#39;s stringWithString:</code> and cast back to Apple Script string with <code>as text</code>. The <code>&#39;s</code> is how you can invoke functions.</p>
-<p>One more thing is that we can support parameters to function, like this <a href="http://applehelpwriter.com/2016/09/06/applescript-remove-characters-from-a-string/" target="_blank" rel="noopener">script</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">on remove:remove_string fromString:source_string	</span><br><span class="line">  set s_String to NSString&apos;s stringWithString:source_string</span><br><span class="line">  set r_String to NSString&apos;s stringWithString:remove_string</span><br><span class="line">  return s_String&apos;s stringByReplacingOccurrencesOfString:r_String withString:&quot;&quot;</span><br><span class="line">end remove:fromString:</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/apple-script/">apple script</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2805,6 +2893,54 @@ signal.map { value in
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-parse-xcrun-simctl-devices/">How to parse xcrun simctl devices</a></h6>
+              <span>December 28, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-parse-xcrun-instruments-devices/">How to parse xcrun instruments devices</a></h6>
+              <span>December 28, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-test-environment-variables-with-shared-scheme-in-Xcode/">How to use test environment variables with shared scheme in Xcode</a></h6>
+              <span>December 28, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-generate-xml-in-Swift/">How to generate xml in Swift</a></h6>
+              <span>December 27, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-use-synthetic-property-in-Kotlin-Android-Extension/">How to use synthetic property in Kotlin Android Extension</a></h6>
               <span>December 23, 2019</span>
             </div>
@@ -2819,54 +2955,6 @@ signal.map { value in
 
               <h6 style="margin: 0;"><a href="/blog/How-to-use-KVO-in-Swift/">How to use KVO in Swift</a></h6>
               <span>December 22, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-precondition-and-assert-in-Swift/">How to use precondition and assert in Swift</a></h6>
-              <span>December 22, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-get-ISO-string-from-date-in-Javascript/">How to get ISO string from date in Javascript</a></h6>
-              <span>December 22, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-regular-expression-in-Swift/">How to use regular expression in Swift</a></h6>
-              <span>December 20, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/Why-is-didSelectItem-not-called-in-UICollectionView/">Why is didSelectItem not called in UICollectionView</a></h6>
-              <span>December 20, 2019</span>
             </div>
 
           </li>
@@ -2893,7 +2981,7 @@ signal.map { value in
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">34</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2903,7 +2991,7 @@ signal.map { value in
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">144</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">201</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">17</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">144</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">204</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">18</span></li></ul>
     </div>
   </div>
 
