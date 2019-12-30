@@ -179,6 +179,123 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-make-NSCollectionView-programatically-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-make-NSCollectionView-programatically-in-Swift/">How to make NSCollectionView programatically in Swift</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-make-NSCollectionView-programatically-in-Swift/" class="article-date">
+	  <time datetime="2017-12-21T12:54:45.000Z" itemprop="datePublished">December 21, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/131" target="_blank" rel="noopener">#131</a></strong></p>
+<p>Here’s how to create <code>NSCollectionView</code> programatically. We need to embed it inside <code>NScrollView</code> for scrolling to work. Code is in Swift 4</p>
+<h3 id="NSCollectionView"><a href="#NSCollectionView" class="headerlink" title="NSCollectionView"></a>NSCollectionView</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> layout = <span class="type">NSCollectionViewFlowLayout</span>()</span><br><span class="line">layout.minimumLineSpacing = <span class="number">4</span></span><br><span class="line"></span><br><span class="line">collectionView = <span class="type">NSCollectionView</span>()</span><br><span class="line">collectionView.dataSource = <span class="keyword">self</span></span><br><span class="line">collectionView.delegate = <span class="keyword">self</span></span><br><span class="line">collectionView.collectionViewLayout = layout</span><br><span class="line">collectionView.allowsMultipleSelection = <span class="literal">false</span></span><br><span class="line">collectionView.backgroundColors = [.clear]</span><br><span class="line">collectionView.isSelectable = <span class="literal">true</span></span><br><span class="line">collectionView.register(</span><br><span class="line">  <span class="type">Cell</span>.<span class="keyword">self</span>,</span><br><span class="line">  forItemWithIdentifier: <span class="type">NSUserInterfaceItemIdentifier</span>(rawValue: <span class="string">"Cell"</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="NScrollView"><a href="#NScrollView" class="headerlink" title="NScrollView"></a>NScrollView</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scrollView = <span class="type">NSScrollView</span>()</span><br><span class="line">scrollView.documentView = collectionView</span><br><span class="line">view.addSubview(scrollView)</span><br></pre></td></tr></table></figure>
+
+<h3 id="NSCollectionViewItem"><a href="#NSCollectionViewItem" class="headerlink" title="NSCollectionViewItem"></a>NSCollectionViewItem</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Cell</span>: <span class="title">NSCollectionViewItem</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> label = <span class="type">Label</span>()</span><br><span class="line">  <span class="keyword">let</span> myImageView = <span class="type">NSImageView</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">loadView</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">self</span>.view = <span class="type">NSView</span>()</span><br><span class="line">    <span class="keyword">self</span>.view.wantsLayer = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="NSCollectionViewDataSource"><a href="#NSCollectionViewDataSource" class="headerlink" title="NSCollectionViewDataSource"></a>NSCollectionViewDataSource</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, numberOfItemsInSection section: Int)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> coins.<span class="built_in">count</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath)</span></span> -&gt; <span class="type">NSCollectionViewItem</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> cell = collectionView.makeItem(</span><br><span class="line">    withIdentifier: <span class="type">NSUserInterfaceItemIdentifier</span>(rawValue: <span class="string">"Cell"</span>),</span><br><span class="line">    <span class="keyword">for</span>: indexPath</span><br><span class="line">  ) <span class="keyword">as</span>! <span class="type">Cell</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> coin = coins[indexPath.item]</span><br><span class="line"></span><br><span class="line">  cell.label.stringValue = coin.name</span><br><span class="line">  cell.coinImageView.image =</span><br><span class="line">    <span class="type">NSImage</span>(named: <span class="type">NSImage</span>.<span class="type">Name</span>(rawValue: <span class="string">"USD"</span>))</span><br><span class="line">    ?? <span class="type">NSImage</span>(named: <span class="type">NSImage</span>.<span class="type">Name</span>(rawValue: <span class="string">"Others"</span>))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> cell</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="NSCollectionViewDelegateFlowLayout"><a href="#NSCollectionViewDelegateFlowLayout" class="headerlink" title="NSCollectionViewDelegateFlowLayout"></a>NSCollectionViewDelegateFlowLayout</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set&lt;IndexPath&gt;)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> indexPath = indexPaths.first,</span><br><span class="line">    <span class="keyword">let</span> cell = collectionView.item(at: indexPath) <span class="keyword">as</span>? <span class="type">Cell</span> <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set&lt;IndexPath&gt;)</span></span> &#123;</span><br><span class="line">  <span class="keyword">guard</span> <span class="keyword">let</span> indexPath = indexPaths.first,</span><br><span class="line">    <span class="keyword">let</span> cell = collectionView.item(at: indexPath) <span class="keyword">as</span>? <span class="type">Cell</span> <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, sizeForItemAt indexPath: IndexPath)</span></span> -&gt; <span class="type">NSSize</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="type">NSSize</span>(</span><br><span class="line">    width: collectionView.frame.size.width,</span><br><span class="line">    height: <span class="number">40</span></span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-UnsafePointer-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/UnsafePointer-in-Swift/">UnsafePointer in Swift</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/UnsafePointer-in-Swift/" class="article-date">
+	  <time datetime="2017-12-20T15:58:30.000Z" itemprop="datePublished">December 20, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/130" target="_blank" rel="noopener">#130</a></strong></p>
+<p>Code is in Swift 4</p>
+<h3 id="Constructing-UnsafeMutablePointer"><a href="#Constructing-UnsafeMutablePointer" class="headerlink" title="Constructing UnsafeMutablePointer"></a>Constructing UnsafeMutablePointer</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> byteCount = <span class="number">32</span></span><br><span class="line"><span class="keyword">let</span> result = <span class="type">UnsafeMutablePointer</span>&lt;<span class="type">UInt8</span>&gt;.allocate(capacity: byteCount)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Data-to-UnsafePointer"><a href="#Data-to-UnsafePointer" class="headerlink" title="Data to UnsafePointer"></a>Data to UnsafePointer</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Data</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">toPointer</span><span class="params">()</span></span> -&gt; <span class="type">UnsafePointer</span>&lt;<span class="type">UInt8</span>&gt;? &#123;</span><br><span class="line">    <span class="keyword">let</span> buffer = <span class="type">UnsafeMutablePointer</span>&lt;<span class="type">UInt8</span>&gt;.allocate(capacity: <span class="built_in">count</span>)</span><br><span class="line">    <span class="keyword">let</span> stream = <span class="type">OutputStream</span>(toBuffer: buffer, capacity: <span class="built_in">count</span>)</span><br><span class="line"></span><br><span class="line">    stream.<span class="keyword">open</span>()</span><br><span class="line">    withUnsafeBytes(&#123; (p: <span class="type">UnsafePointer</span>&lt;<span class="type">UInt8</span>&gt;) -&gt; <span class="type">Void</span> <span class="keyword">in</span></span><br><span class="line">      stream.write(p, maxLength: <span class="built_in">count</span>)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    stream.close()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="type">UnsafePointer</span>&lt;<span class="type">UInt8</span>&gt;(buffer)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="UnsafePointer-to-Data"><a href="#UnsafePointer-to-Data" class="headerlink" title="UnsafePointer to Data"></a>UnsafePointer to Data</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UnsafePointer</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">toData</span><span class="params">()</span></span> -&gt; <span class="type">Data</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Data</span>(bytes: <span class="type">UnsafeRawPointer</span>(<span class="keyword">self</span>), <span class="built_in">count</span>: <span class="number">32</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Dealing-with-C-API"><a href="#Dealing-with-C-API" class="headerlink" title="Dealing with C API"></a>Dealing with C API</h3><p>This is how to do keccak hash using C API from <a href="https://github.com/ethereum/ethash/blob/master/src/libethash/sha3.c" target="_blank" rel="noopener">https://github.com/ethereum/ethash/blob/master/src/libethash/sha3.c</a></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KeccakHash</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">hash</span><span class="params">(data: Data)</span></span> <span class="keyword">throws</span> -&gt; <span class="type">Data</span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> dataPointer = data.toPointer() <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="type">InteralError</span>.invalid</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> byteCount = <span class="number">32</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> result = <span class="type">UnsafeMutablePointer</span>&lt;<span class="type">UInt8</span>&gt;.allocate(capacity: byteCount)</span><br><span class="line">    sha3_256(result, byteCount, dataPointer, data.<span class="built_in">count</span>)</span><br><span class="line">    <span class="keyword">return</span> result.toData()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li>See <a href="https://github.com/onmyway133/Reindeers/blob/master/Sources/Extensions.swift" target="_blank" rel="noopener">https://github.com/onmyway133/Reindeers/blob/master/Sources/Extensions.swift</a></li>
+<li><a href="https://oleb.net/blog/2017/12/importing-c-library-into-swift/" target="_blank" rel="noopener"><br>How to import a C library in Swift using the Swift Package Manager</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-prevent-UIVisualEffectView-crash"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -2669,126 +2786,6 @@ signal.map { value in
     
 
   
-    <article id="post-Learning-from-Open-Source-Using-Playground"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Learning-from-Open-Source-Using-Playground/">Learning from Open Source  Using Playground</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Learning-from-Open-Source-Using-Playground/" class="article-date">
-	  <time datetime="2017-10-23T12:26:26.000Z" itemprop="datePublished">October 23, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/94" target="_blank" rel="noopener">#94</a></strong></p>
-<p>One thing I like about <a href="https://github.com/kickstarter/ios-oss" target="_blank" rel="noopener">kickstarter-ios</a> is how they use <code>Playground</code> to quickly protoyping views.</p>
-<blockquote>
-<p>We use Swift Playgrounds for iterative development and styling. Most major screens in the app get a corresponding playground where we can see a wide variety of devices, languages and data in real time. </p>
-</blockquote>
-<p>This way we don’t need <a href="http://johnholdsworth.com/injection.html" target="_blank" rel="noopener">Injection</a> or using React Native anymore. Take a look at all the pages <a href="https://github.com/kickstarter/ios-oss/tree/master/Kickstarter-iOS.playground/Pages" target="_blank" rel="noopener">https://github.com/kickstarter/ios-oss/tree/master/Kickstarter-iOS.playground/Pages</a></p>
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li><a href="https://talk.objc.io/episodes/S01E51-playground-driven-development-at-kickstarter" target="_blank" rel="noopener">Playground-Driven Development at Kickstarter</a></li>
-<li><a href="https://www.youtube.com/watch?v=DrdxSNG-_DE" target="_blank" rel="noopener">FrenchKit 2017 - Playground Driven Development</a></li>
-<li><a href="https://www.youtube.com/watch?v=A0VaIKK2ijM" target="_blank" rel="noopener">Finding Happiness in Functional Programming</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Indenting-Swift-code"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Indenting-Swift-code/">Indenting Swift code</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Indenting-Swift-code/" class="article-date">
-	  <time datetime="2017-10-20T08:51:16.000Z" itemprop="datePublished">October 20, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/93" target="_blank" rel="noopener">#93</a></strong></p>
-<p>Hi, here is how I indent my code. Let me know what you think 😉 </p>
-<h4 id="Using-2-spaces-indentation"><a href="#Using-2-spaces-indentation" class="headerlink" title="Using 2 spaces indentation"></a>Using 2 spaces indentation</h4><p>When possible, configure your editor to use <code>2 spaces</code> for <code>tab size</code>. You will love it ❤️ </p>
-<p><img src="https://user-images.githubusercontent.com/2284279/31818654-56a24868-b599-11e7-858e-86137f1cbb16.png" alt="spaces"></p>
-<h4 id="Move-first-parameter-to-new-line"><a href="#Move-first-parameter-to-new-line" class="headerlink" title="Move first parameter to new line"></a>Move first parameter to new line</h4><p>If there are many parameters, move the first parameter to a new line, and align the other parameters. Remember that the last parenthesis <code>)</code> should align to the function call</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> event = <span class="type">NSAppleEventDescriptor</span>(</span><br><span class="line">  eventClass: <span class="type">UInt32</span>(kASAppleScriptSuite),</span><br><span class="line">  eventID: <span class="type">UInt32</span>(kASSubroutineEvent),</span><br><span class="line">  targetDescriptor: target,</span><br><span class="line">  returnID: <span class="type">Int16</span>(kAutoGenerateReturnID),</span><br><span class="line">  transactionID: <span class="type">Int32</span>(kAnyTransactionID)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>You can do the same for function declaration</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  <span class="number">_</span> collectionView: UICollectionView,</span></span></span><br><span class="line"><span class="function"><span class="params">  viewForSupplementaryElementOfKind kind: String,</span></span></span><br><span class="line"><span class="function"><span class="params">  at indexPath: IndexPath)</span></span> -&gt; <span class="type">UICollectionReusableView</span> &#123;</span><br><span class="line">  <span class="comment">// your code goes here</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Shouldn’t-use-trailing-closure-if-there-are-more-than-2-closures"><a href="#Shouldn’t-use-trailing-closure-if-there-are-more-than-2-closures" class="headerlink" title="Shouldn’t use trailing closure if there are more than 2 closures"></a>Shouldn’t use trailing closure if there are more than 2 closures</h4><p>Here is how to use <code>UIView.animate</code></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">UIView</span>.animate(</span><br><span class="line">  withDuration: <span class="number">5</span>,</span><br><span class="line">  delay: <span class="number">5</span>,</span><br><span class="line">  usingSpringWithDamping: <span class="number">1</span>,</span><br><span class="line">  initialSpringVelocity: <span class="number">1</span>,</span><br><span class="line">  options: .curveEaseIn,</span><br><span class="line">  animations: &#123;</span><br><span class="line">    <span class="keyword">self</span>.tableView.alpha = <span class="number">1</span></span><br><span class="line">  &#125;,</span><br><span class="line">  completion: &#123; <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">self</span>.view.isHidden = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>Here is how to use <code>RxSwift subscribe</code></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">friendsObservable.subscribe(</span><br><span class="line">  onNext: &#123; friends <span class="keyword">in</span></span><br><span class="line"></span><br><span class="line">  &#125;, </span><br><span class="line">  onError: &#123; error <span class="keyword">in</span></span><br><span class="line"></span><br><span class="line">  &#125;, </span><br><span class="line">  onCompleted: &#123;</span><br><span class="line"></span><br><span class="line">  &#125;, </span><br><span class="line">  onDisposed: &#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<h4 id="Shouldn’t-use-trailing-closure-when-chaining-methods"><a href="#Shouldn’t-use-trailing-closure-when-chaining-methods" class="headerlink" title="Shouldn’t use trailing closure when chaining methods"></a>Shouldn’t use trailing closure when chaining methods</h4><p>Also, the next method call should start on same line</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> items = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</span><br><span class="line"><span class="keyword">let</span> results = items.<span class="built_in">map</span>(&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="type">String</span>($<span class="number">0</span>)</span><br><span class="line">&#125;).flatMap(&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="type">Int</span>($<span class="number">0</span>)</span><br><span class="line">&#125;).<span class="built_in">filter</span>(&#123;</span><br><span class="line">  <span class="keyword">return</span> $<span class="number">0</span> &gt; <span class="number">2</span></span><br><span class="line">&#125;).sorted()</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2893,6 +2890,30 @@ signal.map { value in
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-safeAreaInsets-in-iOS/">How to use safeAreaInsets in iOS</a></h6>
+              <span>December 30, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-send-message-from-bot-to-Slack-in-Swift/">How to send message from bot to Slack in Swift</a></h6>
+              <span>December 30, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-parse-xcrun-simctl-devices/">How to parse xcrun simctl devices</a></h6>
               <span>December 28, 2019</span>
             </div>
@@ -2935,30 +2956,6 @@ signal.map { value in
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-synthetic-property-in-Kotlin-Android-Extension/">How to use synthetic property in Kotlin Android Extension</a></h6>
-              <span>December 23, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-KVO-in-Swift/">How to use KVO in Swift</a></h6>
-              <span>December 22, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2981,7 +2978,7 @@ signal.map { value in
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">34</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2991,7 +2988,7 @@ signal.map { value in
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">144</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">204</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">18</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">145</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">205</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">18</span></li></ul>
     </div>
   </div>
 

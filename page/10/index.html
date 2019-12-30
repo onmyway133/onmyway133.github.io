@@ -179,6 +179,203 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-use-Bitrise-CI-for-React-Native-apps"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-Bitrise-CI-for-React-Native-apps/">How to use Bitrise CI for React Native apps</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-Bitrise-CI-for-React-Native-apps/" class="article-date">
+	  <time datetime="2019-05-23T16:24:21.000Z" itemprop="datePublished">May 23, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/277" target="_blank" rel="noopener">#277</a></strong></p>
+<p>Original post <a href="https://codeburst.io/using-bitrise-ci-for-react-native-apps-b9e7b2722fe5" target="_blank" rel="noopener">https://codeburst.io/using-bitrise-ci-for-react-native-apps-b9e7b2722fe5</a></p>
+<hr>
+<p>After trying Travis, <a href="https://medium.com/fantageek/using-circleci-2-0-in-ios-apps-7641424ba388" target="_blank" rel="noopener">CircleCI</a> and <a href="https://medium.com/fantageek/buddybuild-and-gradle-properties-in-android-apps-4590d17a2203" target="_blank" rel="noopener">BuddyBuild</a>, I now choose <a href="https://hackernoon.com/using-bitrise-ci-for-android-apps-fa9c48e301d8" target="_blank" rel="noopener">Bitrise</a> for my mobile applications. The many cool steps and workflows make Bitrise an ideal CI to try. Like any other CIs, the learning steps and configurations can be intimidating at first. Things that work locally can fail on CI, and how to send things that are marked as git ignore to be used in CI builds are popular issues.</p>
+<p>In this post I will show how to deploy React Native apps for both iOS and Android. The key thing to remember is to have the same setup on CI as you have locally. They are to ensure exact same versions for packages and tools, to be aware of file patterns in gitignore as those changes won’t be there on CI, and how to property use environment variables and secured files.</p>
+<p>This post tried to be intuitive with lots of screenshots. Hope you learn something and avoid the wasted hours that I have been too.</p>
+<h2 id="Support-for-React-Native"><a href="#Support-for-React-Native" class="headerlink" title="Support for React Native"></a>Support for React Native</h2><p>In its simplest sense, React Native is just Javascript code with native iOS and Android projects, and Bitrise has a very good <a href="https://blog.bitrise.io/how-to-set-up-a-react-native-app-on-bitrise" target="_blank" rel="noopener">support</a> for React Native. It scans ios and android folder, and give suggestion about scheme and build variants to build.</p>
+<p>Another good thing about Bitrise is its various useful steps and workflows. Unlike other CIs where we have to spend days on how to property edit the configuration file, Bitrise has a pretty good UI to add and edit steps. Steps are just custom scripts, and we can write pretty much what we like. Most of the predefined steps are open source. Here are a few</p>
+<ul>
+<li><p><a href="https://github.com/bitrise-io/steps-certificate-and-profile-installer" target="_blank" rel="noopener">Certificate and Profile Installer</a></p>
+</li>
+<li><p><a href="https://github.com/bitrise-io/steps-cocoapods-install" target="_blank" rel="noopener">Install CocoaPods</a></p>
+</li>
+<li><p><a href="https://github.com/bitrise-io/steps-slack-message" target="_blank" rel="noopener">Slack message</a></p>
+</li>
+<li><p><a href="https://github.com/bitrise-io/steps-gradle-runner" target="_blank" rel="noopener">Gradle Runner</a></p>
+</li>
+</ul>
+<h2 id="Building-for-iOS"><a href="#Building-for-iOS" class="headerlink" title="Building for iOS"></a>Building for iOS</h2><p>Unless you use the step Build with Simulator , you will need provisioning profile and certificates with private keys in order to build for devices.</p>
+<h3 id="Install-React-Native-amp-npm-install"><a href="#Install-React-Native-amp-npm-install" class="headerlink" title="Install React Native &amp; npm install"></a>Install React Native &amp; npm install</h3><p>React Native moves fast and break things. If you don’t have same version of React Native, you will have hard time figuring out why the builds constantly fail on CI.</p>
+<p>Currently I use React Native 0.57.0, so I enter install <a href="mailto:react-native@0.57.0" target="_blank" rel="noopener">react-native@0.57.0</a> to let Bitrise install the same version. But normally you just need to npm install as versions should be explicitly defined in package.json file.</p>
+<p><img src="https://cdn-images-1.medium.com/max/5148/1*7dalPt_TWrxQM1Fy0pVV6Q.png" alt></p>
+<p>Also, we need to make sure we have the same version of react-native-cli with Install React Native step</p>
+<p><img src="https://cdn-images-1.medium.com/max/5376/1*0geJx4BeLCRigAZaWRRbhQ.png" alt></p>
+<h3 id="Install-CocoaPods"><a href="#Install-CocoaPods" class="headerlink" title="Install CocoaPods"></a>Install CocoaPods</h3><p>It’s safe to have the same CocoaPods version. For Xcode 10, we need at least CocoaPods 1.6.0.beta-1 to avoid the bug <a href="https://stackoverflow.com/questions/52332207/xcode-10-warning-skipping-code-signing-because-the-target-does-not-have-an-info" target="_blank" rel="noopener">Skipping code signing because the target does not have an Info.plist file</a>. Note that our Xcode project is inside ios folder, so we specify ./ios/Podfile for Podfile path</p>
+<p><img src="https://cdn-images-1.medium.com/max/6276/1*9igBlR1u4HkVIisVJ8n9jg.png" alt></p>
+<h3 id="Code-signing"><a href="#Code-signing" class="headerlink" title="Code signing"></a>Code signing</h3><p>Under Workflow -&gt; Code Signing we can upload provisioning profiles and certificates.</p>
+<p><img src="https://cdn-images-1.medium.com/max/6244/1*-U8eExDeUtiQIQr737JOXw.png" alt></p>
+<p>Then we need to use Certificate and profile install step to make use of the profiles and certificates we uploaded.</p>
+<p><img src="https://cdn-images-1.medium.com/max/6100/1*D87n4E2d-zst11qItGIF3w.png" alt></p>
+<h3 id="iOS-Auto-Provision"><a href="#iOS-Auto-Provision" class="headerlink" title="iOS Auto Provision"></a>iOS Auto Provision</h3><p>Another option is to use the <a href="https://blog.bitrise.io/ios-auto-provision-step" target="_blank" rel="noopener">iOS Auto Provision</a> step, but it requires that we need to have an account in team that has connected Apple Developer Account. This way Bitrise can autogenerate profiles for us.</p>
+<p><img src="https://cdn-images-1.medium.com/max/4768/1*qvapzygIiXp8-Zi_K2CZ0A.png" alt></p>
+<p>Sometimes you need to set Should the step try to generate Provisioning Profiles even if Xcode managed signing is enabled in the Xcode project? to yes</p>
+<p>Under Xcode Archive &amp; Export for iOS -&gt; Debug -&gt; Additional options for xcodebuild call We need to pass -allowProvisioningUpdates to make auto provisioning profile update happen.</p>
+<h3 id="Recreate-user-scheme"><a href="#Recreate-user-scheme" class="headerlink" title="Recreate user scheme"></a>Recreate user scheme</h3><p>Bitrise can autogenerate schemes with the <a href="https://github.com/bitrise-steplib/steps-recreate-user-schemes" target="_blank" rel="noopener">Recreate user scheme</a> step, but it’s good to mark our scheme as Shared in Xcode. This ensures consistence between local and CI builds.</p>
+<h3 id="Archive"><a href="#Archive" class="headerlink" title="Archive"></a>Archive</h3><p>To archive project, we need to add Xcode Archive &amp; Export . For React Native, iOS project is inside ios folder, so we need to specify ./ios/MyApp.xcworkspace for Project path. Note that I use xcworkspace because I have CocoaPods</p>
+<p><img src="https://cdn-images-1.medium.com/max/5760/1*XSKuNPL53OnlOwU3gKybeg.png" alt></p>
+<p>Right now, as of React Native 0.57.0, it has problem running with the new build system in <a href="https://github.com/facebook/react-native/issues/21168" target="_blank" rel="noopener">Xcode 10</a>, so the quick fix is to use legacy build system. Under Xcode Archive &amp; Export step there are fields to add additional options for xcodebuild call. Enter -UseModernBuildSystem=NO</p>
+<p><img src="https://cdn-images-1.medium.com/max/5172/1*xB6yCWhHpJ0LCbwu7pDIOQ.png" alt></p>
+<p>You can read more <a href="https://developer.apple.com/documentation/xcode_release_notes/xcode_10_release_notes/build_system_release_notes_for_xcode_10" target="_blank" rel="noopener">Build System Release Notes for Xcode 10</a></p>
+<blockquote>
+<p>Xcode 10 uses a new build system. The new build system provides improved reliability and build performance, and it catches project configuration problems that the legacy build system does not.</p>
+</blockquote>
+<h2 id="Building-for-Android"><a href="#Building-for-Android" class="headerlink" title="Building for Android"></a>Building for Android</h2><p>For Android, the most troublesome task is to give keystore files to Bitrise as it is something we would keep privately from GitHub. Bitrise allows us to upload keystore file, but we also need to specify key alias and key password. One solution is to use Secrets and Environment variables</p>
+<p><img src="https://cdn-images-1.medium.com/max/5800/1*meeAqXnpIc04MntoW7OOPQ.png" alt></p>
+<p>But as we often use gradle.properties to specify custom variables for Gradle, it’s convenient to upload this file. Under Workflow -&gt; Code Signing is where we can upload keystore, as well as secured files</p>
+<p><img src="https://cdn-images-1.medium.com/max/5588/1*j1vER_HvSgJsrGjibT2hhg.png" alt></p>
+<p>The generated URL variables are path to our uploaded files. We can use curl to download them. Bitrise has also Generic File Storage step to download all secured files.</p>
+<p><img src="https://cdn-images-1.medium.com/max/5000/1*VG56m0wXDGA9lE9VPFMm2Q.png" alt></p>
+<p>The downloaded files is located at GENERIC_FILE_STORAGE , so we add another Custom Script step to copy those files into ./android folder</p>
+<p><img src="https://cdn-images-1.medium.com/max/5692/1*8gkV4dl_jYmNYXmv-t8YNw.png" alt></p>
+<pre><code>#!/usr/bin/env bash
+
+cp $GENERIC_FILE_STORAGE/gradle.properties ./android/gradle.properties
+cp $GENERIC_FILE_STORAGE/my_app_android.keystore ./android/my_app_android.keystore</code></pre><p>Note that the name of the files are the same of when we uploaded, and we use cp command to copy to folders.</p>
+<h3 id="Android-Build"><a href="#Android-Build" class="headerlink" title="Android Build"></a>Android Build</h3><p>By default, Bitrise has 2 workflows: primary for quick start, and deploy for archiving and deploying. In the deploy workflow there is Android Build step. We can overwrite module and build variant here.</p>
+<p><img src="https://cdn-images-1.medium.com/max/5732/1*EIXwjn91bFYh-L6MCt0wzQ.png" alt></p>
+<h2 id="If-all-go-well"><a href="#If-all-go-well" class="headerlink" title="If all go well"></a>If all go well</h2><p>In Bitrise we can mark a step to continue regardless of the previous step. I use this to make sure iOS build independently from Android</p>
+<p><img src="https://cdn-images-1.medium.com/max/6092/1*y-Gl4Ggpd3D6aWHXl_b_lA.png" alt></p>
+<p>If both iOS and Android build are successful, we should see the below summary</p>
+<p><img src="https://cdn-images-1.medium.com/max/3028/1*XLv8ga9NrNDxoOQbc4kzbQ.png" alt></p>
+<p>Although Bitrise has a good UI to configure workflows and steps, we have fine grained control every parameters in the bitrise.yml file. It’s good to reason here as we get familiar with all the steps.</p>
+<p><img src="https://cdn-images-1.medium.com/max/5156/1*6PW6EVGZeDqKSMP9sHiziQ.png" alt></p>
+<h2 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h2><p>I hope you learn something and have a happy deploy. Since you are here, below articles may be of your interest</p>
+<ul>
+<li><p><a href="https://medium.com/fantageek/buddybuild-and-gradle-properties-in-android-apps-4590d17a2203" target="_blank" rel="noopener">BuddyBuild and gradle.properties in Android apps</a></p>
+</li>
+<li><p><a href="https://medium.com/react-native-training/fixing-react-native-issues-and-happy-deploy-to-bitrise-fabric-circleci-44da4ab1487b" target="_blank" rel="noopener">Deploying React Native to Bitrise, Fabric, CircleCI</a></p>
+</li>
+<li><p><a href="https://medium.com/hyperoslo/dealing-with-updated-pod-in-buddybuild-d6a128603e4f" target="_blank" rel="noopener">Dealing with updated pod in BuddyBuild</a></p>
+</li>
+<li><p><a href="https://medium.com/fantageek/using-circleci-2-0-in-ios-apps-7641424ba388" target="_blank" rel="noopener">Using CircleCI 2.0 in iOS apps</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ci/">ci</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/react-native/">react native</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-make-Unity-games-in-pure-C"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-make-Unity-games-in-pure-C/">How to make Unity games in pure C#</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-make-Unity-games-in-pure-C/" class="article-date">
+	  <time datetime="2019-05-23T16:21:36.000Z" itemprop="datePublished">May 23, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/275" target="_blank" rel="noopener">#275</a></strong></p>
+<p>Original post <a href="https://codeburst.io/making-unity-games-in-pure-c-2b1723cdc71f" target="_blank" rel="noopener">https://codeburst.io/making-unity-games-in-pure-c-2b1723cdc71f</a></p>
+<hr>
+<p>As an iOS engineers, I ditched Storyboard to avoid all possible hassles and write UI components in pure Swift code. I did XAML in Visual Studio for Windows Phone apps and XML in Android Studio for Android apps some time ago, and I had good experience. However since I’m used to writing things in code, I like to do the same for Unity games, although the Unity editor and simulator are pretty good. Besides being comfortable declaring things in code, I find that code is easy to diff and organise. I also learn more how components work, because in Unity editor, most of important the components and properties are already wired and set up for us, so there’s some very obvious things that we don’t know.</p>
+<p>All the things we can do in the editor, we can express in code. Things like setting up components, transform anchor, animation, sound, … are all feasible in code and you only need to using the correct namespace. There’s lots of info at <a href="https://docs.unity3d.com/ScriptReference/" target="_blank" rel="noopener">Welcome to the Unity Scripting Reference</a>. Unity 2018 has Visual Studio Community so that’s pretty comfortable to write code.</p>
+<h2 id="Javascript-and-C"><a href="#Javascript-and-C" class="headerlink" title="Javascript and C"></a>Javascript and C</h2><p>I would be extremely happy if Unity supports Kotlin or Swift, but for now only <a href="https://unity3d.com/learn/tutorials/topics/scripting/c-vs-js-syntax" target="_blank" rel="noopener">Javascript and C#</a> are supported. I’m also a huge fan of pure Javascript, but I choose C# because of type safety, and also because C# was the language I studied at university for XNA and ASP.NET projects.</p>
+<p><img src="https://cdn-images-1.medium.com/max/2000/1*_c-Ytv_IVI2Q7xJtfw0GIQ.png" alt></p>
+<h2 id="Indentation"><a href="#Indentation" class="headerlink" title="Indentation"></a>Indentation</h2><p>If you like 2 spaces indentation like me, you can go to Preferences in Visual Studio to change the editor settings</p>
+<p><img src="https://cdn-images-1.medium.com/max/2854/1*r3ihnAstxkZnDFG6qNrtvg.png" alt></p>
+<h2 id="GameObject-and-Canvas"><a href="#GameObject-and-Canvas" class="headerlink" title="GameObject and Canvas"></a>GameObject and Canvas</h2><p>In the Unity editor, try dragging an arbitrary UI element onto the screen, you can see that a Canvas and EventSystem are also created. These are GameObject that has a bunch of predefined Component .</p>
+<p><img src="https://cdn-images-1.medium.com/max/2894/1*QojuK8XV5FfWqs7bt-79uw.png" alt></p>
+<p>If we were to write this in code, we just need to follow the what is on the screen. In the beginning, we must use the editor to learn objects and properties, but later if we are familiar with Unity and its many GameObject , we can just code. Bear with me, it can be a hassle with code at first, but you surely learn a lot.</p>
+<p>I usually organise reusable code into files, let’s create a C# file and name it Sugar . For EventSystemand UI we need UnityEngine.EventSystems and using UnityEngine.UI namespaces.</p>
+<p>Here’s how to create EventSystem</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Sugar</span> &#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> GameObject <span class="title">makeEventSystem</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">		GameObject systemEventObject = <span class="keyword">new</span> GameObject(<span class="string">"EventSystem"</span>);</span><br><span class="line"></span><br><span class="line">		EventSystem system = systemEventObject.AddComponent&lt;EventSystem&gt;();</span><br><span class="line">		system.sendNavigationEvents = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">		StandaloneInputModule module = systemEventObject.AddComponent&lt;StandaloneInputModule&gt;();</span><br><span class="line">		module.horizontalAxis = <span class="string">"Horizontal"</span>;</span><br><span class="line">		module.verticalAxis = <span class="string">"Vertical"</span>;</span><br><span class="line">		module.submitButton = <span class="string">"Submit"</span>;</span><br><span class="line">		module.cancelButton = <span class="string">"Cancel"</span>;</span><br><span class="line">		module.inputActionsPerSecond = <span class="number">10</span>;</span><br><span class="line">		module.repeatDelay = <span class="number">0.5f</span>;</span><br><span class="line">		module.forceModuleActive = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> systemEventObject;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>and Canvas</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> GameObject <span class="title">makeCanvas</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">	GameObject canvasObject= <span class="keyword">new</span> GameObject(<span class="string">"Canvas"</span>);</span><br><span class="line"></span><br><span class="line">	Canvas canvas = canvasObject.AddComponent&lt;Canvas&gt;();</span><br><span class="line">	canvas.renderMode = RenderMode.WorldSpace;</span><br><span class="line"></span><br><span class="line">	CanvasScaler scaler = canvasObject.AddComponent&lt;CanvasScaler&gt;();</span><br><span class="line">	scaler.scaleFactor = <span class="number">10.0f</span>;</span><br><span class="line">	scaler.dynamicPixelsPerUnit = <span class="number">10.0f</span>;</span><br><span class="line"></span><br><span class="line">	GraphicRaycaster graphic = canvasObject.AddComponent&lt;GraphicRaycaster&gt;();</span><br><span class="line"></span><br><span class="line">	canvasObject.GetComponent&lt;RectTransform&gt;().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, <span class="number">3.0f</span>);</span><br><span class="line">	canvasObject.GetComponent&lt;RectTransform&gt;().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, <span class="number">3.0f</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> canvasObject;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>and how to make some common UI elements</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> GameObject <span class="title">makeBackground</span>(<span class="params">GameObject canvasObject</span>)</span> &#123;</span><br><span class="line">	GameObject backgroundObject = <span class="keyword">new</span> GameObject(<span class="string">"Background"</span>);</span><br><span class="line">	backgroundObject.AddComponent&lt;CanvasRenderer&gt;();</span><br><span class="line"></span><br><span class="line">	Image image = backgroundObject.AddComponent&lt;Image&gt;();</span><br><span class="line">	image.color = Color.green;</span><br><span class="line"></span><br><span class="line">	backgroundObject.transform.SetParent(canvasObject.transform, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> backgroundObject;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> GameObject <span class="title">makeLogo</span>(<span class="params">GameObject parentObject</span>)</span> &#123;</span><br><span class="line">	GameObject logoObject = <span class="keyword">new</span> GameObject(<span class="string">"Logo"</span>);</span><br><span class="line">	logoObject.AddComponent&lt;CanvasRenderer&gt;();</span><br><span class="line"></span><br><span class="line">	Image image = logoObject.AddComponent&lt;Image&gt;();</span><br><span class="line">	image.color = Color.red;</span><br><span class="line"></span><br><span class="line">	logoObject.transform.SetParent(parentObject.transform, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> logoObject;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> GameObject <span class="title">makeButton</span>(<span class="params">String title, GameObject parentObject</span>)</span> &#123;</span><br><span class="line">	GameObject buttonObject = <span class="keyword">new</span> GameObject(title + <span class="string">" Button"</span>);</span><br><span class="line">	buttonObject.AddComponent&lt;CanvasRenderer&gt;();</span><br><span class="line"></span><br><span class="line">	GameObject textObject = <span class="keyword">new</span> GameObject(<span class="string">"Text"</span>);</span><br><span class="line">	textObject.AddComponent&lt;CanvasRenderer&gt;();</span><br><span class="line"></span><br><span class="line">	Text text = textObject.AddComponent&lt;Text&gt;();</span><br><span class="line">	text.text = title;</span><br><span class="line"></span><br><span class="line">	textObject.transform.SetParent(buttonObject.transform, <span class="literal">false</span>);</span><br><span class="line">	buttonObject.transform.SetParent(parentObject.transform, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> buttonObject;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Now create an empty GameObject in your Scene and add a Script component to this GameObject . You can reference code in your Sugar.cs without any problem</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MenuScript</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Use this for initialization</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">Start</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">		setup();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// Update is called once per frame</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">Update</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setup</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">		Sugar sugar = <span class="keyword">new</span> Sugar();</span><br><span class="line">		GameObject canvasObject = sugar.makeCanvas();</span><br><span class="line">		GameObject eventSystemObject = sugar.makeEventSystem();</span><br><span class="line">		GameObject backgroundObject = sugar.makeBackground(canvasObject);</span><br><span class="line"></span><br><span class="line">		GameObject startButton = sugar.makeButton(<span class="string">"Start"</span>, canvasObject);</span><br><span class="line">		GameObject highScoresButton = sugar.makeButton(<span class="string">"High Scores"</span>, canvasObject);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h2><ul>
+<li><p><a href="https://docs.unity3d.com/Manual/HOWTO-UICreateFromScripting.html" target="_blank" rel="noopener">Creating UI elements from scripting</a>: another way is to use Prefabs and Instantiate function in C# to easily reference and construct elements</p>
+</li>
+<li><p><a href="https://unity3d.com/learn/tutorials/s/2d-game-creation" target="_blank" rel="noopener">2D Game Creation</a>: official Unity tutorials for making 2D games.</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/csharp/">csharp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-20-recommended-utility-apps-for-macOS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -4188,123 +4385,6 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
     
 
   
-    <article id="post-How-to-not-use-isRemovedOnCompletion-for-CAAnimation-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-not-use-isRemovedOnCompletion-for-CAAnimation-in-iOS/">How to not use isRemovedOnCompletion for CAAnimation in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-not-use-isRemovedOnCompletion-for-CAAnimation-in-iOS/" class="article-date">
-	  <time datetime="2019-05-13T09:17:43.000Z" itemprop="datePublished">May 13, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/228" target="_blank" rel="noopener">#228</a></strong></p>
-<p>CAAnimation is about presentation layer, after animation completes, the view snaps back to its original state. If we want to keep the state after animation, then the wrong way is to use <code>CAMediaTimingFillMode.forward</code> and <code>isRemovedOnCompletion</code></p>
-<h2 id="Animation-never-ends"><a href="#Animation-never-ends" class="headerlink" title="Animation never ends"></a>Animation never ends</h2><p><code>forwards</code> <a href="https://developer.apple.com/documentation/quartzcore/camediatimingfillmode/1427658-forwards" target="_blank" rel="noopener">https://developer.apple.com/documentation/quartzcore/camediatimingfillmode/1427658-forwards</a></p>
-<blockquote>
-<p>The receiver remains visible in its final state when the animation is completed.</p>
-</blockquote>
-<p><code>isRemovedOnCompletion</code></p>
-<p><a href="https://developer.apple.com/documentation/quartzcore/caanimation/1412458-isremovedoncompletion" target="_blank" rel="noopener">https://developer.apple.com/documentation/quartzcore/caanimation/1412458-isremovedoncompletion</a></p>
-<blockquote>
-<p>When true, the animation is removed from the target layer’s animations once its active duration has passed. Defaults to true.</p>
-</blockquote>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">layer.fillMode = .forwards</span><br><span class="line">animation. isRemovedOnCompletion = <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<p>This is to tell the animation to never ends and keep its last presentation state. Wrong approach ❗️</p>
-<h2 id="Set-final-state-before-calling-animation"><a href="#Set-final-state-before-calling-animation" class="headerlink" title="Set final state before calling animation"></a>Set final state before calling animation</h2><p>The presentation state is just for animation, the source of truth lies in the layer itself. We need to set the final state before calling animation</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> animation = <span class="type">CABasicAnimation</span>(keyPath: #keyPath(<span class="type">CAShapeLayer</span>.strokeEnd))</span><br><span class="line"></span><br><span class="line">shapeLayer.strokeEnd = <span class="number">1.0</span></span><br><span class="line">shapeLayer.add(animation, forKey: <span class="string">""</span>)</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-make-simple-search-box-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-make-simple-search-box-in-iOS/">How to make simple search box in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-make-simple-search-box-in-iOS/" class="article-date">
-	  <time datetime="2019-05-07T12:30:28.000Z" itemprop="datePublished">May 7, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/227" target="_blank" rel="noopener">#227</a></strong></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">SearchBox</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> textField: <span class="type">UITextField</span> = &#123;</span><br><span class="line">        <span class="keyword">let</span> textField = <span class="type">UITextField</span>()</span><br><span class="line">        <span class="keyword">let</span> imageView = <span class="type">UIImageView</span>(image: <span class="type">R</span>.image.search()!)</span><br><span class="line">        imageView.frame.size = <span class="type">CGSize</span>(width: <span class="number">20</span> + <span class="number">8</span>, height: <span class="number">20</span>)</span><br><span class="line">        imageView.contentMode = .scaleAspectFit</span><br><span class="line">        textField.leftView = imageView</span><br><span class="line">        textField.leftViewMode = .always</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> textField</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> filterButton: <span class="type">UIButton</span> = &#123;</span><br><span class="line">        <span class="keyword">let</span> button = <span class="type">UIButton</span>(type: .custom)</span><br><span class="line">        button.setImage(<span class="type">R</span>.image.<span class="built_in">filter</span>()!, <span class="keyword">for</span>: .normal)</span><br><span class="line">        button.imageEdgeInsets = <span class="type">UIEdgeInsets</span>(top: <span class="number">10</span>, <span class="keyword">left</span>: <span class="number">10</span>, bottom: <span class="number">10</span>, <span class="keyword">right</span>: <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> button</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> backView: <span class="type">UIView</span> = &#123;</span><br><span class="line">        <span class="keyword">let</span> view = <span class="type">UIView</span>()</span><br><span class="line">        view.backgroundColor = .white</span><br><span class="line">        view.layer.cornerRadius = <span class="number">10</span></span><br><span class="line">        view.layer.borderColor = <span class="type">R</span>.color.lightGray.cgColor</span><br><span class="line">        view.layer.borderWidth = <span class="number">0.5</span></span><br><span class="line">        view.layer.shadowOffset = <span class="type">CGSize</span>(width: <span class="number">1</span>, height: <span class="number">1</span>)</span><br><span class="line">        view.layer.shadowOpacity = <span class="number">0.8</span></span><br><span class="line">        view.layer.shadowColor = <span class="type">R</span>.color.lightGray.cgColor</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> view</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>(frame: <span class="type">CGRect</span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(frame: frame)</span><br><span class="line"></span><br><span class="line">        setup()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>?(coder aDecoder: <span class="type">NSCoder</span>) &#123;</span><br><span class="line">        <span class="built_in">fatalError</span>()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">        addSubviews([backView, textField, filterButton])</span><br><span class="line"></span><br><span class="line">        <span class="type">NSLayoutConstraint</span>.on([</span><br><span class="line">            filterButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -<span class="number">8</span>),</span><br><span class="line">            filterButton.centerYAnchor.constraint(equalTo: centerYAnchor),</span><br><span class="line">            filterButton.heightAnchor.constraint(equalToConstant: <span class="number">44</span>),</span><br><span class="line">            filterButton.widthAnchor.constraint(equalToConstant: <span class="number">44</span>),</span><br><span class="line"></span><br><span class="line">            textField.centerYAnchor.constraint(equalTo: centerYAnchor),</span><br><span class="line">            textField.leftAnchor.constraint(equalTo: leftAnchor, constant: <span class="number">16</span>),</span><br><span class="line">            textField.rightAnchor.constraint(equalTo: filterButton.leftAnchor, constant: -<span class="number">8</span>)</span><br><span class="line">        ])</span><br><span class="line"></span><br><span class="line">        <span class="type">NSLayoutConstraint</span>.on([</span><br><span class="line">            backView.pinEdges(view: <span class="keyword">self</span>, inset: <span class="type">UIEdgeInsets</span>(top: <span class="number">4</span>, <span class="keyword">left</span>: <span class="number">4</span>, bottom: -<span class="number">4</span>, <span class="keyword">right</span>: -<span class="number">4</span>))</span><br><span class="line">        ])</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>To apply padding to <code>leftView</code>, increase <code>width</code> and use <code>contentMode</code></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">imageView.frame.size = <span class="type">CGSize</span>(width: <span class="number">20</span> + <span class="number">8</span>, height: <span class="number">20</span>)</span><br><span class="line">imageView.contentMode = .scaleAspectFit</span><br></pre></td></tr></table></figure>
-
-<p>To make image in button smaller, use <code>imageEdgeInsets</code> with all positive values<br>To have round and shadow, specify <code>shadowOpacity</code>, <code>cornerRadius</code>, <code>shadowOffset</code></p>
-<img width="584" alt="searchbox" src="https://user-images.githubusercontent.com/2284279/57307753-6a045000-70e5-11e9-9f2d-db5835f5b21b.png">
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -4409,6 +4489,30 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-safeAreaInsets-in-iOS/">How to use safeAreaInsets in iOS</a></h6>
+              <span>December 30, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-send-message-from-bot-to-Slack-in-Swift/">How to send message from bot to Slack in Swift</a></h6>
+              <span>December 30, 2019</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-parse-xcrun-simctl-devices/">How to parse xcrun simctl devices</a></h6>
               <span>December 28, 2019</span>
             </div>
@@ -4451,30 +4555,6 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-synthetic-property-in-Kotlin-Android-Extension/">How to use synthetic property in Kotlin Android Extension</a></h6>
-              <span>December 23, 2019</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-KVO-in-Swift/">How to use KVO in Swift</a></h6>
-              <span>December 22, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -4497,7 +4577,7 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">34</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -4507,7 +4587,7 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">144</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">204</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">18</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">145</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">205</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">18</span></li></ul>
     </div>
   </div>
 
