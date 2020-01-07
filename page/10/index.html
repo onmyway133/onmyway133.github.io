@@ -179,6 +179,270 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-style-NSButton-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-style-NSButton-in-AppKit/">How to style NSButton in AppKit</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-style-NSButton-in-AppKit/" class="article-date">
+	  <time datetime="2019-05-31T05:29:23.000Z" itemprop="datePublished">May 31, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/297" target="_blank" rel="noopener">#297</a></strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> button = <span class="type">NSButton</span>()</span><br><span class="line">button.wantsLayer = <span class="literal">true</span></span><br><span class="line">button.isBordered = <span class="literal">false</span></span><br><span class="line">button.setButtonType(.momentaryChange)</span><br><span class="line">button.attributedTitle = <span class="type">NSAttributedString</span>(</span><br><span class="line">    string: <span class="string">"Click me"</span>,</span><br><span class="line">    attributes: [</span><br><span class="line">        <span class="type">NSAttributedString</span>.<span class="type">Key</span>.foregroundColor: <span class="type">NSColor</span>.white,</span><br><span class="line">        <span class="type">NSAttributedString</span>.<span class="type">Key</span>.font: <span class="type">NSFont</span>.labelFont(ofSize: <span class="number">13</span>)</span><br><span class="line">    ]</span><br><span class="line">button.layer?.backgroundColor = <span class="type">NSColor</span>.orange.cgColor</span><br><span class="line">button.layer?.cornerRadius = <span class="number">12</span></span><br><span class="line"></span><br><span class="line">activate(</span><br><span class="line">    button.anchor.height.<span class="built_in">equal</span>.to(<span class="number">32</span>),</span><br><span class="line">    button.anchor.width.<span class="built_in">equal</span>.to(<span class="number">100</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>To make it have native rounded rect</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">button.imageScaling = .scaleProportionallyDown</span><br><span class="line">button.setButtonType(.momentaryPushIn)</span><br><span class="line">button.bezelStyle = .rounded</span><br><span class="line">button.isBordered = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"><span class="keyword">import</span> Omnia</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">NSButton</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">style</span><span class="params">(imageName: String)</span></span> &#123;</span><br><span class="line">        image = <span class="type">NSImage</span>(named: <span class="type">NSImage</span>.<span class="type">Name</span>(imageName))</span><br><span class="line">        isBordered = <span class="literal">false</span></span><br><span class="line">        imageScaling = .scaleProportionallyDown</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">styleAction</span><span class="params">(title: String)</span></span> &#123;</span><br><span class="line">        attributedTitle = <span class="type">NSAttributedString</span>(string: title, attributes: [</span><br><span class="line">            <span class="type">NSAttributedString</span>.<span class="type">Key</span>.foregroundColor: <span class="type">NSColor</span>(hex: <span class="string">"008B80"</span>),</span><br><span class="line">            <span class="type">NSAttributedString</span>.<span class="type">Key</span>.font: <span class="type">NSFont</span>.boldSystemFont(ofSize: <span class="number">13</span>)</span><br><span class="line">        ])</span><br><span class="line"></span><br><span class="line">        isBordered = <span class="literal">false</span></span><br><span class="line">        setButtonType(.momentaryChange)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://mackuba.eu/2014/10/06/a-guide-to-nsbutton-styles" target="_blank" rel="noopener">https://mackuba.eu/2014/10/06/a-guide-to-nsbutton-styles</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-debounce-action-in-Flutter"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-debounce-action-in-Flutter/">How to debounce action in Flutter</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-debounce-action-in-Flutter/" class="article-date">
+	  <time datetime="2019-05-30T15:26:24.000Z" itemprop="datePublished">May 30, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/293" target="_blank" rel="noopener">#293</a></strong></p>
+<p>Answer <a href="https://stackoverflow.com/a/55119208/1418457" target="_blank" rel="noopener">https://stackoverflow.com/a/55119208/1418457</a></p>
+<hr>
+<p>This is useful to throttle TextField change event. You can make Debouncer class using Timer</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'package:flutter/foundation.dart'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:async'</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Debouncer</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">int</span> milliseconds;</span><br><span class="line">  VoidCallback action;</span><br><span class="line">  Timer _timer;</span><br><span class="line"></span><br><span class="line">  Debouncer(&#123; <span class="keyword">this</span>.milliseconds &#125;);</span><br><span class="line"></span><br><span class="line">  run(VoidCallback action) &#123;</span><br><span class="line">    <span class="keyword">if</span> (_timer != <span class="keyword">null</span>) &#123;</span><br><span class="line">      _timer.cancel();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    _timer = Timer(<span class="built_in">Duration</span>(milliseconds: milliseconds), action);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Declare and trigger</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> _debouncer = Debouncer(milliseconds: <span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">onTextChange(<span class="built_in">String</span> text) &#123;</span><br><span class="line">  _debouncer.run(() =&gt; <span class="built_in">print</span>(text));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dart/">dart</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flutter/">flutter</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-add-indicator-under-tab-bar-buttons-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-add-indicator-under-tab-bar-buttons-in-iOS/">How to add indicator under tab bar buttons in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-add-indicator-under-tab-bar-buttons-in-iOS/" class="article-date">
+	  <time datetime="2019-05-27T06:44:05.000Z" itemprop="datePublished">May 27, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/288" target="_blank" rel="noopener">#288</a></strong></p>
+<h2 id="selectionIndicatorImage"><a href="#selectionIndicatorImage" class="headerlink" title="selectionIndicatorImage"></a>selectionIndicatorImage</h2><ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uitabbar/1623456-selectionindicatorimage" target="_blank" rel="noopener">https://developer.apple.com/documentation/uikit/uitabbar/1623456-selectionindicatorimage</a></li>
+<li>Should design image with enough height, transparent background and indicator at the bottom</li>
+</ul>
+<blockquote>
+<p>Use this property to specify a custom selection image. Your image is rendered on top of the tab bar but behind the contents of the tab bar item itself. The default value of this property is nil, which causes the tab bar to apply a default highlight to the selected item</p>
+</blockquote>
+<h2 id="Custom-UITabBar-or-UITabBarController"><a href="#Custom-UITabBar-or-UITabBarController" class="headerlink" title="Custom UITabBar or UITabBarController"></a>Custom UITabBar or UITabBarController</h2><ul>
+<li>Hide existing <code>tabBar</code> <code>tabBar.isHidden = true</code></li>
+<li>Position custom buttons</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTabBarController</span>: <span class="title">UITabBarController</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> bar = <span class="type">UIView</span>()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> buttons = [<span class="type">UIButton</span>]()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> viewControllers: [<span class="type">UIViewController</span>]? &#123;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">        	populate(viewControllers: viewControllers)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">        setup()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">        tabBar.isHidden = <span class="literal">true</span></span><br><span class="line">        bar.backgroundColor = <span class="type">R</span>.color.background</span><br><span class="line">        view.addSubview(bar)</span><br><span class="line">        <span class="type">NSLayoutConstraint</span>.on([</span><br><span class="line">            bar.leftAnchor.constraint(equalTo: view.leftAnchor),</span><br><span class="line">            bar.rightAnchor.constraint(equalTo: view.rightAnchor),</span><br><span class="line">            bar.bottomAnchor.constraint(equalTo: view.bottomAnchor),</span><br><span class="line">			bar.topAnchor.constraint(equalTo: tabBar.topAnchor)</span><br><span class="line">        ])</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">populate</span><span class="params">(viewControllers: [UIViewController])</span></span> &#123;</span><br><span class="line">        buttons.forEach &#123;</span><br><span class="line">            $<span class="number">0</span>.removeFromSuperview()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        buttons = viewControllers.<span class="built_in">map</span>(&#123;</span><br><span class="line">            <span class="keyword">let</span> button = <span class="type">UIButton</span>()</span><br><span class="line">            button.setImage($<span class="number">0</span>.tabBarItem.image, <span class="keyword">for</span>: .normal)</span><br><span class="line">            bar.addSubview(button)</span><br><span class="line">            <span class="keyword">return</span> button</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">        view.setNeedsLayout()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLayoutSubviews</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLayoutSubviews()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> padding: <span class="type">CGFloat</span> = <span class="number">20</span></span><br><span class="line">        <span class="keyword">let</span> buttonSize = <span class="type">CGSize</span>(width: <span class="number">30</span>, height: <span class="number">44</span>)</span><br><span class="line">        <span class="keyword">let</span> width = view.bounds.width - padding * <span class="number">20</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (index, button) <span class="keyword">in</span> buttons.enumerated() &#123;</span><br><span class="line">            button.center = <span class="type">CGPoint</span>(x: bar.center.x, y: bar.frame.height/<span class="number">2</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Handle-UITabBarControllerDelegate"><a href="#Handle-UITabBarControllerDelegate" class="headerlink" title="Handle UITabBarControllerDelegate"></a>Handle UITabBarControllerDelegate</h2><ul>
+<li>Override <code>func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem)</code></li>
+<li><code>tabBar.subviews</code> contains 1 private <code>UITabBarBackground</code> and many private <code>UITabBarButton</code></li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTabBarController</span>: <span class="title">UITabBarController</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> indicator: <span class="type">UIView</span> = &#123;</span><br><span class="line">        <span class="keyword">let</span> view = <span class="type">UIView</span>()</span><br><span class="line">        view.backgroundColor = <span class="type">R</span>.color.primary</span><br><span class="line">        view.frame.size = <span class="type">CGSize</span>(width: <span class="number">32</span>, height: <span class="number">2</span>)</span><br><span class="line">        view.layer.cornerRadius = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> view</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">        tabBar.addSubview(indicator)</span><br><span class="line">        <span class="keyword">self</span>.delegate = <span class="keyword">self</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">animate</span><span class="params">(index: Int)</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> buttons = tabBar.subviews</span><br><span class="line">            .<span class="built_in">filter</span>(&#123; <span class="type">String</span>(describing: $<span class="number">0</span>).<span class="built_in">contains</span>(<span class="string">"Button"</span>) &#125;)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> index &lt; buttons.<span class="built_in">count</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> selectedButton = buttons[index]</span><br><span class="line">        <span class="type">UIView</span>.animate(</span><br><span class="line">            withDuration: <span class="number">0.25</span>,</span><br><span class="line">            delay: <span class="number">0</span>,</span><br><span class="line">            options: .curveEaseInOut,</span><br><span class="line">            animations: &#123;</span><br><span class="line">                <span class="keyword">let</span> point = <span class="type">CGPoint</span>(</span><br><span class="line">                    x: selectedButton.center.x,</span><br><span class="line">                    y: selectedButton.frame.maxY - <span class="number">1</span></span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">                <span class="keyword">self</span>.indicator.center = point</span><br><span class="line">            &#125;,</span><br><span class="line">            completion: <span class="literal">nil</span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLayoutSubviews</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLayoutSubviews()</span><br><span class="line"></span><br><span class="line">        animate(index: selectedIndex)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">CustomTabBarController</span>: <span class="title">UITabBarControllerDelegate</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">tabBar</span><span class="params">(<span class="number">_</span> tabBar: UITabBar, didSelect item: UITabBarItem)</span></span> &#123;</span><br><span class="line">        <span class="keyword">guard</span></span><br><span class="line">            <span class="keyword">let</span> items = tabBar.items,</span><br><span class="line">            <span class="keyword">let</span> index = items.firstIndex(of: item)</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        animate(index: index)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In iOS 13, we need to use <code>viewDidAppear</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidAppear</span><span class="params">(<span class="number">_</span> animated: Bool)</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewDidAppear(animated)</span><br><span class="line"></span><br><span class="line">    moveIndicator(index: selectedIndex, animated: <span class="literal">false</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Understanding-socket-and-port-in-TCP"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Understanding-socket-and-port-in-TCP/">Understanding socket and port in TCP</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Understanding-socket-and-port-in-TCP/" class="article-date">
+	  <time datetime="2019-05-25T14:12:06.000Z" itemprop="datePublished">May 25, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/287" target="_blank" rel="noopener">#287</a></strong></p>
+<p>When digging into the world of TCP, I get many terminologies I don’t know any misconceptions. But with the help of those geeks on SO, the problems were demystified. Now it’s time to sum up and share with others :D</p>
+<h2 id="What-defines-a-unique-connection"><a href="#What-defines-a-unique-connection" class="headerlink" title="What defines a unique connection ?"></a>What defines a unique connection ?</h2><p>There are 5 elements that identify a connection. They call them 5-tuple</p>
+<ol>
+<li><p>Protocol. This is often omitted as it is understood that we are talking about TCP, which leaves 4.</p>
+</li>
+<li><p>Source IP address.</p>
+</li>
+<li><p>Source port.</p>
+</li>
+<li><p>Target P address.</p>
+</li>
+<li><p>Target port.</p>
+</li>
+</ol>
+<h2 id="Does-TCP-listen-on-one-port-and-talk-on-another-port"><a href="#Does-TCP-listen-on-one-port-and-talk-on-another-port" class="headerlink" title="Does TCP listen on one port and talk on another port ?"></a>Does TCP listen on one port and talk on another port ?</h2><p>No. This is a common misconception. TCP listens on 1 port and talk on that same port. If clients make multiple TCP connection to server. It’s the client OS that must generate different random source ports, so that server can see them as unique connections</p>
+<h2 id="What-is-the-maximum-number-of-concurrent-TCP-connections-that-a-server-can-handle-in-theory"><a href="#What-is-the-maximum-number-of-concurrent-TCP-connections-that-a-server-can-handle-in-theory" class="headerlink" title="What is the maximum number of concurrent TCP connections that a server can handle, in theory ?"></a>What is the maximum number of concurrent TCP connections that a server can handle, in theory ?</h2><p>A single listening port can accept more than one connection simultaneously.There is a ‘64K’ limit that is often cited, but that is per client per server port, and needs clarifying.</p>
+<p>If a client has many connections to the same port on the same destination, then three of those fields will be the same — only source_port varies to differentiate the different connections. Ports are 16-bit numbers, therefore the maximum number of connections any given client can have to any given host port is 64K.</p>
+<p>However, multiple clients can each have up to 64K connections to some server’s port, and if the server has multiple ports or either is multi-homed then you can multiply that further</p>
+<p>So the real limit is file descriptors. Each individual socket connection is given a file descriptor, so the limit is really the number of file descriptors that the system has been configured to allow and resources to handle. The maximum limit is typically up over 300K, but is configurable e.g. with sysctl</p>
+<h2 id="Concurrent-connection-request-vs-Concurrent-open-connection"><a href="#Concurrent-connection-request-vs-Concurrent-open-connection" class="headerlink" title="Concurrent connection request vs Concurrent open connection"></a>Concurrent connection request vs Concurrent open connection</h2><p>When clients want to make TCP connection with server, this request will be queued in server ‘s backlog queue. This backlog queue size is small (about 5–10), and this size limits the number of concurrent connection requests. However, server quickly pick connection request from that queue and accept it. Connection request which is accepted are called open connection. The number of concurrent open connections is limited by server ‘s resources allocated for file descriptor.</p>
+<h2 id="Why-connection-is-rejected-after-successful-TCP-handshake"><a href="#Why-connection-is-rejected-after-successful-TCP-handshake" class="headerlink" title="Why connection is rejected after successful TCP handshake ?"></a>Why connection is rejected after successful TCP handshake ?</h2><p>It’s normal. When server receive connection request from client (by receiving SYN), it will then response with SYN, ACK, hence cause successful TCP handshake. But this request are stills in backlog queue.</p>
+<p>But, if the application process exceeds the limit of max file descriptors it can use, then when server calls accept, then it realizes that there are no file descriptors available to be the allocated for the socket and fails the accept call and the TCP connection sending a FIN to other side</p>
+<h2 id="What-are-active-and-passive-socket"><a href="#What-are-active-and-passive-socket" class="headerlink" title="What are active and passive socket ?"></a>What are active and passive socket ?</h2><p>Sockets come in two primary flavors. An active socket is con­nect­ed to a remote active socket via an open data con­nec­tion… A passive socket is not con­nect­ed, but rather awaits an in­com­ing con­nec­tion, which will spawn a new active socket once a con­nec­tion is es­tab­lished</p>
+<p>Each port can have a single passive socket binded to it, await­ing in­com­ing con­nec­tions, and mul­ti­ple active sockets, each cor­re­spond­ing to an open con­nec­tion on the port. It’s as if the factory worker is waiting for new mes­sages to arrive (he rep­re­sents the passive socket), and when one message arrives from a new sender, he ini­ti­ates a cor­re­spon­dence (a con­nec­tion) with them by del­e­gat­ing someone else (an active socket) to ac­tu­al­ly read the packet and respond back to the sender if nec­es­sary. This permits the factory worker to be free to receive new packets</p>
+<h2 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h2><p>Here are some more links to help you explore further</p>
+<ul>
+<li><a href="http://stackoverflow.com/questions/152457/what-is-the-difference-between-a-port-and-a-socket" target="_blank" rel="noopener">What is the difference between a port and a socket?</a></li>
+<li><a href="http://stackoverflow.com/questions/4696812/passive-and-active-sockets" target="_blank" rel="noopener">Passive and active sockets</a></li>
+<li><a href="http://stackoverflow.com/questions/3870260/why-will-a-tcp-server-send-a-fin-immediately-after-accepting-a-connection" target="_blank" rel="noopener">Why will a TCP Server send a FIN immediately after accepting a connection?</a></li>
+<li><a href="http://stackoverflow.com/questions/2332741/what-is-the-theoretical-maximum-number-of-open-tcp-connections-that-a-modern-lin" target="_blank" rel="noopener">What is the theoretical maximum number of open TCP connections that a modern Linux box can have</a></li>
+<li><a href="http://stackoverflow.com/questions/114874/socket-listen-backlog-parameter-how-to-determine-this-value" target="_blank" rel="noopener">socket listen backlog parameter, how to determine this value?</a></li>
+<li><a href="http://stackoverflow.com/questions/4253454/question-about-listening-and-backlog-for-sockets" target="_blank" rel="noopener">Question about listening and backlog for sockets</a></li>
+<li><a href="http://stackoverflow.com/questions/1752219/rejecting-a-tcp-connection-before-its-being-accepted" target="_blank" rel="noopener">Rejecting a TCP connection before it’s being accepted?</a></li>
+<li><a href="http://stackoverflow.com/questions/6590181/best-way-to-generate-million-tcp-connection" target="_blank" rel="noopener">Best way to generate million tcp connection</a></li>
+<li><a href="http://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser" target="_blank" rel="noopener">Max parallel http connections in a browser?</a></li>
+<li><a href="http://stackoverflow.com/questions/2831434/how-to-retain-one-million-simultaneous-tcp-connections" target="_blank" rel="noopener">How to retain one million simultaneous TCP connections?</a></li>
+<li><a href="http://stackoverflow.com/questions/7735618/tcp-rst-packet-details" target="_blank" rel="noopener">TCP RST packet details</a></li>
+<li><a href="http://stackoverflow.com/questions/15761436/how-many-tuples-are-there-in-a-connection" target="_blank" rel="noopener">How many tuples are there in a connection?</a></li>
+<li><a href="http://stackoverflow.com/questions/15761776/does-tcp-use-another-port-for-sending-data" target="_blank" rel="noopener">Does TCP use another port for sending data?</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tech/">tech</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-use-Gradle-Kotlin-DSL-in-Android"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -4661,310 +4925,6 @@ export default AirbnbStyleGuide</code></pre><h2 id="Where-to-go-from-here"><a hr
     
 
   
-    <article id="post-How-to-use-remote-theme-for-GitHub-Pages"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-remote-theme-for-GitHub-Pages/">How to use remote theme for GitHub Pages</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-remote-theme-for-GitHub-Pages/" class="article-date">
-	  <time datetime="2019-05-21T05:40:26.000Z" itemprop="datePublished">May 21, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/248" target="_blank" rel="noopener">#248</a></strong></p>
-<p>Visit <a href="https://github.com/onmyway133/onmyway133.github.io" target="_blank" rel="noopener">https://github.com/onmyway133/onmyway133.github.io</a></p>
-<hr>
-<p><a href="https://github.blog/2017-11-29-use-any-theme-with-github-pages/" target="_blank" rel="noopener">https://github.blog/2017-11-29-use-any-theme-with-github-pages/</a></p>
-<blockquote>
-<p>Starting today, you can use any of the hundreds of community-curated themes on GitHub.com. To build your site with any public, GitHub-hosted theme, add the following to your site’s _config.yml file:</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">remote_theme: owner/name</span><br></pre></td></tr></table></figure>
-
-<p>Browse themes <a href="https://github.com/topics/jekyll-theme" target="_blank" rel="noopener">https://github.com/topics/jekyll-theme</a><br>Example config file with navigation <a href="https://github.com/daviddarnes/alembic/blob/master/_config.yml" target="_blank" rel="noopener">https://github.com/daviddarnes/alembic/blob/master/_config.yml</a></p>
-<h2 id="Link-to-a-new-page"><a href="#Link-to-a-new-page" class="headerlink" title="Link to a new page"></a>Link to a new page</h2><p>Each page must have a description. Link must point to generated html file</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Apps: /apps.html</span><br></pre></td></tr></table></figure>
-
-<p>Do not specify <code>layout: default</code> to keep overall theme</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: Another Page</span><br><span class="line">description:</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/github/">github</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-enable-black-mode-in-Google-Maps-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-enable-black-mode-in-Google-Maps-in-iOS/">How to enable black mode in Google Maps in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-enable-black-mode-in-Google-Maps-in-iOS/" class="article-date">
-	  <time datetime="2019-05-20T08:13:11.000Z" itemprop="datePublished">May 20, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/246" target="_blank" rel="noopener">#246</a></strong></p>
-<p>Use GMSMapStyle <a href="https://developers.google.com/maps/documentation/android-sdk/styling" target="_blank" rel="noopener">https://developers.google.com/maps/documentation/android-sdk/styling</a><br>Export styling json from <a href="https://mapstyle.withgoogle.com/" target="_blank" rel="noopener">https://mapstyle.withgoogle.com/</a></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> mapStyleUrl = <span class="type">Bundle</span>.main.url(forResource: <span class="string">"mapStyle"</span>, withExtension: <span class="string">"json"</span>)!</span><br><span class="line">mapView.mapStyle = <span class="keyword">try</span>? <span class="type">GMSMapStyle</span>(contentsOfFileURL: mapStyleUrl)</span><br></pre></td></tr></table></figure>
-
-<p>To change overall color, search for mostly <code>&quot;elementType&quot;: &quot;geometry&quot;</code> and <code>&quot;featureType&quot;: &quot;water&quot;</code></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"elementType"</span>: <span class="string">"geometry"</span>,</span><br><span class="line">    <span class="attr">"stylers"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"color"</span>: <span class="string">"#424242"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"featureType"</span>: <span class="string">"water"</span>,</span><br><span class="line">    <span class="attr">"elementType"</span>: <span class="string">"geometry"</span>,</span><br><span class="line">    <span class="attr">"stylers"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"color"</span>: <span class="string">"#2E2E2E"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/google/">google</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/maps/">maps</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Favorite-WWDC-2018-sessions"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Favorite-WWDC-2018-sessions/">Favorite WWDC 2018 sessions</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Favorite-WWDC-2018-sessions/" class="article-date">
-	  <time datetime="2019-05-19T16:33:17.000Z" itemprop="datePublished">May 19, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/245" target="_blank" rel="noopener">#245</a></strong></p>
-<p>Original post <a href="https://medium.com/fantageek/my-favourite-wwdc-2018-sessions-363d3fc9c9d5" target="_blank" rel="noopener">https://medium.com/fantageek/my-favourite-wwdc-2018-sessions-363d3fc9c9d5</a></p>
-<hr>
-<h1 id="Favourite-WWDC-2018-sessions"><a href="#Favourite-WWDC-2018-sessions" class="headerlink" title="Favourite WWDC 2018 sessions"></a>Favourite WWDC 2018 sessions</h1><p>This year I failed the lottery ticket to WWDC, and I also missed the keynote live stream because I was <a href="https://twitter.com/onmyway133/status/1003584883116167169" target="_blank" rel="noopener">sailing</a> on the Christian Radich outside Oslo fjord that day. Luckily all the videos are available on <a href="https://developer.apple.com/videos/wwdc2018/" target="_blank" rel="noopener">Apple Developer site</a> very shortly, and we can watch them now on Chrome or the <a href="https://github.com/insidegui/WWDC" target="_blank" rel="noopener">unofficial WWDC</a> app on macOS. I recommend the <a href="https://github.com/insidegui/WWDC" target="_blank" rel="noopener">WWDC</a> macOS app as it allows to mark favourites and filter, also offers the ability to adjust play speed to 1.25 or 1.5 saves me some time watching.</p>
-<p>This year WWDC focuses a lot on privacy, stability, and speed, which are all I wish, so many thanks to Apple engineers who made that happen, and the resit to install the so called <a href="https://twitter.com/bagelturf/status/1004444007424905216?s=21" target="_blank" rel="noopener">more stable iOS 12</a> is real. As an iOS engineers, I like to focus more about the necessary things to me, that is about the Swift programming language, new changes in Cocoa Touch, enhancements in Xcode and testing tricks. I also like to explore more <a href="https://medium.com/flawless-app-stories/detecting-avengers-superheroes-in-your-ios-app-with-ibm-watson-and-coreml-fe38e493a4d1" target="_blank" rel="noopener">about</a> <a href="https://medium.com/flawless-app-stories/machine-learning-in-ios-turi-create-and-coreml-5ddce0dc8e26" target="_blank" rel="noopener">machine</a> <a href="https://medium.com/flawless-app-stories/machine-learning-in-ios-azure-custom-vision-and-coreml-645e93f35eee" target="_blank" rel="noopener">learning</a> so I’m very glad that Apple is investing more into this technology with the introduction of Turi Create and Create ML.</p>
-<p>To me, APIs come and get deprecated very often and it’s good to know them, but the most important thing is to invest in your programming, debugging and testing skill which you can apply in many other platforms.</p>
-<p>Continued from last year <a href="https://medium.com/@onmyway133/my-favourite-wwdc-2017-sessions-a777fa5aabaf" target="_blank" rel="noopener">favourites</a> list, below are my favourite sessions with personal notes. Things are listed in no particular order. Hope you find it useful.</p>
-<h3 id="Platforms-State-of-the-Union"><a href="#Platforms-State-of-the-Union" class="headerlink" title="Platforms State of the Union"></a><a href="https://developer.apple.com/videos/play/wwdc2018/102/" target="_blank" rel="noopener">Platforms State of the Union</a></h3><p>If you don’t have time, you should watch only this session. Platform State of the Union is like keynote for developers as it highlights important changes.</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*5zkWPlmZ9oYfY9-O.jpg" alt></p>
-<ul>
-<li><p>Privacy: Apple confirms on its commitment in privacy and security, also introduces password management feature and auto fill on iOS 12. Generating strong password, integrating with 3rd password management and quickly populating OTP field from SMS message have never been easier. <a href="https://support.apple.com/en-us/HT202491" target="_blank" rel="noopener">GateKeeper</a> gets some improvements as well and begins to require app to be notarised.</p>
-</li>
-<li><p>iOS 12: huge improvement in performance, Siri gets smarter with Shortcut support, group calling in FaceTime and grouped notification. Also for emoji fan, Memoji was introduced.</p>
-</li>
-<li><p>macOS 10.14 Mojave: more with Dark Mode. They demo mostly with Xcode in dark mode, which looks so cool. This year WWDC banner give hints about iOS and macOS cross-platform apps, which is partially true with <a href="https://www.imore.com/marzipan" target="_blank" rel="noopener">Marzipan</a>, a way to allow iOS apps to run on the mac.</p>
-</li>
-<li><p>Xcode 10: with improvements in code editing and source control changes bar indicator. Debugging with memory debug tool, LLDB performance enhancement and particular the new build system completely rewritten in Swift with parallel tasks are exciting news.</p>
-</li>
-<li><p>Swift 4.2: if you follow swift repo then <a href="https://github.com/ole/whats-new-in-swift-4-2" target="_blank" rel="noopener">Swift 4.2</a> may not be very surprising. There are also announcements for Swift 5 plan.</p>
-</li>
-<li><p>Machine Learning: is never hotter than this. This year we see huge investments in machine learning with Create ML, Turi Create, Natural Language frameworks, CoreML 2, new detection capabilities in Vision.</p>
-</li>
-<li><p>ARKit 2, watchOS 5, tvOS 12, AppStore Connect and AppStore Connect APIs are some other important news you don’t want to miss.</p>
-</li>
-</ul>
-<h3 id="What’s-new-in-Swift"><a href="#What’s-new-in-Swift" class="headerlink" title="What’s new in Swift"></a><a href="https://developer.apple.com/videos/play/wwdc2018/401/" target="_blank" rel="noopener">What’s new in Swift</a></h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*JQCScM5dRcK9dX-_.jpg" alt></p>
-<p>Together with this session, I recommend you to read <a href="https://www.hackingwithswift.com/articles/77/whats-new-in-swift-4-2" target="_blank" rel="noopener">What’s new in Swift 4.2</a> summary which is very succinct. Besides improvement in complication and runtime, Swift 4.2 offers some new features: iterable enum case, synthesised Equatable and Hashable, handy functions for shuffling, random generating. To me, the need to explicitly handle Implicitly unwrapped optional is also a reasonable change.</p>
-<h3 id="What’s-New-in-Cocoa-Touch"><a href="#What’s-New-in-Cocoa-Touch" class="headerlink" title="What’s New in Cocoa Touch"></a><a href="https://developer.apple.com/videos/play/wwdc2018/202/" target="_blank" rel="noopener">What’s New in Cocoa Touch</a></h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*n1X4HddAZ-4ZHpaf.jpg" alt></p>
-<p>This is a brief introduction to all changes coming to iOS 12, together with tips on how to be a good iOS citizen. Learn what can affect scrolling experience and prefetching technique, memory consumption and automatic backing stores, how to get the best from UIImage and UIImageView . <a href="https://developer.apple.com/videos/play/wwdc2018/220/" target="_blank" rel="noopener">AutoLayout</a> engine got a lot of performance improvement so it won’t bother you any more. To me the most satisfying is to get all the UIKit notifications and classes reorganised under nested types, which makes code reasoning very easy.</p>
-<h3 id="Getting-the-Most-out-of-Playgrounds-in-Xcode"><a href="#Getting-the-Most-out-of-Playgrounds-in-Xcode" class="headerlink" title="Getting the Most out of Playgrounds in Xcode"></a><a href="https://developer.apple.com/videos/play/wwdc2018/402/" target="_blank" rel="noopener">Getting the Most out of Playgrounds in Xcode</a></h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*cl4xdnHojOq-PNBc.jpg" alt></p>
-<p>I’ve <a href="https://medium.com/flawless-app-stories/playground-driven-development-in-swift-cf167489fe7b" target="_blank" rel="noopener">written about Playground</a> before and I’m very glad that Apple also invests a lot in it. The way people can interact and train model [Create ML](<a href="http://Introducing" target="_blank" rel="noopener">http://Introducing</a> Create ML) in Playground is mesmerising. People may question how Playground works so well in session’s demos, but we can’t resist the new changes coming to Playground like Step by Step execution, markup rendering improvements and also how easy it is to consume custom frameworks. We can also now publish our own <a href="https://developer.apple.com/videos/play/wwdc2018/413/" target="_blank" rel="noopener">Playground through subscription</a>.</p>
-<h3 id="What’s-New-in-Core-ML"><a href="#What’s-New-in-Core-ML" class="headerlink" title="What’s New in Core ML"></a><a href="https://developer.apple.com/videos/play/wwdc2018/708/" target="_blank" rel="noopener">What’s New in Core ML</a></h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*1-xUL2gFr-Ys8WQT.jpg" alt></p>
-<p>Apple starts the machine learning trend last year with the introduction of Core ML. We might be excited and frustrated at the same time as Core ML is powerful but there’s no way we can customise it. Now the <a href="https://developer.apple.com/videos/play/wwdc2018/708/" target="_blank" rel="noopener">2</a> <a href="https://developer.apple.com/videos/play/wwdc2018/709/" target="_blank" rel="noopener">parts</a> tell us how to implement custom layer and model, techniques to reduce model size like quantisation and flexible model. This makes the foundation for improvement in <a href="https://developer.apple.com/videos/play/wwdc2018/717/" target="_blank" rel="noopener">Vision</a> in object tracking and the debut of <a href="https://developer.apple.com/videos/play/wwdc2018/713/" target="_blank" rel="noopener">Natural Language</a> framework. Machine learning has never been easier.</p>
-<h3 id="What’s-New-in-Testing"><a href="#What’s-New-in-Testing" class="headerlink" title="What’s New in Testing"></a><a href="https://developer.apple.com/videos/play/wwdc2018/403/" target="_blank" rel="noopener">What’s New in Testing</a></h3><p>I can’t miss any testing sessions as it is part of every day’s work. How can your program avoids regression bugs and ready for refactoring without any tests?</p>
-<p>This session shows improvement in coverage and the introduction of xccov tool to help us build automation on top of coverage report. Parallel distributed testing in Xcode 10 can save us some time to have coffee. Another wonderful news is that tests have multiple order execution mode to avoid bugs due to implicit dependencies.</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*7Gw1utFOl4C3PKqV.jpg" alt></p>
-<h3 id="Testing-Tips-amp-Tricks-🌟"><a href="#Testing-Tips-amp-Tricks-🌟" class="headerlink" title="Testing Tips &amp; Tricks 🌟"></a><a href="https://developer.apple.com/videos/play/wwdc2018/417/" target="_blank" rel="noopener">Testing Tips &amp; Tricks</a> 🌟</h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*OHjJdWEhHj7Fc4rq.jpg" alt></p>
-<p>This is my most favourite. The session starts with a pyramid of tests with unit integration and end-to-end test analogy explanation, then to some very cool tips and tricks.</p>
-<ul>
-<li>Testing network request: I like the separation of APIRequest and APIRequestLoader with URLSession , dependency injection with default parameter and the customisation of URLProtocol in URLSessionConfiguration</li>
-</ul>
-<p><img src="https://cdn-images-1.medium.com/max/2066/1*xJzqnw37CZKFhhMwym2HHQ.png" alt></p>
-<p><img src="https://cdn-images-1.medium.com/max/2684/1*VUxjS-DpOfee7d5zTA1vrg.png" alt></p>
-<p><img src="https://cdn-images-1.medium.com/max/2326/1*rgRwQla_YK3ADRwxZ4xpkg.png" alt></p>
-<ul>
-<li>Testing notification: Notification is system wide and I try to avoid it as much as possible. This shows how to inject dependency with default parameter and use of own NotificationCenter instead of NotificationCenter.default to ease testing</li>
-</ul>
-<p><img src="https://cdn-images-1.medium.com/max/2602/1*mXiNRzit8VcFM4_GNM3ebg.png" alt></p>
-<ul>
-<li><p>Testing location: build abstraction with LocationProvider and LocationFetcher . How to use custom protocol and protocol for delegate to mock during test</p>
-</li>
-<li><p>Testing timer: how to use and mock RunLoop behaviour with Timer</p>
-</li>
-</ul>
-<p><img src="https://cdn-images-1.medium.com/max/2000/1*obf6GcsXcHAbGFy-lUENNw.png" alt></p>
-<h3 id="Advanced-Debugging-with-Xcode-and-LLDB"><a href="#Advanced-Debugging-with-Xcode-and-LLDB" class="headerlink" title="Advanced Debugging with Xcode and LLDB"></a><a href="https://developer.apple.com/videos/play/wwdc2018/412/" target="_blank" rel="noopener">Advanced Debugging with Xcode and LLDB</a></h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*6c81NEXU7tKYPEbQ.jpg" alt></p>
-<p>LLDB has been improved to enable to debugging reliability experience, issues with AST context corruption, Swift type resolution are now things in the past. We can review how to use some common LLDB commands with handy arguments, and how to use Xcode breakpoint to its best.</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/1*ZtVpOaDnmt4VsDTHRiB6Ww.png" alt></p>
-<h3 id="A-Tour-of-UICollectionView-🌟"><a href="#A-Tour-of-UICollectionView-🌟" class="headerlink" title="A Tour of UICollectionView 🌟"></a><a href="https://developer.apple.com/videos/play/wwdc2018/225/" target="_blank" rel="noopener">A Tour of UICollectionView</a> 🌟</h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*skJgSTHlTohIj_DT.jpg" alt></p>
-<p>I begin to use UICollectionView more than UITableView , and it also has same code as NSCollectionView,which is more comfortable solution than the horrible NSTableView .</p>
-<ul>
-<li>Item size in UICollectionViewLayout : I often rely on UICollectionViewDelegateFlowLayout to specify item size but after watching this session, I feel like moving size related code to Layout object feels more like a good way to go</li>
-</ul>
-<p><img src="https://cdn-images-1.medium.com/max/2718/1*FS6OykJZ_zIPTzaWPPYk6g.png" alt></p>
-<ul>
-<li><p>Mosaic layout: This is not new, but good to watch again. You learn how to implement custom layout using cached layout attributes</p>
-</li>
-<li><p>Data Source update: I didn’t expect Apple mentions this, but it is a good lesson on how UICollectionView handles batch update. I ‘ve written about this before in my <a href="https://medium.com/flawless-app-stories/a-better-way-to-update-uicollectionview-data-in-swift-with-diff-framework-924db158db86" target="_blank" rel="noopener">A better way to update UICollectionView data in Swift with diff framework</a> and that post gets a lot of attractions. In this session we need to remember that *<em>ordering matters in data source update, but not in collection view update *</em>❗️❗️❗️</p>
-</li>
-</ul>
-<p><img src="https://cdn-images-1.medium.com/max/2000/1*VMqhNo3bXxI-79e-r9iNvA.png" alt></p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/1*KiWef6geZ3z0-jRaWNuqRg.png" alt></p>
-<h3 id="Swift-Generics"><a href="#Swift-Generics" class="headerlink" title="Swift Generics"></a><a href="https://developer.apple.com/videos/play/wwdc2018/406/" target="_blank" rel="noopener">Swift Generics</a></h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*KWRTeiOV8FBNK3Mu.jpg" alt></p>
-<p>Generic was a core feature of Swift since the beginning, we all know that it helps us to implement generic code that can work with many types in a type safe manner. This session reminds that I ‘ve never learned enough, especially the reasonable design behind it.</p>
-<p>The sessions showcases Collection protocol and its protocol inheritances: MutableCollection , BidirectionalCollection , RandomAccessCollection and how they can be combined to provide generic functionalities for conformers. The associatedtype requirement in each protocol, especially Index and Element, is very minimal and has enough constraints for the protocol to implement lots of necessary functionalities in its protocol extension, which is eye opening for me. I very like to read open source, so looking at the <a href="https://github.com/apple/swift/blob/master/stdlib/public/core/BidirectionalCollection.swift" target="_blank" rel="noopener">source code</a> for such protocols helps me understand more.</p>
-<p><img src="https://cdn-images-1.medium.com/max/2102/1*QIepiAZqK4QmX2IbLFKz0w.png" alt></p>
-<p>The part about <a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle" target="_blank" rel="noopener">Fisher Yates shuffle algorithm</a> details how we can come up with necessary protocol while still make them generic</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/1*actyrEg4E4qSFYu--K6uzA.png" alt></p>
-<p>Pay attention to when they mention count and map , you can learn more how each concrete type can hook into the customisation point in protocol extension</p>
-<p><img src="https://cdn-images-1.medium.com/max/2704/1*IG15tCSq49SqgvgJrXHDWw.png" alt></p>
-<p>Finally learn the <a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle" target="_blank" rel="noopener">Liskov substitution principle</a> with protocol in class inheritance. You should also <a href="https://developer.apple.com/videos/play/wwdc2018/229/" target="_blank" rel="noopener">Using Collections Effectively</a> for how to utilise handy functions in Collection.</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*oIKcsw6-H37i2A1t.jpg" alt></p>
-<h3 id="Data-You-Can-Trust"><a href="#Data-You-Can-Trust" class="headerlink" title="Data You Can Trust"></a><a href="https://developer.apple.com/videos/play/wwdc2018/222/" target="_blank" rel="noopener">Data You Can Trust</a></h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*Iv80a99O1g6k-oO4.jpg" alt></p>
-<p>Although Codable has a lot to offers in term of data integrity, this is good to know about to make sure the data you receive is actually the right data in correct format and structure. <a href="https://twitter.com/mgratzer/status/1003882651038683136" target="_blank" rel="noopener">CommonCrypto</a> is also part of new iOS SDK so you don’t need my <a href="https://github.com/onmyway133/Arcane" target="_blank" rel="noopener">Arcane</a> library to handle encryption and hashing in your apps.</p>
-<h3 id="Embracing-Algorithms"><a href="#Embracing-Algorithms" class="headerlink" title="Embracing Algorithms"></a><a href="https://developer.apple.com/videos/play/wwdc2018/223/" target="_blank" rel="noopener">Embracing Algorithms</a></h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*qocdXtZ8cCAJ0mKV.jpg" alt></p>
-<p>This is the most pleasant to watch as it is like a conversation between the speaker and the imaginary manager Crusty. Here I learn how to be aware of algorithm complexity and also how to utilise built in Foundation functions which are already optimised for performance.</p>
-<p>After this session I can’t help myself but going to Swift repo to read the <a href="https://github.com/apple/swift/blob/master/test/Prototypes/Algorithms.swift" target="_blank" rel="noopener">Algorithms.swift</a> file immediately.</p>
-<h3 id="Image-and-Graphics-Best-Practices"><a href="#Image-and-Graphics-Best-Practices" class="headerlink" title="Image and Graphics Best Practices"></a><a href="https://developer.apple.com/videos/play/wwdc2018/219/" target="_blank" rel="noopener">Image and Graphics Best Practices</a></h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*-qDMSLxL89PuOm-m.jpg" alt></p>
-<p>Learn how image encoding and decoding works through data and image buffer and how that affects memory and performance. There are techniques like downsampling that can tackle this problem. This also recommends against using backing store, and instead, use UIImageView</p>
-<p><img src="https://cdn-images-1.medium.com/max/2766/1*mt70wBlbwC9Kz18vXN5THQ.png" alt></p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/1*uV9Ata-pPnb-US3WrI6Y_A.png" alt></p>
-<h3 id="A-Guide-to-Turi-Create"><a href="#A-Guide-to-Turi-Create" class="headerlink" title="A Guide to Turi Create"></a><a href="https://developer.apple.com/videos/play/wwdc2018/712/" target="_blank" rel="noopener">A Guide to Turi Create</a></h3><p><img src="https://cdn-images-1.medium.com/max/2000/0*yWr3HKYpIslcV-Zz.jpg" alt></p>
-<p>I’ve <a href="https://medium.com/flawless-app-stories/machine-learning-in-ios-turi-create-and-coreml-5ddce0dc8e26" target="_blank" rel="noopener">written about Turi Create</a> before, but it is just scratching the surface of the many tasks offered by Turi. This year Apple releases <a href="https://github.com/apple/turicreate/releases/tag/5.0b1" target="_blank" rel="noopener">Turi Create 5</a> with style transfer task, Vision Feature Print, GPU acceleration and recommender model improvements. I can’t wait to explore. And if you take a look at MLDataTable in Create ML framework, it looks like this has Turi ‘s SFrame under the hood.</p>
-<p>That’s it. Thanks for reading. What are your favourite sessions this year? Please share in the comment section below</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-get-running-window-informations-in-macOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-get-running-window-informations-in-macOS/">How to get running window informations in macOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-get-running-window-informations-in-macOS/" class="article-date">
-	  <time datetime="2019-05-16T11:03:35.000Z" itemprop="datePublished">May 16, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/243" target="_blank" rel="noopener">#243</a></strong></p>
-<p>From <a href="https://developer.apple.com/documentation/coregraphics/1455137-cgwindowlistcopywindowinfo" target="_blank" rel="noopener">https://developer.apple.com/documentation/coregraphics/1455137-cgwindowlistcopywindowinfo</a></p>
-<blockquote>
-<p>Generates and returns information about the selected windows in the current user session.</p>
-</blockquote>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyWindowInfo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> frame: <span class="type">CGRect</span></span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">let</span> pid: <span class="type">Int</span></span><br><span class="line">    <span class="keyword">let</span> number: <span class="type">Int</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>?(json: [<span class="type">String</span>: <span class="type">Any</span>]) &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> pid = json[<span class="string">"kCGWindowOwnerPID"</span>] <span class="keyword">as</span>? <span class="type">Int</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> name = json[<span class="string">"kCGWindowOwnerName"</span>] <span class="keyword">as</span>? <span class="type">String</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> rect = json[<span class="string">"kCGWindowBounds"</span>] <span class="keyword">as</span>? [<span class="type">String</span>: <span class="type">Any</span>] <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> x = rect[<span class="string">"X"</span>] <span class="keyword">as</span>? <span class="type">CGFloat</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> y = rect[<span class="string">"Y"</span>] <span class="keyword">as</span>? <span class="type">CGFloat</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> height = rect[<span class="string">"Height"</span>] <span class="keyword">as</span>? <span class="type">CGFloat</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> width = rect[<span class="string">"Width"</span>] <span class="keyword">as</span>? <span class="type">CGFloat</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> number = json[<span class="string">"kCGWindowNumber"</span>] <span class="keyword">as</span>? <span class="type">Int</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">self</span>.pid = pid</span><br><span class="line">        <span class="keyword">self</span>.name = name</span><br><span class="line">        <span class="keyword">self</span>.number = number</span><br><span class="line">        <span class="keyword">self</span>.frame = <span class="type">CGRect</span>(x: x, y: y, width: width, height: height)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">guard</span> <span class="keyword">let</span> jsons = <span class="type">CGWindowListCopyWindowInfo</span>(.optionAll, kCGNullWindowID) <span class="keyword">as</span>? [[<span class="type">String</span>: <span class="type">Any</span>]] <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> infos = jsons.compactMap(&#123; <span class="type">MyWindowInfo</span>(json: $<span class="number">0</span>) &#125;)</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -5069,6 +5029,54 @@ export default AirbnbStyleGuide</code></pre><h2 id="Where-to-go-from-here"><a hr
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-make-rotation-in-same-direction-in-iOS/">How to make rotation in same direction in iOS</a></h6>
+              <span>January 6, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-get-updated-safeAreaInsets-in-iOS/">How to get updated safeAreaInsets in iOS</a></h6>
+              <span>January 6, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-disable-implicit-decoration-view-animation-in-UICollectionView/">How to disable implicit decoration view animation in UICollectionView</a></h6>
+              <span>January 6, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-make-simple-tracker-via-swizzling-in-Swift/">How to make simple tracker via swizzling in Swift</a></h6>
+              <span>January 4, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-make-simple-adapter-for-delegate-and-datasource-for-UICollectionView-and-UITableView/">How to make simple adapter for delegate and datasource for UICollectionView and UITableView</a></h6>
               <span>January 4, 2020</span>
             </div>
@@ -5083,54 +5091,6 @@ export default AirbnbStyleGuide</code></pre><h2 id="Where-to-go-from-here"><a hr
 
               <h6 style="margin: 0;"><a href="/blog/How-to-make-progress-HUD-in-Swift/">How to make progress HUD in Swift</a></h6>
               <span>January 4, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-specify-year-in-date-formatter-in-Swift/">How to specify year in date formatter in Swift</a></h6>
-              <span>January 3, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-build-static-site-using-Publish/">How to build static site using Publish</a></h6>
-              <span>January 2, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-iTMSTransporter/">How to use  iTMSTransporter</a></h6>
-              <span>January 1, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-Timer-and-RunLoop-in-Swift/">How to use Timer and RunLoop in Swift</a></h6>
-              <span>January 1, 2020</span>
             </div>
 
           </li>
@@ -5157,7 +5117,7 @@ export default AirbnbStyleGuide</code></pre><h2 id="Where-to-go-from-here"><a hr
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -5167,7 +5127,7 @@ export default AirbnbStyleGuide</code></pre><h2 id="Where-to-go-from-here"><a hr
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">146</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">210</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">18</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">149</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">212</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">18</span></li></ul>
     </div>
   </div>
 

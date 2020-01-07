@@ -179,6 +179,230 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-deal-with-animation-in-UITests-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-deal-with-animation-in-UITests-in-iOS/">How to deal with animation in UITests in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-deal-with-animation-in-UITests-in-iOS/" class="article-date">
+	  <time datetime="2018-01-08T14:12:54.000Z" itemprop="datePublished">January 8, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/143" target="_blank" rel="noopener">#143</a></strong></p>
+<p>Today I was writing tests and get this error related to <code>app idle</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t =    23.06s         Assertion Failure: &lt;unknown&gt;:0: Failed to scroll to visible (by AX action) Button, 0x6000003827d0, traits: 8858370049, label: &apos;cart&apos;, error: Error -25204 performing AXAction 2003 on element &lt;XCAccessibilityElement: 0x7fc391a2bd60&gt; pid: 91461, elementOrHash.elementID: 140658975676048.128</span><br></pre></td></tr></table></figure>
+
+<p>It turns out that the project uses a HUD that is performing some progress animation. Even it was being called <code>HUD.hide()</code>, the problem still exists. </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">t =    31.55s     Wait for no.example.MyApp to idle</span><br><span class="line"> t =    91.69s         App animations complete notification not received, will attempt to continue.</span><br><span class="line"> t =    91.70s Tap Target Application 0x6040002a1260</span><br><span class="line"> t =    91.70s     Wait for no.example.MyApp to id</span><br></pre></td></tr></table></figure>
+
+<p>No matter how I call <code>sleep,</code>wait`, still the problem</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sleep(<span class="number">10</span>)</span><br><span class="line">app.tap()</span><br><span class="line"><span class="number">_</span> = checkoutButton.waitForExistence(timeout: <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>The fix is to disable animation. Start with setting argument when running tests</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">app.launchArguments.append(<span class="string">"--UITests"</span>)</span><br><span class="line">app.launch</span><br></pre></td></tr></table></figure>
+
+<p>Then in <code>AppDelegate</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(<span class="number">_</span> application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: <span class="keyword">Any</span>]?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> <span class="type">CommandLine</span>.arguments.<span class="built_in">contains</span>(<span class="string">"--UITests"</span>) &#123;</span><br><span class="line">    <span class="type">UIView</span>.setAnimationsEnabled(<span class="literal">false</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/testing/">testing</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-generate-QR-code-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-generate-QR-code-in-AppKit/">How to generate QR code in AppKit</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-generate-QR-code-in-AppKit/" class="article-date">
+	  <time datetime="2018-01-06T17:41:50.000Z" itemprop="datePublished">January 6, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/140" target="_blank" rel="noopener">#140</a></strong></p>
+<p>I need to generate QR code in <a href="https://github.com/onmyway133/AddressGenerator" target="_blank" rel="noopener">https://github.com/onmyway133/AddressGenerator</a>. Fortunately with <code>CoreImage</code> filter, it is very easy. Code is in Swift 4</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">QRCodeGenerator</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">generate</span><span class="params">(string: String, size: CGSize)</span></span> -&gt; <span class="type">NSImage?</span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> data = string.data(using: .utf8) <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Filter</span></span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> <span class="built_in">filter</span> = <span class="type">CIFilter</span>(name: <span class="string">"CIQRCodeGenerator"</span>) <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">filter</span>.setValue(data, forKey: <span class="string">"inputMessage"</span>)</span><br><span class="line">    <span class="built_in">filter</span>.setValue(<span class="string">"Q"</span>, forKey: <span class="string">"inputCorrectionLevel"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// CIImage</span></span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> ciImage = <span class="built_in">filter</span>.outputImage <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// NSImage</span></span><br><span class="line">    <span class="keyword">let</span> rep = <span class="type">NSCIImageRep</span>(ciImage: ciImage)</span><br><span class="line">    <span class="keyword">let</span> image = <span class="type">NSImage</span>(size: rep.size)</span><br><span class="line">    image.addRepresentation(rep)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Scale</span></span><br><span class="line">    <span class="keyword">let</span> finalImage = <span class="type">NSImage</span>(size: size)</span><br><span class="line">    finalImage.lockFocus()</span><br><span class="line">    <span class="type">NSGraphicsContext</span>.current?.imageInterpolation = .<span class="keyword">none</span></span><br><span class="line">    image.draw(<span class="keyword">in</span>: <span class="type">NSRect</span>(origin: .zero, size: size))</span><br><span class="line">    finalImage.unlockFocus()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> finalImage</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-use-Function-Literals-with-Receiver-in-Kotlin"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-Function-Literals-with-Receiver-in-Kotlin/">How to use Function Literals with Receiver in Kotlin</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-Function-Literals-with-Receiver-in-Kotlin/" class="article-date">
+	  <time datetime="2018-01-05T12:54:26.000Z" itemprop="datePublished">January 5, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/139" target="_blank" rel="noopener">#139</a></strong></p>
+<p>From <a href="https://kotlinlang.org/docs/reference/lambdas.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/reference/lambdas.html</a></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HTML</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">body</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">html</span><span class="params">(<span class="keyword">init</span>: <span class="type">HTML</span>.() -&gt; <span class="type">Unit</span>)</span></span>: HTML &#123;</span><br><span class="line">    <span class="keyword">val</span> html = HTML()  <span class="comment">// create the receiver object</span></span><br><span class="line">    html.<span class="keyword">init</span>()        <span class="comment">// pass the receiver object to the lambda</span></span><br><span class="line">    <span class="keyword">return</span> html</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">html &#123;       <span class="comment">// lambda with receiver begins here</span></span><br><span class="line">    body()   <span class="comment">// calling a method on the receiver object</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>From <a href="https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/util/Standard.kt" target="_blank" rel="noopener">https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/util/Standard.kt</a></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@kotlin</span>.<span class="keyword">internal</span>.InlineOnly</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> T.<span class="title">apply</span><span class="params">(block: <span class="type">T</span>.() -&gt; <span class="type">Unit</span>)</span></span>: T &#123;</span><br><span class="line">    contract &#123;</span><br><span class="line">        callsInPlace(block, InvocationKind.EXACTLY_ONCE)</span><br><span class="line">    &#125;</span><br><span class="line">    block()</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> person = Person().apply &#123;</span><br><span class="line">  name = <span class="string">"Superman"</span></span><br><span class="line">  age = <span class="number">20</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>From <a href="https://academy.realm.io/posts/kau-jake-wharton-testing-robots/" target="_blank" rel="noopener">https://academy.realm.io/posts/kau-jake-wharton-testing-robots/</a></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">payment</span><span class="params">(func: <span class="type">PaymentRobot</span>.() -&gt; <span class="type">Unit</span>)</span></span> = PaymentRobot().apply &#123; func() &#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PaymentRobot</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">fun</span> <span class="title">amount</span><span class="params">(amount: <span class="type">Long</span>)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">fun</span> <span class="title">recipient</span><span class="params">(recipient: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">infix</span> <span class="function"><span class="keyword">fun</span> <span class="title">send</span><span class="params">(func: <span class="type">ResultRobot</span>.() -&gt; <span class="type">Unit</span>)</span></span>: ResultRobot &#123;</span><br><span class="line">	  <span class="comment">// ...</span></span><br><span class="line">	  <span class="keyword">return</span> ResultRobot().apply &#123; func() &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ResultRobot</span> </span>&#123;</span><br><span class="line">	func isSuccess() &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">payment &#123;</span><br><span class="line">	amount(<span class="number">4200</span>)</span><br><span class="line">	recipient(<span class="symbol">superman@</span>google.com)</span><br><span class="line">&#125; send &#123;</span><br><span class="line">	isSuccess()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-use-R.swift-in-UITest-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-R.swift-in-UITest-in-iOS/">How to use R.swift in UITest in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-R.swift-in-UITest-in-iOS/" class="article-date">
+	  <time datetime="2018-01-05T10:22:38.000Z" itemprop="datePublished">January 5, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/138" target="_blank" rel="noopener">#138</a></strong></p>
+<p>Here is how to use <a href="https://github.com/mac-cain13/R.swift" target="_blank" rel="noopener">R.swift</a> in UITest target</p>
+<ul>
+<li>Add <code>Localizable.strings</code> to UITest target</li>
+<li>Declare pod</li>
+</ul>
+<figure class="highlight rb"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">target <span class="string">'MyAppUITests'</span> <span class="keyword">do</span></span><br><span class="line">  pod <span class="string">'R.swift'</span>, <span class="string">'~&gt; 4.0'</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>In UITest target settings, add <code>$(FRAMEWORK_SEARCH_PATHS)</code> to Runpath Search Path</li>
+<li>Add <code>R.generated.swift</code> to UITest target</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Hiding-back-button-in-navigation-bar-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -2464,225 +2688,6 @@ signal.map { value in
     
 
   
-    <article id="post-How-to-make-generic-extension-with-associatedtype-protocol-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-make-generic-extension-with-associatedtype-protocol-in-Swift/">How to make generic extension with associatedtype protocol in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-make-generic-extension-with-associatedtype-protocol-in-Swift/" class="article-date">
-	  <time datetime="2017-11-10T09:37:54.000Z" itemprop="datePublished">November 10, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/104" target="_blank" rel="noopener">#104</a></strong></p>
-<p>I like extensions, and I like to group them under 1 common property to easily access. This also makes it clear that these all belong to the same feature and not to confuse with Apple properties.</p>
-<h3 id="Grouping-all-related-extensions"><a href="#Grouping-all-related-extensions" class="headerlink" title="Grouping all related extensions"></a>Grouping all related extensions</h3><p>This is how I do it in <a href="https://github.com/onmyway133/Anchors" target="_blank" rel="noopener">Anchor</a> and <a href="https://github.com/onmyway133/On" target="_blank" rel="noopener">On</a></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">activate(</span><br><span class="line">  a.anchor.top.<span class="keyword">left</span>,</span><br><span class="line">  b.anchor.top.<span class="keyword">right</span>,</span><br><span class="line">  <span class="built_in">c</span>.anchor.bottom.<span class="keyword">left</span>,</span><br><span class="line">  d.anchor.bottom.<span class="keyword">right</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">textField.on.text &#123; text <span class="keyword">in</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">"textField text has changed"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">textField.on.didEndEditing &#123; text <span class="keyword">in</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">"texField has ended editing"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Generic-extension"><a href="#Generic-extension" class="headerlink" title="Generic extension"></a>Generic extension</h3><p>For <code>On</code>, it is a bit tricky as it needs to adapt to different <code>NSObject</code> subclasses. And to make auto completion work, meaning that each type of subclass gets its own function hint, we need to use generic and <code>associatedtype</code> protocol.</p>
-<p>You can take a look at <a href="https://github.com/onmyway133/On/blob/master/Sources/Shared/Core/Container.swift" target="_blank" rel="noopener">Container</a> and <a href="https://github.com/onmyway133/On/blob/master/Sources/Shared/Core/OnAware.swift" target="_blank" rel="noopener">OnAware</a></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Container</span>&lt;<span class="title">Host</span>: <span class="title">AnyObject</span>&gt;: <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">  <span class="keyword">unowned</span> <span class="keyword">let</span> host: <span class="type">Host</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(host: <span class="type">Host</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.host = host</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">OnAware</span>: <span class="title">class</span> </span>&#123;</span><br><span class="line">  <span class="keyword">associatedtype</span> <span class="type">OnAwareHostType</span>: <span class="type">AnyObject</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> on: <span class="type">Container</span>&lt;<span class="type">OnAwareHostType</span>&gt; &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="RxCocoa"><a href="#RxCocoa" class="headerlink" title="RxCocoa"></a>RxCocoa</h3><p><a href="https://github.com/ReactiveX/RxSwift" target="_blank" rel="noopener">RxSwift</a> has its <code>RxCocoa</code> that does this trick too, so that you can just declare</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">button.rx.tap</span><br><span class="line">textField.rx.text</span><br><span class="line">alertAction.rx.isEnabled</span><br></pre></td></tr></table></figure>
-
-<p>The power lies in the struct <a href="https://github.com/ReactiveX/RxSwift/blob/0b66f666ba6955a51cba1ad530311b030fa4db9c/RxSwift/Reactive.swift" target="_blank" rel="noopener">Reactive</a> and <code>ReactiveCompatible</code> protocol</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">Reactive</span>&lt;<span class="title">Base</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">/// Base object to extend.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">let</span> base: <span class="type">Base</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Creates extensions with base object.</span></span><br><span class="line">    <span class="comment">///</span></span><br><span class="line">    <span class="comment">/// - parameter base: Base object.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">init</span>(<span class="number">_</span> base: <span class="type">Base</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.base = base</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">ReactiveCompatible</span> </span>&#123;</span><br><span class="line">    <span class="comment">/// Extended type</span></span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">CompatibleType</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Reactive extensions.</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> rx: <span class="type">Reactive</span>&lt;<span class="type">CompatibleType</span>&gt;.<span class="type">Type</span> &#123; <span class="keyword">get</span> <span class="keyword">set</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Reactive extensions.</span></span><br><span class="line">    <span class="keyword">var</span> rx: <span class="type">Reactive</span>&lt;<span class="type">CompatibleType</span>&gt; &#123; <span class="keyword">get</span> <span class="keyword">set</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ReactiveCompatible</span> </span>&#123;</span><br><span class="line">    <span class="comment">/// Reactive extensions.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">var</span> rx: <span class="type">Reactive</span>&lt;<span class="type">Self</span>&gt;.<span class="type">Type</span> &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Reactive</span>&lt;<span class="type">Self</span>&gt;.<span class="keyword">self</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            <span class="comment">// this enables using Reactive to "mutate" base type</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Reactive extensions.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> rx: <span class="type">Reactive</span>&lt;<span class="type">Self</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Reactive</span>(<span class="keyword">self</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            <span class="comment">// this enables using Reactive to "mutate" base object</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Here <a href="https://github.com/ReactiveX/RxSwift/blob/master/RxCocoa/iOS/UIButton%2BRx.swift" target="_blank" rel="noopener">UIButton+Rx</a> you can see how it can be applied to <code>UIButton</code></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Reactive</span> <span class="title">where</span> <span class="title">Base</span>: <span class="title">UIButton</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// Reactive wrapper for `TouchUpInside` control event.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> tap: <span class="type">ControlEvent</span>&lt;<span class="type">Void</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> controlEvent(.touchUpInside)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-make-simple-Binding-in-MVVM-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-make-simple-Binding-in-MVVM-in-iOS/">How to make simple Binding in MVVM in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-make-simple-Binding-in-MVVM-in-iOS/" class="article-date">
-	  <time datetime="2017-11-10T09:22:19.000Z" itemprop="datePublished">November 10, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/103" target="_blank" rel="noopener">#103</a></strong></p>
-<p>If you use <code>MVVM</code> or any other kinds of helper classes, then there’s need to report back the result to the caller. In simple cases, without asynchronous chaining, <code>RxSwift</code> is a bit overkill, you can just implement your own <code>Binding</code>. Basically, it is just observer pattern, or closure in its simplest form.</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Binding</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> value: <span class="type">T</span> &#123;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">      listener?(value)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> listener: ((<span class="type">T</span>) -&gt; <span class="type">Void</span>)?</span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(value: <span class="type">T</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.value = value</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">bind</span><span class="params">(<span class="number">_</span> closure: @escaping <span class="params">(T)</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">    closure(value)</span><br><span class="line">    listener = closure</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Then you can declare it like</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ViewModel</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> friends = <span class="type">Binding</span>&lt;[<span class="type">User</span>]&gt;(value: [])</span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>() &#123;</span><br><span class="line">    getFacebookFriends &#123;</span><br><span class="line">      friends.value = $<span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">getFacebookFriends</span><span class="params">(completion: <span class="params">([User])</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">  	<span class="comment">// Do the work</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Finally, this is how you listen to the result via callback</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">  viewModel.friends.bind &#123; friends <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">self</span>.friendsCountLabel.text = <span class="string">"\(friends.count)"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-use-custom-UINavigationBar-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-custom-UINavigationBar-in-iOS/">How to use custom UINavigationBar in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-custom-UINavigationBar-in-iOS/" class="article-date">
-	  <time datetime="2017-11-08T11:09:04.000Z" itemprop="datePublished">November 8, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/102" target="_blank" rel="noopener">#102</a></strong></p>
-<p>Today I was reading the project in <a href="https://www.raywenderlich.com/147162/iglistkit-tutorial-better-uicollectionviews" target="_blank" rel="noopener">IGListKit Tutorial: Better UICollectionViews</a>, I encounter something I often overlook</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> nav = <span class="type">UINavigationController</span>(navigationBarClass: <span class="type">CustomNavigationBar</span>.<span class="keyword">self</span>, toolbarClass: <span class="literal">nil</span>)</span><br><span class="line">nav.pushViewController(<span class="type">FeedViewController</span>(), animated: <span class="literal">false</span>)</span><br></pre></td></tr></table></figure>
-
-<p>So we can provide custom <code>navigationBarClass</code> and <code>toolbarClass</code> for <code>UINavigationController</code>. This <a href="https://github.com/remirobert/RRMaterialNavigationBar" target="_blank" rel="noopener">RRMaterialNavigationBar</a> also has cool implementation of a material <code>UINavigationBar</code>.</p>
-<p>Together with <code>UINavigationBarDelegate</code> we can do some cool things</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-It&#39;s-good-to-have-a-CI"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/It's-good-to-have-a-CI/">It&#39;s good to have a CI</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/It's-good-to-have-a-CI/" class="article-date">
-	  <time datetime="2017-11-02T09:42:34.000Z" itemprop="datePublished">November 2, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/101" target="_blank" rel="noopener">#101</a></strong></p>
-<p>I have Unit tests and UI tests pass on my simulator and device, locally. But when I make the build on Buddybuild, it fails with the reason <code>Activity cannot be used after its scope has completed</code>. People seem to have <a href="https://forums.developer.apple.com/thread/87463" target="_blank" rel="noopener">the</a> <a href="https://stackoverflow.com/questions/46318833/how-can-i-avoid-nsinternalinconsistencyexception-when-tapping-on-ui-elements-wit" target="_blank" rel="noopener">same</a> issue too.</p>
-<p>Taking a look at the log in Buddybuild </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"> t =     8.89s     Staging: UIStatusBarWindow</span><br><span class="line">t =     8.95s     Staging: (CoreFoundation) Sending Updated Preferences to System CFPrefsD</span><br><span class="line">t =     8.95s     Staging: Setup BuddybuildSDK</span><br><span class="line">t =     8.98s     Staging: [BuddyBuildSDK] In app store - Instant Replay Disabled</span><br><span class="line">t =     8.98s     Staging: Setting up the remote notifications for UI Tests video recording</span><br><span class="line">t =     9.07s     CL: CLLocationManager</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;CLLocationManager&quot;, &quot;event&quot;:activity, &quot;_cmd&quot;:initWithEffectiveBundleIdentifier:bundle:, &quot;self&quot;:&quot;0x600000205140&quot;, &quot;identifier&quot;:(null), &quot;bundle&quot;:(null)&#125;</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Core] &#123;&quot;msg&quot;:&quot;state transition&quot;, &quot;event&quot;:state_transition, &quot;state&quot;:LocationManager, &quot;id&quot;:&quot;0x600000205140&quot;, &quot;property&quot;:init, &quot;new&quot;:&apos;00 00 00 00 00 00 F0 BF 00 00 00 00 00 00 F0 BF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F0 3F 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00&apos;&#125;</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Core] &#123;&quot;msg&quot;:&quot;state transition&quot;, &quot;event&quot;:state_transition, &quot;state&quot;:LocationManager, &quot;id&quot;:&quot;0x600000205140&quot;, &quot;property&quot;:lifecycle, &quot;old&quot;:&quot;0x0&quot;, &quot;new&quot;:&quot;0x6040000ddd50&quot;&#125;</span><br><span class="line">t =     9.07s     CL: _CLClientCreateWithBundleIdentifierAndPath</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;_CLClientCreateWithBundleIdentifierAndPath&quot;, &quot;event&quot;:activity, &quot;effectiveBundleIdentifier&quot;:(null), &quot;effectiveBundlePath&quot;:(null)&#125;</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;client allocated&quot;, &quot;client&quot;:&quot;0x7f84c64e0990&quot;&#125;</span><br><span class="line">t =     9.07s     CL: _CLClientCreateConnection</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;_CLClientCreateConnection&quot;, &quot;event&quot;:activity, &quot;client&quot;:&quot;0x7f84c64e0990&quot;&#125;</span><br><span class="line">t =     9.07s     CL: Sending cached messages to daemon</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;Sending cached messages to daemon&quot;, &quot;event&quot;:activity&#125;</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] #Warning No cached registration message</span><br><span class="line">t =     9.07s     Staging: (CoreLocation) [com.apple.locationd.Core.Core] &#123;&quot;msg&quot;:&quot;state transition&quot;, &quot;event&quot;:state_transition, &quot;state&quot;:LocationManager, &quot;id&quot;:&quot;0x600000205140&quot;, &quot;property&quot;:pausesLocationUpdatesAutomatically, &quot;old&quot;:0, &quot;new&quot;:1&#125;</span><br><span class="line">t =     9.10s     CL: CLLocationManager</span><br><span class="line">t =     9.11s     Staging: (CoreLocation) [com.apple.locationd.Core.Client] &#123;&quot;msg&quot;:&quot;CLLocationManager&quot;, &quot;event&quot;:activity, &quot;_cmd&quot;:setDelegate:, &quot;self&quot;:&quot;0x600000205140&quot;, &quot;delegate&quot;:&quot;0x60400028bef0&quot;&#125;</span><br><span class="line">t =     9.12s     error: unexpectedly found nil while unwrapping an Optional value</span><br><span class="line">t =     9.12s             Unable to monitor event loop</span><br><span class="line">t =    10.13s Tap &quot;Onboarding.Continue&quot; Button</span><br><span class="line">t =    10.13s     Wait for no.hyper.MyApp-Staging to idle</span><br><span class="line">t =    10.16s     Find the &quot;Onboarding.Continue&quot; Button</span><br><span class="line">t =    11.28s         Assertion Failure: &lt;unknown&gt;:0: no.hyper.MyApp-Staging crashed in MyApp_Staging.AppDelegate.(makeDependencyContainer in _5D394B3D7D393F9C3C550E61780517BB)() -&gt; MyApp_Staging.DependencyContainer</span><br><span class="line">t =    11.33s Wait for com.apple.springboard to idle</span><br></pre></td></tr></table></figure>
-
-<p>Did you see <code>unexpectedly found nil while unwrapping an Optional value</code>?  It crashed in <code>CLLocationManager</code>. It is because when location changes, <code>CLLocationManager</code> needs to report it via <code>didUpdateLocations</code> function, but we haven’t implemented it. Strangely that it didn’t happen when testing locally.</p>
-<p>The proposed fix is to implement a dummy method with no operation</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">locationManager</span><span class="params">(<span class="number">_</span> manager: CLLocationManager, didUpdateLocations locations: [CLLocation])</span></span> &#123;</span><br><span class="line">  <span class="comment">// No op</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>But it is not the solution. It appears that <code>BuddyBuild</code> is doing some hacks with how <code>push notification</code> and <code>UIWindow</code>, hence causing the issue.  </p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2787,6 +2792,54 @@ signal.map { value in
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-make-rotation-in-same-direction-in-iOS/">How to make rotation in same direction in iOS</a></h6>
+              <span>January 6, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-get-updated-safeAreaInsets-in-iOS/">How to get updated safeAreaInsets in iOS</a></h6>
+              <span>January 6, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-disable-implicit-decoration-view-animation-in-UICollectionView/">How to disable implicit decoration view animation in UICollectionView</a></h6>
+              <span>January 6, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-make-simple-tracker-via-swizzling-in-Swift/">How to make simple tracker via swizzling in Swift</a></h6>
+              <span>January 4, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-make-simple-adapter-for-delegate-and-datasource-for-UICollectionView-and-UITableView/">How to make simple adapter for delegate and datasource for UICollectionView and UITableView</a></h6>
               <span>January 4, 2020</span>
             </div>
@@ -2801,54 +2854,6 @@ signal.map { value in
 
               <h6 style="margin: 0;"><a href="/blog/How-to-make-progress-HUD-in-Swift/">How to make progress HUD in Swift</a></h6>
               <span>January 4, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-specify-year-in-date-formatter-in-Swift/">How to specify year in date formatter in Swift</a></h6>
-              <span>January 3, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-build-static-site-using-Publish/">How to build static site using Publish</a></h6>
-              <span>January 2, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-iTMSTransporter/">How to use  iTMSTransporter</a></h6>
-              <span>January 1, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-Timer-and-RunLoop-in-Swift/">How to use Timer and RunLoop in Swift</a></h6>
-              <span>January 1, 2020</span>
             </div>
 
           </li>
@@ -2875,7 +2880,7 @@ signal.map { value in
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2885,7 +2890,7 @@ signal.map { value in
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">146</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">210</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">18</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">149</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">212</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">18</span></li></ul>
     </div>
   </div>
 

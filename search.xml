@@ -4,6 +4,84 @@
   
     
     <entry>
+      <title>How to make rotation in same direction in iOS</title>
+      <link href="/blog/How-to-make-rotation-in-same-direction-in-iOS/"/>
+      <url>/blog/How-to-make-rotation-in-same-direction-in-iOS/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/571" target="_blank" rel="noopener">#571</a></strong></p><p>From <code>CGFloat.pi / 2</code> to <code>-CGFloat.pi / 2 + epsilon</code></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> iOS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>How to get updated safeAreaInsets in iOS</title>
+      <link href="/blog/How-to-get-updated-safeAreaInsets-in-iOS/"/>
+      <url>/blog/How-to-get-updated-safeAreaInsets-in-iOS/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/570" target="_blank" rel="noopener">#570</a></strong></p><h1 id="Use-viewSafeArea"><a href="#Use-viewSafeArea" class="headerlink" title="Use viewSafeArea"></a>Use viewSafeArea</h1><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@available</span>(iOS <span class="number">11.0</span>, *)</span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewSafeAreaInsetsDidChange</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewSafeAreaInsetsDidChange()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">self</span>.collectionView.reloadData()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Use <a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide</a></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">view.safeAreaLayoutGuide.layoutFrame</span><br></pre></td></tr></table></figure><p><a href="https://developer.apple.com/documentation/uikit/uiview/2891103-safeareainsets" target="_blank" rel="noopener">https://developer.apple.com/documentation/uikit/uiview/2891103-safeareainsets</a></p><blockquote><p>For the view controller’s root view, the insets account for the status bar, other visible bars, and any additional insets that you specified using the additionalSafeAreaInsets property of your view controller. For other views in the view hierarchy, the insets reflect only the portion of the view that is covered. For example, if a view is entirely within the safe area of its superview, the edge insets in this property are 0.</p></blockquote><p>Use UICollectionView.contentInsetAdjustmentBehavior</p><h2 id="Nested-view"><a href="#Nested-view" class="headerlink" title="Nested view"></a>Nested view</h2><p>For UICollectionView inside Cell inside UICollectionView, its insets is 0, but its parent parent is correct, which is the original cell</p><p>UICollectionView -&gt; Cell -&gt; ContentView -&gt; UICollectionView</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">collectionView.superview?.superview?.safeAreaInsets</span><br></pre></td></tr></table></figure><p>viewWillAppear: safeAreaInsets is not set to collectionView<br>viewDidAppear: safeAreaInsets is set to collectionView and cells, but not to nested collectionView</p><p>In <code>viewSafeAreaInsetsDidChange</code>, invalidate outer and nested <code>collectionViewLayout</code></p><h2 id="Use-extendedLayoutIncludesOpaqueBars"><a href="#Use-extendedLayoutIncludesOpaqueBars" class="headerlink" title="Use extendedLayoutIncludesOpaqueBars"></a>Use extendedLayoutIncludesOpaqueBars</h2><p><a href="https://developer.apple.com/documentation/uikit/uiviewcontroller/1621404-extendedlayoutincludesopaquebars" target="_blank" rel="noopener">https://developer.apple.com/documentation/uikit/uiviewcontroller/1621404-extendedlayoutincludesopaquebars</a></p><blockquote><p>A Boolean value indicating whether or not the extended layout includes opaque bars.</p></blockquote><p>Seems to affect left and right insets</p><ul><li><a href="https://stackoverflow.com/questions/18798792/explaining-difference-between-automaticallyadjustsscrollviewinsets-extendedlayo" target="_blank" rel="noopener">https://stackoverflow.com/questions/18798792/explaining-difference-between-automaticallyadjustsscrollviewinsets-extendedlayo</a></li><li><a href="https://medium.com/@wailord/extended-layout-in-ios-pre-ios-11-5eff2debf28" target="_blank" rel="noopener">https://medium.com/@wailord/extended-layout-in-ios-pre-ios-11-5eff2debf28</a></li></ul><h2 id="Seemingly-related-to-UIPresentationController"><a href="#Seemingly-related-to-UIPresentationController" class="headerlink" title="Seemingly related to UIPresentationController"></a>Seemingly related to UIPresentationController</h2><p>But it’s not, it is because of when safeAreaInsets is available, and how it is passed to nested view</p><p>When invalidating collection view layout with custom <code>UIPresentationController</code>, <code>alongsideTransition</code> is called twice, the first time with old <code>safeAreaInsets</code>, and the second time with latest <code>safeAreaInsets</code></p><p>And the layout invalidation uses the old insets.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewWillTransition</span><span class="params">(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator)</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewWillTransition(to: size, with: coordinator)</span><br><span class="line">    coordinator.animate(alongsideTransition: &#123; <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">self</span>.collectionViewLayout.invalidateLayout()</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Dispatch</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UIViewController subclass</span></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewWillTransition</span><span class="params">(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator)</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.viewWillTransition(to: size, with: coordinator)</span><br><span class="line">    coordinator.animate(alongsideTransition: &#123; <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">        <span class="type">DispatchQueue</span>.main.async &#123;</span><br><span class="line">            <span class="keyword">self</span>.collectionViewLayout.invalidateLayout()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Call layoutIfNeeded</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UIPresentationController subclass</span></span><br><span class="line"><span class="keyword">override</span> <span class="keyword">var</span> frameOfPresentedViewInContainerView: <span class="type">CGRect</span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> containerView = containerView <span class="keyword">else</span> &#123; <span class="keyword">return</span> .zero &#125;</span><br><span class="line">    </span><br><span class="line">    presentedView?.setNeedsLayout()</span><br><span class="line">    presentedView?.layoutIfNeeded()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ...</span><br></pre></td></tr></table></figure><h2 id="Check"><a href="#Check" class="headerlink" title="Check"></a>Check</h2><p>Check that UICollectionView or the view you’re working on is in view hierarchy</p><ul><li><a href="https://stackoverflow.com/questions/46271186/safe-area-not-work-properly-on-iphone-x-when-subviews-are-not-in-the-view-area" target="_blank" rel="noopener">https://stackoverflow.com/questions/46271186/safe-area-not-work-properly-on-iphone-x-when-subviews-are-not-in-the-view-area</a></li></ul><p>Check that you’re using code in viewDidLayoutSubviews when safeAreaInsets is known</p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://www.appcoda.com/presentation-controllers-tutorial/" target="_blank" rel="noopener">https://www.appcoda.com/presentation-controllers-tutorial/</a></li><li><a href="https://fluffy.es/4-ios13-breaking-changes/" target="_blank" rel="noopener">https://fluffy.es/4-ios13-breaking-changes/</a></li><li><a href="https://developer.apple.com/documentation/uikit/uiview/positioning_content_relative_to_the_safe_area" target="_blank" rel="noopener">https://developer.apple.com/documentation/uikit/uiview/positioning_content_relative_to_the_safe_area</a></li></ul>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> iOS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>How to disable implicit decoration view animation in UICollectionView</title>
+      <link href="/blog/How-to-disable-implicit-decoration-view-animation-in-UICollectionView/"/>
+      <url>/blog/How-to-disable-implicit-decoration-view-animation-in-UICollectionView/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/569" target="_blank" rel="noopener">#569</a></strong></p><p>From documentation <a href="https://developer.apple.com/documentation/uikit/uicollectionviewlayout/1617726-initiallayoutattributesforappear" target="_blank" rel="noopener">https://developer.apple.com/documentation/uikit/uicollectionviewlayout/1617726-initiallayoutattributesforappear</a></p><blockquote><p>This method is called after the prepare(forCollectionViewUpdates:) method and before the finalizeCollectionViewUpdates() method for any decoration views that are about to be inserted. Your implementation should return the layout information that describes the initial position and state of the view. The collection view uses this information as the starting point for any animations. (The end point of the animation is the view’s new location in the collection view.) If you return nil, the layout object uses the item’s final attributes for both the start and end points of the animation.</p></blockquote><blockquote><p>The default implementation of this method returns nil.</p></blockquote><p>Although the doc says “The default implementation of this method returns nil”, calling <code>super.initialLayoutAttributesForAppearingDecorationElement</code> gives somehow implicit animation. The workaround is to explicitly return nil</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">initialLayoutAttributesForAppearingDecorationElement</span><span class="params">(ofKind elementKind: String, at decorationIndexPath: IndexPath)</span></span> -&gt; <span class="type">UICollectionViewLayoutAttributes?</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">finalLayoutAttributesForDisappearingDecorationElement</span><span class="params">(ofKind elementKind: String, at decorationIndexPath: IndexPath)</span></span> -&gt; <span class="type">UICollectionViewLayoutAttributes?</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Decoration seems to be removed when all items are removed. Workaround is to check and only add decoration when there is preferred data or cell</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> swift </tag>
+            
+            <tag> iOS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>How to make simple tracker via swizzling in Swift</title>
+      <link href="/blog/How-to-make-simple-tracker-via-swizzling-in-Swift/"/>
+      <url>/blog/How-to-make-simple-tracker-via-swizzling-in-Swift/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/568" target="_blank" rel="noopener">#568</a></strong></p><h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><ul><li><a href="https://github.com/onmyway133/EasyTracker" target="_blank" rel="noopener">EasyTracker</a></li></ul><h2 id="Swizzle-viewDidAppear"><a href="#Swizzle-viewDidAppear" class="headerlink" title="Swizzle viewDidAppear"></a>Swizzle viewDidAppear</h2><ul><li><a href="https://github.com/onmyway133/EasyTracker/blob/master/Sources/Trackers.swift" target="_blank" rel="noopener">https://github.com/onmyway133/EasyTracker/blob/master/Sources/Trackers.swift</a></li></ul><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> mapping: [<span class="type">String</span>: (<span class="type">UIViewController</span>) -&gt; <span class="type">Void</span>] = [:]</span><br><span class="line"><span class="keyword">var</span> hasSwizzled = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">track</span>&lt;T: UIViewController&gt;<span class="params">(<span class="number">_</span> type: T.<span class="keyword">Type</span>, block: @escaping <span class="params">(T)</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> original = #selector(<span class="type">UIViewController</span>.viewDidAppear(<span class="number">_</span>:))</span><br><span class="line">  <span class="keyword">let</span> swizled = #selector(<span class="type">UIViewController</span>.trackers_viewDidAppear(<span class="number">_</span>:))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> !hasSwizzled &#123;</span><br><span class="line">    swizzle(kClass: <span class="type">UIViewController</span>.<span class="keyword">self</span>, originalSelector: original, swizzledSelector: swizled)</span><br><span class="line">    hasSwizzled = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  mapping[<span class="type">NSStringFromClass</span>(type)] = &#123; controller <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> controller = controller <span class="keyword">as</span>? <span class="type">T</span> &#123;</span><br><span class="line">      block(controller)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">trackers_viewDidAppear</span><span class="params">(<span class="number">_</span> animated: Bool)</span></span> &#123;</span><br><span class="line">    trackers_viewDidAppear(animated)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> string = <span class="type">NSStringFromClass</span>(type(of: <span class="keyword">self</span>))</span><br><span class="line">    mapping[string]?(<span class="keyword">self</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swizzle</span><span class="params">(kClass: AnyClass, originalSelector: Selector, swizzledSelector: Selector)</span></span> &#123;</span><br><span class="line">  <span class="keyword">let</span> originalMethod = class_getInstanceMethod(kClass, originalSelector)</span><br><span class="line">  <span class="keyword">let</span> swizzledMethod = class_getInstanceMethod(kClass, swizzledSelector)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> didAddMethod = class_addMethod(kClass, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> didAddMethod &#123;</span><br><span class="line">    class_replaceMethod(kClass, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    method_exchangeImplementations(originalMethod, swizzledMethod)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="Track-in-a-declarative-way"><a href="#Track-in-a-declarative-way" class="headerlink" title="Track in a declarative way"></a>Track in a declarative way</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">track(<span class="type">ListController</span>.<span class="keyword">self</span>) &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">"list controller has appeared"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">track(<span class="type">DetailController</span>.<span class="keyword">self</span>) &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">"detail controller has appeared"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">track(<span class="type">CouponController</span>.<span class="keyword">self</span>) &#123; controller <span class="keyword">in</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">"coupon controller has appeared with code \(controller.coupon.code)"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> swift </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>How to make simple adapter for delegate and datasource for UICollectionView and UITableView</title>
       <link href="/blog/How-to-make-simple-adapter-for-delegate-and-datasource-for-UICollectionView-and-UITableView/"/>
       <url>/blog/How-to-make-simple-adapter-for-delegate-and-datasource-for-UICollectionView-and-UITableView/</url>
@@ -124,7 +202,7 @@
       <link href="/blog/How-to-use-safeAreaInsets-in-iOS/"/>
       <url>/blog/How-to-use-safeAreaInsets-in-iOS/</url>
       
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/561" target="_blank" rel="noopener">#561</a></strong></p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://medium.com/rosberryapps/ios-safe-area-ca10e919526f" target="_blank" rel="noopener">https://medium.com/rosberryapps/ios-safe-area-ca10e919526f</a></li><li><a href="https://blog.smartnsoft.com/layout-guide-margins-insets-and-safe-area-demystified-on-ios-10-11-d6e7246d7cb8" target="_blank" rel="noopener">https://blog.smartnsoft.com/layout-guide-margins-insets-and-safe-area-demystified-on-ios-10-11-d6e7246d7cb8</a></li></ul>]]></content>
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/561" target="_blank" rel="noopener">#561</a></strong></p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://medium.com/rosberryapps/ios-safe-area-ca10e919526f" target="_blank" rel="noopener">https://medium.com/rosberryapps/ios-safe-area-ca10e919526f</a></li><li><a href="https://blog.smartnsoft.com/layout-guide-margins-insets-and-safe-area-demystified-on-ios-10-11-d6e7246d7cb8" target="_blank" rel="noopener">https://blog.smartnsoft.com/layout-guide-margins-insets-and-safe-area-demystified-on-ios-10-11-d6e7246d7cb8</a></li><li><a href="https://www.matrixprojects.net/p/safe-area-insets/" target="_blank" rel="noopener">https://www.matrixprojects.net/p/safe-area-insets/</a></li></ul>]]></content>
       
       
       
@@ -746,7 +824,7 @@
       <link href="/blog/How-to-use-decoration-view-in-UICollectionView/"/>
       <url>/blog/How-to-use-decoration-view-in-UICollectionView/</url>
       
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/529" target="_blank" rel="noopener">#529</a></strong></p><h2 id="indexPath"><a href="#indexPath" class="headerlink" title="indexPath"></a>indexPath</h2><p><a href="https://developer.apple.com/documentation/uikit/uicollectionviewlayoutattributes/1617786-layoutattributesfordecorationvie" target="_blank" rel="noopener">https://developer.apple.com/documentation/uikit/uicollectionviewlayoutattributes/1617786-layoutattributesfordecorationvie</a></p><blockquote><p>It is up to you to decide how to use the indexPath parameter to identify a given decoration view. Typically, you use the decorationViewKind parameter to identify the type of the decoration view and the indexPath information to distinguish between different instances of that view.</p></blockquote>]]></content>
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/529" target="_blank" rel="noopener">#529</a></strong></p><h2 id="indexPath"><a href="#indexPath" class="headerlink" title="indexPath"></a>indexPath</h2><p><a href="https://developer.apple.com/documentation/uikit/uicollectionviewlayoutattributes/1617786-layoutattributesfordecorationvie" target="_blank" rel="noopener">https://developer.apple.com/documentation/uikit/uicollectionviewlayoutattributes/1617786-layoutattributesfordecorationvie</a></p><blockquote><p>It is up to you to decide how to use the indexPath parameter to identify a given decoration view. Typically, you use the decorationViewKind parameter to identify the type of the decoration view and the indexPath information to distinguish between different instances of that view.</p></blockquote><h2 id="Posts"><a href="#Posts" class="headerlink" title="Posts"></a>Posts</h2><ul><li>Add separator <a href="https://gist.github.com/tomaskraina/1eb291e4717f14ad6e0f8e60ffe9b7d3" target="_blank" rel="noopener">https://gist.github.com/tomaskraina/1eb291e4717f14ad6e0f8e60ffe9b7d3</a></li></ul>]]></content>
       
       
       
@@ -4985,25 +5063,6 @@
     
     
     <entry>
-      <title>A bit about Design</title>
-      <link href="/blog/A-bit-about-Design/"/>
-      <url>/blog/A-bit-about-Design/</url>
-      
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/317" target="_blank" rel="noopener">#317</a></strong></p><h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><ul><li><a href="https://medium.com/@nathangitter/why-your-app-looks-better-in-sketch-3a01b22c43d7" target="_blank" rel="noopener">Why Your App Looks Better in Sketch</a></li><li><a href="https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6" target="_blank" rel="noopener">8 Tips for Dark Theme Design</a></li></ul><h2 id="UX"><a href="#UX" class="headerlink" title="UX"></a>UX</h2><ul><li><a href="https://growth.design/case-studies/duolingo-user-retention/" target="_blank" rel="noopener">Duolingo User Retention</a></li><li><a href="https://brianlovin.com/design-details" target="_blank" rel="noopener">Design Details</a></li><li><a href="https://uxplanet.org/30-things-we-often-forget-when-designing-mobile-apps-ae30cc3b2c6b" target="_blank" rel="noopener">30 Things We Often Forget When Designing Mobile Apps</a></li><li><a href="https://www.casestudy.club/" target="_blank" rel="noopener">Case study club</a></li></ul><h2 id="Showcase"><a href="#Showcase" class="headerlink" title="Showcase"></a>Showcase</h2><ul><li><a href="https://saaspages.xyz/" target="_blank" rel="noopener">https://saaspages.xyz/</a></li></ul><h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul><li><a href="https://shape.so/" target="_blank" rel="noopener">https://shape.so/</a></li><li><a href="https://icons8.com/" target="_blank" rel="noopener">https://icons8.com/</a></li><li><a href="https://icons8.com/animated-icons" target="_blank" rel="noopener">https://icons8.com/animated-icons</a></li><li><a href="https://icons8.com/vector-creator" target="_blank" rel="noopener">https://icons8.com/vector-creator</a></li><li><a href="https://feathericons.com/" target="_blank" rel="noopener">https://feathericons.com/</a></li><li><a href="https://iconstore.co/" target="_blank" rel="noopener">https://iconstore.co/</a></li><li><a href="https://streamlineicons.com/" target="_blank" rel="noopener">https://streamlineicons.com/</a></li></ul>]]></content>
-      
-      
-      
-        <tags>
-            
-            <tag> design </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Links for Design</title>
       <link href="/blog/Links-for-Design/"/>
       <url>/blog/Links-for-Design/</url>
@@ -5017,6 +5076,25 @@
             <tag> design </tag>
             
             <tag> links </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>A bit about Design</title>
+      <link href="/blog/A-bit-about-Design/"/>
+      <url>/blog/A-bit-about-Design/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/317" target="_blank" rel="noopener">#317</a></strong></p><h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><ul><li><a href="https://medium.com/@nathangitter/why-your-app-looks-better-in-sketch-3a01b22c43d7" target="_blank" rel="noopener">Why Your App Looks Better in Sketch</a></li><li><a href="https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6" target="_blank" rel="noopener">8 Tips for Dark Theme Design</a></li></ul><h2 id="UX"><a href="#UX" class="headerlink" title="UX"></a>UX</h2><ul><li><a href="https://growth.design/case-studies/duolingo-user-retention/" target="_blank" rel="noopener">Duolingo User Retention</a></li><li><a href="https://brianlovin.com/design-details" target="_blank" rel="noopener">Design Details</a></li><li><a href="https://uxplanet.org/30-things-we-often-forget-when-designing-mobile-apps-ae30cc3b2c6b" target="_blank" rel="noopener">30 Things We Often Forget When Designing Mobile Apps</a></li><li><a href="https://www.casestudy.club/" target="_blank" rel="noopener">Case study club</a></li></ul><h2 id="Showcase"><a href="#Showcase" class="headerlink" title="Showcase"></a>Showcase</h2><ul><li><a href="https://saaspages.xyz/" target="_blank" rel="noopener">https://saaspages.xyz/</a></li></ul><h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul><li><a href="https://shape.so/" target="_blank" rel="noopener">https://shape.so/</a></li><li><a href="https://icons8.com/" target="_blank" rel="noopener">https://icons8.com/</a></li><li><a href="https://icons8.com/animated-icons" target="_blank" rel="noopener">https://icons8.com/animated-icons</a></li><li><a href="https://icons8.com/vector-creator" target="_blank" rel="noopener">https://icons8.com/vector-creator</a></li><li><a href="https://feathericons.com/" target="_blank" rel="noopener">https://feathericons.com/</a></li><li><a href="https://iconstore.co/" target="_blank" rel="noopener">https://iconstore.co/</a></li><li><a href="https://streamlineicons.com/" target="_blank" rel="noopener">https://streamlineicons.com/</a></li></ul>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> design </tag>
             
         </tags>
       
@@ -5080,25 +5158,6 @@
     
     
     <entry>
-      <title>What&#39;s new in iOS</title>
-      <link href="/blog/What&#39;s-new-in-iOS/"/>
-      <url>/blog/What&#39;s-new-in-iOS/</url>
-      
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p><h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p><blockquote><p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p><blockquote><p>A class that animates changes to views and allows the dynamic modification of those animations.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p><blockquote><p>A container that encapsulates the Core Data stack in your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p><blockquote><p>The abstract superclass for all feedback generators.</p></blockquote><h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p><blockquote><p>An object that controls the process of requesting App Store ratings and reviews from users.</p></blockquote><h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p><blockquote><p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p><blockquote><p>Integrate machine learning models into your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p><blockquote><p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p><blockquote><p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p><blockquote><p>Access per-device, per-developer data that your associated server can use in its business logic.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p><blockquote><p>Bring drag and drop to your app by using interaction APIs with your views.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p><blockquote><p>Detect NFC tags and read messages that contain NDEF data.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p><blockquote><p>Animatable corner radius</p></blockquote><h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p><blockquote><p>Make it easy for users to log into apps and services.</p></blockquote><h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p><blockquote><p>Declare the user interface and behavior for your app on every platform.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p><blockquote><p>Customize handling of asynchronous events by combining event-processing operators.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p><blockquote><p>Perform cryptographic operations securely and efficiently.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p><blockquote><p>Expose UISearchTextField on UISearchBar</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>]]></content>
-      
-      
-      
-        <tags>
-            
-            <tag> iOS </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Links for WWDC</title>
       <link href="/blog/Links-for-WWDC/"/>
       <url>/blog/Links-for-WWDC/</url>
@@ -5112,6 +5171,25 @@
             <tag> iOS </tag>
             
             <tag> links </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>What&#39;s new in iOS</title>
+      <link href="/blog/What&#39;s-new-in-iOS/"/>
+      <url>/blog/What&#39;s-new-in-iOS/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p><h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p><blockquote><p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p><blockquote><p>A class that animates changes to views and allows the dynamic modification of those animations.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p><blockquote><p>A container that encapsulates the Core Data stack in your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p><blockquote><p>The abstract superclass for all feedback generators.</p></blockquote><h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p><blockquote><p>An object that controls the process of requesting App Store ratings and reviews from users.</p></blockquote><h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p><blockquote><p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p><blockquote><p>Integrate machine learning models into your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p><blockquote><p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p><blockquote><p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p><blockquote><p>Access per-device, per-developer data that your associated server can use in its business logic.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p><blockquote><p>Bring drag and drop to your app by using interaction APIs with your views.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p><blockquote><p>Detect NFC tags and read messages that contain NDEF data.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p><blockquote><p>Animatable corner radius</p></blockquote><h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p><blockquote><p>Make it easy for users to log into apps and services.</p></blockquote><h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p><blockquote><p>Declare the user interface and behavior for your app on every platform.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p><blockquote><p>Customize handling of asynchronous events by combining event-processing operators.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p><blockquote><p>Perform cryptographic operations securely and efficiently.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p><blockquote><p>Expose UISearchTextField on UISearchBar</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> iOS </tag>
             
         </tags>
       
@@ -6964,19 +7042,6 @@
     
     
     <entry>
-      <title>OSS</title>
-      <link href="/blog/OSS/"/>
-      <url>/blog/OSS/</url>
-      
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/189" target="_blank" rel="noopener">#189</a></strong></p><ul><li><a href="https://github.com/digipost/ios" target="_blank" rel="noopener">https://github.com/digipost/ios</a></li><li><a href="https://github.com/wwdc/2019" target="_blank" rel="noopener">https://github.com/wwdc/2019</a></li><li><a href="https://github.com/google/science-journal-ios" target="_blank" rel="noopener">https://github.com/google/science-journal-ios</a></li></ul>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Links for OSS</title>
       <link href="/blog/Links-for-OSS/"/>
       <url>/blog/Links-for-OSS/</url>
@@ -6990,6 +7055,19 @@
             <tag> links </tag>
             
         </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>OSS</title>
+      <link href="/blog/OSS/"/>
+      <url>/blog/OSS/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/189" target="_blank" rel="noopener">#189</a></strong></p><ul><li><a href="https://github.com/digipost/ios" target="_blank" rel="noopener">https://github.com/digipost/ios</a></li><li><a href="https://github.com/wwdc/2019" target="_blank" rel="noopener">https://github.com/wwdc/2019</a></li><li><a href="https://github.com/google/science-journal-ios" target="_blank" rel="noopener">https://github.com/google/science-journal-ios</a></li></ul>]]></content>
+      
+      
       
     </entry>
     
@@ -9258,19 +9336,6 @@
     
     
     <entry>
-      <title>Getting started with Swift</title>
-      <link href="/blog/Getting-started-with-Swift/"/>
-      <url>/blog/Getting-started-with-Swift/</url>
-      
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/46" target="_blank" rel="noopener">#46</a></strong></p><p>Hi, here are some materials I found that are useful for learning Swift and iOS</p><ul><li><a href="https://itunes.apple.com/us/book/app-development-with-swift/id1219117996?mt=11" target="_blank" rel="noopener">App Development with Swift</a></li><li><a href="https://www.hackingwithswift.com/read" target="_blank" rel="noopener">Hacking with Swift</a></li><li><a href="https://swifteducation.github.io/teaching_app_development_with_swift/" target="_blank" rel="noopener">Teaching App Development with Swift</a></li><li><a href="http://guides.codepath.com/ios" target="_blank" rel="noopener">CodePath iOS Guides</a></li><li><a href="https://github.com/nettlep/learn-swift" target="_blank" rel="noopener">learn-swift</a></li><li><a href="https://developer.apple.com/library/content/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html" target="_blank" rel="noopener">About iOS App Architecture</a></li><li><a href="https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/index.html#//apple_ref/doc/uid/TP40015214-CH2-SW1" target="_blank" rel="noopener">Start Developing iOS Apps (Swift)</a></li></ul>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Links for Swift</title>
       <link href="/blog/Links-for-Swift/"/>
       <url>/blog/Links-for-Swift/</url>
@@ -9284,6 +9349,19 @@
             <tag> swift </tag>
             
         </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Getting started with Swift</title>
+      <link href="/blog/Getting-started-with-Swift/"/>
+      <url>/blog/Getting-started-with-Swift/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/46" target="_blank" rel="noopener">#46</a></strong></p><p>Hi, here are some materials I found that are useful for learning Swift and iOS</p><ul><li><a href="https://itunes.apple.com/us/book/app-development-with-swift/id1219117996?mt=11" target="_blank" rel="noopener">App Development with Swift</a></li><li><a href="https://www.hackingwithswift.com/read" target="_blank" rel="noopener">Hacking with Swift</a></li><li><a href="https://swifteducation.github.io/teaching_app_development_with_swift/" target="_blank" rel="noopener">Teaching App Development with Swift</a></li><li><a href="http://guides.codepath.com/ios" target="_blank" rel="noopener">CodePath iOS Guides</a></li><li><a href="https://github.com/nettlep/learn-swift" target="_blank" rel="noopener">learn-swift</a></li><li><a href="https://developer.apple.com/library/content/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html" target="_blank" rel="noopener">About iOS App Architecture</a></li><li><a href="https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/index.html#//apple_ref/doc/uid/TP40015214-CH2-SW1" target="_blank" rel="noopener">Start Developing iOS Apps (Swift)</a></li></ul>]]></content>
+      
+      
       
     </entry>
     
