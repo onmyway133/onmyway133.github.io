@@ -179,6 +179,126 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-make-simple-form-validator-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-make-simple-form-validator-in-Swift/">How to make simple form validator in Swift</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-make-simple-form-validator-in-Swift/" class="article-date">
+	  <time datetime="2019-06-25T12:05:08.000Z" itemprop="datePublished">June 25, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/328" target="_blank" rel="noopener">#328</a></strong></p>
+<p>Sometimes we want to validate forms with many fields, for example name, phone, email, and with different rules. If validation fails, we show error message.</p>
+<p>We can make simple <code>Validator</code> and <code>Rule</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Validator</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">validate</span><span class="params">(text: String, with rules: [Rule])</span></span> -&gt; <span class="type">String?</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> rules.compactMap(&#123; $<span class="number">0</span>.check(text) &#125;).first</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">validate</span><span class="params">(input: InputView, with rules: [Rule])</span></span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> message = validate(text: input.textField.text ?? <span class="string">""</span>, with: rules) <span class="keyword">else</span> &#123;</span><br><span class="line">            input.messageLabel.isHidden = <span class="literal">true</span></span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        input.messageLabel.isHidden = <span class="literal">false</span></span><br><span class="line">        input.messageLabel.text = message</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Rule</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Return nil if matches, error message otherwise</span></span><br><span class="line">    <span class="keyword">let</span> check: (<span class="type">String</span>) -&gt; <span class="type">String?</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> notEmpty = <span class="type">Rule</span>(check: &#123;</span><br><span class="line">        <span class="keyword">return</span> $<span class="number">0</span>.isEmpty ? <span class="string">"Must not be empty"</span> : <span class="literal">nil</span></span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> validEmail = <span class="type">Rule</span>(check: &#123;</span><br><span class="line">        <span class="keyword">let</span> regex = #<span class="string">"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]&#123;2,64&#125;"</span>#</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> predicate = <span class="type">NSPredicate</span>(format: <span class="string">"SELF MATCHES %@"</span>, regex)</span><br><span class="line">        <span class="keyword">return</span> predicate.evaluate(with: $<span class="number">0</span>) ? <span class="literal">nil</span> : <span class="string">"Must have valid email"</span></span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> countryCode = <span class="type">Rule</span>(check: &#123;</span><br><span class="line">        <span class="keyword">let</span> regex = #<span class="string">"^\+\d+.*"</span>#</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> predicate = <span class="type">NSPredicate</span>(format: <span class="string">"SELF MATCHES %@"</span>, regex)</span><br><span class="line">        <span class="keyword">return</span> predicate.evaluate(with: $<span class="number">0</span>) ? <span class="literal">nil</span> : <span class="string">"Must have prefix country code"</span></span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Then we can use very expressively</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> validator = <span class="type">Validator</span>()</span><br><span class="line">validator.validate(input: inputView, with: [.notEmpty, .validEmail])</span><br></pre></td></tr></table></figure>
+
+<p>Then a few tests to make sure it works</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ValidatorTests</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> validator = <span class="type">Validator</span>()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testEmpty</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="type">XCTAssertNil</span>(validator.validate(text: <span class="string">"a"</span>, with: [.notEmpty]))</span><br><span class="line">        <span class="type">XCTAssertNotNil</span>(validator.validate(text: <span class="string">""</span>, with: [.notEmpty]))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testEmail</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="type">XCTAssertNil</span>(validator.validate(text: <span class="string">"onmyway133@gmail.com"</span>, with: [.validEmail]))</span><br><span class="line">        <span class="type">XCTAssertNotNil</span>(validator.validate(text: <span class="string">"onmyway133"</span>, with: [.validEmail]))</span><br><span class="line">        <span class="type">XCTAssertNotNil</span>(validator.validate(text: <span class="string">"onmyway133.com"</span>, with: [.validEmail]))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testCountryCode</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="type">XCTAssertNil</span>(validator.validate(text: <span class="string">"+47 11 222 333"</span>, with: [.countryCode]))</span><br><span class="line">        <span class="type">XCTAssertNotNil</span>(validator.validate(text: <span class="string">"11 222 333"</span>, with: [.countryCode]))</span><br><span class="line">        <span class="type">XCTAssertNotNil</span>(validator.validate(text: <span class="string">"47 11 222 333"</span>, with: [.countryCode]))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="allSatisfy"><a href="#allSatisfy" class="headerlink" title="allSatisfy"></a>allSatisfy</h2><p>To check if all rules are ok, we can use reduce</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(text: String, with rules: [Rule])</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> rules.allSatisfy(&#123; $<span class="number">0</span>.check(text).isOk &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Or more concisely, use <code>allSatisfy</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(text: String, with rules: [Rule])</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> rules.allSatisfy(&#123; $<span class="number">0</span>.check(text).isOk &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-organise-test-files"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-organise-test-files/">How to organise test files</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-organise-test-files/" class="article-date">
+	  <time datetime="2019-06-25T09:01:49.000Z" itemprop="datePublished">June 25, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/327" target="_blank" rel="noopener">#327</a></strong></p>
+<p>In terms of tests, we usually have files for unit test, UI test, integeration test and mock.</p>
+<blockquote>
+<p>Out of sight, out of mind.</p>
+</blockquote>
+<p>Unit tests are for checking specific functions and classes, it’s more convenient to browse them side by side with source file. For example in Javascript, Kotlin and Swift</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">index.js</span><br><span class="line">index.test.js</span><br><span class="line">index.mock.js</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LocationManager.kt</span><br><span class="line">LocationManager.mock.kt</span><br><span class="line">LocationManager.test.kt</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">BasketHandler</span>.swift</span><br><span class="line"><span class="type">BasketHandler</span>.mock.swift</span><br><span class="line"><span class="type">BasketHandler</span>.test.swift</span><br></pre></td></tr></table></figure>
+
+<p>Integration tests check features or sub features, and may cover many source files, it’s better to place them in <code>feature</code> folders</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- Features</span><br><span class="line">  - Cart</span><br><span class="line">    - Sources</span><br><span class="line">    - Tests</span><br><span class="line">      - Cart.test.swift</span><br><span class="line">      - Validator.test.swift</span><br><span class="line">  - Profile</span><br><span class="line">    - Sources</span><br><span class="line">    - Tests</span><br><span class="line">      - Updater.test.swift</span><br><span class="line">      - AvatarUploader.test.swift</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/testing/">testing</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-deal-with-weak-in-closure-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -931,134 +1051,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-Links-for-WWDC"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Links-for-WWDC/">Links for WWDC</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Links-for-WWDC/" class="article-date">
-	  <time datetime="2019-06-17T10:53:31.000Z" itemprop="datePublished">June 17, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p>
-<h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p>
-<blockquote>
-<p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p>
-<blockquote>
-<p>A class that animates changes to views and allows the dynamic modification of those animations.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p>
-<blockquote>
-<p>A container that encapsulates the Core Data stack in your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p>
-<blockquote>
-<p>The abstract superclass for all feedback generators.</p>
-</blockquote>
-<h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p>
-<blockquote>
-<p>An object that controls the process of requesting App Store ratings and reviews from users.</p>
-</blockquote>
-<h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p>
-<blockquote>
-<p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p>
-<blockquote>
-<p>Integrate machine learning models into your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p>
-<blockquote>
-<p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p>
-<blockquote>
-<p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p>
-<blockquote>
-<p>Access per-device, per-developer data that your associated server can use in its business logic.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p>
-<blockquote>
-<p>Bring drag and drop to your app by using interaction APIs with your views.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p>
-<blockquote>
-<p>Detect NFC tags and read messages that contain NDEF data.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p>
-<blockquote>
-<p>Animatable corner radius</p>
-</blockquote>
-<h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p>
-<blockquote>
-<p>Make it easy for users to log into apps and services.</p>
-</blockquote>
-<h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><ul>
-<li><a href="https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13</a></li>
-<li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/</a></li>
-</ul>
-<p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p>
-<blockquote>
-<p>Declare the user interface and behavior for your app on every platform.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p>
-<blockquote>
-<p>Customize handling of asynchronous events by combining event-processing operators.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p>
-<blockquote>
-<p>Perform cryptographic operations securely and efficiently.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p>
-<blockquote>
-<p>Expose UISearchTextField on UISearchBar</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>
-<p>➕CoreSVG</p>
-<ul>
-<li><a href="https://github.com/SDWebImage/SDWebImageSVGCoder" target="_blank" rel="noopener">https://github.com/SDWebImage/SDWebImageSVGCoder</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
     <article id="post-What&#39;s-new-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1289,6 +1281,134 @@ var themeMenus = {};
       
   <span class="ico-tags"></span>
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Links-for-WWDC"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Links-for-WWDC/">Links for WWDC</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Links-for-WWDC/" class="article-date">
+	  <time datetime="2019-06-17T10:53:31.000Z" itemprop="datePublished">June 17, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p>
+<h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p>
+<blockquote>
+<p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p>
+<blockquote>
+<p>A class that animates changes to views and allows the dynamic modification of those animations.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p>
+<blockquote>
+<p>A container that encapsulates the Core Data stack in your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p>
+<blockquote>
+<p>The abstract superclass for all feedback generators.</p>
+</blockquote>
+<h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p>
+<blockquote>
+<p>An object that controls the process of requesting App Store ratings and reviews from users.</p>
+</blockquote>
+<h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p>
+<blockquote>
+<p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p>
+<blockquote>
+<p>Integrate machine learning models into your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p>
+<blockquote>
+<p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p>
+<blockquote>
+<p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p>
+<blockquote>
+<p>Access per-device, per-developer data that your associated server can use in its business logic.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p>
+<blockquote>
+<p>Bring drag and drop to your app by using interaction APIs with your views.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p>
+<blockquote>
+<p>Detect NFC tags and read messages that contain NDEF data.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p>
+<blockquote>
+<p>Animatable corner radius</p>
+</blockquote>
+<h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p>
+<blockquote>
+<p>Make it easy for users to log into apps and services.</p>
+</blockquote>
+<h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><ul>
+<li><a href="https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13</a></li>
+<li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/</a></li>
+</ul>
+<p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p>
+<blockquote>
+<p>Declare the user interface and behavior for your app on every platform.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p>
+<blockquote>
+<p>Customize handling of asynchronous events by combining event-processing operators.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p>
+<blockquote>
+<p>Perform cryptographic operations securely and efficiently.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p>
+<blockquote>
+<p>Expose UISearchTextField on UISearchBar</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>
+<p>➕CoreSVG</p>
+<ul>
+<li><a href="https://github.com/SDWebImage/SDWebImageSVGCoder" target="_blank" rel="noopener">https://github.com/SDWebImage/SDWebImageSVGCoder</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li></ul>
 
       
             
@@ -2123,160 +2243,6 @@ if (packet != NULL)
     
 
   
-    <article id="post-How-to-make-simple-pan-to-dismiss-view-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-make-simple-pan-to-dismiss-view-in-iOS/">How to make simple pan to dismiss view in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-make-simple-pan-to-dismiss-view-in-iOS/" class="article-date">
-	  <time datetime="2019-06-12T06:30:14.000Z" itemprop="datePublished">June 12, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/301" target="_blank" rel="noopener">#301</a></strong></p>
-<p>Make it more composable using <code>UIViewController</code> subclass and <code>ThroughView</code> to pass hit events to underlying views.</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PanViewController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> animator = <span class="type">UIViewPropertyAnimator</span>(duration: <span class="number">0</span>, curve: .easeOut)</span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> panGR = <span class="type">UIPanGestureRecognizer</span>(target: <span class="keyword">self</span>, action: #selector(handlePan(<span class="number">_</span>: )))</span><br><span class="line">    <span class="keyword">let</span> slideView = <span class="type">UIView</span>()</span><br><span class="line">    <span class="keyword">let</span> gripView = <span class="type">UIView</span>()</span><br><span class="line">    <span class="keyword">var</span> options: <span class="type">Options</span> = <span class="type">Options</span>()</span><br><span class="line">    <span class="keyword">var</span> didHide: (() -&gt; <span class="type">Void</span>)?</span><br><span class="line">    <span class="keyword">let</span> pullDownVelocity: <span class="type">CGFloat</span> = <span class="number">70</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Options</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> contentView: <span class="type">UIView</span> = <span class="type">UIView</span>()</span><br><span class="line">        <span class="keyword">var</span> percentHeight: <span class="type">CGFloat</span> = <span class="number">0.24</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">loadView</span><span class="params">()</span></span> &#123;</span><br><span class="line">        view = <span class="type">ThroughView</span>()</span><br><span class="line">        view.translatesAutoresizingMaskIntoConstraints = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">        setup()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">        slideView.layer.cornerRadius = <span class="number">10</span></span><br><span class="line">        slideView.clipsToBounds = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">        gripView.backgroundColor = <span class="type">UIColor</span>.yellow</span><br><span class="line">        gripView.layer.cornerRadius = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        view.addSubview(slideView)</span><br><span class="line">        slideView.addSubview(gripView)</span><br><span class="line">        slideView.addGestureRecognizer(panGR)</span><br><span class="line"></span><br><span class="line">        <span class="type">NSLayoutConstraint</span>.on([</span><br><span class="line">            slideView.leftAnchor.constraint(equalTo: view.leftAnchor),</span><br><span class="line">            slideView.rightAnchor.constraint(equalTo: view.rightAnchor),</span><br><span class="line">            slideView.heightAnchor.constraint(equalTo: view.heightAnchor),</span><br><span class="line">            slideView.topAnchor.constraint(equalTo: view.bottomAnchor)</span><br><span class="line">        ])</span><br><span class="line"></span><br><span class="line">        <span class="type">NSLayoutConstraint</span>.on([</span><br><span class="line">            gripView.centerXAnchor.constraint(equalTo: slideView.centerXAnchor),</span><br><span class="line">            gripView.topAnchor.constraint(equalTo: slideView.topAnchor, constant: <span class="number">16</span>),</span><br><span class="line">            gripView.widthAnchor.constraint(equalToConstant: <span class="number">30</span>),</span><br><span class="line">            gripView.heightAnchor.constraint(equalToConstant: <span class="number">2</span>)</span><br><span class="line">        ])</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">apply</span><span class="params">(options: Options)</span></span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.options.contentView.removeFromSuperview()</span><br><span class="line">        slideView.insertSubview(options.contentView, at: <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        <span class="type">NSLayoutConstraint</span>.on([</span><br><span class="line">            options.contentView.leftAnchor.constraint(equalTo: slideView.leftAnchor),</span><br><span class="line">            options.contentView.rightAnchor.constraint(equalTo: slideView.rightAnchor),</span><br><span class="line">            options.contentView.topAnchor.constraint(equalTo: slideView.topAnchor),</span><br><span class="line">            options.contentView.heightAnchor.constraint(equalTo: slideView.heightAnchor, multiplier: options.percentHeight)</span><br><span class="line">        ])</span><br><span class="line"></span><br><span class="line">        <span class="keyword">self</span>.options = options</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@objc</span> <span class="function"><span class="keyword">func</span> <span class="title">handlePan</span><span class="params">(<span class="number">_</span> gr: UIPanGestureRecognizer)</span></span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> gr.state &#123;</span><br><span class="line">        <span class="keyword">case</span> .began:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">case</span> .changed:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">case</span> .ended:</span><br><span class="line">            <span class="keyword">let</span> velocity = gr.velocity(<span class="keyword">in</span>: slideView)</span><br><span class="line">            <span class="keyword">if</span> velocity.y &gt; pullDownVelocity &#123;</span><br><span class="line">                hide()</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">show</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> parentView = view.superview <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        animator = <span class="keyword">self</span>.makeAnimator()</span><br><span class="line">        animator.addAnimations &#123;</span><br><span class="line">            <span class="keyword">self</span>.slideView.transform = <span class="type">CGAffineTransform</span>(</span><br><span class="line">                translationX: <span class="number">0</span>,</span><br><span class="line">                y: -parentView.bounds.height * <span class="keyword">self</span>.options.percentHeight - parentView.safeAreaInsets.bottom</span><br><span class="line">            )</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        animator.startAnimation()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">hide</span><span class="params">()</span></span> &#123;</span><br><span class="line">        animator = <span class="keyword">self</span>.makeAnimator()</span><br><span class="line">        animator.addAnimations &#123;</span><br><span class="line">            <span class="keyword">self</span>.slideView.transform = <span class="type">CGAffineTransform</span>.identity</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        animator.addCompletion(&#123; <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">self</span>.didHide?()</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">        animator.startAnimation()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeAnimator</span><span class="params">()</span></span> -&gt; <span class="type">UIViewPropertyAnimator</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">UIViewPropertyAnimator</span>(duration: <span class="number">0.25</span>, dampingRatio: <span class="number">1.0</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThroughView</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">didMoveToSuperview</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.didMoveToSuperview()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> superview = superview <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">NSLayoutConstraint</span>.on([pinEdges(view: superview)])</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">point</span><span class="params">(inside point: CGPoint, with event: UIEvent?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> slideView = subviews.first <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> slideView.hitTest(convert(point, to: slideView), with: event) != <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Getting-started-with-WWDC-2019"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Getting-started-with-WWDC-2019/">Getting started with WWDC 2019</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Getting-started-with-WWDC-2019/" class="article-date">
-	  <time datetime="2019-06-11T07:34:21.000Z" itemprop="datePublished">June 11, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/300" target="_blank" rel="noopener">#300</a></strong></p>
-<h2 id="WWDC"><a href="#WWDC" class="headerlink" title="WWDC"></a>WWDC</h2><ul>
-<li><a href="https://ios-goodies.com/post/185370134786/week-2845-wwdc-special" target="_blank" rel="noopener">WWDC special</a></li>
-<li><a href="https://wwdcbysundell.com/" target="_blank" rel="noopener">WWDC by Sundell</a></li>
-<li><a href="https://nshipster.com/wwdc-2019/" target="_blank" rel="noopener">NSHipster WWDC 2019</a></li>
-<li><a href="https://patrickbalestra.com/blog/2019/06/07/wwdc-2019-the-things-you-may-have-missed.html" target="_blank" rel="noopener">WWDC 2019 - The Things You May Have Missed</a></li>
-<li><a href="https://wwdcbysundell.com/2019/essential-session-videos/" target="_blank" rel="noopener">7 essential WWDC session videos for iOS developers</a></li>
-<li><a href="https://www.hackingwithswift.com/articles/190/the-best-wwdc-videos-of-all-time" target="_blank" rel="noopener">The 15 Best WWDC Videos of All Time</a></li>
-<li><a href="https://github.com/Blackjacx/WWDC" target="_blank" rel="noopener">WWDC</a> Extracted gists</li>
-<li><a href="https://github.com/onmyway133/blog/issues/305" target="_blank" rel="noopener">Favorite WWDC 2019 sessions</a></li>
-</ul>
-<h2 id="Swift-5-1"><a href="#Swift-5-1" class="headerlink" title="Swift 5.1"></a>Swift 5.1</h2><ul>
-<li><a href="https://www.avanderlee.com/swift/property-wrappers/" target="_blank" rel="noopener">Property wrappers to remove boilerplate code in Swift</a></li>
-<li><a href="https://swiftrocks.com/understanding-opaque-return-types-in-swift.html" target="_blank" rel="noopener">Understanding Opaque Return Types in Swift</a></li>
-<li><a href="https://www.swiftbysundell.com/posts/the-swift-51-features-that-power-swiftuis-api" target="_blank" rel="noopener">The Swift 5.1 features that power SwiftUI’s API</a></li>
-<li><a href="https://www.hackingwithswift.com/articles/182/whats-new-in-swift-5-1" target="_blank" rel="noopener">What’s new in Swift 5.1</a></li>
-<li><a href="https://jeroenscode.com/swift-opaque-result-types/" target="_blank" rel="noopener">Swift Opaque Result Types</a></li>
-<li><a href="https://github.com/guillermomuntaner/Burritos" target="_blank" rel="noopener">Burritos</a> A collection of Swift Property Wrappers</li>
-<li><a href="https://medium.com/flawless-app-stories/how-can-property-wrappers-and-function-builders-be-leveraged-d43160de338f" target="_blank" rel="noopener">How can Property Wrappers and Function Builders be leveraged?</a></li>
-</ul>
-<h2 id="SwiftUI"><a href="#SwiftUI" class="headerlink" title="SwiftUI"></a>SwiftUI</h2><ul>
-<li><a href="https://developer.apple.com/xcode/swiftui/" target="_blank" rel="noopener">SwiftUI</a></li>
-<li><a href="https://github.com/Juanpe/About-SwiftUI" target="_blank" rel="noopener">About-SwiftUI</a></li>
-<li><a href="https://www.hackingwithswift.com/quick-start/swiftui/" target="_blank" rel="noopener">Swift UI by example</a></li>
-<li><a href="https://swiftrocks.com/inside-swiftui-compiler-magic.html" target="_blank" rel="noopener">Inside SwiftUI’s Declarative Syntax’s Compiler Magic</a></li>
-<li><a href="https://wwdcbysundell.com/2019/swiftui-common-questions/" target="_blank" rel="noopener">Answers to the most common questions about SwiftUI</a></li>
-<li><a href="https://www.raywenderlich.com/3715234-swiftui-getting-started" target="_blank" rel="noopener">SwiftUI: Getting Started</a></li>
-<li><a href="https://github.com/SimpleBoilerplates/SwiftUI-Cheat-Sheet" target="_blank" rel="noopener">SwiftUI-Cheat-Sheet</a></li>
-<li><a href="https://mecid.github.io/2019/06/12/understanding-property-wrappers-in-swiftui/" target="_blank" rel="noopener">Understanding Property Wrappers in SwiftUI</a></li>
-<li><a href="https://github.com/Jinxiansen/SwiftUI" target="_blank" rel="noopener">SwiftUI</a> Framework Learning and Usage Guide</li>
-<li><a href="https://github.com/unixzii/SwiftUI-2048" target="_blank" rel="noopener">SwiftUI-2048</a></li>
-<li><a href="https://fuckingswiftui.com/" target="_blank" rel="noopener">Fucking SwiftUI</a></li>
-<li><a href="https://github.com/anandabits/SwiftUI-Processing" target="_blank" rel="noopener">SwiftUI-Processing</a></li>
-<li><a href="http://www.alwaysrightinstitute.com/swiftwebui/" target="_blank" rel="noopener">SwiftWebUI</a></li>
-<li><a href="https://mecid.github.io/2019/06/19/building-forms-with-swiftui/" target="_blank" rel="noopener">Building forms with SwiftUI</a></li>
-<li><a href="https://mecid.github.io/2019/06/26/animations-in-swiftui/" target="_blank" rel="noopener">Animations in SwiftUI</a></li>
-<li><a href="https://www.youtube.com/playlist?list=PLDaHCLWmCcQLL-3YDxnPgG8VENNUiJ0Nv" target="_blank" rel="noopener">SwiftUI DesignCode</a></li>
-</ul>
-<p>Good to know</p>
-<ul>
-<li><a href="https://www.objc.io/blog/2019/10/29/swiftui-environment/" target="_blank" rel="noopener">SwiftUI: Setting Environment Values</a></li>
-<li><a href="https://kean.github.io/post/swiftui-layout-system" target="_blank" rel="noopener">SwiftUI Layout System</a></li>
-</ul>
-<p>Code</p>
-<ul>
-<li><a href="https://github.com/xtabbas/calculator-checklist" target="_blank" rel="noopener">https://github.com/xtabbas/calculator-checklist</a></li>
-<li><a href="https://github.com/alfianlosari/SwiftUI-MovieDB" target="_blank" rel="noopener">https://github.com/alfianlosari/SwiftUI-MovieDB</a></li>
-<li><a href="https://github.com/unixzii/SwiftUI-2048" target="_blank" rel="noopener">https://github.com/unixzii/SwiftUI-2048</a></li>
-</ul>
-<h2 id="Combine"><a href="#Combine" class="headerlink" title="Combine"></a>Combine</h2><ul>
-<li><a href="https://medium.com/gett-engineering/rxswift-to-apples-combine-cheat-sheet-e9ce32b14c5b" target="_blank" rel="noopener">RxSwift to Apple’s Combine Cheat Sheet</a></li>
-<li><a href="https://medium.com/flawless-app-stories/will-combine-kill-rxswift-64780a150d89" target="_blank" rel="noopener">Will Combine kill RxSwift?</a></li>
-<li><a href="https://github.com/broadwaylamb/OpenCombine" target="_blank" rel="noopener">OpenCombine</a> Open-source implementation of Apple’s Combine framework for processing values over time.</li>
-<li><a href="https://github.com/AvdLee/CombineSwiftPlayground" target="_blank" rel="noopener">CombineSwiftPlayground</a></li>
-<li><a href="https://medium.com/snowdog-labs/combine-framework-in-action-part-2-63c7d652b32f" target="_blank" rel="noopener">Combine framework in action — Part 2</a></li>
-<li><a href="https://heckj.github.io/swiftui-notes/" target="_blank" rel="noopener">Using Combine</a> 🚀 </li>
-</ul>
-<h2 id="Dark-Mode"><a href="#Dark-Mode" class="headerlink" title="Dark Mode"></a>Dark Mode</h2><ul>
-<li><a href="https://www.fivestars.blog/code/ios-dark-mode-how-to.html" target="_blank" rel="noopener">How To Adopt Dark Mode In Your iOS App </a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2381,6 +2347,30 @@ if (packet != NULL)
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-Applications-folder-in-macOS/">How to use Applications folder in macOS</a></h6>
+              <span>January 8, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-fix-library-not-found-with-SPM-and-CocoaPods-in-Xcode/">How to fix library not found with SPM and CocoaPods in  Xcode</a></h6>
+              <span>January 8, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-make-rotation-in-same-direction-in-iOS/">How to make rotation in same direction in iOS</a></h6>
               <span>January 6, 2020</span>
             </div>
@@ -2423,30 +2413,6 @@ if (packet != NULL)
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-make-simple-adapter-for-delegate-and-datasource-for-UICollectionView-and-UITableView/">How to make simple adapter for delegate and datasource for UICollectionView and UITableView</a></h6>
-              <span>January 4, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-make-progress-HUD-in-Swift/">How to make progress HUD in Swift</a></h6>
-              <span>January 4, 2020</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2459,7 +2425,7 @@ if (packet != NULL)
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.65px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.18px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.18px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.59px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.76px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 11.76px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.59px;">css</a> <a href="/tags/dart/" style="font-size: 11.76px;">dart</a> <a href="/tags/database/" style="font-size: 10.59px;">database</a> <a href="/tags/design/" style="font-size: 10.59px;">design</a> <a href="/tags/electron/" style="font-size: 11.76px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.76px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.76px;">flutter</a> <a href="/tags/git/" style="font-size: 11.18px;">git</a> <a href="/tags/github/" style="font-size: 12.35px;">github</a> <a href="/tags/go/" style="font-size: 10.59px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.41px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.24px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.06px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.76px;">layout</a> <a href="/tags/life/" style="font-size: 14.12px;">life</a> <a href="/tags/links/" style="font-size: 14.12px;">links</a> <a href="/tags/macOS/" style="font-size: 18.82px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.59px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.76px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.53px;">node</a> <a href="/tags/objc/" style="font-size: 10.59px;">objc</a> <a href="/tags/react/" style="font-size: 11.18px;">react</a> <a href="/tags/react-native/" style="font-size: 14.71px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.18px;">rx</a> <a href="/tags/script/" style="font-size: 10.59px;">script</a> <a href="/tags/spm/" style="font-size: 11.18px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.47px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.29px;">tech</a> <a href="/tags/terminal/" style="font-size: 14.12px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.94px;">testing</a> <a href="/tags/tool/" style="font-size: 10px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.76px;">voip</a> <a href="/tags/watchOS/" style="font-size: 14.12px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.59px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.59px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 15.88px;">xcode</a>
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.65px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.18px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.18px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.59px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.76px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 11.76px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.59px;">css</a> <a href="/tags/dart/" style="font-size: 11.76px;">dart</a> <a href="/tags/database/" style="font-size: 10.59px;">database</a> <a href="/tags/design/" style="font-size: 10.59px;">design</a> <a href="/tags/electron/" style="font-size: 11.76px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.76px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.76px;">flutter</a> <a href="/tags/git/" style="font-size: 11.18px;">git</a> <a href="/tags/github/" style="font-size: 12.35px;">github</a> <a href="/tags/go/" style="font-size: 10.59px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.41px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.24px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.06px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.76px;">layout</a> <a href="/tags/life/" style="font-size: 14.12px;">life</a> <a href="/tags/links/" style="font-size: 14.12px;">links</a> <a href="/tags/macOS/" style="font-size: 18.82px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.59px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.76px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 13.53px;">node</a> <a href="/tags/objc/" style="font-size: 10.59px;">objc</a> <a href="/tags/react/" style="font-size: 11.18px;">react</a> <a href="/tags/react-native/" style="font-size: 14.71px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.18px;">rx</a> <a href="/tags/script/" style="font-size: 10.59px;">script</a> <a href="/tags/spm/" style="font-size: 11.76px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.47px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.29px;">tech</a> <a href="/tags/terminal/" style="font-size: 14.12px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.94px;">testing</a> <a href="/tags/tool/" style="font-size: 10px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.76px;">voip</a> <a href="/tags/watchOS/" style="font-size: 14.12px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.59px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.59px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 15.88px;">xcode</a>
     </div>
   </div>
 
@@ -2469,7 +2435,7 @@ if (packet != NULL)
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2479,7 +2445,7 @@ if (packet != NULL)
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">149</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">69</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">212</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">18</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">149</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">70</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">212</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">19</span></li></ul>
     </div>
   </div>
 
