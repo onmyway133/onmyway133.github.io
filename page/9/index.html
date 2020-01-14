@@ -181,6 +181,62 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-simplify-pager-interaction-with-Rx"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-simplify-pager-interaction-with-Rx/">How to simplify pager interaction with Rx</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-simplify-pager-interaction-with-Rx/" class="article-date">
+	  <time datetime="2019-06-27T11:30:34.000Z" itemprop="datePublished">June 27, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/333" target="_blank" rel="noopener">#333</a></strong></p>
+<p>In a traditional pager with many pages of content, and a bottom navigation with previous and next button. Each page may have different content, and depending on each state, may block the next button.</p>
+<p>The state of next button should state in real time depending on state in each page content, and when user moves back and forth between pages, the state of next button should be reflected as well.</p>
+<p>We might have</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ViewController</span>: <span class="title">BottomNavigationDelegate</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">bottomNavigationCanGoNext</span><span class="params">(currentIndex: Int)</span></span> -&gt; <span class="type">Bool</span> &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">bottomNavigationDidMoveTo</span><span class="params">(index: Int)</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ViewController</span>: <span class="title">PreferencePageDelegate</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">preferencePageDidSelect</span><span class="params">(itemCount: Int)</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ViewController</span>: <span class="title">FormPageDelegate</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">formPageDidCheck</span><span class="params">(valid: Bool)</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ViewController</span>: <span class="title">ConsentPageDelegate</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">consentPageDidAccept</span><span class="params">(agree: Bool)</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The indirect communications between each page, bottom navigation and ViewController get complicated and out of hands very quickly.</p>
+<p>This is a perfect problem for Rx to solve. If we look closely, the state of next button is a derivative of current index, how many items selected in preferences, valid form and agreement status.</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BottomNavigation</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> index = <span class="type">PublishSubject</span>&lt;<span class="type">Int</span>&gt;()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PreferencePage</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> itemCount = <span class="type">PublishSubject</span>&lt;<span class="type">Int</span>&gt;()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FormPage</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> valid = <span class="type">PublishSubject</span>&lt;<span class="type">Bool</span>&gt;()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConsentPage</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> agree = <span class="type">PublishSubject</span>&lt;<span class="type">Bool</span>&gt;()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> canNext = <span class="type">Observable</span></span><br><span class="line">  .combineLatest(bottomNavigation.index, preferencePage.itemCount, formPage.valid, consentPage.agree)</span><br><span class="line">  .<span class="built_in">map</span>(&#123; (index, itemCount, valid, agree) -&gt; <span class="type">Bool</span> <span class="keyword">in</span></span><br><span class="line">    <span class="comment">// Logic goes here to reduce, for example</span></span><br><span class="line">    <span class="keyword">switch</span> index &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">0</span>: <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>: <span class="keyword">return</span> itemCount &gt; <span class="number">2</span></span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span>: <span class="keyword">return</span> valid</span><br><span class="line">      <span class="keyword">case</span> <span class="number">3</span>: <span class="type">Return</span> agree</span><br><span class="line">      <span class="keyword">default</span>: <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-use-moveItem-in-NSCollectionView-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1022,75 +1078,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-A-bit-about-Design"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/A-bit-about-Design/">A bit about Design</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/A-bit-about-Design/" class="article-date">
-	  <time datetime="2019-06-18T09:20:19.000Z" itemprop="datePublished">June 18, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/317" target="_blank" rel="noopener">#317</a></strong></p>
-<h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><ul>
-<li><a href="https://medium.com/@nathangitter/why-your-app-looks-better-in-sketch-3a01b22c43d7" target="_blank" rel="noopener">Why Your App Looks Better in Sketch</a></li>
-<li><a href="https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6" target="_blank" rel="noopener">8 Tips for Dark Theme Design</a></li>
-</ul>
-<h2 id="UX"><a href="#UX" class="headerlink" title="UX"></a>UX</h2><ul>
-<li><a href="https://growth.design/case-studies/duolingo-user-retention/" target="_blank" rel="noopener">Duolingo User Retention</a></li>
-<li><a href="https://brianlovin.com/design-details" target="_blank" rel="noopener">Design Details</a></li>
-<li><a href="https://uxplanet.org/30-things-we-often-forget-when-designing-mobile-apps-ae30cc3b2c6b" target="_blank" rel="noopener">30 Things We Often Forget When Designing Mobile Apps</a></li>
-<li><a href="https://www.casestudy.club/" target="_blank" rel="noopener">Case study club</a></li>
-</ul>
-<h2 id="Showcase"><a href="#Showcase" class="headerlink" title="Showcase"></a>Showcase</h2><ul>
-<li><a href="https://saaspages.xyz/" target="_blank" rel="noopener">https://saaspages.xyz/</a></li>
-</ul>
-<h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul>
-<li><a href="https://shape.so/" target="_blank" rel="noopener">https://shape.so/</a></li>
-<li><a href="https://icons8.com/" target="_blank" rel="noopener">https://icons8.com/</a></li>
-<li><a href="https://icons8.com/animated-icons" target="_blank" rel="noopener">https://icons8.com/animated-icons</a></li>
-<li><a href="https://icons8.com/vector-creator" target="_blank" rel="noopener">https://icons8.com/vector-creator</a></li>
-<li><a href="https://feathericons.com/" target="_blank" rel="noopener">https://feathericons.com/</a></li>
-<li><a href="https://iconstore.co/" target="_blank" rel="noopener">https://iconstore.co/</a></li>
-<li><a href="https://streamlineicons.com/" target="_blank" rel="noopener">https://streamlineicons.com/</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design/">design</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
     <article id="post-Links-for-Design"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1147,6 +1134,75 @@ var themeMenus = {};
       
   <span class="ico-tags"></span>
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design/">design</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-A-bit-about-Design"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/A-bit-about-Design/">A bit about Design</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/A-bit-about-Design/" class="article-date">
+	  <time datetime="2019-06-18T09:20:19.000Z" itemprop="datePublished">June 18, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/317" target="_blank" rel="noopener">#317</a></strong></p>
+<h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><ul>
+<li><a href="https://medium.com/@nathangitter/why-your-app-looks-better-in-sketch-3a01b22c43d7" target="_blank" rel="noopener">Why Your App Looks Better in Sketch</a></li>
+<li><a href="https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6" target="_blank" rel="noopener">8 Tips for Dark Theme Design</a></li>
+</ul>
+<h2 id="UX"><a href="#UX" class="headerlink" title="UX"></a>UX</h2><ul>
+<li><a href="https://growth.design/case-studies/duolingo-user-retention/" target="_blank" rel="noopener">Duolingo User Retention</a></li>
+<li><a href="https://brianlovin.com/design-details" target="_blank" rel="noopener">Design Details</a></li>
+<li><a href="https://uxplanet.org/30-things-we-often-forget-when-designing-mobile-apps-ae30cc3b2c6b" target="_blank" rel="noopener">30 Things We Often Forget When Designing Mobile Apps</a></li>
+<li><a href="https://www.casestudy.club/" target="_blank" rel="noopener">Case study club</a></li>
+</ul>
+<h2 id="Showcase"><a href="#Showcase" class="headerlink" title="Showcase"></a>Showcase</h2><ul>
+<li><a href="https://saaspages.xyz/" target="_blank" rel="noopener">https://saaspages.xyz/</a></li>
+</ul>
+<h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul>
+<li><a href="https://shape.so/" target="_blank" rel="noopener">https://shape.so/</a></li>
+<li><a href="https://icons8.com/" target="_blank" rel="noopener">https://icons8.com/</a></li>
+<li><a href="https://icons8.com/animated-icons" target="_blank" rel="noopener">https://icons8.com/animated-icons</a></li>
+<li><a href="https://icons8.com/vector-creator" target="_blank" rel="noopener">https://icons8.com/vector-creator</a></li>
+<li><a href="https://feathericons.com/" target="_blank" rel="noopener">https://feathericons.com/</a></li>
+<li><a href="https://iconstore.co/" target="_blank" rel="noopener">https://iconstore.co/</a></li>
+<li><a href="https://streamlineicons.com/" target="_blank" rel="noopener">https://streamlineicons.com/</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design/">design</a></li></ul>
 
       
             
@@ -1290,6 +1346,130 @@ var themeMenus = {};
     <footer class="entry-meta entry-footer">
       
       
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-What-is-new-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/What-is-new-in-iOS/">What is new in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/What-is-new-in-iOS/" class="article-date">
+	  <time datetime="2019-06-17T10:53:31.000Z" itemprop="datePublished">June 17, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p>
+<h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p>
+<blockquote>
+<p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p>
+<blockquote>
+<p>A class that animates changes to views and allows the dynamic modification of those animations.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p>
+<blockquote>
+<p>A container that encapsulates the Core Data stack in your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p>
+<blockquote>
+<p>The abstract superclass for all feedback generators.</p>
+</blockquote>
+<h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p>
+<blockquote>
+<p>An object that controls the process of requesting App Store ratings and reviews from users.</p>
+</blockquote>
+<h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p>
+<blockquote>
+<p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p>
+<blockquote>
+<p>Integrate machine learning models into your app.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p>
+<blockquote>
+<p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p>
+<blockquote>
+<p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p>
+<blockquote>
+<p>Access per-device, per-developer data that your associated server can use in its business logic.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p>
+<blockquote>
+<p>Bring drag and drop to your app by using interaction APIs with your views.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p>
+<blockquote>
+<p>Detect NFC tags and read messages that contain NDEF data.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p>
+<blockquote>
+<p>Animatable corner radius</p>
+</blockquote>
+<h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p>
+<blockquote>
+<p>Make it easy for users to log into apps and services.</p>
+</blockquote>
+<h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><ul>
+<li><a href="https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13</a></li>
+<li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/</a></li>
+</ul>
+<p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p>
+<blockquote>
+<p>Declare the user interface and behavior for your app on every platform.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p>
+<blockquote>
+<p>Customize handling of asynchronous events by combining event-processing operators.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p>
+<blockquote>
+<p>Perform cryptographic operations securely and efficiently.</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p>
+<blockquote>
+<p>Expose UISearchTextField on UISearchBar</p>
+</blockquote>
+<p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
       
             
       
@@ -1537,130 +1717,6 @@ var themeMenus = {};
       
   <span class="ico-tags"></span>
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-What-is-new-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/What-is-new-in-iOS/">What is new in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/What-is-new-in-iOS/" class="article-date">
-	  <time datetime="2019-06-17T10:53:31.000Z" itemprop="datePublished">June 17, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p>
-<h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p>
-<blockquote>
-<p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p>
-<blockquote>
-<p>A class that animates changes to views and allows the dynamic modification of those animations.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p>
-<blockquote>
-<p>A container that encapsulates the Core Data stack in your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p>
-<blockquote>
-<p>The abstract superclass for all feedback generators.</p>
-</blockquote>
-<h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p>
-<blockquote>
-<p>An object that controls the process of requesting App Store ratings and reviews from users.</p>
-</blockquote>
-<h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p>
-<blockquote>
-<p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p>
-<blockquote>
-<p>Integrate machine learning models into your app.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p>
-<blockquote>
-<p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p>
-<blockquote>
-<p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p>
-<blockquote>
-<p>Access per-device, per-developer data that your associated server can use in its business logic.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p>
-<blockquote>
-<p>Bring drag and drop to your app by using interaction APIs with your views.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p>
-<blockquote>
-<p>Detect NFC tags and read messages that contain NDEF data.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p>
-<blockquote>
-<p>Animatable corner radius</p>
-</blockquote>
-<h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p>
-<blockquote>
-<p>Make it easy for users to log into apps and services.</p>
-</blockquote>
-<h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><ul>
-<li><a href="https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13</a></li>
-<li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/</a></li>
-</ul>
-<p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p>
-<blockquote>
-<p>Declare the user interface and behavior for your app on every platform.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p>
-<blockquote>
-<p>Customize handling of asynchronous events by combining event-processing operators.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p>
-<blockquote>
-<p>Perform cryptographic operations securely and efficiently.</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p>
-<blockquote>
-<p>Expose UISearchTextField on UISearchBar</p>
-</blockquote>
-<p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
 
       
             
@@ -1981,56 +2037,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-How-to-mock-grpc-model-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-mock-grpc-model-in-Swift/">How to mock grpc model in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-mock-grpc-model-in-Swift/" class="article-date">
-	  <time datetime="2019-06-13T06:03:11.000Z" itemprop="datePublished">June 13, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/306" target="_blank" rel="noopener">#306</a></strong></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> json: [<span class="type">String</span>: <span class="type">Any</span>] = [</span><br><span class="line">    <span class="string">"id"</span>: <span class="string">"123"</span>,</span><br><span class="line">    <span class="string">"name"</span>: <span class="string">"Thor"</span>,</span><br><span class="line">    <span class="string">"isInMarvel"</span>: <span class="literal">true</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> data = <span class="keyword">try</span> <span class="type">JSONSerialization</span>.data(withJSONObject: json, options: [])</span><br><span class="line"><span class="keyword">let</span> string = <span class="type">String</span>(data: data, encoding: .utf8)!</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">try</span> <span class="type">Hero</span>(jsonString: string)</span><br></pre></td></tr></table></figure>
-
-<p>If we use <code>withValue</code> from <a href="https://github.com/onmyway133/blog/issues/354" target="_blank" rel="noopener">How to simplify struct mutating in Swift</a> then we can mock easily</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">mock</span><span class="params">()</span></span> -&gt; <span class="type">Hero</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> withValue(<span class="type">Hero</span>()) &#123;</span><br><span class="line">            $<span class="number">0</span>.id = <span class="string">"123"</span></span><br><span class="line">            $<span class="number">0</span>.name = <span class="string">"Thor"</span></span><br><span class="line">            $<span class="number">0</span>.isInMarvel = <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2135,6 +2141,18 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-specify-locale-in-Swift/">How to specify locale in Swift</a></h6>
+              <span>January 14, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-workaround-URLSession-issue-in-watchOS-6.1.1/">How to workaround URLSession issue in watchOS 6.1.1</a></h6>
               <span>January 13, 2020</span>
             </div>
@@ -2189,18 +2207,6 @@ var themeMenus = {};
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-fix-library-not-found-with-SPM-and-CocoaPods-in-Xcode/">How to fix library not found with SPM and CocoaPods in  Xcode</a></h6>
-              <span>January 8, 2020</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2223,7 +2229,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 

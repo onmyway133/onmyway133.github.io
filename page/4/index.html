@@ -181,6 +181,68 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-add-monkey-test-to-iOS-apps"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-add-monkey-test-to-iOS-apps/">How to add monkey test to iOS apps</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-add-monkey-test-to-iOS-apps/" class="article-date">
+	  <time datetime="2019-11-01T08:48:43.000Z" itemprop="datePublished">November 1, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/484" target="_blank" rel="noopener">#484</a></strong></p>
+<p>Use <a href="https://github.com/zalando/SwiftMonkey" target="_blank" rel="noopener">SwiftMonkey</a> which adds random UITests gestures</p>
+<p>Add to UITests target</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">target <span class="string">'MyAppUITests'</span> <span class="keyword">do</span></span><br><span class="line">  pod <span class="string">'R.swift'</span>, <span class="string">'~&gt; 5.0'</span></span><br><span class="line">  pod <span class="string">'SwiftMonkey'</span>, <span class="string">'~&gt; 2.1.0'</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><h3 id="Failed-to-determine-hittability-of-Button"><a href="#Failed-to-determine-hittability-of-Button" class="headerlink" title="Failed to determine hittability of Button"></a>Failed to determine hittability of Button</h3><blockquote>
+<p>Failed to determine hittability of Button: Unable to fetch parameterized attribute XC_kAXXCParameterizedAttributeConvertHostedViewPositionFromContext, remote interface does not have this capability.</p>
+</blockquote>
+<p>This happens when using SwiftMonkey and somewhere in our code uses <code>isHittable</code>, so best to avoid that by having isolated monkey test only</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> XCTest</span><br><span class="line"><span class="keyword">import</span> SwiftMonkey</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MonkeyTests</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> app: <span class="type">XCUIApplication!</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">setUp</span><span class="params">()</span></span> &#123;</span><br><span class="line">        continueAfterFailure = <span class="literal">false</span></span><br><span class="line">        app = <span class="type">XCUIApplication</span>()</span><br><span class="line">        app.launch()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testMonkey</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> monkey = <span class="type">Monkey</span>(frame: app.frame)</span><br><span class="line">        monkey.addDefaultUIAutomationActions()</span><br><span class="line">        monkey.addXCTestTapAlertAction(interval: <span class="number">100</span>, application: app)</span><br><span class="line">        monkey.monkeyAround()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Another workaround is possibly use <code>addDefaultXCTestPublicActions</code> other than <code>addDefaultUIAutomationActions</code></p>
+<h3 id="UI-Test-Activity"><a href="#UI-Test-Activity" class="headerlink" title="UI Test Activity:"></a>UI Test Activity:</h3><blockquote>
+<p>Assertion Failure: MonkeyXCTest.swift:33: Failed to get matching snapshots: Timed out while evaluating UI query.</p>
+</blockquote>
+<p>This seems related to SwiftMonkey trying to snapshot. Workaround is to remove</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">monkey.addXCTestTapAlertAction(interval: <span class="number">100</span>, application: app)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/testing/">testing</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-use-array-of-strings-in-ForEach-in-SwiftUI"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -2029,63 +2091,6 @@ end</code></pre></li>
     
 
   
-    <article id="post-How-to-use-UserNotificationsUI-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-UserNotificationsUI-in-iOS/">How to use UserNotificationsUI in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-UserNotificationsUI-in-iOS/" class="article-date">
-	  <time datetime="2019-10-10T10:45:29.000Z" itemprop="datePublished">October 10, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/454" target="_blank" rel="noopener">#454</a></strong></p>
-<p>From documentation <a href="https://developer.apple.com/documentation/usernotificationsui" target="_blank" rel="noopener">https://developer.apple.com/documentation/usernotificationsui</a></p>
-<blockquote>
-<p>Customize how local and remote notifications appear on the user’s device by adding a notification content app extension to the bundle of your iOS app. Your extension manages a custom view controller, which you use to present the content from incoming notifications. When a notification arrives, the system displays your view controller in addition to, or in place of, the default system interface.</p>
-</blockquote>
-<p><a href="https://developer.apple.com/documentation/usernotificationsui/customizing_the_appearance_of_notifications" target="_blank" rel="noopener">https://developer.apple.com/documentation/usernotificationsui/customizing_the_appearance_of_notifications</a></p>
-<blockquote>
-<p>When an iOS device receives a notification containing an alert, the system displays the contents of the alert in two stages. Initially, it displays an abbreviated banner with the title, subtitle, and two to four lines of body text from the notification. If the user presses the abbreviated banner, iOS displays the full notification interface, including any notification-related actions. The system provides the interface for the abbreviated banner, but you can customize the full interface using a notification content app extension.</p>
-</blockquote>
-<p><img src="https://docs-assets.developer.apple.com/published/ff99a71282/b6f2b1aa-fb42-4517-b5b8-9e955c6455da.png" alt></p>
-<p>Use <code>Notification Content Extension</code></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">didReceive</span><span class="params">(<span class="number">_</span> notification: UNNotification)</span></span> &#123;</span><br><span class="line">   <span class="keyword">self</span>.bodyText?.text = notification.request.content.body</span><br><span class="line">   <span class="keyword">self</span>.headlineText?.text = notification.request.content.title</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2190,6 +2195,18 @@ end</code></pre></li>
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-specify-locale-in-Swift/">How to specify locale in Swift</a></h6>
+              <span>January 14, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-workaround-URLSession-issue-in-watchOS-6.1.1/">How to workaround URLSession issue in watchOS 6.1.1</a></h6>
               <span>January 13, 2020</span>
             </div>
@@ -2244,18 +2261,6 @@ end</code></pre></li>
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-fix-library-not-found-with-SPM-and-CocoaPods-in-Xcode/">How to fix library not found with SPM and CocoaPods in  Xcode</a></h6>
-              <span>January 8, 2020</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2278,7 +2283,7 @@ end</code></pre></li>
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 

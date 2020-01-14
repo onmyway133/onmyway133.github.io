@@ -181,6 +181,58 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-deal-with-singleton-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-deal-with-singleton-in-iOS/">How to deal with singleton in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-deal-with-singleton-in-iOS/" class="article-date">
+	  <time datetime="2017-05-02T19:40:10.000Z" itemprop="datePublished">May 2, 2017</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/18" target="_blank" rel="noopener">#18</a></strong></p>
+<h2 id="A-single-singleton"><a href="#A-single-singleton" class="headerlink" title="A single singleton"></a>A single singleton</h2><p>There are many classes that designed to be used as singleton, like <code>UserDefaults.standard</code>, <code>FileManager.default</code>, <code>NotificationCenter.default</code> or even our own classes like <code>UserManager</code>, <code>Storage</code>, … Singleton is a design patter and has its own use case, sometimes we still need to use it. But if we are to use singleton, we should just use 1, and group all other singleton under this single singleton. Thanks to <a href="https://github.com/vadymmarkov/" target="_blank" rel="noopener">Vadym</a> for showing this to me</p>
+<p>Swift makes it extremely easy to make singleton, let name it <code>App</code> then we have a single point of control for all the singletons</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">let</span> model = <span class="type">AppModel</span>()</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">let</span> realmProvider = <span class="type">RealmProvider</span>()</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">let</span> networkingProvider = <span class="type">NetworkingProvider</span>()</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">var</span> navigator = <span class="type">Navigator</span>()</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">let</span> config = <span class="type">AppConfig</span>()</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">let</span> pushNotificationCenter = <span class="type">PushNotificationCenter</span>()</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">let</span> lifeCycle = <span class="type">LifeCycle</span>()</span><br><span class="line">&#125;</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line"><span class="type">These</span> are use cases <span class="keyword">where</span> a single instance <span class="keyword">is</span> needed</span><br><span class="line"></span><br><span class="line">### <span class="type">AppModel</span></span><br><span class="line"><span class="type">This</span> <span class="keyword">is</span> <span class="keyword">where</span> we store model <span class="keyword">for</span> an app, that can be</span><br><span class="line">- <span class="keyword">is</span> onboarding shown</span><br><span class="line">- organization name</span><br><span class="line">- `<span class="type">Session</span>` that encapsulates token, current profile</span><br><span class="line"></span><br><span class="line">### <span class="type">LifeCycle</span></span><br><span class="line"><span class="type">This</span> <span class="keyword">is</span> <span class="keyword">where</span> we listen to app life cycle, <span class="type">I</span> use `rx` to make it easy, see https:<span class="comment">//github.com/onmyway133/blog/issues/12</span></span><br><span class="line"></span><br><span class="line">### <span class="type">RealmProvider</span></span><br><span class="line"><span class="type">I</span> prefer `<span class="type">Realm</span>` <span class="keyword">for</span> storing and caching, usually <span class="number">1</span> `<span class="type">Realm</span>` <span class="keyword">is</span> enough. <span class="type">This</span> <span class="keyword">is</span> <span class="keyword">where</span> we <span class="keyword">return</span> the a certain `<span class="type">Realm</span>` instance</span><br><span class="line"></span><br><span class="line">```swift</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RealmProvider</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">realm</span><span class="params">()</span></span> -&gt; <span class="type">Realm</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> configuration = <span class="type">Realm</span>.<span class="type">Configuration</span>(schemaVersion: <span class="type">App</span>.config.schemaVersion)</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">try</span>! <span class="type">Realm</span>(configuration: configuration)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="AppConfig"><a href="#AppConfig" class="headerlink" title="AppConfig"></a>AppConfig</h3><p>This is where we have configurations for staging and production environment, those can be client key, <code>Firebase</code> configuration, analytics keys, …</p>
+<h3 id="Navigator"><a href="#Navigator" class="headerlink" title="Navigator"></a>Navigator</h3><p>I use <a href="https://github.com/hyperoslo/Compass" target="_blank" rel="noopener">Compass</a> to do central navigation, and there should be 1 <code>Navigator</code> that does the job</p>
+<h2 id="Inject-a-singleton"><a href="#Inject-a-singleton" class="headerlink" title="Inject a singleton"></a>Inject a singleton</h2><p>Sometime we rely on a singleton to do our job, to make dependencies clear and testing easier, we need to inject this singleton, and leverage Swift default parameter, thanks to <a href="https://github.com/JohnSundell" target="_blank" rel="noopener">John</a> for showing this to me</p>
+<p>Here is an example of a <code>ViewModel</code> that relies on <code>networking</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProfileViewModel</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> networking: <span class="type">Networking</span>&lt;<span class="type">APIEndpoint</span>&gt;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(networking: <span class="type">Networking</span>&lt;<span class="type">APIEndpoint</span>&gt; = <span class="type">App</span>.networking) &#123;</span><br><span class="line">    <span class="keyword">self</span>.networking = networking</span><br><span class="line"></span><br><span class="line">    networking.rxRequest(<span class="type">APIEndpoint</span>.profile)</span><br><span class="line">      .bindNext(&#123; profile <span class="keyword">in</span></span><br><span class="line">        <span class="built_in">print</span>(profile)</span><br><span class="line">      &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Swift-snippets"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1169,6 +1221,18 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-specify-locale-in-Swift/">How to specify locale in Swift</a></h6>
+              <span>January 14, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-workaround-URLSession-issue-in-watchOS-6.1.1/">How to workaround URLSession issue in watchOS 6.1.1</a></h6>
               <span>January 13, 2020</span>
             </div>
@@ -1223,18 +1287,6 @@ var themeMenus = {};
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-fix-library-not-found-with-SPM-and-CocoaPods-in-Xcode/">How to fix library not found with SPM and CocoaPods in  Xcode</a></h6>
-              <span>January 8, 2020</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -1257,7 +1309,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">38</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
