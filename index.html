@@ -181,7 +181,7 @@ var themeMenus = {};
         
           <section id="main">
   
-    <article id="post-How-to-deal-with-Swift-slow-compile-time"  class="article article-type-post" itemscope itemprop="blogPost" >
+    <article id="post-How-to-test-drag-and-drop-in-UITests"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
     
@@ -189,7 +189,7 @@ var themeMenus = {};
         
   
     <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-deal-with-Swift-slow-compile-time/">How to deal with Swift slow compile time</a>
+      <a class="article-title" href="/blog/How-to-test-drag-and-drop-in-UITests/">How to test drag and drop in UITests</a>
     </h1>
   
 
@@ -197,24 +197,139 @@ var themeMenus = {};
     
     <div class="article-meta">
       
-	Posted on <a href="/blog/How-to-deal-with-Swift-slow-compile-time/" class="article-date">
-	  <time datetime="2020-01-21T08:18:21.000Z" itemprop="datePublished">January 21, 2020</time>
+	Posted on <a href="/blog/How-to-test-drag-and-drop-in-UITests/" class="article-date">
+	  <time datetime="2020-01-23T13:01:07.000Z" itemprop="datePublished">January 23, 2020</time>
 	</a>
 
       
     </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/581" target="_blank" rel="noopener">#581</a></strong></p>
-<h2 id="Type-conversion"><a href="#Type-conversion" class="headerlink" title="Type conversion"></a>Type conversion</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">CGFloat</span>(integerLiteral: index)</span><br></pre></td></tr></table></figure>
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/583" target="_blank" rel="noopener">#583</a></strong></p>
+<p>In UITests, we can use <code>press</code> from <code>XCUIElement</code> to test drag and drop</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> fromCat = app.buttons[<span class="string">"cat1"</span>].firstMatch</span><br><span class="line"><span class="keyword">let</span> toCat = app.buttons[<span class="string">"cat2"</span>]</span><br><span class="line"><span class="keyword">let</span> fromCoordinate = fromCat.coordinate(withNormalizedOffset: <span class="type">CGVector</span>(dx: <span class="number">0</span>, dy: <span class="number">0</span>))</span><br><span class="line"><span class="keyword">let</span> toCoordinate = toCat.coordinate(withNormalizedOffset: <span class="type">CGVector</span>(dx: <span class="number">0</span>, dy: -<span class="number">0.5</span>))</span><br><span class="line">fromCoordinate.press(forDuration: <span class="number">1</span>, thenDragTo: toCoordinate)</span><br></pre></td></tr></table></figure>
 
-<p>Make extension</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Int64</span> </span>&#123;</span><br><span class="line">    <span class="keyword">init</span>(doubleValue: <span class="type">Double</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="keyword">init</span>(doubleValue)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Float</span> </span>&#123;</span><br><span class="line">    <span class="keyword">init</span>(integerValue: <span class="type">Int</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="keyword">init</span>(integerValue)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Double</span> </span>&#123;</span><br><span class="line">    <span class="keyword">init</span>(integerValue: <span class="type">Int</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="keyword">init</span>(integerValue)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>and then take screenshot</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> screenshot = <span class="type">XCUIScreen</span>.main.screenshot()</span><br><span class="line"><span class="keyword">let</span> attachment = <span class="type">XCTAttachment</span>(screenshot: screenshot)</span><br><span class="line">attachment.lifetime = .keepAlways</span><br><span class="line">attachment.name = name</span><br><span class="line">add(attachment)</span><br></pre></td></tr></table></figure>
 
-<h2 id="Switch-case"><a href="#Switch-case" class="headerlink" title="Switch case"></a>Switch case</h2><p>Use <code>switch case</code> instead of <code>if case let</code></p>
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li><a href="https://engineering.circle.com/swift-compiler-performance-tips-and-tricks-e86a53a5b42a" target="_blank" rel="noopener">https://engineering.circle.com/swift-compiler-performance-tips-and-tricks-e86a53a5b42a</a></li>
+<p>Screenshot capturing happens after the action, so it may be too late. One way is to inject launch arguments, like <code>app.launchArguments.append(&quot;--dragdrop&quot;)</code> to alter some code in the app.</p>
+<p>We can also swizzle gesture recognizer to alter behavior</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UILongPressGestureRecognizer</span> </span>&#123;</span><br><span class="line">    <span class="meta">@objc</span> <span class="keyword">var</span> uiTests_state: <span class="type">UIGestureRecognizer</span>.<span class="type">State</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> state = <span class="keyword">self</span>.uiTests_state</span><br><span class="line">        <span class="keyword">if</span> state == .ended &#123;</span><br><span class="line">            <span class="keyword">return</span> .changed</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> state</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> originalSelector = #selector(getter: <span class="type">UILongPressGestureRecognizer</span>.state)</span><br><span class="line"><span class="keyword">let</span> swizzledSelector = #selector(getter: <span class="type">UILongPressGestureRecognizer</span>.uiTests_state)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> originalMethod = class_getInstanceMethod(<span class="type">UILongPressGestureRecognizer</span>.<span class="keyword">self</span>, originalSelector)!</span><br><span class="line"><span class="keyword">let</span> swizzledMethod = class_getInstanceMethod(<span class="type">UILongPressGestureRecognizer</span>.<span class="keyword">self</span>, swizzledSelector)!</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> didAddMethod = class_addMethod(<span class="type">UILongPressGestureRecognizer</span>.<span class="keyword">self</span>, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> didAddMethod &#123;</span><br><span class="line">    class_replaceMethod(<span class="type">UILongPressGestureRecognizer</span>.<span class="keyword">self</span>, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    method_exchangeImplementations(originalMethod, swizzledMethod)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/testing/">testing</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-set-corner-radius-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-set-corner-radius-in-iOS/">How to set corner radius in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-set-corner-radius-in-iOS/" class="article-date">
+	  <time datetime="2020-01-22T11:06:45.000Z" itemprop="datePublished">January 22, 2020</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/582" target="_blank" rel="noopener">#582</a></strong></p>
+<h2 id="Use-View-Debugging"><a href="#Use-View-Debugging" class="headerlink" title="Use View Debugging"></a>Use View Debugging</h2><p>Run on device, <code>Xcode -&gt; Debug -&gt; View debugging -&gt; Rendering -&gt; Color blended layer</code><br>On <code>Simulator -&gt; Debug -&gt; Color Blended Layer</code></p>
+<h2 id="Corner-radius"><a href="#Corner-radius" class="headerlink" title="Corner radius"></a>Corner radius</h2><ul>
+<li><a href="https://twitter.com/timoliverau/status/1135999854176395264" target="_blank" rel="noopener">https://twitter.com/timoliverau/status/1135999854176395264</a></li>
 </ul>
+<blockquote>
+<p>Okay. Talked to a Core Animation engineer again:</p>
+</blockquote>
+<blockquote>
+<ul>
+<li>cornerRadius was deliberately improved in Metal so it could be used everywhere.</li>
+<li>Using a bitmap is WAY heavier in terms of memory and performance.</li>
+<li>CALayer maskLayer is still heavy.</li>
+</ul>
+</blockquote>
+<p><a href="https://developer.apple.com/documentation/quartzcore/calayer/1410818-cornerradius" target="_blank" rel="noopener">https://developer.apple.com/documentation/quartzcore/calayer/1410818-cornerradius</a></p>
+<blockquote>
+<p>Setting the radius to a value greater than 0.0 causes the layer to begin drawing rounded corners on its background. By default, the corner radius does not apply to the image in the layer’s contents property; it applies only to the background color and border of the layer. However, setting the masksToBounds property to true causes the content to be clipped to the rounded corners.</p>
+</blockquote>
+<p><a href="https://developer.apple.com/documentation/quartzcore/calayer/1410896-maskstobounds" target="_blank" rel="noopener">https://developer.apple.com/documentation/quartzcore/calayer/1410896-maskstobounds</a></p>
+<blockquote>
+<p>When the value of this property is true, Core Animation creates an implicit clipping mask that matches the bounds of the layer and includes any corner radius effects. If a value for the mask property is also specified, the two masks are multiplied to get the final mask value.</p>
+</blockquote>
+<h2 id="Mask-layer"><a href="#Mask-layer" class="headerlink" title="Mask layer"></a>Mask layer</h2><p><code>layer.cornerRadius</code>, with or without <code>layer.maskedCorners</code> causes blending<br>Use mask layer instead of <code>layer.cornerRadius</code> to avoid blending, but mask causes offscreen rendering</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> mask = <span class="type">CAShapeLayer</span>()</span><br><span class="line"><span class="keyword">let</span> path = <span class="type">UIBezierPath</span>(</span><br><span class="line">    roundedRect: bounds,</span><br><span class="line">    byRoundingCorners: [.topLeft, .topRight, .bottomLeft, .bottomRight],</span><br><span class="line">    cornerRadii: <span class="type">CGSize</span>(width: <span class="number">20</span>, height: <span class="number">20</span>)</span><br><span class="line">)</span><br><span class="line">mask.path = path.cgPath</span><br><span class="line">layer.mask = mask</span><br></pre></td></tr></table></figure>
+
+<h2 id="Offscreen-rendering"><a href="#Offscreen-rendering" class="headerlink" title="Offscreen rendering"></a>Offscreen rendering</h2><ul>
+<li><a href="https://www.objc.io/issues/3-views/moving-pixels-onto-the-screen/" target="_blank" rel="noopener">https://www.objc.io/issues/3-views/moving-pixels-onto-the-screen/</a></li>
+</ul>
+<blockquote>
+<p>Instruments’ Core Animation Tool has an option called Color Offscreen-Rendered Yellow that will color regions yellow that have been rendered with an offscreen buffer (this option is also available in the Simulator’s Debug menu). Be sure to also check Color Hits Green and Misses Red. Green is for whenever an offscreen buffer is reused, while red is for when it had to be re-created.</p>
+</blockquote>
+<ul>
+<li><a href="https://thoughtbot.com/blog/designing-for-ios-graphics-performance" target="_blank" rel="noopener">https://thoughtbot.com/blog/designing-for-ios-graphics-performance</a></li>
+</ul>
+<blockquote>
+<p>Offscreen drawing on the other hand refers to the process of generating bitmap graphics in the background using the CPU before handing them off to the GPU for onscreen rendering. In iOS, offscreen drawing occurs automatically in any of the following cases:</p>
+</blockquote>
+<blockquote>
+<p>Core Graphics (any class prefixed with CG<em>)<br>The drawRect() method, even with an empty implementation.<br>CALayers with a shouldRasterize property set to YES.<br>CALayers using masks (setMasksToBounds) and dynamic shadows (setShadow</em>).<br>Any text displayed on screen, including Core Text.<br>Group opacity (UIViewGroupOpacity).</p>
+</blockquote>
+<h2 id="Instruments"><a href="#Instruments" class="headerlink" title="Instruments"></a>Instruments</h2><ul>
+<li>Colors <a href="https://felixha.wordpress.com/2014/04/28/graphics-performance-tuning/" target="_blank" rel="noopener">https://felixha.wordpress.com/2014/04/28/graphics-performance-tuning/</a></li>
+</ul>
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://texturegroup.org/docs/corner-rounding.html" target="_blank" rel="noopener">Corner Rounding</a></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@abstract Sets the corner rounding method to use on the ASDisplayNode.</span><br><span class="line">There are three types of corner rounding provided by Texture: CALayer, Precomposited, and Clipping.</span><br><span class="line"></span><br><span class="line">- ASCornerRoundingTypeDefaultSlowCALayer: uses CALayer&apos;s inefficient .cornerRadius property. Use</span><br><span class="line">this type of corner in situations in which there is both movement through and movement underneath</span><br><span class="line">the corner (very rare). This uses only .cornerRadius.</span><br><span class="line"></span><br><span class="line">- ASCornerRoundingTypePrecomposited: corners are drawn using bezier paths to clip the content in a</span><br><span class="line">CGContext / UIGraphicsContext. This requires .backgroundColor and .cornerRadius to be set. Use opaque</span><br><span class="line">background colors when possible for optimal efficiency, but transparent colors are supported and much</span><br><span class="line">more efficient than CALayer. The only limitation of this approach is that it cannot clip children, and</span><br><span class="line">thus works best for ASImageNodes or containers showing a background around their children.</span><br><span class="line"></span><br><span class="line">- ASCornerRoundingTypeClipping: overlays 4 separate opaque corners on top of the content that needs</span><br><span class="line">corner rounding. Requires .backgroundColor and .cornerRadius to be set. Use clip corners in situations</span><br><span class="line">in which is movement through the corner, with an opaque background (no movement underneath the corner).</span><br><span class="line">Clipped corners are ideal for animating / resizing views, and still outperform CALayer.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><a href="https://www.hackingwithswift.com/articles/79/how-to-find-and-fix-slow-drawing-using-instruments" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/79/how-to-find-and-fix-slow-drawing-using-instruments</a></li>
+<li><a href="https://stackoverflow.com/questions/35685726/uibezierpath-doesnt-work-in-topright-corner-and-bottomright-corner/43808103" target="_blank" rel="noopener">https://stackoverflow.com/questions/35685726/uibezierpath-doesnt-work-in-topright-corner-and-bottomright-corner/43808103</a></li>
+<li><a href="https://stackoverflow.com/questions/6731545/when-does-a-view-or-layer-require-offscreen-rendering" target="_blank" rel="noopener">https://stackoverflow.com/questions/6731545/when-does-a-view-or-layer-require-offscreen-rendering</a></li>
+</ul>
+<blockquote>
+<p>Generally, on iOS, pixel effects and Quartz / Core Graphics drawing are not hardware accelerated, and most other things are.<br>The following things are not hardware accelerated, which means that they need to be done in software (offscreen):<br>Anything done in a drawRect. If your view has a drawRect, even an empty one, the drawing is not done in hardware, and there is a performance penalty.<br>Any layer with the shouldRasterize property set to YES.<br>Any layer with a mask or drop shadow.<br>Text (any kind, including UILabels, CATextLayers, Core Text, etc).<br>Any drawing you do yourself (either onscreen or offscreen) using a CGContext.</p>
+</blockquote>
+<ul>
+<li>Make overlay view <a href="https://stackoverflow.com/questions/13979935/setting-corner-radius-on-a-cell-kills-uicollectionviews-performance" target="_blank" rel="noopener">https://stackoverflow.com/questions/13979935/setting-corner-radius-on-a-cell-kills-uicollectionviews-performance</a></li>
+<li><a href="http://www.lukeparham.com/blog/2018/3/6/friends-dont-let-friends-render-offscreen" target="_blank" rel="noopener">http://www.lukeparham.com/blog/2018/3/6/friends-dont-let-friends-render-offscreen</a></li>
+</ul>
+<blockquote>
+<p>For example, writing your own draw method with Core Graphics means your rendering will technically be done in software (offscreen) as opposed to being hardware accelerated like it is when you use a normal CALayer. This is why manually rendering a UIImage with a CGContext is slower than just assigning the image to a UIImageView.</p>
+</blockquote>
+<ul>
+<li><a href="https://github.com/seedante/OptimizationForOffscreenRender" target="_blank" rel="noopener">https://github.com/seedante/OptimizationForOffscreenRender</a></li>
+</ul>
+<blockquote>
+<p>if layer’s contents is nil or this contents has a transparent background, you just need to set cornerRadius. For UILabel, UITextView and UIButton, you can just set layer’s backgroundColor and cornerRadius to get a rounded corner. Note: UILabel’s backgroundColor is not its layer’s backgroundColor.</p>
+</blockquote>
 
       
     </div>
@@ -222,7 +337,7 @@ var themeMenus = {};
       
       
   <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
 
       
             
@@ -419,7 +534,7 @@ var themeMenus = {};
 <p>A locale ID identifies a specific region and its cultural conventions—such as the formatting of dates, times, and numbers. To specify a locale, use an underscore character to combine a language ID with a region designator, as shown in Table B-5. For example, the locale ID for English-language speakers in the United Kingdom is en_GB, while the locale for English-speaking residents of the United States is en_US.</p>
 </blockquote>
 <p>Example</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">let formatter = DateFormatter()</span><br><span class="line">formatter.dateStyle = .medium</span><br><span class="line">formatter.timeStyle = .short</span><br><span class="line">formatter.locale = Locale.current</span><br><span class="line"></span><br><span class="line">10. jan. 2018, 16:50 // nb_NO</span><br><span class="line">10. jan. 2018, 16:50 // nb_US</span><br><span class="line">10 Jan 2018 at 16:50 // en_NO</span><br><span class="line">Jan 10, 2018 at 4:50 PM // en_US</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">let formatter = DateFormatter()</span><br><span class="line">formatter.dateStyle = .medium</span><br><span class="line">formatter.timeStyle = .short</span><br><span class="line">formatter.locale = Locale.current</span><br><span class="line"></span><br><span class="line">10. jan. 2018, 16:50 // nb_NO</span><br><span class="line">10. jan. 2018, 16:50 // nb_US iOS 12</span><br><span class="line">10. jan. 2018, 4:50 pm // nb_US iOS 13</span><br><span class="line">10 Jan 2018 at 16:50 // en_NO</span><br><span class="line">Jan 10, 2018 at 4:50 PM // en_US</span><br></pre></td></tr></table></figure>
 
 <h2 id="Date-format"><a href="#Date-format" class="headerlink" title="Date format"></a>Date format</h2><p>Use <a href="https://developer.apple.com/documentation/foundation/dateformatter/style/short" target="_blank" rel="noopener">DateFormatter Style</a></p>
 <p>Example <code>short</code></p>
@@ -1920,58 +2035,6 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     
 
   
-    <article id="post-How-to-get-ISO-string-from-date-in-Javascript"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-get-ISO-string-from-date-in-Javascript/">How to get ISO string from date in Javascript</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-get-ISO-string-from-date-in-Javascript/" class="article-date">
-	  <time datetime="2019-12-22T22:05:47.000Z" itemprop="datePublished">December 22, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/552" target="_blank" rel="noopener">#552</a></strong></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">type Components = &#123;</span><br><span class="line">  day: number,</span><br><span class="line">  month: number,</span><br><span class="line">  year: number</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">DateFormatter</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 2018-11-11T00:00:00</span></span><br><span class="line">  <span class="keyword">static</span> ISOStringWithoutTimeZone = (date: <span class="built_in">Date</span>): <span class="function"><span class="params">string</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> components = DateFormatter.format(DateFormatter.components(date))</span><br><span class="line">    <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;components.year&#125;</span>-<span class="subst">$&#123;components.month&#125;</span>-<span class="subst">$&#123;components.day&#125;</span>T00:00:00`</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> format = <span class="function">(<span class="params">components: Components</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      day: <span class="string">`<span class="subst">$&#123;components.day&#125;</span>`</span>.padStart(<span class="number">2</span>, <span class="string">'0'</span>),</span><br><span class="line">      month: <span class="string">`<span class="subst">$&#123;components.month&#125;</span>`</span>.padStart(<span class="number">2</span>, <span class="string">'0'</span>),</span><br><span class="line">      year: components.year</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> components = (date: <span class="built_in">Date</span>): <span class="function"><span class="params">Components</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      day: date.getDate(),</span><br><span class="line">      month: date.getMonth() + <span class="number">1</span>,</span><br><span class="line">      year: date.getFullYear()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li><a href="https://stackoverflow.com/a/53298976/1418457" target="_blank" rel="noopener">https://stackoverflow.com/a/53298976/1418457</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2076,8 +2139,20 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
               <div class="widget-entry-summary" style="margin: 0;">
             
 
-              <h6 style="margin: 0;"><a href="/blog/How-to-deal-with-Swift-slow-compile-time/">How to deal with Swift slow compile time</a></h6>
-              <span>January 21, 2020</span>
+              <h6 style="margin: 0;"><a href="/blog/How-to-test-drag-and-drop-in-UITests/">How to test drag and drop in UITests</a></h6>
+              <span>January 23, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-set-corner-radius-in-iOS/">How to set corner radius in iOS</a></h6>
+              <span>January 22, 2020</span>
             </div>
 
           </li>
@@ -2130,18 +2205,6 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-generate-XCTest-test-methods/">How to generate XCTest test methods</a></h6>
-              <span>January 12, 2020</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2154,7 +2217,7 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.78px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.11px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.11px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.56px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.67px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 11.67px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.56px;">css</a> <a href="/tags/dart/" style="font-size: 11.67px;">dart</a> <a href="/tags/database/" style="font-size: 10.56px;">database</a> <a href="/tags/design/" style="font-size: 10.56px;">design</a> <a href="/tags/electron/" style="font-size: 11.67px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.67px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.67px;">flutter</a> <a href="/tags/git/" style="font-size: 11.11px;">git</a> <a href="/tags/github/" style="font-size: 12.22px;">github</a> <a href="/tags/go/" style="font-size: 10.56px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.44px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.33px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.22px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.67px;">layout</a> <a href="/tags/life/" style="font-size: 13.33px;">life</a> <a href="/tags/links/" style="font-size: 14.44px;">links</a> <a href="/tags/macOS/" style="font-size: 18.89px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.56px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.67px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 12.78px;">node</a> <a href="/tags/objc/" style="font-size: 10.56px;">objc</a> <a href="/tags/react/" style="font-size: 11.11px;">react</a> <a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.11px;">rx</a> <a href="/tags/script/" style="font-size: 10.56px;">script</a> <a href="/tags/spm/" style="font-size: 12.22px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.67px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.56px;">tech</a> <a href="/tags/terminal/" style="font-size: 13.33px;">terminal</a> <a href="/tags/testing/" style="font-size: 12.78px;">testing</a> <a href="/tags/tool/" style="font-size: 10px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.67px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.89px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.56px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.56px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 16.11px;">xcode</a>
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.78px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.11px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.11px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.56px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.67px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 11.67px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.56px;">css</a> <a href="/tags/dart/" style="font-size: 11.67px;">dart</a> <a href="/tags/database/" style="font-size: 10.56px;">database</a> <a href="/tags/design/" style="font-size: 10.56px;">design</a> <a href="/tags/electron/" style="font-size: 11.67px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.67px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.67px;">flutter</a> <a href="/tags/git/" style="font-size: 11.11px;">git</a> <a href="/tags/github/" style="font-size: 12.22px;">github</a> <a href="/tags/go/" style="font-size: 10.56px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.44px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.33px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.22px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.67px;">layout</a> <a href="/tags/life/" style="font-size: 13.33px;">life</a> <a href="/tags/links/" style="font-size: 14.44px;">links</a> <a href="/tags/macOS/" style="font-size: 18.89px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.56px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.67px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 12.78px;">node</a> <a href="/tags/objc/" style="font-size: 10.56px;">objc</a> <a href="/tags/react/" style="font-size: 11.11px;">react</a> <a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.11px;">rx</a> <a href="/tags/script/" style="font-size: 10.56px;">script</a> <a href="/tags/spm/" style="font-size: 12.22px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.67px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.56px;">tech</a> <a href="/tags/terminal/" style="font-size: 13.33px;">terminal</a> <a href="/tags/testing/" style="font-size: 13.33px;">testing</a> <a href="/tags/tool/" style="font-size: 10px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.67px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.89px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.56px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.56px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 16.11px;">xcode</a>
     </div>
   </div>
 
@@ -2164,7 +2227,7 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2174,7 +2237,7 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">151</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">72</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">221</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">20</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">153</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">72</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">221</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">20</span></li></ul>
     </div>
   </div>
 
