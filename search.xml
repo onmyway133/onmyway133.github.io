@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>How to use custom font in SwiftUI</title>
+      <link href="/blog/How-to-use-custom-font-in-SwiftUI/"/>
+      <url>/blog/How-to-use-custom-font-in-SwiftUI/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/586" target="_blank" rel="noopener">#586</a></strong></p><h2 id="In-macOS"><a href="#In-macOS" class="headerlink" title="In macOS"></a>In macOS</h2><p>Add fonts to target. In <code>Info.plist</code>, just need to specify font locations, most of the time they are at Resources folder</p><blockquote><p>ATSApplicationFontsPath (String - macOS) identifies the location of a font file or directory of fonts in the bundle’s Resources directory. If present, macOS activates the fonts at the specified path for use by the bundled app. The fonts are activated only for the bundled app and not for the system as a whole. The path itself should be specified as a relative directory of the bundle’s Resources directory. For example, if a directory of fonts was at the path /Applications/MyApp.app/Contents/Resources/Stuff/MyFonts/, you should specify the string Stuff/MyFonts/ for the value of this key.</p></blockquote><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>ATSApplicationFontsPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">string</span>&gt;</span>.<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br></pre></td></tr></table></figure><p>Define font weight as enums, and base on <code>ContentSizeCategory</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">OpenSans</span>: <span class="title">String</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> bold = <span class="string">"OpenSans-Bold"</span></span><br><span class="line">    <span class="keyword">case</span> semiBold = <span class="string">"OpenSans-SemiBold"</span></span><br><span class="line">    <span class="keyword">case</span> extraBold = <span class="string">"OpenSans-ExtraBold"</span></span><br><span class="line">    <span class="keyword">case</span> light = <span class="string">"OpenSans-Light"</span></span><br><span class="line">    <span class="keyword">case</span> regular = <span class="string">"OpenSans-Regular"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">FiraCode</span>: <span class="title">String</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> bold = <span class="string">"FiraCode-Bold"</span></span><br><span class="line">    <span class="keyword">case</span> medium = <span class="string">"FiraCode-Medium"</span></span><br><span class="line">    <span class="keyword">case</span> light = <span class="string">"FiraCode-Light"</span></span><br><span class="line">    <span class="keyword">case</span> regular = <span class="string">"FiraCode-Regular"</span></span><br><span class="line">    <span class="keyword">case</span> retina = <span class="string">"FiraCode-Retina"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ContentSizeCategory</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> size: <span class="type">CGFloat</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> .small:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">14</span></span><br><span class="line">        <span class="keyword">case</span> .medium:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">16</span></span><br><span class="line">        <span class="keyword">case</span> .large:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">20</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">14</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">customFont</span><span class="params">(<span class="number">_</span> font: OpenSans, category: ContentSizeCategory)</span></span> -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">self</span>.customFont(font.rawValue, category: category)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">customFont</span><span class="params">(<span class="number">_</span> name: String, category: ContentSizeCategory)</span></span> -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">self</span>.font(.custom(name, size: category.size))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Then we can specify font weight, thanks to function overloading</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Text</span>(<span class="string">"Welcome"</span>)</span><br><span class="line">    .customFont(<span class="type">OpenSans</span>.bold, category: .large)</span><br></pre></td></tr></table></figure><h2 id="In-iOS"><a href="#In-iOS" class="headerlink" title="In iOS"></a>In iOS</h2><p>Observe <code>@Environment(\.sizeCategory) var sizeCategory</code> in ViewModifier</p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-dynamic-type-with-a-custom-font" target="_blank" rel="noopener">https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-dynamic-type-with-a-custom-font</a></li></ul>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> swift </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>How to use Firebase Crashlytics in macOS app</title>
       <link href="/blog/How-to-use-Firebase-Crashlytics-in-macOS-app/"/>
       <url>/blog/How-to-use-Firebase-Crashlytics-in-macOS-app/</url>
@@ -1672,9 +1691,9 @@
     
     
     <entry>
-      <title>Links for Xcode</title>
-      <link href="/blog/Links-for-Xcode/"/>
-      <url>/blog/Links-for-Xcode/</url>
+      <title>How to use Xcode</title>
+      <link href="/blog/How-to-use-Xcode/"/>
+      <url>/blog/How-to-use-Xcode/</url>
       
         <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/499" target="_blank" rel="noopener">#499</a></strong></p><h2 id="Build-setting"><a href="#Build-setting" class="headerlink" title="Build setting"></a>Build setting</h2><h3 id="Build-Library-For-Distribution"><a href="#Build-Library-For-Distribution" class="headerlink" title="Build Library For Distribution"></a>Build Library For Distribution</h3><ul><li><a href="https://developer.apple.com/videos/play/wwdc2019/416/?time=596" target="_blank" rel="noopener">Binary Frameworks in Swift</a></li></ul><blockquote><p>It turns on all the features that are necessary to build your library in such a way that it can be distributed</p></blockquote><blockquote><p>What does this error actually mean? Well, when the Swift compiler goes to import a module, it looks for a file called the Compiled Module for that library. If it finds one of these files, it reads off the manifest of public APIs that you can call into, and lets you use them. Now, this Compiled Module Format is a binary format that basically contains internal compiler data structures.</p></blockquote><blockquote><p> And since they’re just internal data structures, they’re subject to change with every version of the Swift Compiler. So what this means is that if one person tries to import a module using one version of Swift, and that module was created by another version of Swift, their compiler can’t understand it, and they won’t be able to use it.</p></blockquote><blockquote><p>Well, in order to solve this version lock, Xcode 11 introduces a new format for Swift Modules, called Swift Module Interfaces. And just like the Compiled Module Format, they list out all the public APIs of a module, but in a textual form that behaves more like source code. And since they behave like source code, then future versions of the Swift Compiler will be able to import module interfaces created with older versions. And when you enable Build Libraries for Distribution, you’re telling the compiler to generate one of these stable interfaces whenever it builds your framework</p></blockquote>]]></content>
       
@@ -1693,9 +1712,9 @@
     
     
     <entry>
-      <title>How to use Xcode</title>
-      <link href="/blog/How-to-use-Xcode/"/>
-      <url>/blog/How-to-use-Xcode/</url>
+      <title>Links for Xcode</title>
+      <link href="/blog/Links-for-Xcode/"/>
+      <url>/blog/Links-for-Xcode/</url>
       
         <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/499" target="_blank" rel="noopener">#499</a></strong></p><h2 id="Build-setting"><a href="#Build-setting" class="headerlink" title="Build setting"></a>Build setting</h2><h3 id="Build-Library-For-Distribution"><a href="#Build-Library-For-Distribution" class="headerlink" title="Build Library For Distribution"></a>Build Library For Distribution</h3><ul><li><a href="https://developer.apple.com/videos/play/wwdc2019/416/?time=596" target="_blank" rel="noopener">Binary Frameworks in Swift</a></li></ul><blockquote><p>It turns on all the features that are necessary to build your library in such a way that it can be distributed</p></blockquote><blockquote><p>What does this error actually mean? Well, when the Swift compiler goes to import a module, it looks for a file called the Compiled Module for that library. If it finds one of these files, it reads off the manifest of public APIs that you can call into, and lets you use them. Now, this Compiled Module Format is a binary format that basically contains internal compiler data structures.</p></blockquote><blockquote><p> And since they’re just internal data structures, they’re subject to change with every version of the Swift Compiler. So what this means is that if one person tries to import a module using one version of Swift, and that module was created by another version of Swift, their compiler can’t understand it, and they won’t be able to use it.</p></blockquote><blockquote><p>Well, in order to solve this version lock, Xcode 11 introduces a new format for Swift Modules, called Swift Module Interfaces. And just like the Compiled Module Format, they list out all the public APIs of a module, but in a textual form that behaves more like source code. And since they behave like source code, then future versions of the Swift Compiler will be able to import module interfaces created with older versions. And when you enable Build Libraries for Distribution, you’re telling the compiler to generate one of these stable interfaces whenever it builds your framework</p></blockquote>]]></content>
       
@@ -1846,9 +1865,9 @@
       
         <tags>
             
-            <tag> cloud </tag>
-            
             <tag> firebase </tag>
+            
+            <tag> cloud </tag>
             
         </tags>
       
@@ -1867,9 +1886,9 @@
       
         <tags>
             
-            <tag> cloud </tag>
-            
             <tag> machine learning </tag>
+            
+            <tag> cloud </tag>
             
         </tags>
       
@@ -2214,9 +2233,9 @@
             
             <tag> swift </tag>
             
-            <tag> android </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> android </tag>
             
         </tags>
       
@@ -2340,9 +2359,9 @@
       
         <tags>
             
-            <tag> android </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> android </tag>
             
         </tags>
       
@@ -5420,9 +5439,9 @@
       
         <tags>
             
-            <tag> android </tag>
-            
             <tag> iOS </tag>
+            
+            <tag> android </tag>
             
         </tags>
       
@@ -5486,6 +5505,27 @@
     
     
     <entry>
+      <title>Links for WWDC</title>
+      <link href="/blog/Links-for-WWDC/"/>
+      <url>/blog/Links-for-WWDC/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p><h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p><blockquote><p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p><blockquote><p>A class that animates changes to views and allows the dynamic modification of those animations.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p><blockquote><p>A container that encapsulates the Core Data stack in your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p><blockquote><p>The abstract superclass for all feedback generators.</p></blockquote><h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p><blockquote><p>An object that controls the process of requesting App Store ratings and reviews from users.</p></blockquote><h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p><blockquote><p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p><blockquote><p>Integrate machine learning models into your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p><blockquote><p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p><blockquote><p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p><blockquote><p>Access per-device, per-developer data that your associated server can use in its business logic.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p><blockquote><p>Bring drag and drop to your app by using interaction APIs with your views.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p><blockquote><p>Detect NFC tags and read messages that contain NDEF data.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p><blockquote><p>Animatable corner radius</p></blockquote><h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p><blockquote><p>Make it easy for users to log into apps and services.</p></blockquote><h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><ul><li><a href="https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13</a></li><li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/</a></li></ul><p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p><blockquote><p>Declare the user interface and behavior for your app on every platform.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p><blockquote><p>Customize handling of asynchronous events by combining event-processing operators.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p><blockquote><p>Perform cryptographic operations securely and efficiently.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p><blockquote><p>Expose UISearchTextField on UISearchBar</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p><p>➕CoreSVG</p><ul><li><a href="https://github.com/SDWebImage/SDWebImageSVGCoder" target="_blank" rel="noopener">https://github.com/SDWebImage/SDWebImageSVGCoder</a></li></ul>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> iOS </tag>
+            
+            <tag> links </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>What is new in iOS</title>
       <link href="/blog/What-is-new-in-iOS/"/>
       <url>/blog/What-is-new-in-iOS/</url>
@@ -5516,27 +5556,6 @@
         <tags>
             
             <tag> iOS </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Links for WWDC</title>
-      <link href="/blog/Links-for-WWDC/"/>
-      <url>/blog/Links-for-WWDC/</url>
-      
-        <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/313" target="_blank" rel="noopener">#313</a></strong></p><h2 id="iOS-10"><a href="#iOS-10" class="headerlink" title="iOS 10"></a>iOS 10</h2><p>➕<a href="https://developer.apple.com/documentation/usernotifications" target="_blank" rel="noopener">UserNotifications</a></p><blockquote><p>Push user-facing notifications to the user’s device from a server, or generate them locally from your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uiviewpropertyanimator" target="_blank" rel="noopener">UIViewPropertyAnimator</a></p><blockquote><p>A class that animates changes to views and allows the dynamic modification of those animations.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer" target="_blank" rel="noopener">NSPersistentContainer</a></p><blockquote><p>A container that encapsulates the Core Data stack in your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uifeedbackgenerator" target="_blank" rel="noopener">UIFeedbackGenerator</a></p><blockquote><p>The abstract superclass for all feedback generators.</p></blockquote><h2 id="iOS-10-3"><a href="#iOS-10-3" class="headerlink" title="iOS 10.3"></a>iOS 10.3</h2><p>➕<a href="https://developer.apple.com/documentation/storekit/skstorereviewcontroller" target="_blank" rel="noopener">SKStoreReviewController</a></p><blockquote><p>An object that controls the process of requesting App Store ratings and reviews from users.</p></blockquote><h2 id="iOS-11"><a href="#iOS-11" class="headerlink" title="iOS 11"></a>iOS 11</h2><p>➕<a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank" rel="noopener">safeAreaLayoutGuide</a></p><blockquote><p>The layout guide representing the portion of your view that is unobscured by bars and other content.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/coreml" target="_blank" rel="noopener">CoreML</a></p><blockquote><p>Integrate machine learning models into your app.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/vision" target="_blank" rel="noopener">Vision</a></p><blockquote><p>Apply computer vision algorithms to perform a variety of tasks on input images and video.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/arkit" target="_blank" rel="noopener">ARKit</a></p><blockquote><p>Integrate iOS device camera and motion features to produce augmented reality experiences in your app or game.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/devicecheck" target="_blank" rel="noopener">DeviceCheck</a></p><blockquote><p>Access per-device, per-developer data that your associated server can use in its business logic.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/drag_and_drop" target="_blank" rel="noopener">Drag and Drop</a></p><blockquote><p>Bring drag and drop to your app by using interaction APIs with your views.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/corenfc" target="_blank" rel="noopener">CoreNFC</a></p><blockquote><p>Detect NFC tags and read messages that contain NDEF data.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/quartzcore/calayer/2877488-maskedcorners" target="_blank" rel="noopener">maskedCorners</a></p><blockquote><p>Animatable corner radius</p></blockquote><h2 id="iOS-12"><a href="#iOS-12" class="headerlink" title="iOS 12"></a>iOS 12</h2><p>➕<a href="https://developer.apple.com/documentation/authenticationservices" target="_blank" rel="noopener">AuthenticationServices</a></p><blockquote><p>Make it easy for users to log into apps and services.</p></blockquote><h2 id="iOS-13"><a href="#iOS-13" class="headerlink" title="iOS 13"></a>iOS 13</h2><ul><li><a href="https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13" target="_blank" rel="noopener">https://www.hackingwithswift.com/articles/193/whats-new-in-ios-13</a></li><li><a href="https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/" target="_blank" rel="noopener">https://onesignal.com/blog/ios-13-introduces-4-breaking-changes-to-notifications/</a></li></ul><p>➕<a href="https://developer.apple.com/documentation/swiftui" target="_blank" rel="noopener">SwiftUI</a></p><blockquote><p>Declare the user interface and behavior for your app on every platform.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/combine" target="_blank" rel="noopener">Combine</a></p><blockquote><p>Customize handling of asynchronous events by combining event-processing operators.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/cryptokit" target="_blank" rel="noopener">CryptoKit</a></p><blockquote><p>Perform cryptographic operations securely and efficiently.</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/uikit/uisearchtextfield" target="_blank" rel="noopener">UISearchTextField</a></p><blockquote><p>Expose UISearchTextField on UISearchBar</p></blockquote><p>➕<a href="https://developer.apple.com/documentation/metrickit" target="_blank" rel="noopener">MetricKit</a></p><p>➕CoreSVG</p><ul><li><a href="https://github.com/SDWebImage/SDWebImageSVGCoder" target="_blank" rel="noopener">https://github.com/SDWebImage/SDWebImageSVGCoder</a></li></ul>]]></content>
-      
-      
-      
-        <tags>
-            
-            <tag> iOS </tag>
-            
-            <tag> links </tag>
             
         </tags>
       

@@ -181,6 +181,138 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-run-Android-apps-in-Bitrise"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-run-Android-apps-in-Bitrise/">How to run Android apps in Bitrise</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-run-Android-apps-in-Bitrise/" class="article-date">
+	  <time datetime="2019-05-23T16:18:19.000Z" itemprop="datePublished">May 23, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/273" target="_blank" rel="noopener">#273</a></strong></p>
+<p>Original post <a href="https://hackernoon.com/using-bitrise-ci-for-android-apps-fa9c48e301d8" target="_blank" rel="noopener">https://hackernoon.com/using-bitrise-ci-for-android-apps-fa9c48e301d8</a></p>
+<hr>
+<p>CI, short for Continuous Integration, is a good practice to move fast and confidently where code is integrated into shared repository many times a day. The ability to have pull requests get built, tested and release builds get distributed to testers allows team to verify automated build and identify problems quickly.</p>
+<p>I ‘ve been using <a href="https://www.buddybuild.com/" target="_blank" rel="noopener">BuddyBuild</a> for both iOS and Android apps and were very happy with it. The experience from creating new apps and deploying build is awesome. It works so well that <a href="https://www.buddybuild.com/blog/buddybuild-is-now-part-of-apple" target="_blank" rel="noopener">Apple acquired it</a>, which then lead to the fact that Android apps are no longer supported and new customers can’t register.</p>
+<p>We are one of <a href="https://github.com/GitHawkApp/GitHawk/issues/1330" target="_blank" rel="noopener">those</a> <a href="https://stackoverflow.com/questions/48085134/alternative-to-buddy-build" target="_blank" rel="noopener">who</a> are looking for new alternatives. We’ve been using TravisCI, CircleCI and Jenkins to deploy to Fabric. There is also <a href="https://www.jetbrains.com/teamcity/" target="_blank" rel="noopener">TeamCity</a> that is promising. But after a quick survey with friends and people, <a href="https://www.bitrise.io/" target="_blank" rel="noopener">Bitrise</a> is the most recommended. So maybe I should try that.</p>
+<p>The thing I like about Bitrise is its wide range support of workflow. They are just scripts that execute certain actions, and most of them are <a href="https://github.com/bitrise-io/" target="_blank" rel="noopener">open source</a>. There’s also yml config file, but all things can be done using web interface, so I don’t need to look into pages of documentation just to get the configuration right.</p>
+<p>This post is not a promote for Bitrise, it is just about trying and adapting to new things. There is no eternal thing in tech, things come ad go fast. Below are some of the lessons I learn after using Bitrise, hope you find them useful.</p>
+<h2 id="Variant-to-build"><a href="#Variant-to-build" class="headerlink" title="Variant to build"></a>Variant to build</h2><p>There is no Android Build step in the default ‘primary’ workflow, as primary is generally used for testing the code for every push. There is an Android Build step in the deploy workflow and the app gets built by running this workflow. However, I like to have the Android Build step in my primary workflow, so I added it there.</p>
+<p>Usually I want app module and stagingRelease build variant as we need to deploy staging builds to internal testers.</p>
+<p><img src="https://cdn-images-1.medium.com/max/2882/1*uJGkaQ0EvmDIM_T3ZTmuZw.png" alt></p>
+<p>If you go to Bitrise.yml tab you can see that the configuration file has been updated. This is very handy. I’ve used some other CI services and I needed to lookup their documentation on how to make this yml work.</p>
+<p><img src="https://cdn-images-1.medium.com/max/2836/1*z9eotS_Dyetx4ubtjWsnjg.png" alt></p>
+<h2 id="Bump-version-code-automatically"><a href="#Bump-version-code-automatically" class="headerlink" title="Bump version code automatically"></a>Bump version code automatically</h2><p>I’ve used some other CI services before and the app version code surely does not start from 0. So it makes sense that Bitrise can auto bump version code from the current number. There are some predefined steps in Workflow but they don’t serve my need</p>
+<p><img src="https://cdn-images-1.medium.com/max/2000/1*MsojdXPWw9WMzVa8SuOtDA.png" alt></p>
+<p>For the Set Android Manifest Version code and name step, the source code is <a href="https://github.com/jamesmontemagno/steps-set-android-manifest-versions/blob/master/step.sh" target="_blank" rel="noopener">here</a> so I understand what it does. It works by modify AndroidManifest.xml file using sed . This article <a href="https://blog.bitrise.io/adjust-your-build-numbers" target="_blank" rel="noopener">Adjust your build number</a> is not clear enough.</p>
+<p><img src="https://cdn-images-1.medium.com/max/2076/1*WDmvpUHp23a-jBjWVfN00Q.png" alt></p>
+<pre><code>sed -i.bak “s/android:versionCode=”\”${VERSIONCODE}\””/android:versionCode=”\”${CONFIG_new_version_code}\””/” ${manifest_file}</code></pre><p>In our projects, the versionCode is from an environment variable BUILD_NUMBER in Jenkins, so we need look up the same thing in <a href="https://devcenter.bitrise.io/faq/available-environment-variables/" target="_blank" rel="noopener">Available Environment Variables</a>, and it is BITRISE_BUILD_NUMBER , which is a build number of the build on bitrise.io.</p>
+<p>This is how versionCode looks like in build.gradle</p>
+<pre><code>versionCode (System.*getenv*(&quot;BITRISE_BUILD_NUMBER&quot;) as Integer ?: System.*getenv*(&quot;BUILD_NUMBER&quot;) as Integer ?: 243)</code></pre><p>243 is the current version code of this project, so let’s go to app’s Settings and change Your next build number will be</p>
+<p><img src="https://cdn-images-1.medium.com/max/2254/1*xUOPh2zy6V6hMPPty_PMXg.png" alt></p>
+<h2 id="Deploy-to-Fabric"><a href="#Deploy-to-Fabric" class="headerlink" title="Deploy to Fabric"></a>Deploy to Fabric</h2><p>I hope Bitrise has its own Crash reporting tool. For now I use Crashlytics in <a href="https://fabric.io/home" target="_blank" rel="noopener">Fabric</a>. And despite that Bitrise can distribute builds to testers, I still need to cross deploy to Fabric for historial reasons.</p>
+<p>There is only script <a href="https://github.com/bitrise-io/steps-fabric-crashlytics-beta-deploy" target="_blank" rel="noopener">steps-fabric-crashlytics-beta-deploy</a> to deploy IPA file for iOS apps, so we need something for Android. Fortunately I can use the Fabric plugin for gradle.</p>
+<h3 id="Add-Fabric-plugin"><a href="#Add-Fabric-plugin" class="headerlink" title="Add Fabric plugin"></a>Add Fabric plugin</h3><p>Follow <a href="https://fabric.io/kits/android/crashlytics/install" target="_blank" rel="noopener">Install Crashlytics via Gradle</a> to add Fabric plugin. Basically you need to add these dependencies to your app ‘s build.gradle</p>
+<pre><code>buildscript {
+    repositories {
+        google()
+        maven { url &apos;https://maven.fabric.io/public&apos; }
+    }
+
+    dependencies {
+        classpath &apos;io.fabric.tools:gradle:1.+&apos;
+    }
+}
+
+apply plugin: &apos;io.fabric&apos;
+
+dependencies {
+    compile(&apos;com.crashlytics.sdk.android:crashlytics:2.9.4@aar&apos;) {
+        transitive = true;
+    }
+}</code></pre><p>and API credentials in Manifest file</p>
+<pre><code>&lt;meta-data
+ android:name=”io.fabric.ApiKey”
+ android:value=”67ffdb78ce9cd50af8404c244fa25df01ea2b5bc”
+ /&gt;</code></pre><h3 id="Deploy-command"><a href="#Deploy-command" class="headerlink" title="Deploy command"></a>Deploy command</h3><p>Modern Android Studio usually includes a gradlew execution file in the root of your project. Run ./gradlew tasks for the list of tasks that you app can perform, look for Build tasks that start with assemble . Read more <a href="https://developer.android.com/studio/build/building-cmdline" target="_blank" rel="noopener">Build your app from the command line</a></p>
+<blockquote>
+<p>You can execute all the build tasks available to your Android project using the <a href="https://docs.gradle.org/current/userguide/gradle_wrapper.html" target="_blank" rel="noopener">Gradle wrapper</a> command line tool. It’s available as a batch file for Windows (gradlew.bat) and a shell script for Linux and Mac (gradlew.sh), and it’s accessible from the root of each project you create with Android Studio.</p>
+</blockquote>
+<p>For me, I want to deploy staging release build variant, so I run. Check that the build is on Fabric.</p>
+<pre><code>./gradlew assembleStagingRelease crashlyticsUploadDistributionStagingRelease</code></pre><h3 id="Manage-tester-group"><a href="#Manage-tester-group" class="headerlink" title="Manage tester group"></a>Manage tester group</h3><p>Go to your app on Fabric.io and create group of testers. Note that alias that is generated for the group</p>
+<p><img src="https://cdn-images-1.medium.com/max/2000/1*HMeW8VGqC6OWRizl0cC5BQ.png" alt></p>
+<p>Go to your app’s build.gradle and add ext.betaDistributionGroupAliases=’my-internal-testers’ to your desired productFlavors or buildTypes . For me I add to staging under productFlavors</p>
+<pre><code>productFlavors {
+   staging {
+     // …
+     ext.betaDistributionGroupAliases=’hyper-internal-testers-1&apos;
+   }
+   production {
+     // …
+   }
+}</code></pre><p>Now that the command is run correctly, let’s add that to Bitrise</p>
+<h3 id="Gradle-Run-step"><a href="#Gradle-Run-step" class="headerlink" title="Gradle Run step"></a>Gradle Run step</h3><p>Go to Workflow tab and add a Gradle Run step and place it below Deploy to Bitrise.io step.</p>
+<p><img src="https://cdn-images-1.medium.com/max/2782/1*oHUZoX-rdiqXjTV9SFFcKA.png" alt></p>
+<p>Expand Config, and add assembleStagingRelease crashlyticsUploadDistributionStagingRelease to Gradle task to run .</p>
+<p>Now start a new build in Bitrise manually or trigger new build by making pull request, you can see that the version code is increased for every build, crossed build gets deployed to Fabric to your defined tester groups.</p>
+<p>As an alternative, you can also use <a href="https://github.com/bitrise-io/steps-fabric-crashlytics-beta-deploy" target="_blank" rel="noopener">Fabric/Crashlytics deployer</a>, just update config with your apps key and secret found in <a href="https://fabric.io/settings" target="_blank" rel="noopener">settings</a>.</p>
+<h2 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h2><p>I hope those tips are useful to you. Here are some more links to help you explore further</p>
+<ul>
+<li><p><a href="https://medium.com/@bitrise/convert-old-android-workflows-and-configure-new-steps-based-on-the-old-gradle-tasks-on-bitrise-51a1adbfe78d" target="_blank" rel="noopener">Convert old Android workflows and configure new steps based on the old Gradle tasks on Bitrise</a></p>
+</li>
+<li><p><a href="https://stackoverflow.com/questions/11245144/replace-whole-line-containing-a-string-using-sed" target="_blank" rel="noopener">Replace whole line containing a string using Sed</a></p>
+</li>
+<li><p><a href="https://github.com/GitHawkApp/GitHawk/issues/1330" target="_blank" rel="noopener">Alternatives to Buddybuild?</a></p>
+</li>
+<li><p><a href="https://engineering.udacity.com/simplifying-app-distribution-with-beta-by-crashlytics-6c8c24f4ab02" target="_blank" rel="noopener">Simplifying Android app distribution with Beta by Crashlytics</a></p>
+</li>
+<li><p><a href="https://fabric.io/downloads/android-studio" target="_blank" rel="noopener">Fabric app for Android Studio</a></p>
+</li>
+<li><p><a href="https://stackoverflow.com/questions/27383732/crashlytics-distribution-for-app-with-multiple-flavors" target="_blank" rel="noopener">Crashlytics distribution for app with multiple flavors</a></p>
+</li>
+<li><p><a href="https://www.tutorialspoint.com/gradle/gradle_plugins.htm" target="_blank" rel="noopener">Gradle plugins</a></p>
+</li>
+<li><p><a href="https://blog.danlew.net/2015/02/20/setting-up-a-new-app-in-crashlytics-without-the-plugin/" target="_blank" rel="noopener">Setting up a new app in Crashlytics without the IDE plugin</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-make-tag-selection-view-in-React-Native"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -4078,59 +4210,6 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
     
 
   
-    <article id="post-How-to-use-custom-fonts-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-custom-fonts-in-iOS/">How to use custom fonts in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-custom-fonts-in-iOS/" class="article-date">
-	  <time datetime="2019-05-07T07:17:28.000Z" itemprop="datePublished">May 7, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/225" target="_blank" rel="noopener">#225</a></strong></p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>UIAppFonts<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>OpenSans-Bold.ttf<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>OpenSans-BoldItalic.ttf<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>OpenSans-ExtraBold.ttf<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>OpenSans-ExtraBoldItalic.ttf<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>OpenSans-Italic.ttf<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>OpenSans-Light.ttf<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>OpenSans-LightItalic.ttf<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>OpenSans-Regular.ttf<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>OpenSans-SemiBold.ttf<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>OpenSans-SemiBoldItalic.ttf<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>Read <a href="https://developer.apple.com/documentation/uikit/text_display_and_fonts/adding_a_custom_font_to_your_app" target="_blank" rel="noopener">Adding a Custom Font to Your App</a></p>
-<blockquote>
-<p>The name of the font isn’t always obvious, and rarely matches the font file name. A quick way to find the font name is to get the list of fonts available to your app, which you can do with the following code:</p>
-</blockquote>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> family <span class="keyword">in</span> <span class="type">UIFont</span>.familyNames.sorted() &#123;</span><br><span class="line">    <span class="keyword">let</span> names = <span class="type">UIFont</span>.fontNames(forFamilyName: family)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"Family: \(family) Font names: \(names)"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -4235,6 +4314,18 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-custom-font-in-SwiftUI/">How to use custom font in SwiftUI</a></h6>
+              <span>January 28, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-use-Firebase-Crashlytics-in-macOS-app/">How to use Firebase Crashlytics in macOS app</a></h6>
               <span>January 28, 2020</span>
             </div>
@@ -4289,18 +4380,6 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-work-with-SceneDelegate-in-iOS-12/">How to work with SceneDelegate in iOS 12</a></h6>
-              <span>January 20, 2020</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -4323,7 +4402,7 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">25</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -4333,7 +4412,7 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">153</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">73</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">222</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">21</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">153</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">73</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">223</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">21</span></li></ul>
     </div>
   </div>
 
