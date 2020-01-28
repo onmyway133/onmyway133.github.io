@@ -181,6 +181,208 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-Learning-from-Open-Source-Colocate-test-files"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Learning-from-Open-Source-Colocate-test-files/">Learning from Open Source  Colocate test files</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Learning-from-Open-Source-Colocate-test-files/" class="article-date">
+	  <time datetime="2018-04-12T06:55:32.000Z" itemprop="datePublished">April 12, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/160" target="_blank" rel="noopener">#160</a></strong></p>
+<ul>
+<li><a href="https://kickstarter.engineering/why-you-should-co-locate-your-xcode-tests-c69f79211411" target="_blank" rel="noopener">Why you should co-locate your Xcode tests</a></li>
+<li>Files</li>
+</ul>
+<p><a href="https://github.com/kickstarter/ios-oss/blob/master/Kickstarter-iOS/ViewModels/RootViewModel.swift" target="_blank" rel="noopener">https://github.com/kickstarter/ios-oss/blob/master/Kickstarter-iOS/ViewModels/RootViewModel.swift</a><br><a href="https://github.com/kickstarter/ios-oss/blob/master/Kickstarter-iOS/ViewModels/RootViewModelTests.swift" target="_blank" rel="noopener">https://github.com/kickstarter/ios-oss/blob/master/Kickstarter-iOS/ViewModels/RootViewModelTests.swift</a></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Using-CircleCI-2.0"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Using-CircleCI-2.0/">Using CircleCI 2.0</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Using-CircleCI-2.0/" class="article-date">
+	  <time datetime="2018-04-03T11:29:58.000Z" itemprop="datePublished">April 3, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/158" target="_blank" rel="noopener">#158</a></strong></p>
+<p>We ‘ve been using CircleCI for many of our open source projects. Since the end of last year 2017, version 2.0 began to come out, and we think it’s good time to try it now together with <a href="https://swift.org/blog/swift-4-1-released/" target="_blank" rel="noopener">Swift 4.1</a> and <a href="https://developer.apple.com/news/?id=01242018d" target="_blank" rel="noopener">Xcode 9.3</a></p>
+<p>The problem with <a href="https://circleci.com/docs/2.0/" target="_blank" rel="noopener">version 2.0</a> is it’s so powerful and has lots of cool new features like jobs and workflows, but that requires going to documentation for how to <a href="https://circleci.com/docs/2.0/migrating-from-1-2/" target="_blank" rel="noopener">migrate</a> configuration file, especially <a href="https://circleci.com/docs/2.0/migrating-from-1-2/#search-and-replace-deprecated-20-keys" target="_blank" rel="noopener">Search and Replace Deprecated 2.0 Keys</a></p>
+<h3 id="Creating-config-yml"><a href="#Creating-config-yml" class="headerlink" title="Creating config.yml"></a>Creating <code>config.yml</code></h3><p>The first thing is to create a new <code>config.yml</code> inside folder <code>.circleci</code></p>
+<blockquote>
+<p>Copy your existing circle.yml file into a new directory called .circleci at the root of your project repository.</p>
+</blockquote>
+<p>Next is to declare version and jobs</p>
+<blockquote>
+<p>Add version: 2 to the top of the .circleci/config.yml file.</p>
+</blockquote>
+<h3 id="Checking-xcodebuild"><a href="#Checking-xcodebuild" class="headerlink" title="Checking xcodebuild"></a>Checking <code>xcodebuild</code></h3><p>For simple cases, we just use <code>xcodebuild</code> to build and test the project, so it’s good to try it locally to avoid lots of trial commits to trigger CircleCI. You can take a look at this PR <a href="https://github.com/hyperoslo/Cheers/pull/20" target="_blank" rel="noopener">https://github.com/hyperoslo/Cheers/pull/20</a></p>
+<p>Before our configuration file for version 1.0 looks like this</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- <span class="built_in">set</span> -o pipefail &amp;&amp; xcodebuild -project Cheers.xcodeproj -scheme <span class="string">"Cheers-iOS"</span> -sdk iphonesimulator -destination <span class="string">'platform=iOS Simulator,name=iPhone 8,OS=11.0'</span> -enableCodeCoverage YES <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>Now we should put <code>pipefail</code> inside <code>shell</code>, follow <a href="https://github.com/CircleCI-Public/circleci-demo-ios/blob/master/.circleci/config.yml" target="_blank" rel="noopener">https://github.com/CircleCI-Public/circleci-demo-ios/blob/master/.circleci/config.yml</a></p>
+<blockquote>
+<p>shell: /bin/bash –login -o pipefail</p>
+</blockquote>
+<p>Now is the actual trying <code>xcodebuild</code>, after many failures due to <code>destination</code> param</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild: error: Unable to find a destination matching the provided destination specifier:</span><br><span class="line">		&#123; platform:iOS Simulator, OS:11.3 &#125;</span><br><span class="line"></span><br><span class="line">	Missing required device specifier option.</span><br><span class="line">	The device type “iOS Simulator” requires that either “name” or “id” be specified.</span><br><span class="line">	Please supply either “name” or “id”.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild: error: option &apos;Destination&apos; requires at least one parameter of the form &apos;key=value&apos;</span><br></pre></td></tr></table></figure>
+
+<p>I found this to work, run this in the same folder as your <code>xcodeproj</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild -project Cheers.xcodeproj -scheme <span class="string">"Cheers-iOS"</span> -sdk iphonesimulator -destination <span class="string">"platform=iOS Simulator,OS=11.3,name=iPhone X"</span> -enableCodeCoverage YES <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Adding-workflow"><a href="#Adding-workflow" class="headerlink" title="Adding workflow"></a>Adding workflow</h3><p>Version 2.0 introduces <a href="https://circleci.com/docs/2.0/workflows/" target="_blank" rel="noopener">workflow</a> which helps organising jobs</p>
+<blockquote>
+<p>A workflow is a set of rules for defining a collection of jobs and their run order. Workflows support complex job orchestration using a simple set of configuration keys to help you resolve failures sooner.</p>
+</blockquote>
+<p>For our simple use cases, we add this workflow</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">workflows:</span></span><br><span class="line"><span class="attr">  version:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">  build-and-test:</span></span><br><span class="line"><span class="attr">    jobs:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">build-and-test</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Collecting-Test-Metadata"><a href="#Collecting-Test-Metadata" class="headerlink" title="Collecting Test Metadata"></a>Collecting Test Metadata</h2><ul>
+<li><a href="https://circleci.com/docs/2.0/collect-test-data/" target="_blank" rel="noopener">https://circleci.com/docs/2.0/collect-test-data/</a></li>
+</ul>
+<blockquote>
+<p>CircleCI collects test metadata from XML files and uses it to provide insights into your job</p>
+</blockquote>
+<h2 id="Final"><a href="#Final" class="headerlink" title="Final"></a>Final</h2><p>Use below as template</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="number">2.1</span></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line"><span class="attr">  build_test:</span></span><br><span class="line"><span class="attr">    macos:</span></span><br><span class="line"><span class="attr">      xcode:</span> <span class="string">"11.0"</span></span><br><span class="line"><span class="attr">    shell:</span> <span class="string">/bin/bash</span> <span class="bullet">--login</span> <span class="bullet">-o</span> <span class="string">pipefail</span></span><br><span class="line"><span class="attr">    steps:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">checkout</span></span><br><span class="line"><span class="attr">      - run:</span></span><br><span class="line"><span class="attr">          command:</span> <span class="string">|</span></span><br><span class="line"><span class="string">            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf</span></span><br><span class="line"><span class="string">            pod install</span></span><br><span class="line"><span class="string"></span><span class="attr">      - run:</span></span><br><span class="line"><span class="attr">          command:</span> <span class="string">xcodebuild</span> <span class="bullet">-workspace</span> <span class="string">MyApp.xcworkspace</span> <span class="bullet">-scheme</span> <span class="string">"MyApp"</span> <span class="bullet">-sdk</span> <span class="string">iphonesimulator</span> <span class="bullet">-destination</span> <span class="string">"platform=iOS Simulator,name=iPhone X,OS=12.2"</span> <span class="bullet">-enableCodeCoverage</span> <span class="literal">YES</span> <span class="string">test</span></span><br><span class="line"><span class="attr">      - store_test_results:</span></span><br><span class="line"><span class="attr">          path:</span> <span class="string">test-results</span></span><br><span class="line"></span><br><span class="line"><span class="attr">workflows:</span></span><br><span class="line"><span class="attr">  version:</span> <span class="number">2.1</span></span><br><span class="line"><span class="attr">  primary:</span></span><br><span class="line"><span class="attr">    jobs:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">build_test</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://circleci.com/docs/2.0/ios-migrating-from-1-2/" target="_blank" rel="noopener">https://circleci.com/docs/2.0/ios-migrating-from-1-2/</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ci/">ci</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xcode/">xcode</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Jitter-buffer-in-VoIP"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/Jitter-buffer-in-VoIP/">Jitter buffer in VoIP</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/Jitter-buffer-in-VoIP/" class="article-date">
+	  <time datetime="2018-02-27T11:30:02.000Z" itemprop="datePublished">February 27, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/157" target="_blank" rel="noopener">#157</a></strong></p>
+<p>This post was from long time ago when I did <a href="http://pjsip.org/" target="_blank" rel="noopener">pjsip</a></p>
+<hr>
+<p>A jitter buffer temporarily stores arriving packets in order to minimize delay variations. If packets arrive too late then they are discarded. A jitter buffer may be mis-configured and be either too large or too small.  </p>
+<h3 id="Impact"><a href="#Impact" class="headerlink" title="Impact"></a>Impact</h3><p>If a jitter buffer is too small then an excessive number of packets may be discarded, which can lead to call quality degradation. </p>
+<p>Lower settings cause less delay in the meeting, but meetings with lower settings are more susceptible to jitter effects caused by network congestion. Less data is buffered, increasing the likelihood that delayed or lost packets will produce a jitter effect in the media stream.</p>
+<p>If a jitter buffer is too large then the additional delay can lead to conversational difficulty.</p>
+<p>Higher settings are more effective at reducing jitter effects. With higher settings, more data is buffered, which allows more time for delayed packets to arrive at the client. However, higher settings also result in more delay (or latency) in the meeting. A user who is speaking will not be heard immediately by the other meeting participants. The delay in the meeting increases with the amount of time that data is held in the buffer.</p>
+<h3 id="Resolution"><a href="#Resolution" class="headerlink" title="Resolution"></a>Resolution</h3><p>A typical jitter buffer configuration is 30mS to 50mS in size. In the case of   an adaptive jitter buffer then the maximum size may be set to 100-200mS. Note that if the jitter buffer size exceeds 100mS then the additional delay introduced can lead to conversational difficulty.</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><p><a href="http://publib.boulder.ibm.com/infocenter/sametime/v7r5m1/index.jsp?topic=/com.ibm.help.sametime.admin.doc/st_adm_avserv_audframepacket_t.html" target="_blank" rel="noopener">lib.boulder.ibm.com/infocenter/sametime</a>  </p>
+</li>
+<li><p><a href="http://www.voiptroubleshooter.com/problems/jitterbuffer.html" target="_blank" rel="noopener">http://www.voiptroubleshooter.com</a></p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tech/">tech</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/voip/">voip</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Some-Windows-Phone-7-development-tips"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1956,517 +2158,6 @@ Searching many threads on SO, like these create android Sliding Menu like Facebo
     
 
   
-    <article id="post-Hashable-and-Set-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Hashable-and-Set-in-Swift/">Hashable and Set in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Hashable-and-Set-in-Swift/" class="article-date">
-	  <time datetime="2017-12-13T14:10:40.000Z" itemprop="datePublished">December 13, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/122" target="_blank" rel="noopener">#122</a></strong></p>
-<p>From <a href="https://developer.apple.com/documentation/swift/set" target="_blank" rel="noopener">Set</a></p>
-<blockquote>
-<p>You can create a set with any element type that conforms to the Hashable protocol. By default, most types in the standard library are hashable, including strings, numeric and Boolean types, enumeration cases without associated values, and even sets themselves.</p>
-</blockquote>
-<p>From <a href="https://developer.apple.com/documentation/swift/hashable" target="_blank" rel="noopener">Hashable</a></p>
-<blockquote>
-<p>The Hashable protocol inherits from the Equatable protocol, so you must also add an equal-to operator (==) function for your custom type.</p>
-</blockquote>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Hashable</span> : <span class="title">Equatable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The hash value.</span></span><br><span class="line">    <span class="comment">///</span></span><br><span class="line">    <span class="comment">/// Hash values are not guaranteed to be equal across different executions of</span></span><br><span class="line">    <span class="comment">/// your program. Do not save hash values to use during a future execution.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> hashValue: <span class="type">Int</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li><a href="https://useyourloaf.com/blog/swift-hashable/" target="_blank" rel="noopener">https://useyourloaf.com/blog/swift-hashable/</a></li>
-<li><a href="http://kelan.io/2015/swift-hashable-for-sets/" target="_blank" rel="noopener">http://kelan.io/2015/swift-hashable-for-sets/</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Generic-declaration-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Generic-declaration-in-Swift/">Generic declaration in Swift</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Generic-declaration-in-Swift/" class="article-date">
-	  <time datetime="2017-12-13T11:53:23.000Z" itemprop="datePublished">December 13, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/121" target="_blank" rel="noopener">#121</a></strong></p>
-<p>These are different</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DiffService</span>&lt;<span class="title">T</span>: <span class="title">MKAnnotation</span> &amp; <span class="title">Equatable</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DiffService</span>&lt;<span class="title">T</span>: <span class="title">MKAnnotation</span>, <span class="title">Equatable</span>&gt;</span></span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-A-taste-of-MVVM-and-Reactive-paradigm"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/A-taste-of-MVVM-and-Reactive-paradigm/">A taste of MVVM and Reactive paradigm</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/A-taste-of-MVVM-and-Reactive-paradigm/" class="article-date">
-	  <time datetime="2017-12-07T16:41:32.000Z" itemprop="datePublished">December 7, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/120" target="_blank" rel="noopener">#120</a></strong></p>
-<p>Original post <a href="https://medium.com/flawless-app-stories/a-taste-of-mvvm-and-reactive-paradigm-5288a819cca1" target="_blank" rel="noopener">https://medium.com/flawless-app-stories/a-taste-of-mvvm-and-reactive-paradigm-5288a819cca1</a></p>
-<hr>
-<h2 id="A-taste-of-MVVM-and-Reactive-paradigm"><a href="#A-taste-of-MVVM-and-Reactive-paradigm" class="headerlink" title="A taste of MVVM and Reactive paradigm"></a>A taste of MVVM and Reactive paradigm</h2><p>I like Swift, like many other object oriented programming languages. Swift allows you to represent real world objects that have some characteristics and can perform some action.</p>
-<p>I tend to think of an app as a world where each object is a person. They work and communicate. If a person can’t do the work alone, he needs to ask for help. Take a project, for example, if the manager has to do all of the work by himself, he will go crazy. So there is a need to organise and delegate tasks, and for many persons to collaborate on the project: designer, tester, scrum master, developer. After the task is done, the manager needs to be informed.</p>
-<p>This may not a good example. But at least you get the importance of communication and delegation in OOP. I was very intrigued by the word “architecture” when I started iOS programming. But after doing for a while, it all comes down to identifying and splitting responsibilities. This article tells a bit about MVC and simple <a href="https://refactoring.com/catalog/extractClass.html" target="_blank" rel="noopener">Extract Class</a>refactoring to MVVM, and how to go further with Rx. You are free to create your own architecture, but whatever you do, consistence is key as to not confuse or surprise your teammates.</p>
-<h2 id="Model-View-Controller"><a href="#Model-View-Controller" class="headerlink" title="Model View Controller"></a>Model View Controller</h2><p>Take a look at the architecture you know the best, MVC, short for Model View Controller. You always get one when you create a new iOS project. View is where you present your data, using UIView, UIButton, UILabel. Model is just a fancy word for data. It can be your entity, data from networking, object from database, or from cache. The controller is the thing that mediates between the model and the view.</p>
-<p><img src="https://cdn-images-1.medium.com/max/2000/0*ETgFfqjBaD8SdQBd.png" alt></p>
-<h2 id="UIViewController-is-the-center-of-the-universe"><a href="#UIViewController-is-the-center-of-the-universe" class="headerlink" title="UIViewController is the center of the universe"></a>UIViewController is the center of the universe</h2><p>The problem with ViewController is that it tends to be huge. Apple puts it as the center of the universe, where it has lots of properties and responsibilities. There are many things that you can only do with a UIViewController. Things like interacting with storyboard, managing the view, configuring view rotation, state restoration. UIViewController is designed with lots of hooks for you to override and customize.</p>
-<p>Take a look at the many sections in UIViewController <a href="https://developer.apple.com/documentation/uikit/uiviewcontroller" target="_blank" rel="noopener">documentation</a>, you can’t do the following without a UIViewController.</p>
-<pre><code>func viewDidLoad()
-var preferredStatusBarStyle: UIStatusBarStyle { get }
-UITableViewDataSource
-var presentationController: UIPresentationController? { get }
-func childViewControllerForScreenEdgesDeferringSystemGestures() -&gt; UIViewController?
-func didMove(toParentViewController parent: UIViewController?)
-var systemMinimumLayoutMargins: NSDirectionalEdgeInsets
-var edgesForExtendedLayout: UIRectEdge
-var previewActionItems: [UIPreviewActionItem]
-var navigationItem: UINavigationItem
-var shouldAutorotate: Bool</code></pre><p>As your app grows, we need to add more code for other logic. Such as networking, data source, handling multiple delegates, presenting child view controllers. We can, of course, put all the stuff on the view controller, but that results in big view controller and improvement in your scrolling skill. This is where you lose the big picture of responsibilities because all stuff stays in the mega view controller. You tend to introduce code duplication and bugs are hard to fix because they are all over the places.</p>
-<p>The same goes with Page in Windows Phone or Activity in Android. They are intended for a screen or partial screen of functionality. There are certain actions that can only be done through them like <a href="https://msdn.microsoft.com/en-us/library/system.windows.controls.page.onnavigatedto%28v=vs.105%29.aspx" target="_blank" rel="noopener">Page.OnNavigatedTo</a>, <a href="https://developer.android.com/guide/components/activities/activity-lifecycle#oncreate" target="_blank" rel="noopener">Activity.onCreate</a>.</p>
-<p><img src="https://cdn-images-1.medium.com/max/3000/0*FegPo70Zxmid6brv.png" alt></p>
-<h2 id="The-buzzwords-of-architecture"><a href="#The-buzzwords-of-architecture" class="headerlink" title="The buzzwords of architecture"></a>The buzzwords of architecture</h2><p>What do you do when the ViewController is doing a lot? You offset the work to other components. By the way, if you want another object to do the user input handling, you can use the Presenter. If the Presenter is doing too much, then it can offset the business logic to the Interactor. Also, there are more buzzwords that can be used.</p>
-<pre><code>let buzzWords = [
-  &quot;Model&quot;, &quot;View&quot;, &quot;Controller&quot;, &quot;Entity&quot;, &quot;Router&quot;, &quot;Clean&quot;, &quot;Reactive&quot;, 
-  &quot;Presenter&quot;, &quot;Interactor&quot;, &quot;Megatron&quot;, &quot;Coordinator&quot;, &quot;Flow&quot;, &quot;Manager&quot;
-]
-let architecture = buzzWords.shuffled().takeRandom()
-let acronym = architecture.makeAcronym()</code></pre><p><img src="https://cdn-images-1.medium.com/max/2000/0*N785wG7eDrflu_OT.jpeg" alt></p>
-<p>After all the buzzwords are assembled, we get an architecture. There are <a href="https://github.com/onmyway133/fantastic-ios-architecture" target="_blank" rel="noopener">many</a> of them, ranging from simple extract class refactoring, embracing MVC or taking inspiration from Clean Code, Rx, EventBus or Redux. The choice depends on project, and some teams prefer one architecture over the other.</p>
-<h2 id="The-pragmatic-programmer"><a href="#The-pragmatic-programmer" class="headerlink" title="The pragmatic programmer"></a>The pragmatic programmer</h2><p>People have different opinion about what is good architecture. For me, it is about clear separation of concern, good communication pattern and being comfortable to use. Each component in the architecture should be identifiable and have a specific role. The communication must be clear so that we know which object is talking to each other. This together with good dependency injection will make testing easier.</p>
-<p>Things that sound good in theory may not work well in practice. Separated domain objects are cool, protocol extensions are cool, multiple layers of abstraction are cool. But too many of them can be a problem.</p>
-<p>If you read enough about design patterns, you know they all come down to these simple principles:</p>
-<ul>
-<li><p>Encapsulate what varies: identify the aspects of your application that vary and separate them from what stays the same.</p>
-</li>
-<li><p>Program to an interface, not an implementation</p>
-</li>
-<li><p>Prefer composition over inheritance</p>
-</li>
-</ul>
-<p>If there’s one thing we should master, it’s <strong>composition</strong>. The key is to identify responsibility and compose them in a reasonable and consistent way. Consult with your team mates on what suits the most. Always writing code with the thought that you will also be the future maintainer. Then you will write it differently.</p>
-<h2 id="Don’t-fight-against-the-system"><a href="#Don’t-fight-against-the-system" class="headerlink" title="Don’t fight against the system"></a>Don’t fight against the system</h2><p>Some architectures introduce completely new paradigm. Some of them are cumbersome that there people write scripts to generate boiler plate code. It’s good that there are many approaches to a problem. But for me sometimes it feels they are fighting the system. Some tasks are made easy while some trivial tasks become extremely hard. We should not constrain ourselves to one architecture simply because it are trendy. Be pragmatic, not dogmatic.</p>
-<p>In iOS, we should embrace MVC. UIViewController is not meant for a full screen of content. They can contain and be composed to split the functionalities. We can use <a href="http://khanlou.com/2015/10/coordinators-redux/" target="_blank" rel="noopener">Coordinator</a> and <a href="https://github.com/onmyway133/blog/issues/106" target="_blank" rel="noopener">FlowController</a> to manage dependencies and handle flow. <a href="https://www.swiftbysundell.com/posts/custom-container-view-controllers-in-swift" target="_blank" rel="noopener">Container</a>for state transition, embedded logic <a href="https://www.swiftbysundell.com/posts/logic-controllers-in-swift" target="_blank" rel="noopener">controller</a>, <a href="https://davedelong.com/blog/2017/11/06/a-better-mvc-part-3-fixing-massive-view-controller/" target="_blank" rel="noopener">part</a> of full screen content. This embracing ViewController approach play nicely with MVC in iOS and is my preferable way of doing.</p>
-<h2 id="Model-View-ViewModel"><a href="#Model-View-ViewModel" class="headerlink" title="Model View ViewModel"></a>Model View ViewModel</h2><p><img src="https://cdn-images-1.medium.com/max/2000/0*oRX6izHOCsHdhDoW.png" alt></p>
-<p>Another good-enough way is to offload some of the tasks to another object, let’s call it ViewModel. The name does not matter, you can name it Reactor, Maestro, Dinosaur. The important thing is your team get an agreed name. ViewModel takes some tasks from the ViewController and reports when it’s done. There are <a href="https://www.objc.io/issues/7-foundation/communication-patterns/" target="_blank" rel="noopener">communication patterns</a> in Cocoa Touch such as delegate, closures to use.</p>
-<p>ViewModel is self-contained, has no reference to UIKit, and has just input and output. We can put <a href="https://ashfurrow.com/blog/mvvm-is-exceptionally-ok/" target="_blank" rel="noopener">a lot of things</a> into ViewModel like calculation, formatting, networking, business logic. Also, if you don’t like the ViewModel to become massive, you surely need to create some dedicated objects. ViewModel is the first step to get a slim ViewController.</p>
-<h2 id="Synchronously"><a href="#Synchronously" class="headerlink" title="Synchronously"></a>Synchronously</h2><p>Below is a very simple ViewModel, which formats data based on User model. This is done synchronously.</p>
-<pre><code>class ProfileController: UIViewController {
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    let viewModel = ViewModel(user: user)
-    nameLabel.text = viewModel.name
-    birthdayLabel.text = viewModel.birthdayString
-    salaryLabel.text = viewModel.salary
-    piLabel.text = viewModel.millionthDigitOfPi
-  }
-}</code></pre><h2 id="Asynchronously"><a href="#Asynchronously" class="headerlink" title="Asynchronously"></a>Asynchronously</h2><p>We work with asynchronous API all the time. What if we want to show the user’s number of Facebook friends? For this to work we need to call Facebook API and this operation takes time. The ViewModel can report back via closure.</p>
-<pre><code>viewModel.getFacebookFriends { friends in
-  self.friendCountLabel.text = &quot;\(friends.count)&quot;
-}</code></pre><p>Internally, the ViewModel may offload the task to a dedicated Facebook API client object.</p>
-<pre><code>class ViewModel {
-  func getFacebookFriends(completion: [User] -&gt; Void) {
-    let client = APIClient()
-    client.getFacebookFriends(for: user) { friends in
-      DispatchQueue.main.async {
-        completion(friends)
-      }
-    }
-  }
-}</code></pre><h2 id="Jetpack-in-Android"><a href="#Jetpack-in-Android" class="headerlink" title="Jetpack in Android"></a>Jetpack in Android</h2><p><img src="https://cdn-images-1.medium.com/max/2000/0*ORC4mswaenJBZOwP.png" alt></p>
-<p>Google introduced Android Architecture Component, now part of Jetpack, at Google IO 2017. It has ViewModel and LiveData, which is also a type of MVVM applied in Android. ViewModel survives through configuration changes, and notify results in terms of LiveData for Activity to consume.</p>
-<pre><code>class MyActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-
-        val model = ViewModelProviders.of(this).get(MyViewModel::class.java)
-        model.getUsers().observe(this, { users -&gt;
-            // update UI
-        })
-    }
-}</code></pre><p>This is one of the reason I like ViewModel. If we follow ViewModel like this, then code structures between iOS and Android become similar. There should be no need for some random Javascript cross platform solutions. You learn the concept once, and apply it on both iOS and Android. I learn ViewModel, RxSwift on iOS and feel right at home when I work with RxJava and RxBinding on Android. The Kickstarter project also proves that this works well in their <a href="https://github.com/kickstarter/ios-oss" target="_blank" rel="noopener">iOS</a> and <a href="https://github.com/kickstarter/android-oss" target="_blank" rel="noopener">Android</a> apps.</p>
-<h2 id="Binding"><a href="#Binding" class="headerlink" title="Binding"></a>Binding</h2><p>To encapsulate the closure, we can create a class called Binding, which can notify one or multiple listeners. It takes advantage of didSet, and the observable property becomes clear.</p>
-<pre><code>class Binding&lt;T&gt; {
-  var value: T {
-    didSet {
-      listener?(value)
-    }
-  }
-  private var listener: ((T) -&gt; Void)?
-  init(value: T) {
-    self.value = value
-  }
-  func bind(_ closure: @escaping (T) -&gt; Void) {
-    closure(value)
-    listener = closure
-  }
-}</code></pre><p>Here is how to use it inside ViewModel:</p>
-<pre><code>class ViewModel {
-  let friends = Binding&lt;[User]&gt;(value: [])
-  init() {
-    getFacebookFriends {
-      friends.value = $0
-    }
-  }
-  func getFacebookFriends(completion: ([User]) -&gt; Void) {
-      // Do the work
-  }
-}</code></pre><p>When ever friends are fetched, or changed, the ViewController is updated accordingly. This is called reaction to changes.</p>
-<pre><code>override func viewDidLoad() {
-  super.viewDidLoad()
-  viewModel.friends.bind { friends in
-    self.friendsCountLabel.text = &quot;\(friends.count)&quot;
-  }
-}</code></pre><p>You often see MVVM introduction with reactive frameworks, and it is for a reason. They offer many chaining operators and make reactive programming easier and more declarative.</p>
-<h2 id="RxSwift"><a href="#RxSwift" class="headerlink" title="RxSwift"></a>RxSwift</h2><p>Perhaps the most common reactive framework in Swift is <a href="https://github.com/ReactiveX/RxSwift" target="_blank" rel="noopener">RxSwift</a>. The thing I like about it is that it follows <a href="http://reactivex.io/" target="_blank" rel="noopener">ReactiveX</a> pattern. So you will feel more familiar if you already use <a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="noopener">RxJava</a>, <a href="https://github.com/ReactiveX/rxjs" target="_blank" rel="noopener">RxJs</a>, or <a href="https://github.com/ReactiveX/RxKotlin" target="_blank" rel="noopener">RxKotlin</a>.</p>
-<h2 id="Observable"><a href="#Observable" class="headerlink" title="Observable"></a>Observable</h2><p><img src="https://cdn-images-1.medium.com/max/2000/0*GXJMWsuz8LvgkEXb.png" alt></p>
-<p>RxSwift unifies sync and async operations through Observable. This is how you make one.</p>
-<pre><code>class ViewModel {
-  let friends: Observable&lt;[User]&gt;
-  init() {
-    let client = APIClient()
-    friends = Observable&lt;[User]&gt;.create({ subscriber in
-      client.getFacebookFriends(completion: { friends in
-        subscriber.onNext(friends)
-        subscriber.onCompleted()
-      })
-      return Disposables.create()
-    })
-  }
-}</code></pre><p>The power of RxSwift lies in its numerous operators, which help you chain Observables. Here you can call 2 network requests, wait for both of them to finish, then sum up the friends. This is very streamlined and saves you lots of time. Here you can just subscribe to the Observable, it will be triggered when the request completes:</p>
-<pre><code>override func viewDidLoad() {
-  super.viewDidLoad()
-  viewModel.friends.subscribe(onNext: { friends in
-    self.friendsCountLabel.text = &quot;\(friends.count)&quot;
-  })
-}</code></pre><h2 id="Input-and-output"><a href="#Input-and-output" class="headerlink" title="Input and output"></a>Input and output</h2><p>One thing that is nice about ViewModel and Rx is that we can separate input and output using Observable, which gives a clear interface. Read more at <a href="https://github.com/onmyway133/blog/issues/87" target="_blank" rel="noopener">Learning from Open Source: Input and output container</a>.</p>
-<p>Below it is clear that we fetch is an input, and friends is the viable output.</p>
-<pre><code>class ViewModel {
-  class Input {
-    let fetch = PublishSubject&lt;()&gt;()
-  }
-  class Output {
-    let friends: Driver&lt;[User]&gt;
-  }
-  let apiClient: APIClient
-  let input: Input
-  let output: Output
-  init(apiClient: APIClient) {
-    self.apiClient = apiClient
-    // Connect input and output
-  }
-}
-
-class ProfileViewController: BaseViewController&lt;ProfileView&gt; {
-  let viewModel: ProfileViewModelType
-  init(viewModel: ProfileViewModelType) {
-    self.viewModel = viewModel
-  }
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    // Input
-    viewModel.input.fetch.onNext(())
-    // Output
-    viewModel.output.friends.subscribe(onNext: { friends in
-      self.friendsCountLabel.text = &quot;\(friends.count)&quot;
-    })
-  }
-}</code></pre><h2 id="How-reactive-works"><a href="#How-reactive-works" class="headerlink" title="How reactive works"></a>How reactive works</h2><p>If you feel like Rx, it’s good to get an understanding of them after using some frameworks for a while. There are some concepts like Signal, SignalProducer, Observable, Promise, Future, Task, Job, Launcher, Async and some people can have a very distinction about them. Here I simply call it Signal, which is something that can signal values.</p>
-<h2 id="Monad"><a href="#Monad" class="headerlink" title="Monad"></a>Monad</h2><p>Signal and its <a href="https://en.wikipedia.org/wiki/Result_type" target="_blank" rel="noopener">Result</a> are just <a href="https://en.wikipedia.org/wiki/Monad_%28functional_programming%29" target="_blank" rel="noopener">monads</a>, which are thing that can be mapped and chained.</p>
-<p>Signal makes use of deferred execution callback closures. It can be pushed or pulled. Which is just how the Signal updates its value and the order the callbacks are called.</p>
-<p>Execution callback closure means that we pass a function to another function. And the passed in function will get called when appropriated.</p>
-<h2 id="Sync-vs-Async"><a href="#Sync-vs-Async" class="headerlink" title="Sync vs Async"></a>Sync vs Async</h2><p>Monad can be in either sync or async mode. Sync is easier to understand, but async is somewhat you’re already familiar and used in practice.</p>
-<p>Basically,</p>
-<ul>
-<li><p>Sync: you get the returned value right away via return</p>
-</li>
-<li><p>Async: you get the returned value via callback block</p>
-</li>
-</ul>
-<p>Here is an example of simple sync and async free functions:</p>
-<pre><code>// Sync
-func sum(a: Int, b: Int) -&gt; Int {
-    return a + b
-}
-
-// Async
-func sum(a: Int, b: Int, completion: Int -&gt; Void) {
-    // Assumed it is a very long task to get the result
-    let result = a + b
-
-    completion(result)
-}</code></pre><p>And how sync and async apply to Result type. Notice the async version, we get the transformed value in a completion closure instead of immediate return from function.</p>
-<pre><code>enum Result&lt;T&gt; {
-  case value(value: T)
-  case failure(error: Error)
-
-  // Sync
-  public func map&lt;U&gt;(f: (T) -&gt; U) -&gt; Result&lt;U&gt; {
-    switch self {
-    case let .value(value):
-      return .value(value: f(value))
-    case let .failure(error):
-      return .failure(error: error)
-    }
-  }
-
-  // Async
-  public func map&lt;U&gt;(f: @escaping ((T), (U) -&gt; Void) -&gt; Void) -&gt; (((Result&lt;U&gt;) -&gt; Void) -&gt; Void) {
-    return { g in   // g: Result&lt;U&gt; -&gt; Void
-      switch self {
-      case let .value(value):
-        f(value) { transformedValue in  // transformedValue: U
-          g(.value(value: transformedValue))
-        }
-      case let .failure(error):
-        g(.failure(error: error))
-      }
-    }
-  }
-}</code></pre><h2 id="Push-Signal"><a href="#Push-Signal" class="headerlink" title="Push Signal"></a>Push Signal</h2><p>Given a chained signals like this:</p>
-<p>A -(map)-&gt; B -(flatMap)-&gt; C -(flatMap)-&gt; D -(subscribe)</p>
-<p>Push Signal, means that when the source signal A is sent an event, it propagates that event via callbacks. PushSignal is similar to PublishSubject in RxSwift.</p>
-<ul>
-<li><p>Triggered by sending event to the source signal.</p>
-</li>
-<li><p>We must keep A as it keeps the others around</p>
-</li>
-<li><p>We subscribe the last D</p>
-</li>
-<li><p>We send event to the first A</p>
-</li>
-<li><p>A ‘s callback gets called, it it in turn calls callback of B with the result of A ‘s map, then B ‘s callback calls C ‘s callback with the result of B‘s flatMap, and so on.</p>
-</li>
-</ul>
-<p>It is similar to <a href="https://promisesaplus.com/" target="_blank" rel="noopener">Promise A+</a>, you can see my Swift implementation of Promise A+ <a href="https://github.com/onmyway133/Then/blob/master/Pod/Classes/Promise.swift" target="_blank" rel="noopener">in my Then framework</a>. For now, here is the Swift 4 implementation of a simple PushSignal.</p>
-<pre><code>public final class PushSignal&lt;T&gt; {
-  var event: Result&lt;T&gt;?
-  var callbacks: [(Result&lt;T&gt;) -&gt; Void] = []
-  let lockQueue = DispatchQueue(label: &quot;Serial Queue&quot;)
-
-  func notify() {
-    guard let event = event else {
-      return
-    }
-
-    callbacks.forEach { callback in
-      callback(event)
-    }
-  }
-
-  func update(event: Result&lt;T&gt;) {
-    lockQueue.sync {
-      self.event = event
-    }
-
-    notify()
-  }
-
-  public func subscribe(f: @escaping (Result&lt;T&gt;) -&gt; Void) -&gt; Signal&lt;T&gt; {
-    // Callback
-    if let event = event {
-      f(event)
-    }
-
-    callbacks.append(f)
-
-    return self
-  }
-
-  public func map&lt;U&gt;(f: @escaping (T) -&gt; U) -&gt; Signal&lt;U&gt; {
-    let signal = Signal&lt;U&gt;()
-
-    _ = subscribe { event in
-      signal.update(event: event.map(f: f))
-    }
-
-    return signal
-  }
-}</code></pre><p>Below is how a PushSignal is used to transform a chain from string to its length, you should see 4, the length of the string “test” printed.</p>
-<pre><code>let signal = PushSignal&lt;String&gt;()
-
-_ = signal.map { value in
-  return value.count
-}.subscribe { event in
-  if case let .value(value) = event {
-    print(value)
-  } else {
-    print(&quot;error&quot;)
-  }
-}
-
-signal.update(event: .value(value: &quot;test&quot;))</code></pre><h2 id="Pull-Signal"><a href="#Pull-Signal" class="headerlink" title="Pull Signal"></a>Pull Signal</h2><p>Given a chained signals like this:</p>
-<p>A -(map)-&gt; B -(flatMap)-&gt; C -(flatMap)-&gt; D -(subscribe)</p>
-<p>Pull Signal, sometimes called Future, means when we subscribe to the final signal D, it causes the previous signals to action:</p>
-<ul>
-<li><p>Triggered by subscribing to the final signal D;</p>
-</li>
-<li><p>We must keep D as it keeps the others around;</p>
-</li>
-<li><p>We subscribe the last D;</p>
-</li>
-<li><p>D ‘s operation runs, and it cause C ‘s operation to runs, … then A ‘s operation runs. It is in A that the task is performed (like fetching network, retrieving database, file access, heavy computation, …) to get the result, and A ‘s completion gets called. Then A’s completion calls B ‘s completion with the result mapped by B ‘s map, … all the way to the subscriber ‘s completion block.</p>
-</li>
-</ul>
-<p>Here is a Swift 4 implementation of PullSignal. PullSignal is similar to Observablein RxSwift and SignalProducer in ReactiveSwift.</p>
-<pre><code>public struct PullSignal&lt;T&gt; {
-  let operation: ((Result&lt;T&gt;) -&gt; Void) -&gt; Void
-
-  public init(operation: @escaping ((Result&lt;T&gt;) -&gt; Void) -&gt; Void) {
-    self.operation = operation
-  }
-
-  public func start(completion: (Result&lt;T&gt;) -&gt; Void) {
-    operation() { event in
-      completion(event)
-    }
-  }
-
-  public func map&lt;U&gt;(f: @escaping (T) -&gt; U) -&gt; PullSignal&lt;U&gt; {
-    return PullSignal&lt;U&gt; { completion in
-      self.start { event in
-        completion(event.map(f: f))
-      }
-    }
-  }
-}</code></pre><p>The chain is inactive until you call start at the last signal in the chain, which triggers operation flow all over to the first signal. Run this snippet and you should see 4, the length of the string “test” printed on the console.</p>
-<pre><code>let signal = PullSignal&lt;String&gt; { completion in
-  // There should be some long running operation here
-  completion(Result.value(value: &quot;test&quot;))
-}
-
-signal.map { value in
-  value.count
-}.start { event in
-  if case let .value(value) = event {
-    print(value)
-  } else {
-    print(&quot;error&quot;)
-  }
-}</code></pre><p>I hope those snippets are simple enough to help you understand how signal works under the hood, and how to differentiate hot and cold signals. To get a fully working Signal framework, you need to implement more operations. Such as retry, rebounce, throttle, queue, flatten, filter, delay, combine and add support for UIKit like RxCocoa does. Find out how to implement in my <a href="https://github.com/onmyway133/archives/tree/master/Signal/Pod/Classes" target="_blank" rel="noopener">Signal</a> repo.</p>
-<h2 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h2><p>Architecture is a very opinionated topic. Hopefully this article gives you some ideas to add into your decision points. MVC is dominant in iOS, MVVM is a good friend and Rx is a powerful tool. Here are some more interesting readings:</p>
-<ul>
-<li><a href="https://ashfurrow.com/blog/mvvm-is-exceptionally-ok/" target="_blank" rel="noopener">MVVM is Exceptionally OK</a></li>
-<li><a href="https://academy.realm.io/posts/krzysztof-zablocki-mDevCamp-ios-architecture-mvvm-mvc-viper/" target="_blank" rel="noopener">Good iOS Application Architecture: MVVM vs. MVC vs. VIPER</a></li>
-<li><a href="https://www.youtube.com/watch?v=YWVzCd5FYbs" target="_blank" rel="noopener">A Better MVC</a></li>
-<li><a href="https://blog.uptech.team/taming-great-complexity-mvvm-coordinators-and-rxswift-8daf8a76e7fd" target="_blank" rel="noopener">Taming Great Complexity: MVVM, Coordinators and RxSwift</a></li>
-<li><a href="http://blogs.microsoft.co.il/bnaya/2010/03/13/rx-for-beginners-part-9-hot-vs-cold-observable/" target="_blank" rel="noopener">Rx — for beginners (part 9): Hot Vs. Cold observable</a></li>
-<li><a href="https://github.com/ReactiveX/RxSwift/blob/master/Documentation/HotAndColdObservables.md" target="_blank" rel="noopener">Hot and Cold Observables</a></li>
-<li><a href="https://stackoverflow.com/questions/17082255/when-to-use-ienumerable-vs-iobservable" target="_blank" rel="noopener">When to use IEnumerable vs IObservable?</a></li>
-<li><a href="https://www.youtube.com/watch?v=AcDaWe3S75c" target="_blank" rel="noopener">Functional Reactive Programming without Black Magic</a></li>
-<li><a href="https://www.youtube.com/watch?v=mbd6g7NfR-8" target="_blank" rel="noopener">Swift Sync and Async Error Handling</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rx/">rx</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2571,6 +2262,30 @@ signal.map { value in
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-Firebase-Crashlytics-in-macOS-app/">How to use Firebase Crashlytics in macOS app</a></h6>
+              <span>January 28, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/Xcode-tips/">Xcode tips</a></h6>
+              <span>January 26, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-test-drag-and-drop-in-UITests/">How to test drag and drop in UITests</a></h6>
               <span>January 23, 2020</span>
             </div>
@@ -2595,44 +2310,20 @@ signal.map { value in
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-deal-with-Swift-slow-compile-time/">How to deal with Swift slow compile time</a></h6>
+              <span>January 21, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-work-with-SceneDelegate-in-iOS-12/">How to work with SceneDelegate in iOS 12</a></h6>
               <span>January 20, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-handle-radio-group-for-NSButton/">How to handle radio group for NSButton</a></h6>
-              <span>January 17, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-specify-locale-in-Swift/">How to specify locale in Swift</a></h6>
-              <span>January 14, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-workaround-URLSession-issue-in-watchOS-6.1.1/">How to workaround URLSession issue in watchOS 6.1.1</a></h6>
-              <span>January 13, 2020</span>
             </div>
 
           </li>
@@ -2649,7 +2340,7 @@ signal.map { value in
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.78px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.11px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.11px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.56px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.67px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 11.67px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.56px;">css</a> <a href="/tags/dart/" style="font-size: 11.67px;">dart</a> <a href="/tags/database/" style="font-size: 10.56px;">database</a> <a href="/tags/design/" style="font-size: 10.56px;">design</a> <a href="/tags/electron/" style="font-size: 11.67px;">electron</a> <a href="/tags/firebase/" style="font-size: 11.67px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.67px;">flutter</a> <a href="/tags/git/" style="font-size: 11.11px;">git</a> <a href="/tags/github/" style="font-size: 12.22px;">github</a> <a href="/tags/go/" style="font-size: 10.56px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.44px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.33px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.22px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.67px;">layout</a> <a href="/tags/life/" style="font-size: 13.33px;">life</a> <a href="/tags/links/" style="font-size: 14.44px;">links</a> <a href="/tags/macOS/" style="font-size: 18.89px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.56px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.67px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 12.78px;">node</a> <a href="/tags/objc/" style="font-size: 10.56px;">objc</a> <a href="/tags/react/" style="font-size: 11.11px;">react</a> <a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.11px;">rx</a> <a href="/tags/script/" style="font-size: 10.56px;">script</a> <a href="/tags/spm/" style="font-size: 12.22px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.67px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.56px;">tech</a> <a href="/tags/terminal/" style="font-size: 13.33px;">terminal</a> <a href="/tags/testing/" style="font-size: 13.33px;">testing</a> <a href="/tags/tool/" style="font-size: 10px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.67px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.89px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.56px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.56px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 16.11px;">xcode</a>
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.78px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.11px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.11px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.56px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.67px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 11.67px;">combine</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.56px;">css</a> <a href="/tags/dart/" style="font-size: 11.67px;">dart</a> <a href="/tags/database/" style="font-size: 10.56px;">database</a> <a href="/tags/design/" style="font-size: 10.56px;">design</a> <a href="/tags/electron/" style="font-size: 11.67px;">electron</a> <a href="/tags/firebase/" style="font-size: 12.22px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.67px;">flutter</a> <a href="/tags/git/" style="font-size: 11.11px;">git</a> <a href="/tags/github/" style="font-size: 12.22px;">github</a> <a href="/tags/go/" style="font-size: 10.56px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.44px;">iOS</a> <a href="/tags/javascript/" style="font-size: 18.33px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 17.22px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.67px;">layout</a> <a href="/tags/life/" style="font-size: 13.33px;">life</a> <a href="/tags/links/" style="font-size: 14.44px;">links</a> <a href="/tags/macOS/" style="font-size: 18.89px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.56px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.67px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 12.78px;">node</a> <a href="/tags/objc/" style="font-size: 10.56px;">objc</a> <a href="/tags/react/" style="font-size: 11.11px;">react</a> <a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.11px;">rx</a> <a href="/tags/script/" style="font-size: 10.56px;">script</a> <a href="/tags/spm/" style="font-size: 12.22px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 16.67px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.56px;">tech</a> <a href="/tags/terminal/" style="font-size: 13.33px;">terminal</a> <a href="/tags/testing/" style="font-size: 13.33px;">testing</a> <a href="/tags/tool/" style="font-size: 10px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.67px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.89px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.56px;">web</a> <a href="/tags/wwdc/" style="font-size: 10.56px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 16.11px;">xcode</a>
     </div>
   </div>
 
@@ -2659,7 +2350,7 @@ signal.map { value in
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2669,7 +2360,7 @@ signal.map { value in
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">153</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">72</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">221</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">20</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">153</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">73</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">222</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">21</span></li></ul>
     </div>
   </div>
 
