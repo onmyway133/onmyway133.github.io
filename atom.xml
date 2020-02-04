@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-02-01T06:51:58.000Z</updated>
+  <updated>2020-02-04T04:41:45.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,68 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to add drag and drop in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-add-drag-and-drop-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-add-drag-and-drop-in-SwiftUI/</id>
+    <published>2020-02-04T04:41:45.000Z</published>
+    <updated>2020-02-04T04:41:45.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/594" target="_blank" rel="noopener">#594</a></strong></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SelectFileView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> buttonTitle: <span class="type">String</span></span><br><span class="line">    @<span class="type">State</span> <span class="keyword">var</span> isDrop: <span class="type">Bool</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span>(alignment: .leading) &#123;</span><br><span class="line">            <span class="type">Button</span>(action: &#123;&#125;) &#123;</span><br><span class="line">                <span class="type">Text</span>(buttonTitle)</span><br><span class="line">            &#125;</span><br><span class="line">            .buttonStyle(<span class="type">ActionButtonStyle</span>())</span><br><span class="line">            .offset(x: -<span class="number">16</span>)</span><br><span class="line">            <span class="type">Text</span>(<span class="string">"Alternatively, you can drag and drop file here"</span>)</span><br><span class="line">                .font(.footnote)</span><br><span class="line">                .foregroundColor(<span class="type">Color</span>.gray)</span><br><span class="line">        &#125;</span><br><span class="line">        .border(isDrop ? <span class="type">R</span>.color.separator : <span class="type">Color</span>.clear)</span><br><span class="line">        .onDrop(of: [<span class="type">Constants</span>.urlFileType], delegate: <span class="keyword">self</span>)</span><br><span class="line">        .padding(.bottom, <span class="number">32</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">SelectFileView</span>: <span class="title">DropDelegate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">dropEntered</span><span class="params">(info: DropInfo)</span></span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.isDrop = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">dropExited</span><span class="params">(info: DropInfo)</span></span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.isDrop = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">performDrop</span><span class="params">(info: DropInfo)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">guard</span></span><br><span class="line">            <span class="keyword">let</span> itemProvider = info.itemProviders(<span class="keyword">for</span>: [<span class="type">Constants</span>.urlFileType]).first</span><br><span class="line">        <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">false</span> &#125;</span><br><span class="line"></span><br><span class="line">        itemProvider.loadItem(forTypeIdentifier: <span class="type">Constants</span>.urlFileType, options: <span class="literal">nil</span>) &#123; item, error <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">guard</span></span><br><span class="line">                <span class="keyword">let</span> data = item <span class="keyword">as</span>? <span class="type">Data</span>,</span><br><span class="line">                <span class="keyword">let</span> url = <span class="type">URL</span>(dataRepresentation: data, relativeTo: <span class="literal">nil</span>)</span><br><span class="line">            <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/594&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#594&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;figure
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to weak link Combine in macOS 10.14 and iOS 12</title>
+    <link href="https://onmyway133.github.io/blog/How-to-weak-link-Combine-in-macOS-10.14-and-iOS-12/"/>
+    <id>https://onmyway133.github.io/blog/How-to-weak-link-Combine-in-macOS-10.14-and-iOS-12/</id>
+    <published>2020-02-02T05:34:09.000Z</published>
+    <updated>2020-02-02T05:34:48.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/593" target="_blank" rel="noopener">#593</a></strong></p><p><code>#if canImport(Combine)</code> is not enough, need to specify in Other Linker Flags</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OTHER_LDFLAGS = -weak_framework Combine</span><br></pre></td></tr></table></figure><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://stackoverflow.com/questions/57168931/optional-linking-for-swift-combine-framework-in-xcode-11" target="_blank" rel="noopener">https://stackoverflow.com/questions/57168931/optional-linking-for-swift-combine-framework-in-xcode-11</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/593&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#593&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;#if
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+      <category term="combine" scheme="https://onmyway133.github.io/tags/combine/"/>
+    
+  </entry>
   
   <entry>
     <title>How to make radio button group in SwiftUI</title>
@@ -549,62 +611,6 @@
       <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
     
       <category term="spm" scheme="https://onmyway133.github.io/tags/spm/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to expression cast type in lldb in Swit</title>
-    <link href="https://onmyway133.github.io/blog/How-to-expression-cast-type-in-lldb-in-Swit/"/>
-    <id>https://onmyway133.github.io/blog/How-to-expression-cast-type-in-lldb-in-Swit/</id>
-    <published>2020-01-10T07:35:12.000Z</published>
-    <updated>2020-01-10T07:35:12.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/574" target="_blank" rel="noopener">#574</a></strong></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">expr -l Swift -- import UIKit</span><br><span class="line">expr -l Swift -- let $collectionView = unsafeBitCast(0x7fddd8180000, to: UICollectionView.self)</span><br><span class="line">expr -l Swift -- $collectionView.safeAreaInsets</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/574&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#574&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;figure
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to use Applications folder in macOS</title>
-    <link href="https://onmyway133.github.io/blog/How-to-use-Applications-folder-in-macOS/"/>
-    <id>https://onmyway133.github.io/blog/How-to-use-Applications-folder-in-macOS/</id>
-    <published>2020-01-08T21:34:46.000Z</published>
-    <updated>2020-01-08T21:34:51.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/573" target="_blank" rel="noopener">#573</a></strong></p><p>There are 2 Applications folder</p><ul><li>/System/Applications: contains Notes, Books, Calculator, …</li><li>/Applications: contains Safari, Xcode, Keynote, …</li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/573&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#573&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;There are
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
     
   </entry>
   
