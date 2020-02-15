@@ -181,6 +181,323 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-constrain-to-views-inside-UICollectionViewCell-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-constrain-to-views-inside-UICollectionViewCell-in-iOS/">How to constrain to views inside UICollectionViewCell in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-constrain-to-views-inside-UICollectionViewCell-in-iOS/" class="article-date">
+	  <time datetime="2019-09-17T07:44:33.000Z" itemprop="datePublished">September 17, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/422" target="_blank" rel="noopener">#422</a></strong></p>
+<p>To constrain views outside to elements inside <code>UICollectionViewCell</code>, we can use <code>UILayoutGuide</code>.</p>
+<p>Need to make layout guide the same constraints as the real elements</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> imageViewGuide = <span class="type">UILayoutGuide</span>()</span><br><span class="line">collectionView.addLayoutGuide(imageViewGuide)</span><br><span class="line"><span class="type">NSLayoutConstraint</span>.on([</span><br><span class="line">    imageViewGuide.topAnchor.constraint(equalTo: collectionView.topAnchor, constant: <span class="number">16</span>),</span><br><span class="line">    imageViewGuide.heightAnchor.constraint(equalTo: collectionView.heightAnchor, multiplier: <span class="number">0.5</span>)</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NSLayoutConstraint</span>.on([</span><br><span class="line">    loadingIndicator.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),</span><br><span class="line">    loadingIndicator.centerYAnchor.constraint(equalTo: imageViewGuide.centerYAnchor)</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-secure-CVC-in-STPPaymentCardTextField-in-Stripe-for-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-secure-CVC-in-STPPaymentCardTextField-in-Stripe-for-iOS/">How to secure CVC in STPPaymentCardTextField in Stripe for iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-secure-CVC-in-STPPaymentCardTextField-in-Stripe-for-iOS/" class="article-date">
+	  <time datetime="2019-09-16T09:14:07.000Z" itemprop="datePublished">September 16, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/421" target="_blank" rel="noopener">#421</a></strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">maskCvcIfAny</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span></span><br><span class="line">        <span class="keyword">let</span> view = paymentTextField.subviews.first(<span class="keyword">where</span>: &#123; !($<span class="number">0</span> <span class="keyword">is</span> <span class="type">UIImageView</span>) &#125;),</span><br><span class="line">        <span class="keyword">let</span> cvcField = view.subviews</span><br><span class="line">			.compactMap(&#123; $<span class="number">0</span> <span class="keyword">as</span>? <span class="type">UITextField</span> &#125;)</span><br><span class="line">			.first(<span class="keyword">where</span>: &#123; $<span class="number">0</span>.tag == <span class="number">2</span> &amp;&amp; ($<span class="number">0</span>.accessibilityLabel ?? <span class="string">""</span>).lowercased().<span class="built_in">contains</span>(<span class="string">"cvc"</span>)  &#125;)</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    cvcField.isSecureTextEntry = <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>where tag is in <code>STPPaymentCardTextFieldViewModel.h</code></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSInteger</span>, STPCardFieldType) &#123;</span><br><span class="line">    STPCardFieldTypeNumber,</span><br><span class="line">    STPCardFieldTypeExpiration,</span><br><span class="line">    STPCardFieldTypeCVC,</span><br><span class="line">    STPCardFieldTypePostalCode,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>Also, need to check <code>accessibilityLabel</code> in <code>STPPaymentCardTextField.m</code></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSString</span> *)defaultCVCPlaceholder &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.viewModel.brand == STPCardBrandAmex) &#123;</span><br><span class="line">        <span class="keyword">return</span> STPLocalizedString(<span class="string">@"CVV"</span>, <span class="string">@"Label for entering CVV in text field"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> STPLocalizedString(<span class="string">@"CVC"</span>, <span class="string">@"Label for entering CVC in text field"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-replace-all-occurrences-of-a-string-in-Javascript"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-replace-all-occurrences-of-a-string-in-Javascript/">How to replace all occurrences of a string in Javascript</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-replace-all-occurrences-of-a-string-in-Javascript/" class="article-date">
+	  <time datetime="2019-09-16T08:31:23.000Z" itemprop="datePublished">September 16, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/420" target="_blank" rel="noopener">#420</a></strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> normalized = string</span><br><span class="line">   .replace(<span class="regexp">/\//g</span>, <span class="string">''</span>)</span><br><span class="line">   .replace(<span class="regexp">/\"/g</span>, <span class="string">''</span>)</span><br><span class="line">   .replace(<span class="regexp">/\(/g</span>, <span class="string">''</span>)</span><br><span class="line">   .replace(<span class="regexp">/\)/g</span>, <span class="string">''</span>)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-read-and-write-file-using-fs-in-node"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-read-and-write-file-using-fs-in-node/">How to read and write file using fs in node</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-read-and-write-file-using-fs-in-node/" class="article-date">
+	  <time datetime="2019-09-16T07:09:20.000Z" itemprop="datePublished">September 16, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/419" target="_blank" rel="noopener">#419</a></strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">write</span>(<span class="params">json</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> data = <span class="built_in">JSON</span>.stringify(json)</span><br><span class="line">    <span class="keyword">const</span> year = json.date.getFullYear()</span><br><span class="line">    <span class="keyword">const</span> directory = <span class="string">`collected/<span class="subst">$&#123;slugify(className)&#125;</span>/<span class="subst">$&#123;year&#125;</span>`</span></span><br><span class="line"></span><br><span class="line">    fs.mkdirSync(directory, &#123; <span class="attr">recursive</span>: <span class="literal">true</span> &#125;)</span><br><span class="line">    fs.writeFileSync(</span><br><span class="line">        <span class="string">`<span class="subst">$&#123;directory&#125;</span>/<span class="subst">$&#123;slugify(studentName)&#125;</span>`</span>, </span><br><span class="line">        data,</span><br><span class="line">        &#123; <span class="attr">overwrite</span>: <span class="literal">true</span> &#125;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">readAll</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> classes = fs.readdirSync(<span class="string">'classes'</span>)</span><br><span class="line">    classes.forEach(<span class="function">(<span class="params">class</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> years = fs.readdirSync(<span class="string">`classes/<span class="subst">$&#123;class&#125;</span>`</span>)</span><br><span class="line">        years.forEach(<span class="function">(<span class="params">year</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> students = fs.readdirSync(<span class="string">`classes/<span class="subst">$&#123;class&#125;</span>/<span class="subst">$&#123;year&#125;</span>`</span>)</span><br><span class="line">            students.forEach(<span class="function">(<span class="params">student</span>) =&gt;</span> &#123;</span><br><span class="line">            	<span class="keyword">const</span> data = fs.readFileSync(<span class="string">`classes/<span class="subst">$&#123;class&#125;</span>/<span class="subst">$&#123;year&#125;</span>/<span class="subst">$&#123;student&#125;</span>)</span></span><br><span class="line"><span class="string">            	const json = JSON.parse(data)</span></span><br><span class="line"><span class="string">            &#125;)</span></span><br><span class="line"><span class="string">        &#125;)</span></span><br><span class="line"><span class="string">    &#125;)</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/node/">node</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-get-videos-from-vimeo-in-node"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-get-videos-from-vimeo-in-node/">How to get videos from vimeo in node</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-get-videos-from-vimeo-in-node/" class="article-date">
+	  <time datetime="2019-09-16T06:36:02.000Z" itemprop="datePublished">September 16, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/418" target="_blank" rel="noopener">#418</a></strong></p>
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><p>Path for user <code>users/nsspain/videos</code><br>Path for showcase <a href="https://developer.vimeo.com/api/reference/albums#get_album" target="_blank" rel="noopener">https://developer.vimeo.com/api/reference/albums#get_album</a><br>Path for Channels, Groups and Portfolios</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Vimeo = <span class="built_in">require</span>(<span class="string">'vimeo'</span>).Vimeo</span><br><span class="line"><span class="keyword">const</span> vimeoClient = <span class="keyword">new</span> Vimeo(vimeoClientId, vimeoClientSecret, vimeoAccessToken)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> getVideos(path) &#123;</span><br><span class="line">    <span class="keyword">const</span> options = &#123;</span><br><span class="line">        path: <span class="string">`channels/staffpicks/videos`</span>,</span><br><span class="line">        query: &#123;</span><br><span class="line">            page: <span class="number">1</span>,</span><br><span class="line">            per_page: <span class="number">100</span>,</span><br><span class="line">            fields: <span class="string">'uri,name,description,created_time,pictures'</span></span><br><span class="line">          &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            vimeoClient.request(options, (error, body, status_code, headers) =&gt; &#123;</span><br><span class="line">                <span class="keyword">if</span> (isValid(body)) &#123;</span><br><span class="line">                    resolve(body)</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">throw</span> error</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">            reject(e)</span><br><span class="line">            <span class="built_in">console</span>.log(e)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Response look like</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   <span class="attr">"total"</span>:<span class="number">13754</span>,</span><br><span class="line">   <span class="attr">"page"</span>:<span class="number">1</span>,</span><br><span class="line">   <span class="attr">"per_page"</span>:<span class="number">100</span>,</span><br><span class="line">   <span class="attr">"paging"</span>:&#123;</span><br><span class="line">      <span class="attr">"next"</span>:<span class="string">"/channels/staffpicks/videos?page=2&amp;per_page=100&amp;fields=uri%2Cname%2Cdescription%2Ccreated_time%2Cpictures"</span>,</span><br><span class="line">      <span class="attr">"previous"</span>:<span class="literal">null</span>,</span><br><span class="line">      <span class="attr">"first"</span>:<span class="string">"/channels/staffpicks/videos?page=1&amp;per_page=100&amp;fields=uri%2Cname%2Cdescription%2Ccreated_time%2Cpictures"</span>,</span><br><span class="line">      <span class="attr">"last"</span>:<span class="string">"/channels/staffpicks/videos?page=138&amp;per_page=100&amp;fields=uri%2Cname%2Cdescription%2Ccreated_time%2Cpictures"</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="attr">"data"</span>:[</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="attr">"uri"</span>:<span class="string">"/videos/359281775"</span>,</span><br><span class="line">         <span class="attr">"name"</span>:<span class="string">"Maestro"</span>,</span><br><span class="line">         <span class="attr">"description"</span>:<span class="string">"A Bloom Pictures short film directed by Illogic.\n\n\"Maestro\" is this week's Staff Pick Premiere. Read more about it on the Vimeo Blog:  https://vimeo.com/blog/post/staff-pick-premiere-maestro-from-illogic\n\nMaking of :\n https://vimeo.com/bloompictures/maestromakingof\n\nYou want to collaborate?\nSend us a message at : hello@bloompictures.tv\n\nFor festivals and screenings, please contact : \nfestival@miyu.fr\n\nPress/Media requests : \nbenoit@animationshowcase.com\n\nhttps://www.bloompictures.tv\n\n©Bloom Pictures 2019"</span>,</span><br><span class="line">         <span class="attr">"created_time"</span>:<span class="string">"2019-09-11T12:31:33+00:00"</span>,</span><br><span class="line">         <span class="attr">"pictures"</span>:&#123;</span><br><span class="line">            <span class="attr">"uri"</span>:<span class="string">"/videos/359281775/pictures/813130850"</span>,</span><br><span class="line">            <span class="attr">"active"</span>:<span class="literal">true</span>,</span><br><span class="line">            <span class="attr">"type"</span>:<span class="string">"custom"</span>,</span><br><span class="line">            <span class="attr">"sizes"</span>:[</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">100</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">75</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_100x75.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_100x75.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;,</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">200</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">150</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_200x150.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_200x150.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;,</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">295</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">166</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_295x166.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_295x166.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;,</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">640</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">360</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_640x360.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_640x360.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;,</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">1280</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">720</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_1280x720.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_1280x720.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;,</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">1920</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">1080</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_1920x1080.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_1920x1080.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;,</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">640</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">346</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_640x346.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_640x346.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;,</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">960</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">519</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_960x519.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_960x519.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;,</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">1280</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">692</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_1280x692.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_1280x692.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;,</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">1920</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">1038</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_1920x1038.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_1920x1038.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;,</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="attr">"width"</span>:<span class="number">1280</span>,</span><br><span class="line">                  <span class="attr">"height"</span>:<span class="number">692</span>,</span><br><span class="line">                  <span class="attr">"link"</span>:<span class="string">"https://i.vimeocdn.com/video/813130850_1280x692.jpg?r=pad"</span>,</span><br><span class="line">                  <span class="attr">"link_with_play_button"</span>:<span class="string">"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F813130850_1280x692.jpg&amp;src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"</span></span><br><span class="line">               &#125;</span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">"resource_key"</span>:<span class="string">"b42ac645a67b3277cb2fe66d3894016842ceef72"</span></span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://www.npmjs.com/package/vimeo#make-requests" target="_blank" rel="noopener">https://www.npmjs.com/package/vimeo#make-requests</a></li>
+<li><a href="https://developer.vimeo.com/api/reference/users#get_picture" target="_blank" rel="noopener">https://developer.vimeo.com/api/reference/users#get_picture</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/node/">node</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-get-videos-from-youtube-in-node"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-get-videos-from-youtube-in-node/">How to get videos from youtube in node</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-get-videos-from-youtube-in-node/" class="article-date">
+	  <time datetime="2019-09-13T12:06:43.000Z" itemprop="datePublished">September 13, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/417" target="_blank" rel="noopener">#417</a></strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Youtube</span> </span>&#123;</span><br><span class="line">    <span class="keyword">async</span> getVideos(playlistId, pageToken) &#123;</span><br><span class="line">        <span class="keyword">const</span> options = &#123;</span><br><span class="line">            key: clientKey,</span><br><span class="line">            part: <span class="string">'id,contentDetails,snippet'</span>,</span><br><span class="line">            playlistId: playlistId,</span><br><span class="line">            maxResult: <span class="number">100</span>, </span><br><span class="line">            pageToken</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                youtube.playlistItems.list(options, (error, result) =&gt; &#123;</span><br><span class="line">                    <span class="keyword">if</span> (isValid(result)) &#123;</span><br><span class="line">                        resolve(result)</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">throw</span> error</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">                reject(e)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Response look like</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> <span class="string">"kind"</span>: <span class="string">"youtube#playlistItemListResponse"</span>,</span><br><span class="line"> <span class="string">"etag"</span>: <span class="string">"\"p4VTdlkQv3HQeTEaXgvLePAydmU/ZNTrH71d3sV6gR6BWPeamXI1HhE\""</span>,</span><br><span class="line"> <span class="string">"nextPageToken"</span>: <span class="string">"CAUQAA"</span>,</span><br><span class="line"> <span class="string">"pageInfo"</span>: &#123;</span><br><span class="line">  <span class="string">"totalResults"</span>: <span class="number">32</span>,</span><br><span class="line">  <span class="string">"resultsPerPage"</span>: <span class="number">5</span></span><br><span class="line"> &#125;,</span><br><span class="line"> <span class="string">"items"</span>: [</span><br><span class="line">  &#123;</span><br><span class="line">   <span class="string">"kind"</span>: <span class="string">"youtube#playlistItem"</span>,</span><br><span class="line">   <span class="string">"etag"</span>: <span class="string">"\"p4VTdlkQv3HQeTEaXgvLePAydmU/pt-bElhU3f7Q6c1Wc0URk9GJN-w\""</span>,</span><br><span class="line">   <span class="string">"id"</span>: <span class="string">"UExDbDVOTTRxRDN1X0w4ZEpyV1liTEI4RmNVYW9BSERGdC4yODlGNEE0NkRGMEEzMEQy"</span>,</span><br><span class="line">   <span class="string">"snippet"</span>: &#123;</span><br><span class="line">    <span class="string">"publishedAt"</span>: <span class="string">"2019-04-11T06:09:26.000Z"</span>,</span><br><span class="line">    <span class="string">"channelId"</span>: <span class="string">"UCuPue-GLK4nVX8klxQITIOw"</span>,</span><br><span class="line">    <span class="string">"title"</span>: <span class="string">"abc"</span>,</span><br><span class="line">    <span class="string">"description"</span>: <span class="string">"abc"</span>,</span><br><span class="line">    <span class="string">"thumbnails"</span>: &#123;</span><br><span class="line">     <span class="string">"default"</span>: &#123;</span><br><span class="line">      <span class="string">"url"</span>: <span class="string">"https://i.ytimg.com/vi/ZefmzgLabCA/default.jpg"</span>,</span><br><span class="line">      <span class="string">"width"</span>: <span class="number">120</span>,</span><br><span class="line">      <span class="string">"height"</span>: <span class="number">90</span></span><br><span class="line">     &#125;,</span><br><span class="line">     <span class="string">"medium"</span>: &#123;</span><br><span class="line">      <span class="string">"url"</span>: <span class="string">"https://i.ytimg.com/vi/ZefmzgLabCA/mqdefault.jpg"</span>,</span><br><span class="line">      <span class="string">"width"</span>: <span class="number">320</span>,</span><br><span class="line">      <span class="string">"height"</span>: <span class="number">180</span></span><br><span class="line">     &#125;,</span><br><span class="line">     <span class="string">"high"</span>: &#123;</span><br><span class="line">      <span class="string">"url"</span>: <span class="string">"https://i.ytimg.com/vi/ZefmzgLabCA/hqdefault.jpg"</span>,</span><br><span class="line">      <span class="string">"width"</span>: <span class="number">480</span>,</span><br><span class="line">      <span class="string">"height"</span>: <span class="number">360</span></span><br><span class="line">     &#125;,</span><br><span class="line">     <span class="string">"standard"</span>: &#123;</span><br><span class="line">      <span class="string">"url"</span>: <span class="string">"https://i.ytimg.com/vi/ZefmzgLabCA/sddefault.jpg"</span>,</span><br><span class="line">      <span class="string">"width"</span>: <span class="number">640</span>,</span><br><span class="line">      <span class="string">"height"</span>: <span class="number">480</span></span><br><span class="line">     &#125;,</span><br><span class="line">     <span class="string">"maxres"</span>: &#123;</span><br><span class="line">      <span class="string">"url"</span>: <span class="string">"https://i.ytimg.com/vi/ZefmzgLabCA/maxresdefault.jpg"</span>,</span><br><span class="line">      <span class="string">"width"</span>: <span class="number">1280</span>,</span><br><span class="line">      <span class="string">"height"</span>: <span class="number">720</span></span><br><span class="line">     &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"channelTitle"</span>: <span class="string">"try! Swift Conference"</span>,</span><br><span class="line">    <span class="string">"playlistId"</span>: <span class="string">"PLCl5NM4qD3u_L8dJrWYbLB8FcUaoAHDFt"</span>,</span><br><span class="line">    <span class="string">"position"</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="string">"resourceId"</span>: &#123;</span><br><span class="line">     <span class="string">"kind"</span>: <span class="string">"youtube#video"</span>,</span><br><span class="line">     <span class="string">"videoId"</span>: <span class="string">"ZefmzgLabCA"</span></span><br><span class="line">    &#125;</span><br><span class="line">   &#125;</span><br><span class="line">  &#125;</span><br><span class="line"> ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To handle pagination</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> getVideosLoop(playlistId, nextPageToken, items, count) &#123;</span><br><span class="line">    <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="keyword">this</span>.getVideos(playlistId, nextPageToken)</span><br><span class="line">    <span class="keyword">const</span> newItems = items.concat(response.data.items)</span><br><span class="line">    <span class="keyword">if</span> (isValid(response.data.nextPageToken) &amp;&amp; count &lt; <span class="number">10</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.getVideosLoop(playlistId, response.data.nextPageToken, newItems, count + <span class="number">1</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> newItems</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To get playlist title, use <a href="https://developers.google.com/youtube/v3/docs/playlists/list" target="_blank" rel="noopener">playlists.list</a></p>
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://developers.google.com/youtube/v3/docs/playlistItems/list" target="_blank" rel="noopener">https://developers.google.com/youtube/v3/docs/playlistItems/list</a></li>
+<li><a href="https://developers.google.com/youtube/v3/quickstart/nodejs" target="_blank" rel="noopener">https://developers.google.com/youtube/v3/quickstart/nodejs</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/node/">node</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-convert-callback-to-Promise-in-Javascript"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1495,357 +1812,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-How-to-use-Hexo-to-deploy-static-site"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-Hexo-to-deploy-static-site/">How to use Hexo to deploy static site</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-Hexo-to-deploy-static-site/" class="article-date">
-	  <time datetime="2019-09-03T11:02:18.000Z" itemprop="datePublished">September 3, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/392" target="_blank" rel="noopener">#392</a></strong></p>
-<p>It’s been a long journey since <a href="https://github.com/onmyway133/blog/issues/1" target="_blank" rel="noopener">https://github.com/onmyway133/blog/issues/1</a>, next step is to keep GitHub issues as source, and mirror those to a static site.</p>
-<p>Use 2 repos</p>
-<ul>
-<li><a href="https://github.com/onmyway133/web" target="_blank" rel="noopener">https://github.com/onmyway133/web</a> for source</li>
-<li><a href="https://github.com/onmyway133/onmyway133.github.io" target="_blank" rel="noopener">https://github.com/onmyway133/onmyway133.github.io</a> for generated content</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br><span class="line">echo $PATH=$PATH:/Users/khoa/.nodenv/versions/10.15.2/bin/hexo</span><br><span class="line">hexo init blog</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-
-<p>Update <code>_config.yml</code></p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line"><span class="attr">  type:</span> <span class="string">git</span></span><br><span class="line"><span class="attr">  repo:</span> <span class="attr">https://github.com/onmyway133/onmyway133.github.io.git</span></span><br><span class="line"><span class="attr">  branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li><a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">https://hexo.io/docs/deployment.html</a></li>
-<li><a href="https://gist.github.com/btfak/18938572f5df000ebe06fbd1872e4e39" target="_blank" rel="noopener">https://gist.github.com/btfak/18938572f5df000ebe06fbd1872e4e39</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-use-type-coersion-in-Javascript"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-type-coersion-in-Javascript/">How to use type coersion in Javascript</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-type-coersion-in-Javascript/" class="article-date">
-	  <time datetime="2019-09-03T09:59:28.000Z" itemprop="datePublished">September 3, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/391" target="_blank" rel="noopener">#391</a></strong></p>
-<p>People who make fun of Javascript probably don’t understand implicit type coersion and when to use triple equal. Javascript is very unexpected, but when we work with this language, we need to be aware.</p>
-<blockquote>
-<ol>
-<li>Coercion–Automatically changing a value from one type to another.</li>
-<li>If x is Number and y is String, return x == ToNumber(y)</li>
-<li>If x is String or Number and y is Object, return x == ToPrimitive(y)</li>
-<li>Empty array becomes empty string</li>
-</ol>
-</blockquote>
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li><a href="https://codeburst.io/javascript-double-equals-vs-triple-equals-61d4ce5a121a" target="_blank" rel="noopener">https://codeburst.io/javascript-double-equals-vs-triple-equals-61d4ce5a121a</a></li>
-<li><a href="https://www.freecodecamp.org/news/js-type-coercion-explained-27ba3d9a2839/" target="_blank" rel="noopener">https://www.freecodecamp.org/news/js-type-coercion-explained-27ba3d9a2839/</a></li>
-<li><a href="https://www.freecodecamp.org/news/explaining-the-best-javascript-meme-i-have-ever-seen/" target="_blank" rel="noopener">https://www.freecodecamp.org/news/explaining-the-best-javascript-meme-i-have-ever-seen/</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-safely-access-deeply-nested-object-in-Javascript"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-safely-access-deeply-nested-object-in-Javascript/">How to safely access deeply nested object in Javascript</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-safely-access-deeply-nested-object-in-Javascript/" class="article-date">
-	  <time datetime="2019-09-03T09:53:16.000Z" itemprop="datePublished">September 3, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/390" target="_blank" rel="noopener">#390</a></strong></p>
-<p>An object ‘s property can be null or undefined.</p>
-<p>Accessing step by step is tedious</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">props.user &amp;&amp;</span><br><span class="line">props.user.posts &amp;&amp;</span><br><span class="line">props.user.posts[<span class="number">0</span>] &amp;&amp;</span><br><span class="line">props.user.posts[<span class="number">0</span>].comments</span><br></pre></td></tr></table></figure>
-
-<p>Dynamic parsing path is too clever and involves string in the end, which is a no no</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">get</span> = (p, o) =&gt;</span><br><span class="line">  p.reduce((xs, x) =&gt; (xs &amp;&amp; xs[x]) ? xs[x] : null, o)</span><br><span class="line"></span><br><span class="line">const getUserComments = <span class="keyword">get</span>(['user', 'posts', 0, 'comments'])</span><br></pre></td></tr></table></figure>
-
-<p>Instead let’s use function and catch errors explicitly, and defaults with a fallback</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">get</span>: (f, defaultValue) =&gt; &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      	<span class="keyword">const</span> value = f()</span><br><span class="line">      	<span class="keyword">if</span> (isNotNullOrUndefined(value)) &#123;</span><br><span class="line">        	<span class="keyword">return</span> value</span><br><span class="line">      	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        	<span class="keyword">return</span> defaultValue</span><br><span class="line">      	&#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">     	<span class="keyword">return</span> defaultValue</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> comments = <span class="keyword">get</span>(() =&gt; &#123; .user.posts[<span class="number">0</span>].comments &#125;, [])</span><br></pre></td></tr></table></figure>
-
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li><a href="https://medium.com/javascript-inside/safely-accessing-deeply-nested-values-in-javascript-99bf72a0855a" target="_blank" rel="noopener">https://medium.com/javascript-inside/safely-accessing-deeply-nested-values-in-javascript-99bf72a0855a</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-use-flow-type-in-Javascript"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-flow-type-in-Javascript/">How to use flow type in Javascript</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-flow-type-in-Javascript/" class="article-date">
-	  <time datetime="2019-09-03T09:46:41.000Z" itemprop="datePublished">September 3, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/389" target="_blank" rel="noopener">#389</a></strong></p>
-<p>Prefer <a href="https://flow.org/" target="_blank" rel="noopener">flow</a> over TypeScript for simplicity</p>
-<p>Javascript primitive types <code>number</code> and <code>string</code> are too general and do not express the domain objects. Because lack of type alias in Javascript, we can use flow</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> type Centimeter = number</span><br><span class="line"><span class="keyword">export</span> type Color = string</span><br><span class="line"><span class="keyword">export</span> type ImageSource = number</span><br><span class="line"><span class="keyword">export</span> type Kilogram = number</span><br><span class="line"><span class="keyword">export</span> type Kilocalorie = number <span class="comment">// 1 cal = 4.1840 J</span></span><br><span class="line"><span class="keyword">export</span> type Second = number</span><br><span class="line"><span class="keyword">export</span> type SecondsSince1970 = number</span><br><span class="line"><span class="keyword">export</span> type Minute = number</span><br><span class="line"><span class="keyword">export</span> type DateString = string <span class="comment">// 2018-11-20</span></span><br><span class="line"><span class="keyword">export</span> type DateTimeString = string <span class="comment">// 2018-11-20T00:00:00</span></span><br><span class="line"><span class="keyword">export</span> type YearWeekString = string <span class="comment">// 201838</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> type FunctionWithVoid = <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">void</span></span><br><span class="line"><span class="keyword">export</span> type FunctionWithString = <span class="function">(<span class="params">string</span>) =&gt;</span> <span class="keyword">void</span></span><br><span class="line"><span class="keyword">export</span> type FunctionWithBoolean = <span class="function">(<span class="params">boolean</span>) =&gt;</span> <span class="keyword">void</span></span><br><span class="line"><span class="keyword">export</span> type FunctionWithNumber = <span class="function">(<span class="params">number</span>) =&gt;</span> <span class="keyword">void</span></span><br><span class="line"><span class="keyword">export</span> type JSONObject = any</span><br><span class="line"><span class="keyword">export</span> type JSONString = string</span><br><span class="line"><span class="keyword">export</span> type StringToString = any</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> type Degree = number</span><br><span class="line"><span class="keyword">export</span> type Radian = number</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> type Animal = <span class="string">'cat'</span> | <span class="string">'dog'</span> | <span class="string">'cow'</span></span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-use-flow-in-Kotlin"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-flow-in-Kotlin/">How to use flow in Kotlin</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-flow-in-Kotlin/" class="article-date">
-	  <time datetime="2019-09-03T08:57:06.000Z" itemprop="datePublished">September 3, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/388" target="_blank" rel="noopener">#388</a></strong></p>
-<h2 id="Asynchronous-Flow"><a href="#Asynchronous-Flow" class="headerlink" title="Asynchronous Flow"></a>Asynchronous Flow</h2><p><a href="https://kotlinlang.org/docs/reference/coroutines/flow.html" target="_blank" rel="noopener">https://kotlinlang.org/docs/reference/coroutines/flow.html</a></p>
-<blockquote>
-<p>Using List<int> result type we can only return all the values at once. To represent the stream of values that are being asynchronously computed we can use Flow<int> type similarly to the Sequence<int> type for synchronously computed values:</int></int></int></p>
-</blockquote>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-choose-Firebase-vs-Google-Analytics"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-choose-Firebase-vs-Google-Analytics/">How to choose Firebase vs Google Analytics</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-choose-Firebase-vs-Google-Analytics/" class="article-date">
-	  <time datetime="2019-09-03T08:32:17.000Z" itemprop="datePublished">September 3, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/387" target="_blank" rel="noopener">#387</a></strong></p>
-<p>Google Analytics is shutting down. From Firebase Analytics console, we can choose to upgrade to Google Analytics, no code change is needed.</p>
-<p><a href="https://support.google.com/firebase/answer/9167112?hl=en" target="_blank" rel="noopener">https://support.google.com/firebase/answer/9167112?hl=en</a></p>
-<blockquote>
-<p>In October 2019, we will start to sunset Google Analytics mobile-apps reporting based on the Google Analytics Services SDKs for Android and iOS.</p>
-</blockquote>
-<p><a href="https://firebase.googleblog.com/2019/07/firebase-google-analytics-upgrade.html" target="_blank" rel="noopener">https://firebase.googleblog.com/2019/07/firebase-google-analytics-upgrade.html</a></p>
-<blockquote>
-<p>Thanks to our continued partnership with Google Analytics, you can now upgrade your Firebase projects to the next generation of app analytics! </p>
-</blockquote>
-<p><a href="https://www.e-nor.com/blog/google-analytics/google-analytics-unifies-app-and-website-measurement" target="_blank" rel="noopener">https://www.e-nor.com/blog/google-analytics/google-analytics-unifies-app-and-website-measurement</a></p>
-<blockquote>
-<p>Google Analytics team has officially launched a new type of GA properties called “App + Web” to open public beta</p>
-</blockquote>
-<blockquote>
-<p>It is a new GA property type that allows you to combine app and web data for unified reporting and analysis</p>
-</blockquote>
-<blockquote>
-<p>Over the coming weeks, those who have existing Firebase projects will be able to upgrade your projects to the next generation Google Analytics experience as follows:</p>
-</blockquote>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -1950,68 +1916,68 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-TabView-with-enum-in-SwiftUI/">How to use TabView with enum in SwiftUI</a></h6>
+              <h6 style="margin: 0;"><a href="/blog/How-to-edit-selected-item-in-list-in-SwiftUI/">How to edit selected item in list in SwiftUI</a></h6>
+              <span>February 14, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-log-in-SwiftUI/">How to log in SwiftUI</a></h6>
+              <span>February 14, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-mask-with-UILabel/">How to mask with UILabel</a></h6>
+              <span>February 13, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-avoid-pitfalls-in-SwiftUI/">How to avoid pitfalls in SwiftUI</a></h6>
+              <span>February 12, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-application-will-terminate-in-macOS/">How to use application will terminate in macOS</a></h6>
+              <span>February 12, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-sync-multiple-CAAnimation/">How to sync multiple CAAnimation</a></h6>
               <span>February 11, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-build-SwiftUI-style-UICollectionView-data-source-in-Swift/">How to build SwiftUI style UICollectionView data source in Swift</a></h6>
-              <span>February 9, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-make-round-border-in-SwiftUI/">How to make round border in SwiftUI</a></h6>
-              <span>February 5, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-mock-in-Swift/">How to mock in Swift</a></h6>
-              <span>February 4, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-change-background-color-in-List-in-SwiftUI-for-macOS/">How to change background color in List in SwiftUI for macOS</a></h6>
-              <span>February 4, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-add-drag-and-drop-in-SwiftUI/">How to add drag and drop in SwiftUI</a></h6>
-              <span>February 4, 2020</span>
             </div>
 
           </li>
@@ -2038,7 +2004,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">47</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2048,7 +2014,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">154</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">80</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">235</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">21</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">157</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">81</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">239</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">33</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">22</span></li></ul>
     </div>
   </div>
 
