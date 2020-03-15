@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-03-11T21:08:52.000Z</updated>
+  <updated>2020-03-14T21:22:59.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,94 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to update FetchRequest with predicate in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-update-FetchRequest-with-predicate-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-update-FetchRequest-with-predicate-in-SwiftUI/</id>
+    <published>2020-03-14T21:21:14.000Z</published>
+    <updated>2020-03-14T21:22:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/621" target="_blank" rel="noopener">#621</a></strong></p><p>Make subview that accepts <code>FetchRequest</code>. Trigger search by setting property</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SideView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">Environment</span>(\.managedObjectContext)</span><br><span class="line">    <span class="keyword">var</span> context</span><br><span class="line"></span><br><span class="line">    @<span class="type">State</span> <span class="keyword">var</span> search: <span class="type">Search?</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span>(alignment: .leading) &#123;</span><br><span class="line">            <span class="type">SearchView</span>(</span><br><span class="line">                onSearch: <span class="keyword">self</span>.onSearch</span><br><span class="line">            )</span><br><span class="line">            <span class="type">InsideListView</span>(fetchRequest: makeFetchRequest())</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">makeFetchRequest</span><span class="params">()</span></span> -&gt; <span class="type">FetchRequest</span>&lt;<span class="type">Book</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> predicate: <span class="type">NSPredicate?</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> search = search &#123;</span><br><span class="line">            <span class="keyword">let</span> textPredicate = <span class="type">NSPredicate</span>(format: <span class="string">"string CONTAINS[cd] %@"</span>, search.text)</span><br><span class="line">            <span class="keyword">let</span> appPredicate = <span class="type">NSPredicate</span>(format: <span class="string">"appName == %@"</span>, search.app)</span><br><span class="line">            <span class="keyword">let</span> typePredicate = <span class="type">NSPredicate</span>(format: <span class="string">"type == %@"</span>, search.type)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> predicates: [<span class="type">NSPredicate</span>] = []</span><br><span class="line">            <span class="keyword">if</span> search.text.<span class="built_in">count</span> &gt;= <span class="number">3</span> &#123;</span><br><span class="line">                predicates.append(textPredicate)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> search.app != <span class="type">Constants</span>.all &#123;</span><br><span class="line">                predicates.append(appPredicate)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> search.type != <span class="type">Constants</span>.all &#123;</span><br><span class="line">                predicates.append(typePredicate)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            predicate = <span class="type">NSCompoundPredicate</span>(andPredicateWithSubpredicates: predicates)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            predicate = <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="type">FetchRequest</span>&lt;<span class="type">Book</span>&gt;(</span><br><span class="line">            entity: <span class="type">Book</span>.entity(),</span><br><span class="line">            sortDescriptors: [</span><br><span class="line">                <span class="type">NSSortDescriptor</span>(keyPath: \<span class="type">Book</span>.date, ascending: <span class="literal">false</span>)</span><br><span class="line">            ],</span><br><span class="line">            predicate: predicate</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">onSearch</span><span class="params">(<span class="number">_</span> search: Search)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> search.text.<span class="built_in">count</span> &lt; <span class="number">3</span> &amp;&amp; search.type != <span class="type">Constants</span>.all &amp;&amp; search.app != <span class="type">Constants</span>.all &#123;</span><br><span class="line">            <span class="keyword">self</span>.search = <span class="literal">nil</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.search = search</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">struct</span> <span class="title">InsideListView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">Environment</span>(\.managedObjectContext)</span><br><span class="line">    <span class="keyword">var</span> context</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> fetchRequest: <span class="type">FetchRequest</span>&lt;<span class="type">Book</span>&gt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">List</span>(items) &#123;</span><br><span class="line">            <span class="type">ForEach</span></span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> items: <span class="type">FetchedResults</span>&lt;<span class="type">Book</span>&gt; &#123;</span><br><span class="line">        fetchRequest.wrappedValue</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/621&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#621&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Make
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to make TextField focus in SwiftUI for macOS</title>
+    <link href="https://onmyway133.github.io/blog/How-to-make-TextField-focus-in-SwiftUI-for-macOS/"/>
+    <id>https://onmyway133.github.io/blog/How-to-make-TextField-focus-in-SwiftUI-for-macOS/</id>
+    <published>2020-03-13T05:39:49.000Z</published>
+    <updated>2020-03-13T05:39:57.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/620" target="_blank" rel="noopener">#620</a></strong></p><p>For <code>NSWindow</code> having <code>level</code>other than <code>.normal</code>, need  to override key and main  property to allow TextField to be focusable</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FocusWindow</span>: <span class="title">NSWindow</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> canBecomeKey: <span class="type">Bool</span>  &#123; <span class="literal">true</span> &#125;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> canBecomeMain: <span class="type">Bool</span> &#123; <span class="literal">true</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Furthermore to customize TextField, consider  using custom</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyTextField</span>: <span class="title">NSViewRepresentable</span> </span>&#123;</span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> text: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeNSView</span><span class="params">(context: NSViewRepresentableContext&lt;MyTextField&gt;)</span></span> -&gt; <span class="type">NSTextField</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> tf = <span class="type">NSTextField</span>()</span><br><span class="line">        tf.isSelectable = <span class="literal">true</span></span><br><span class="line">        tf.isEditable = <span class="literal">true</span></span><br><span class="line">        <span class="keyword">return</span> tf</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateNSView</span><span class="params">(<span class="number">_</span> nsView: NSTextField, context: NSViewRepresentableContext&lt;MyTextField&gt;)</span></span> &#123;</span><br><span class="line">        nsView.stringValue = text</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/620&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#620&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;For
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to manage work</title>
+    <link href="https://onmyway133.github.io/blog/How-to-manage-work/"/>
+    <id>https://onmyway133.github.io/blog/How-to-manage-work/</id>
+    <published>2020-03-12T15:44:57.000Z</published>
+    <updated>2020-03-12T15:44:57.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/619" target="_blank" rel="noopener">#619</a></strong></p><h2 id="Remote"><a href="#Remote" class="headerlink" title="Remote"></a>Remote</h2><ul><li><a href="https://basecamp.com/books/remote" target="_blank" rel="noopener">Remote by Basecamp</a></li><li><a href="https://twist.com/remote-work-guides" target="_blank" rel="noopener">Remote Work Guides</a></li></ul><h2 id="Communication"><a href="#Communication" class="headerlink" title="Communication"></a>Communication</h2><ul><li><a href="https://basecamp.com/guides/how-we-communicate" target="_blank" rel="noopener">The Basecamp Guide to Internal Communication</a></li></ul><h2 id="Plan"><a href="#Plan" class="headerlink" title="Plan"></a>Plan</h2><ul><li><a href="https://3.basecamp-help.com/article/35-the-six-week-cycle" target="_blank" rel="noopener">The Six Week Cycle</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/619&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#619&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h2
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="work" scheme="https://onmyway133.github.io/tags/work/"/>
+    
+  </entry>
   
   <entry>
     <title>How to show popover for item in ForEach in SwiftUI</title>
@@ -51,9 +139,9 @@
     <link href="https://onmyway133.github.io/blog/How-to-make-tooltip-in-SwiftUI-for-macOS/"/>
     <id>https://onmyway133.github.io/blog/How-to-make-tooltip-in-SwiftUI-for-macOS/</id>
     <published>2020-03-11T20:42:03.000Z</published>
-    <updated>2020-03-11T21:09:41.000Z</updated>
+    <updated>2020-03-12T19:54:53.000Z</updated>
     
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/617" target="_blank" rel="noopener">#617</a></strong></p><p>Create empty NSView and use as overlay</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Tooltip</span>: <span class="title">NSViewRepresentable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> tooltip: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeNSView</span><span class="params">(context: NSViewRepresentableContext&lt;Tooltip&gt;)</span></span> -&gt; <span class="type">NSView</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> view = <span class="type">NSView</span>()</span><br><span class="line">        view.toolTip = tooltip</span><br><span class="line">        <span class="keyword">return</span> view</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateNSView</span><span class="params">(<span class="number">_</span> nsView: NSView, context: NSViewRepresentableContext&lt;Tooltip&gt;)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Button</span>(action: <span class="keyword">self</span>.onGear) &#123;</span><br><span class="line">    <span class="type">Image</span>(<span class="string">"gear"</span>)</span><br><span class="line">        .styleButton()</span><br><span class="line">&#125;</span><br><span class="line">.overlay(<span class="type">Tooltip</span>(tooltip: <span class="string">"Settings"</span>))</span><br><span class="line">.buttonStyle(<span class="type">BorderlessButtonStyle</span>())</span><br></pre></td></tr></table></figure><p>Sometimes  it’s better to add overlay tooltip to Image inside Button to avoid blocking</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Button</span>(action: <span class="keyword">self</span>.onGear) &#123;</span><br><span class="line">    <span class="type">Image</span>(<span class="string">"gear"</span>)</span><br><span class="line">        .styleButton()</span><br><span class="line">       .overlay(<span class="type">Tooltip</span>(tooltip: <span class="string">"Settings"</span>))</span><br><span class="line">&#125;</span><br><span class="line">.buttonStyle(<span class="type">BorderlessButtonStyle</span>())</span><br></pre></td></tr></table></figure>]]></content>
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/617" target="_blank" rel="noopener">#617</a></strong></p><p>Create empty NSView and use as overlay. Need  to <code>updateNSView</code> in case we toggle the state of tooltip</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Tooltip</span>: <span class="title">NSViewRepresentable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> tooltip: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeNSView</span><span class="params">(context: NSViewRepresentableContext&lt;Tooltip&gt;)</span></span> -&gt; <span class="type">NSView</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> view = <span class="type">NSView</span>()</span><br><span class="line">        view.toolTip = tooltip</span><br><span class="line">        <span class="keyword">return</span> view</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateNSView</span><span class="params">(<span class="number">_</span> nsView: NSView, context: NSViewRepresentableContext&lt;Tooltip&gt;)</span></span> &#123;</span><br><span class="line">        nsView.toolTip = tooltip</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Button</span>(action: <span class="keyword">self</span>.onGear) &#123;</span><br><span class="line">    <span class="type">Image</span>(<span class="string">"gear"</span>)</span><br><span class="line">        .styleButton()</span><br><span class="line">&#125;</span><br><span class="line">.overlay(<span class="type">Tooltip</span>(tooltip: <span class="string">"Settings"</span>))</span><br><span class="line">.buttonStyle(<span class="type">BorderlessButtonStyle</span>())</span><br></pre></td></tr></table></figure><p>Sometimes  it’s better to add overlay tooltip to Image inside Button to avoid blocking</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Button</span>(action: <span class="keyword">self</span>.onGear) &#123;</span><br><span class="line">    <span class="type">Image</span>(<span class="string">"gear"</span>)</span><br><span class="line">        .styleButton()</span><br><span class="line">       .overlay(<span class="type">Tooltip</span>(tooltip: <span class="string">"Settings"</span>))</span><br><span class="line">&#125;</span><br><span class="line">.buttonStyle(<span class="type">BorderlessButtonStyle</span>())</span><br></pre></td></tr></table></figure>]]></content>
     
     <summary type="html">
     
@@ -504,96 +592,6 @@
         
           &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/602&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#602&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;h2
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to use application will terminate in macOS</title>
-    <link href="https://onmyway133.github.io/blog/How-to-use-application-will-terminate-in-macOS/"/>
-    <id>https://onmyway133.github.io/blog/How-to-use-application-will-terminate-in-macOS/</id>
-    <published>2020-02-12T20:39:53.000Z</published>
-    <updated>2020-02-12T20:41:50.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/601" target="_blank" rel="noopener">#601</a></strong></p><p>On Xcode 11, <code>applicationWillTerminate</code> is not called because of default automatic termination on in Info.plist. Removing <code>NSSupportsSuddenTermination</code> to trigger will terminate notification</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">applicationWillTerminate</span><span class="params">(<span class="number">_</span> notification: Notification)</span></span> &#123;</span><br><span class="line">    save()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>NSSupportsAutomaticTermination<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>NSSupportsSuddenTermination<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/601&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#601&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;On Xcode
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
-    
-      <category term="xcode" scheme="https://onmyway133.github.io/tags/xcode/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to sync multiple CAAnimation</title>
-    <link href="https://onmyway133.github.io/blog/How-to-sync-multiple-CAAnimation/"/>
-    <id>https://onmyway133.github.io/blog/How-to-sync-multiple-CAAnimation/</id>
-    <published>2020-02-11T13:19:18.000Z</published>
-    <updated>2020-02-11T13:19:18.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/600" target="_blank" rel="noopener">#600</a></strong></p><p>Use same <code>CACurrentMediaTime</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">AnimationSyncer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> now = <span class="type">CACurrentMediaTime</span>()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeAnimation</span><span class="params">()</span></span> -&gt; <span class="type">CABasicAnimation</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> animation = <span class="type">CABasicAnimation</span>(keyPath: <span class="string">"opacity"</span>)</span><br><span class="line">        animation.fillMode = .forwards</span><br><span class="line">        animation.fromValue = <span class="number">0</span></span><br><span class="line">        animation.toValue = <span class="number">1</span></span><br><span class="line">        animation.repeatCount = .infinity</span><br><span class="line">        animation.duration = <span class="number">2</span></span><br><span class="line">        animation.beginTime = <span class="type">Self</span>.now</span><br><span class="line">        animation.autoreverses = <span class="literal">true</span></span><br><span class="line">        animation.timingFunction = <span class="type">CAMediaTimingFunction</span>(name: .easeInEaseOut)</span><br><span class="line">        <span class="keyword">return</span> animation</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/600&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#600&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use same
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to use TabView with enum in SwiftUI</title>
-    <link href="https://onmyway133.github.io/blog/How-to-use-TabView-with-enum-in-SwiftUI/"/>
-    <id>https://onmyway133.github.io/blog/How-to-use-TabView-with-enum-in-SwiftUI/</id>
-    <published>2020-02-11T05:38:53.000Z</published>
-    <updated>2020-02-11T05:39:22.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/599" target="_blank" rel="noopener">#599</a></strong></p><p>Specify tag</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Authentication</span>: <span class="title">Int</span>, <span class="title">Codable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> key</span><br><span class="line">    <span class="keyword">case</span> certificate</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">TabView</span>(selection: $authentication) &#123;</span><br><span class="line">    <span class="type">KeyAuthenticationView</span>()</span><br><span class="line">        .tabItem &#123;</span><br><span class="line">            <span class="type">Text</span>(<span class="string">"🔑 Key"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .tag(<span class="type">Authentication</span>.key)</span><br><span class="line">    <span class="type">CertificateAuthenticationView</span>()</span><br><span class="line">        .tabItem &#123;</span><br><span class="line">            <span class="type">Text</span>(<span class="string">"📰 Certificate"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .tag(<span class="type">Authentication</span>.certificate)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/599&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#599&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Specify
         
       
     
