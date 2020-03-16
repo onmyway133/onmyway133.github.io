@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-03-14T21:22:59.000Z</updated>
+  <updated>2020-03-16T13:25:52.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,68 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to force FetchRequest update in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-force-FetchRequest-update-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-force-FetchRequest-update-in-SwiftUI/</id>
+    <published>2020-03-16T13:25:52.000Z</published>
+    <updated>2020-03-16T13:25:52.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/623" target="_blank" rel="noopener">#623</a></strong></p><p>Listen to context changes notification and change SwiftUI View state</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> changes = [<span class="type">NSDeletedObjectsKey</span>: ids]</span><br><span class="line"><span class="type">NSManagedObjectContext</span>.mergeChanges(</span><br><span class="line">    fromRemoteContextSave: changes,</span><br><span class="line">    into: [context]</span><br><span class="line">)</span><br><span class="line"><span class="keyword">try</span> context.save()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ListView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">Environment</span>(\.managedObjectContext)</span><br><span class="line">    <span class="keyword">var</span> context</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> didSave = <span class="type">NotificationCenter</span>.<span class="keyword">default</span>.publisher(<span class="keyword">for</span>: .<span class="type">NSManagedObjectContextDidSave</span>)</span><br><span class="line">    @<span class="type">State</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> refreshing: <span class="type">Bool</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        makeContent()</span><br><span class="line">            .onReceive(didSave) &#123; <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">                <span class="keyword">self</span>.refreshing.toggle()</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/623&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#623&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Listen to
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+      <category term="core data" scheme="https://onmyway133.github.io/tags/core-data/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to batch delete in Core Data</title>
+    <link href="https://onmyway133.github.io/blog/How-to-batch-delete-in-Core-Data/"/>
+    <id>https://onmyway133.github.io/blog/How-to-batch-delete-in-Core-Data/</id>
+    <published>2020-03-15T05:14:58.000Z</published>
+    <updated>2020-03-15T05:15:28.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/622" target="_blank" rel="noopener">#622</a></strong></p><p>Read <a href="https://developer.apple.com/library/archive/featuredarticles/CoreData_Batch_Guide/BatchDeletes/BatchDeletes.html" target="_blank" rel="noopener">Implementing Batch Deletes</a></p><blockquote><p>If the entities that are being deleted are not loaded into memory, there is no need to update your application after the NSBatchDeleteRequest has been executed. However, if you are deleting objects in the persistence layer and those entities are also in memory, it is important that you notify the application that the objects in memory are stale and need to be refreshed.</p></blockquote><blockquote><p>To do this, first make sure the resultType of the NSBatchDeleteRequest is set to NSBatchDeleteRequestResultType.resultTypeObjectIDs before the request is executed. When the request has completed successfully, the resulting NSPersistentStoreResult instance that is returned will have an array of NSManagedObjectID instances referenced in the result property. That array of NSManagedObjectID instances can then be used to update one or more NSManagedObjectContext instances.</p></blockquote><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> fetchRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">NSFetchRequestResult</span>&gt; = <span class="type">Book</span>.fetchRequest()</span><br><span class="line"><span class="keyword">let</span> deleteRequest = <span class="type">NSBatchDeleteRequest</span>(fetchRequest: fetchRequest)</span><br><span class="line">deleteRequest.resultType = .resultTypeObjectIDs</span><br><span class="line"></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> context = <span class="type">CoreDataManager</span>.shared.container.viewContext</span><br><span class="line">    <span class="keyword">let</span> result = <span class="keyword">try</span> context.execute(</span><br><span class="line">        deleteRequest</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">guard</span></span><br><span class="line">        <span class="keyword">let</span> deleteResult = result <span class="keyword">as</span>? <span class="type">NSBatchDeleteResult</span>,</span><br><span class="line">        <span class="keyword">let</span> ids = deleteResult.result <span class="keyword">as</span>? [<span class="type">NSManagedObjectID</span>]</span><br><span class="line">    <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> changes = [<span class="type">NSDeletedObjectsKey</span>: ids]</span><br><span class="line">    <span class="type">NSManagedObjectContext</span>.mergeChanges(</span><br><span class="line">        fromRemoteContextSave: changes,</span><br><span class="line">        into: [context]</span><br><span class="line">    )</span><br><span class="line">&#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(error <span class="keyword">as</span> <span class="type">Any</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/622&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#622&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Read &lt;a
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+      <category term="core data" scheme="https://onmyway133.github.io/tags/core-data/"/>
+    
+  </entry>
   
   <entry>
     <title>How to update FetchRequest with predicate in SwiftUI</title>
@@ -49,9 +111,9 @@
     <link href="https://onmyway133.github.io/blog/How-to-make-TextField-focus-in-SwiftUI-for-macOS/"/>
     <id>https://onmyway133.github.io/blog/How-to-make-TextField-focus-in-SwiftUI-for-macOS/</id>
     <published>2020-03-13T05:39:49.000Z</published>
-    <updated>2020-03-13T05:39:57.000Z</updated>
+    <updated>2020-03-15T21:06:47.000Z</updated>
     
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/620" target="_blank" rel="noopener">#620</a></strong></p><p>For <code>NSWindow</code> having <code>level</code>other than <code>.normal</code>, need  to override key and main  property to allow TextField to be focusable</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FocusWindow</span>: <span class="title">NSWindow</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> canBecomeKey: <span class="type">Bool</span>  &#123; <span class="literal">true</span> &#125;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> canBecomeMain: <span class="type">Bool</span> &#123; <span class="literal">true</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Furthermore to customize TextField, consider  using custom</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyTextField</span>: <span class="title">NSViewRepresentable</span> </span>&#123;</span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> text: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeNSView</span><span class="params">(context: NSViewRepresentableContext&lt;MyTextField&gt;)</span></span> -&gt; <span class="type">NSTextField</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> tf = <span class="type">NSTextField</span>()</span><br><span class="line">        tf.isSelectable = <span class="literal">true</span></span><br><span class="line">        tf.isEditable = <span class="literal">true</span></span><br><span class="line">        <span class="keyword">return</span> tf</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateNSView</span><span class="params">(<span class="number">_</span> nsView: NSTextField, context: NSViewRepresentableContext&lt;MyTextField&gt;)</span></span> &#123;</span><br><span class="line">        nsView.stringValue = text</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/620" target="_blank" rel="noopener">#620</a></strong></p><p>For <code>NSWindow</code> having <code>level</code>other than <code>.normal</code>, need  to override key and main  property to allow TextField to be focusable</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FocusWindow</span>: <span class="title">NSWindow</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> canBecomeKey: <span class="type">Bool</span>  &#123; <span class="literal">true</span> &#125;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> canBecomeMain: <span class="type">Bool</span> &#123; <span class="literal">true</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Furthermore to customize TextField, consider  using custom</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyTextField</span>: <span class="title">NSViewRepresentable</span> </span>&#123;</span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> text: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeNSView</span><span class="params">(context: NSViewRepresentableContext&lt;MyTextField&gt;)</span></span> -&gt; <span class="type">NSTextField</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> tf = <span class="type">NSTextField</span>()</span><br><span class="line">        tf.focusRingType = .<span class="keyword">none</span></span><br><span class="line">        tf.isBordered = <span class="literal">false</span></span><br><span class="line">        tf.drawsBackground = <span class="literal">false</span></span><br><span class="line">        tf.delegate = context.coordinator</span><br><span class="line">        <span class="keyword">return</span> tf</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateNSView</span><span class="params">(<span class="number">_</span> nsView: NSTextField, context: NSViewRepresentableContext&lt;MyTextField&gt;)</span></span> &#123;</span><br><span class="line">        nsView.stringValue = text</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeCoordinator</span><span class="params">()</span></span> -&gt; <span class="type">MyTextField</span>.<span class="type">Coordinator</span> &#123;</span><br><span class="line">        <span class="type">Coordinator</span>(parent: <span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Coordinator</span>: <span class="title">NSObject</span>, <span class="title">NSTextFieldDelegate</span>  </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> parent: <span class="type">MyTextField</span></span><br><span class="line">        <span class="keyword">init</span>(parent: <span class="type">MyTextField</span>) &#123;</span><br><span class="line">            <span class="keyword">self</span>.parent = parent</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">func</span> <span class="title">controlTextDidChange</span><span class="params">(<span class="number">_</span> obj: Notification)</span></span> &#123;</span><br><span class="line">            <span class="keyword">let</span> textField = obj.object <span class="keyword">as</span>! <span class="type">NSTextField</span></span><br><span class="line">            parent.text = textField.stringValue</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
     
     <summary type="html">
     
@@ -540,66 +602,6 @@
     </summary>
     
     
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to mask with UILabel</title>
-    <link href="https://onmyway133.github.io/blog/How-to-mask-with-UILabel/"/>
-    <id>https://onmyway133.github.io/blog/How-to-mask-with-UILabel/</id>
-    <published>2020-02-13T11:20:04.000Z</published>
-    <updated>2020-02-13T15:14:28.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/603" target="_blank" rel="noopener">#603</a></strong></p><p>Need to set correct frame for mask layer or <code>UILabel</code>,  as it is relative to the coordinate of the view to be masked</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> aView = <span class="type">UIView</span>(frame: .<span class="keyword">init</span>(x: <span class="number">100</span>, y: <span class="number">110</span>, width: <span class="number">200</span>, height: <span class="number">100</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> textLayer = <span class="type">CATextLayer</span>()</span><br><span class="line">textLayer.foregroundColor = <span class="type">UIColor</span>.white.cgColor</span><br><span class="line">textLayer.string = <span class="string">"Hello world"</span></span><br><span class="line">textLayer.font = <span class="type">UIFont</span>.preferredFont(forTextStyle: .largeTitle)</span><br><span class="line">textLayer.frame = aView.bounds</span><br><span class="line"></span><br><span class="line">aView.layer.mask = textLayer</span><br></pre></td></tr></table></figure><p>Use <code>sizeToFit</code> to ensure frame for <code>UILabel</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> label = <span class="type">UILabel</span>()</span><br><span class="line">label.frame.origin = <span class="type">CGPoint</span>(x: <span class="number">80</span>, y: <span class="number">80</span>)</span><br><span class="line"></span><br><span class="line">label.textColor = <span class="type">UIColor</span>.black</span><br><span class="line">label.font = <span class="type">UIFont</span>.preferredFont(forTextStyle: .largeTitle)</span><br><span class="line">label.text = <span class="string">"ABC"</span></span><br><span class="line">label.sizeToFit()</span><br><span class="line"></span><br><span class="line">aView.mask = label</span><br></pre></td></tr></table></figure><p>Change <code>bounds.origin</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">label.frame.origin = <span class="type">CGPoint</span>(x: <span class="number">50</span>, y: <span class="number">50</span>)</span><br><span class="line">aView.bounds.origin = label.frame.origin</span><br></pre></td></tr></table></figure><p>Adding label to view hierarchy seems to remove masking effect. Need to set mask later</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">view.addSubview(aView)</span><br><span class="line">view.addSubview(label)</span><br><span class="line">aView.mask = label</span><br></pre></td></tr></table></figure><p>Can’t add overlayView to UILabel and use UILabel as mask, cause cycler CALayer</p><p>After using UILabel as mask, its superview is nil</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">aView.mask = label</span><br><span class="line">label.superview == nil</span><br></pre></td></tr></table></figure><p>Mask with snapshot from UILabel. Need to set correct frame for aView and maskLayer</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> maskLayer = <span class="type">CALayer</span>()</span><br><span class="line">maskLayer.contents = label.makeScreenshot().cgImage</span><br><span class="line">maskLayer.contentsGravity = .resizeAspect</span><br><span class="line"></span><br><span class="line">aView.frame = label.bounds</span><br><span class="line">maskLayer.frame = aView.bounds</span><br><span class="line">aView.layer.mask = maskLayer</span><br><span class="line">label.addSubview(aView)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeScreenshot</span><span class="params">()</span></span> -&gt; <span class="type">UIImage</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> renderer = <span class="type">UIGraphicsImageRenderer</span>(bounds: <span class="keyword">self</span>.bounds)</span><br><span class="line">        <span class="keyword">return</span> renderer.image &#123; (context) <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">self</span>.layer.render(<span class="keyword">in</span>: context.cgContext)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/603&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#603&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Need to
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to avoid pitfalls in SwiftUI</title>
-    <link href="https://onmyway133.github.io/blog/How-to-avoid-pitfalls-in-SwiftUI/"/>
-    <id>https://onmyway133.github.io/blog/How-to-avoid-pitfalls-in-SwiftUI/</id>
-    <published>2020-02-12T21:49:27.000Z</published>
-    <updated>2020-02-12T22:02:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/602" target="_blank" rel="noopener">#602</a></strong></p><h2 id="Identify-by-unique-id"><a href="#Identify-by-unique-id" class="headerlink" title="Identify by unique id"></a>Identify by unique id</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ForEach(store.blogs.enumerated().map(&#123; $0 &#125;), id: \.element.id) &#123; index, blog in</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>## </p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/602&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#602&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;h2
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
     
       <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
     
