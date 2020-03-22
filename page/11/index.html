@@ -181,6 +181,110 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-deal-with-weak-in-closure-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-deal-with-weak-in-closure-in-Swift/">How to deal with weak in closure in Swift</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-deal-with-weak-in-closure-in-Swift/" class="article-date">
+	  <time datetime="2019-06-25T08:18:40.000Z" itemprop="datePublished">June 25, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/326" target="_blank" rel="noopener">#326</a></strong></p>
+<p>Traditionally, from Swift 4.2 we need <code>guard let self</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">addButton.didTouch = &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">guard</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">self</span> = <span class="keyword">self</span>,</span><br><span class="line">        <span class="keyword">let</span> product = <span class="keyword">self</span>.purchasedProduct()</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">self</span>.delegate?.productViewController(<span class="keyword">self</span>, didAdd: product)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This is cumbersome, we can invent a higher order function to zip and unwrap the optionals</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">with</span>&lt;A, B&gt;<span class="params">(<span class="number">_</span> op1: A?, <span class="number">_</span> op2: B?, <span class="number">_</span> closure: <span class="params">(A, B)</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> value1 = op1, <span class="keyword">let</span> value2 = op2 &#123;</span><br><span class="line">        closure(value1, value2)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">addButton.didTouch = &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] <span class="keyword">in</span></span><br><span class="line">    with(<span class="keyword">self</span>, <span class="keyword">self</span>?.purchasedProduct()) &#123;</span><br><span class="line">        $<span class="number">0</span>.delegate?.productViewController($<span class="number">0</span>, didAdd: $<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-make-material-UITextField-with-floating-label-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-make-material-UITextField-with-floating-label-in-iOS/">How to make material UITextField with floating label in iOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-make-material-UITextField-with-floating-label-in-iOS/" class="article-date">
+	  <time datetime="2019-06-24T06:34:53.000Z" itemprop="datePublished">June 24, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/325" target="_blank" rel="noopener">#325</a></strong></p>
+<ul>
+<li>Use <code>UILabel</code> as placeholder and move it</li>
+<li>When label is moved up, scale it down 80%. It means it has 10% padding on the left and right when shrinked, so <code>offsetX</code> for translation is 10%</li>
+<li>Translation transform should happen before scale</li>
+<li>Ideally we can animate font and color change using <code>CATextLayer</code>, but with <code>UILabel</code> we can use <code>UIView.transition</code></li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">MaterialInputView</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> label: <span class="type">UILabel</span> = &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">UILabel</span>()</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> textField: <span class="type">UITextField</span> = &#123;</span><br><span class="line">        <span class="keyword">let</span> textField = <span class="type">UITextField</span>()</span><br><span class="line">        textField.tintColor = <span class="type">R</span>.color.primary</span><br><span class="line">        textField.textColor = <span class="type">R</span>.color.lightText</span><br><span class="line">        textField.font = <span class="type">R</span>.customFont.medium(<span class="number">16</span>)</span><br><span class="line">        textField.autocapitalizationType = .<span class="keyword">none</span></span><br><span class="line">        textField.autocorrectionType = .no</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> textField</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> line: <span class="type">UIView</span> = &#123;</span><br><span class="line">        <span class="keyword">let</span> line = <span class="type">UIView</span>()</span><br><span class="line">        line.backgroundColor = <span class="type">R</span>.color.primary</span><br><span class="line">        <span class="keyword">return</span> line</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Whether label should be moved to top</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> isUp: <span class="type">Bool</span> = <span class="literal">false</span> &#123;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">            styleLabel(isUp: isUp)</span><br><span class="line">            moveLabel(isUp: isUp)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>(frame: <span class="type">CGRect</span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(frame: frame)</span><br><span class="line"></span><br><span class="line">        setup()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>?(coder aDecoder: <span class="type">NSCoder</span>) &#123;</span><br><span class="line">        <span class="built_in">fatalError</span>()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">        addSubviews([textField, label, line])</span><br><span class="line">        textField.delegate = <span class="keyword">self</span></span><br><span class="line"></span><br><span class="line">        <span class="type">NSLayoutConstraint</span>.on([</span><br><span class="line">            textField.leftAnchor.constraint(equalTo: leftAnchor, constant: <span class="number">16</span>),</span><br><span class="line">            textField.rightAnchor.constraint(equalTo: rightAnchor, constant: -<span class="number">16</span>),</span><br><span class="line">            textField.topAnchor.constraint(equalTo: topAnchor, constant: <span class="number">16</span>),</span><br><span class="line"></span><br><span class="line">            label.leftAnchor.constraint(equalTo: textField.leftAnchor),</span><br><span class="line">            label.centerYAnchor.constraint(equalTo: textField.centerYAnchor),</span><br><span class="line"></span><br><span class="line">            line.leftAnchor.constraint(equalTo: textField.leftAnchor),</span><br><span class="line">            line.rightAnchor.constraint(equalTo: textField.rightAnchor),</span><br><span class="line">            line.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: <span class="number">8</span>),</span><br><span class="line">            line.heightAnchor.constraint(equalToConstant: <span class="number">2</span>)</span><br><span class="line">        ])</span><br><span class="line"></span><br><span class="line">        styleLabel(isUp: <span class="literal">false</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">styleLabel</span><span class="params">(isUp: Bool)</span></span> &#123;</span><br><span class="line">        <span class="type">UIView</span>.transition(</span><br><span class="line">            with: label,</span><br><span class="line">            duration: <span class="number">0.15</span>,</span><br><span class="line">            options: .curveEaseInOut,</span><br><span class="line">            animations: &#123;</span><br><span class="line">                <span class="keyword">if</span> isUp &#123;</span><br><span class="line">                    <span class="keyword">self</span>.label.font = <span class="type">R</span>.customFont.regular(<span class="number">12</span>)</span><br><span class="line">                    <span class="keyword">self</span>.label.textColor = <span class="type">R</span>.color.primary</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">self</span>.label.font = <span class="type">R</span>.customFont.medium(<span class="number">16</span>)</span><br><span class="line">                    <span class="keyword">self</span>.label.textColor = <span class="type">R</span>.color.grayText</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            completion: <span class="literal">nil</span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">moveLabel</span><span class="params">(isUp: Bool)</span></span> &#123;</span><br><span class="line">        <span class="type">UIView</span>.animate(</span><br><span class="line">            withDuration: <span class="number">0.15</span>,</span><br><span class="line">            delay: <span class="number">0</span>,</span><br><span class="line">            options: .curveEaseInOut,</span><br><span class="line">            animations: &#123;</span><br><span class="line">                <span class="keyword">if</span> isUp &#123;</span><br><span class="line">                    <span class="keyword">let</span> offsetX = <span class="keyword">self</span>.label.frame.width * <span class="number">0.1</span></span><br><span class="line">                    <span class="keyword">let</span> translation = <span class="type">CGAffineTransform</span>(translationX: -offsetX, y: -<span class="number">24</span>)</span><br><span class="line">                    <span class="keyword">let</span> scale = <span class="type">CGAffineTransform</span>(scaleX: <span class="number">0.8</span>, y: <span class="number">0.8</span>)</span><br><span class="line">                    <span class="keyword">self</span>.label.transform = translation.concatenating(scale)</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">self</span>.label.transform = .identity</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            completion: <span class="literal">nil</span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">MaterialInputView</span>: <span class="title">UITextFieldDelegate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">textFieldDidBeginEditing</span><span class="params">(<span class="number">_</span> textField: UITextField)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> !isUp &#123;</span><br><span class="line">            isUp = <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">textFieldShouldEndEditing</span><span class="params">(<span class="number">_</span> textField: UITextField)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> text = textField.text <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> isUp &amp;&amp; text.isEmpty &#123;</span><br><span class="line">            isUp = <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-embed-UIStackView-inside-UIScrollView-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -548,6 +652,75 @@ var themeMenus = {};
     
 
   
+    <article id="post-A-bit-about-Design"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/A-bit-about-Design/">A bit about Design</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/A-bit-about-Design/" class="article-date">
+	  <time datetime="2019-06-18T09:20:19.000Z" itemprop="datePublished">June 18, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/317" target="_blank" rel="noopener">#317</a></strong></p>
+<h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><ul>
+<li><a href="https://medium.com/@nathangitter/why-your-app-looks-better-in-sketch-3a01b22c43d7" target="_blank" rel="noopener">Why Your App Looks Better in Sketch</a></li>
+<li><a href="https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6" target="_blank" rel="noopener">8 Tips for Dark Theme Design</a></li>
+</ul>
+<h2 id="UX"><a href="#UX" class="headerlink" title="UX"></a>UX</h2><ul>
+<li><a href="https://growth.design/case-studies/duolingo-user-retention/" target="_blank" rel="noopener">Duolingo User Retention</a></li>
+<li><a href="https://brianlovin.com/design-details" target="_blank" rel="noopener">Design Details</a></li>
+<li><a href="https://uxplanet.org/30-things-we-often-forget-when-designing-mobile-apps-ae30cc3b2c6b" target="_blank" rel="noopener">30 Things We Often Forget When Designing Mobile Apps</a></li>
+<li><a href="https://www.casestudy.club/" target="_blank" rel="noopener">Case study club</a></li>
+</ul>
+<h2 id="Showcase"><a href="#Showcase" class="headerlink" title="Showcase"></a>Showcase</h2><ul>
+<li><a href="https://saaspages.xyz/" target="_blank" rel="noopener">https://saaspages.xyz/</a></li>
+</ul>
+<h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul>
+<li><a href="https://shape.so/" target="_blank" rel="noopener">https://shape.so/</a></li>
+<li><a href="https://icons8.com/" target="_blank" rel="noopener">https://icons8.com/</a></li>
+<li><a href="https://icons8.com/animated-icons" target="_blank" rel="noopener">https://icons8.com/animated-icons</a></li>
+<li><a href="https://icons8.com/vector-creator" target="_blank" rel="noopener">https://icons8.com/vector-creator</a></li>
+<li><a href="https://feathericons.com/" target="_blank" rel="noopener">https://feathericons.com/</a></li>
+<li><a href="https://iconstore.co/" target="_blank" rel="noopener">https://iconstore.co/</a></li>
+<li><a href="https://streamlineicons.com/" target="_blank" rel="noopener">https://streamlineicons.com/</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design/">design</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Links-for-Design"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -604,75 +777,6 @@ var themeMenus = {};
       
   <span class="ico-tags"></span>
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design/">design</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-A-bit-about-Design"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/A-bit-about-Design/">A bit about Design</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/A-bit-about-Design/" class="article-date">
-	  <time datetime="2019-06-18T09:20:19.000Z" itemprop="datePublished">June 18, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/317" target="_blank" rel="noopener">#317</a></strong></p>
-<h2 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h2><ul>
-<li><a href="https://medium.com/@nathangitter/why-your-app-looks-better-in-sketch-3a01b22c43d7" target="_blank" rel="noopener">Why Your App Looks Better in Sketch</a></li>
-<li><a href="https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6" target="_blank" rel="noopener">8 Tips for Dark Theme Design</a></li>
-</ul>
-<h2 id="UX"><a href="#UX" class="headerlink" title="UX"></a>UX</h2><ul>
-<li><a href="https://growth.design/case-studies/duolingo-user-retention/" target="_blank" rel="noopener">Duolingo User Retention</a></li>
-<li><a href="https://brianlovin.com/design-details" target="_blank" rel="noopener">Design Details</a></li>
-<li><a href="https://uxplanet.org/30-things-we-often-forget-when-designing-mobile-apps-ae30cc3b2c6b" target="_blank" rel="noopener">30 Things We Often Forget When Designing Mobile Apps</a></li>
-<li><a href="https://www.casestudy.club/" target="_blank" rel="noopener">Case study club</a></li>
-</ul>
-<h2 id="Showcase"><a href="#Showcase" class="headerlink" title="Showcase"></a>Showcase</h2><ul>
-<li><a href="https://saaspages.xyz/" target="_blank" rel="noopener">https://saaspages.xyz/</a></li>
-</ul>
-<h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul>
-<li><a href="https://shape.so/" target="_blank" rel="noopener">https://shape.so/</a></li>
-<li><a href="https://icons8.com/" target="_blank" rel="noopener">https://icons8.com/</a></li>
-<li><a href="https://icons8.com/animated-icons" target="_blank" rel="noopener">https://icons8.com/animated-icons</a></li>
-<li><a href="https://icons8.com/vector-creator" target="_blank" rel="noopener">https://icons8.com/vector-creator</a></li>
-<li><a href="https://feathericons.com/" target="_blank" rel="noopener">https://feathericons.com/</a></li>
-<li><a href="https://iconstore.co/" target="_blank" rel="noopener">https://iconstore.co/</a></li>
-<li><a href="https://streamlineicons.com/" target="_blank" rel="noopener">https://streamlineicons.com/</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design/">design</a></li></ul>
 
       
             
@@ -953,7 +1057,7 @@ var themeMenus = {};
     
 
   
-    <article id="post-Links-for-WWDC"  class="article article-type-post" itemscope itemprop="blogPost" >
+    <article id="post-How-to-use-new-APIs-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
     
@@ -961,7 +1065,7 @@ var themeMenus = {};
         
   
     <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Links-for-WWDC/">Links for WWDC</a>
+      <a class="article-title" href="/blog/How-to-use-new-APIs-in-iOS/">How to use new APIs  in iOS</a>
     </h1>
   
 
@@ -969,7 +1073,7 @@ var themeMenus = {};
     
     <div class="article-meta">
       
-	Posted on <a href="/blog/Links-for-WWDC/" class="article-date">
+	Posted on <a href="/blog/How-to-use-new-APIs-in-iOS/" class="article-date">
 	  <time datetime="2019-06-17T10:53:31.000Z" itemprop="datePublished">June 17, 2019</time>
 	</a>
 
@@ -1201,7 +1305,7 @@ var themeMenus = {};
     
 
   
-    <article id="post-How-to-use-new-APIs-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+    <article id="post-Links-for-WWDC"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
     
@@ -1209,7 +1313,7 @@ var themeMenus = {};
         
   
     <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-new-APIs-in-iOS/">How to use new APIs  in iOS</a>
+      <a class="article-title" href="/blog/Links-for-WWDC/">Links for WWDC</a>
     </h1>
   
 
@@ -1217,7 +1321,7 @@ var themeMenus = {};
     
     <div class="article-meta">
       
-	Posted on <a href="/blog/How-to-use-new-APIs-in-iOS/" class="article-date">
+	Posted on <a href="/blog/Links-for-WWDC/" class="article-date">
 	  <time datetime="2019-06-17T10:53:31.000Z" itemprop="datePublished">June 17, 2019</time>
 	</a>
 
@@ -2197,169 +2301,6 @@ if (packet != NULL)
     
 
   
-    <article id="post-Getting-started-with-WWDC-2019"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Getting-started-with-WWDC-2019/">Getting started with WWDC 2019</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Getting-started-with-WWDC-2019/" class="article-date">
-	  <time datetime="2019-06-11T07:34:21.000Z" itemprop="datePublished">June 11, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/300" target="_blank" rel="noopener">#300</a></strong></p>
-<h2 id="WWDC"><a href="#WWDC" class="headerlink" title="WWDC"></a>WWDC</h2><ul>
-<li><a href="https://ios-goodies.com/post/185370134786/week-2845-wwdc-special" target="_blank" rel="noopener">WWDC special</a></li>
-<li><a href="https://wwdcbysundell.com/" target="_blank" rel="noopener">WWDC by Sundell</a></li>
-<li><a href="https://nshipster.com/wwdc-2019/" target="_blank" rel="noopener">NSHipster WWDC 2019</a></li>
-<li><a href="https://patrickbalestra.com/blog/2019/06/07/wwdc-2019-the-things-you-may-have-missed.html" target="_blank" rel="noopener">WWDC 2019 - The Things You May Have Missed</a></li>
-<li><a href="https://wwdcbysundell.com/2019/essential-session-videos/" target="_blank" rel="noopener">7 essential WWDC session videos for iOS developers</a></li>
-<li><a href="https://www.hackingwithswift.com/articles/190/the-best-wwdc-videos-of-all-time" target="_blank" rel="noopener">The 15 Best WWDC Videos of All Time</a></li>
-<li><a href="https://github.com/Blackjacx/WWDC" target="_blank" rel="noopener">WWDC</a> Extracted gists</li>
-<li><a href="https://github.com/onmyway133/blog/issues/305" target="_blank" rel="noopener">Favorite WWDC 2019 sessions</a></li>
-</ul>
-<h2 id="Swift-5-1"><a href="#Swift-5-1" class="headerlink" title="Swift 5.1"></a>Swift 5.1</h2><ul>
-<li><a href="https://www.avanderlee.com/swift/property-wrappers/" target="_blank" rel="noopener">Property wrappers to remove boilerplate code in Swift</a></li>
-<li><a href="https://swiftrocks.com/understanding-opaque-return-types-in-swift.html" target="_blank" rel="noopener">Understanding Opaque Return Types in Swift</a></li>
-<li><a href="https://www.swiftbysundell.com/posts/the-swift-51-features-that-power-swiftuis-api" target="_blank" rel="noopener">The Swift 5.1 features that power SwiftUI’s API</a></li>
-<li><a href="https://www.hackingwithswift.com/articles/182/whats-new-in-swift-5-1" target="_blank" rel="noopener">What’s new in Swift 5.1</a></li>
-<li><a href="https://jeroenscode.com/swift-opaque-result-types/" target="_blank" rel="noopener">Swift Opaque Result Types</a></li>
-<li><a href="https://github.com/guillermomuntaner/Burritos" target="_blank" rel="noopener">Burritos</a> A collection of Swift Property Wrappers</li>
-<li><a href="https://medium.com/flawless-app-stories/how-can-property-wrappers-and-function-builders-be-leveraged-d43160de338f" target="_blank" rel="noopener">How can Property Wrappers and Function Builders be leveraged?</a></li>
-</ul>
-<h2 id="SwiftUI"><a href="#SwiftUI" class="headerlink" title="SwiftUI"></a>SwiftUI</h2><ul>
-<li><a href="https://developer.apple.com/xcode/swiftui/" target="_blank" rel="noopener">SwiftUI</a></li>
-<li><a href="https://github.com/Juanpe/About-SwiftUI" target="_blank" rel="noopener">About-SwiftUI</a></li>
-<li><a href="https://www.hackingwithswift.com/quick-start/swiftui/" target="_blank" rel="noopener">Swift UI by example</a></li>
-<li><a href="https://swiftrocks.com/inside-swiftui-compiler-magic.html" target="_blank" rel="noopener">Inside SwiftUI’s Declarative Syntax’s Compiler Magic</a></li>
-<li><a href="https://wwdcbysundell.com/2019/swiftui-common-questions/" target="_blank" rel="noopener">Answers to the most common questions about SwiftUI</a></li>
-<li><a href="https://www.raywenderlich.com/3715234-swiftui-getting-started" target="_blank" rel="noopener">SwiftUI: Getting Started</a></li>
-<li><a href="https://github.com/SimpleBoilerplates/SwiftUI-Cheat-Sheet" target="_blank" rel="noopener">SwiftUI-Cheat-Sheet</a></li>
-<li><a href="https://mecid.github.io/2019/06/12/understanding-property-wrappers-in-swiftui/" target="_blank" rel="noopener">Understanding Property Wrappers in SwiftUI</a></li>
-<li><a href="https://github.com/Jinxiansen/SwiftUI" target="_blank" rel="noopener">SwiftUI</a> Framework Learning and Usage Guide</li>
-<li><a href="https://github.com/unixzii/SwiftUI-2048" target="_blank" rel="noopener">SwiftUI-2048</a></li>
-<li><a href="https://fuckingswiftui.com/" target="_blank" rel="noopener">Fucking SwiftUI</a></li>
-<li><a href="https://github.com/anandabits/SwiftUI-Processing" target="_blank" rel="noopener">SwiftUI-Processing</a></li>
-<li><a href="http://www.alwaysrightinstitute.com/swiftwebui/" target="_blank" rel="noopener">SwiftWebUI</a></li>
-<li><a href="https://mecid.github.io/2019/06/19/building-forms-with-swiftui/" target="_blank" rel="noopener">Building forms with SwiftUI</a></li>
-<li><a href="https://mecid.github.io/2019/06/26/animations-in-swiftui/" target="_blank" rel="noopener">Animations in SwiftUI</a></li>
-<li><a href="https://www.youtube.com/playlist?list=PLDaHCLWmCcQLL-3YDxnPgG8VENNUiJ0Nv" target="_blank" rel="noopener">SwiftUI DesignCode</a></li>
-</ul>
-<p>Good to know</p>
-<ul>
-<li><a href="https://www.objc.io/blog/2019/10/29/swiftui-environment/" target="_blank" rel="noopener">SwiftUI: Setting Environment Values</a></li>
-<li><a href="https://kean.github.io/post/swiftui-layout-system" target="_blank" rel="noopener">SwiftUI Layout System</a></li>
-</ul>
-<p>Code</p>
-<ul>
-<li><a href="https://github.com/xtabbas/calculator-checklist" target="_blank" rel="noopener">https://github.com/xtabbas/calculator-checklist</a></li>
-<li><a href="https://github.com/alfianlosari/SwiftUI-MovieDB" target="_blank" rel="noopener">https://github.com/alfianlosari/SwiftUI-MovieDB</a></li>
-<li><a href="https://github.com/unixzii/SwiftUI-2048" target="_blank" rel="noopener">https://github.com/unixzii/SwiftUI-2048</a></li>
-</ul>
-<h2 id="Combine"><a href="#Combine" class="headerlink" title="Combine"></a>Combine</h2><ul>
-<li><a href="https://medium.com/gett-engineering/rxswift-to-apples-combine-cheat-sheet-e9ce32b14c5b" target="_blank" rel="noopener">RxSwift to Apple’s Combine Cheat Sheet</a></li>
-<li><a href="https://medium.com/flawless-app-stories/will-combine-kill-rxswift-64780a150d89" target="_blank" rel="noopener">Will Combine kill RxSwift?</a></li>
-<li><a href="https://github.com/broadwaylamb/OpenCombine" target="_blank" rel="noopener">OpenCombine</a> Open-source implementation of Apple’s Combine framework for processing values over time.</li>
-<li><a href="https://github.com/AvdLee/CombineSwiftPlayground" target="_blank" rel="noopener">CombineSwiftPlayground</a></li>
-<li><a href="https://medium.com/snowdog-labs/combine-framework-in-action-part-2-63c7d652b32f" target="_blank" rel="noopener">Combine framework in action — Part 2</a></li>
-<li><a href="https://heckj.github.io/swiftui-notes/" target="_blank" rel="noopener">Using Combine</a> 🚀 </li>
-</ul>
-<h2 id="Dark-Mode"><a href="#Dark-Mode" class="headerlink" title="Dark Mode"></a>Dark Mode</h2><ul>
-<li><a href="https://www.fivestars.blog/code/ios-dark-mode-how-to.html" target="_blank" rel="noopener">How To Adopt Dark Mode In Your iOS App </a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-style-NSButton-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-style-NSButton-in-AppKit/">How to style NSButton in AppKit</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-style-NSButton-in-AppKit/" class="article-date">
-	  <time datetime="2019-05-31T05:29:23.000Z" itemprop="datePublished">May 31, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/297" target="_blank" rel="noopener">#297</a></strong></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> button = <span class="type">NSButton</span>()</span><br><span class="line">button.wantsLayer = <span class="literal">true</span></span><br><span class="line">button.isBordered = <span class="literal">false</span></span><br><span class="line">button.setButtonType(.momentaryChange)</span><br><span class="line">button.attributedTitle = <span class="type">NSAttributedString</span>(</span><br><span class="line">    string: <span class="string">"Click me"</span>,</span><br><span class="line">    attributes: [</span><br><span class="line">        <span class="type">NSAttributedString</span>.<span class="type">Key</span>.foregroundColor: <span class="type">NSColor</span>.white,</span><br><span class="line">        <span class="type">NSAttributedString</span>.<span class="type">Key</span>.font: <span class="type">NSFont</span>.labelFont(ofSize: <span class="number">13</span>)</span><br><span class="line">    ]</span><br><span class="line">button.layer?.backgroundColor = <span class="type">NSColor</span>.orange.cgColor</span><br><span class="line">button.layer?.cornerRadius = <span class="number">12</span></span><br><span class="line"></span><br><span class="line">activate(</span><br><span class="line">    button.anchor.height.<span class="built_in">equal</span>.to(<span class="number">32</span>),</span><br><span class="line">    button.anchor.width.<span class="built_in">equal</span>.to(<span class="number">100</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>To make it have native rounded rect</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">button.imageScaling = .scaleProportionallyDown</span><br><span class="line">button.setButtonType(.momentaryPushIn)</span><br><span class="line">button.bezelStyle = .rounded</span><br><span class="line">button.isBordered = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"><span class="keyword">import</span> Omnia</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">NSButton</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">style</span><span class="params">(imageName: String)</span></span> &#123;</span><br><span class="line">        image = <span class="type">NSImage</span>(named: <span class="type">NSImage</span>.<span class="type">Name</span>(imageName))</span><br><span class="line">        isBordered = <span class="literal">false</span></span><br><span class="line">        imageScaling = .scaleProportionallyDown</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">styleAction</span><span class="params">(title: String)</span></span> &#123;</span><br><span class="line">        attributedTitle = <span class="type">NSAttributedString</span>(string: title, attributes: [</span><br><span class="line">            <span class="type">NSAttributedString</span>.<span class="type">Key</span>.foregroundColor: <span class="type">NSColor</span>(hex: <span class="string">"008B80"</span>),</span><br><span class="line">            <span class="type">NSAttributedString</span>.<span class="type">Key</span>.font: <span class="type">NSFont</span>.boldSystemFont(ofSize: <span class="number">13</span>)</span><br><span class="line">        ])</span><br><span class="line"></span><br><span class="line">        isBordered = <span class="literal">false</span></span><br><span class="line">        setButtonType(.momentaryChange)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li><a href="https://mackuba.eu/2014/10/06/a-guide-to-nsbutton-styles" target="_blank" rel="noopener">https://mackuba.eu/2014/10/06/a-guide-to-nsbutton-styles</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2464,6 +2405,30 @@ if (packet != NULL)
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-show-context-popover-from-SwiftUI-for-macOS/">How to show context popover from SwiftUI for macOS</a></h6>
+              <span>March 22, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-make-segmented-control-in-SwiftUI-for-macOS/">How to make segmented control in SwiftUI for macOS</a></h6>
+              <span>March 22, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-iterate-over-XCUIElementQuery-in-UITests/">How to iterate over XCUIElementQuery in UITests</a></h6>
               <span>March 20, 2020</span>
             </div>
@@ -2506,30 +2471,6 @@ if (packet != NULL)
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-access-bookmark-url-in-macOS/">How to access bookmark url in macOS</a></h6>
-              <span>March 17, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-force-FetchRequest-update-in-SwiftUI/">How to force FetchRequest update in SwiftUI</a></h6>
-              <span>March 16, 2020</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2552,7 +2493,7 @@ if (packet != NULL)
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2562,7 +2503,7 @@ if (packet != NULL)
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-data/">core data</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">157</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">92</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">257</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">45</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work/">work</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">22</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-data/">core data</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">157</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">94</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">259</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">47</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work/">work</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">22</span></li></ul>
     </div>
   </div>
 
