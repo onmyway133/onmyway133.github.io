@@ -181,6 +181,128 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-use-Sonarqube-in-Swift-projects"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-Sonarqube-in-Swift-projects/">How to use Sonarqube in Swift projects</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-Sonarqube-in-Swift-projects/" class="article-date">
+	  <time datetime="2019-04-29T06:20:52.000Z" itemprop="datePublished">April 29, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/216" target="_blank" rel="noopener">#216</a></strong></p>
+<h2 id="Install-Sonarqube"><a href="#Install-Sonarqube" class="headerlink" title="Install Sonarqube"></a>Install Sonarqube</h2><p><a href="https://docs.sonarqube.org/latest/setup/get-started-2-minutes/" target="_blank" rel="noopener">https://docs.sonarqube.org/latest/setup/get-started-2-minutes/</a></p>
+<ul>
+<li>Download Sonarqube for macOS <a href="https://www.sonarqube.org/downloads/" target="_blank" rel="noopener">https://www.sonarqube.org/downloads/</a></li>
+<li>Put it in <code>~/sonarqube</code></li>
+<li>Run localhost server <code>~/sonarqube/bin/macosx-universal-64/sonar.sh console</code></li>
+<li>Login <code>http://localhost:9000</code> with <code>admin/admin</code></li>
+<li>Create new project</li>
+</ul>
+<h2 id="Install-Sonar-scanner"><a href="#Install-Sonar-scanner" class="headerlink" title="Install Sonar scanner"></a>Install Sonar scanner</h2><p><a href="https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner" target="_blank" rel="noopener">https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner</a></p>
+<ul>
+<li>Download for macOS 64 bit</li>
+<li>Put it in <code>~/sonarscanner</code></li>
+<li>export <code>PATH=$PATH:/Users/khoa/sonarscanner/bin</code></li>
+<li>Go to project, create <code>sonar-project.properties</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># must be unique in a given SonarQube instance</span><br><span class="line">sonar.projectKey=my-app</span><br><span class="line"># this is the name and version displayed in the SonarQube UI. Was mandatory prior to SonarQube 6.1.</span><br><span class="line">sonar.projectName=My App</span><br><span class="line">sonar.projectVersion=1.0</span><br><span class="line"> </span><br><span class="line"># Path is relative to the sonar-project.properties file. Replace &quot;\&quot; by &quot;/&quot; on Windows.</span><br><span class="line"># This property is optional if sonar.modules is set. </span><br><span class="line">sonar.sources=.</span><br><span class="line"> </span><br><span class="line"># Encoding of the source code. Default is default system encoding</span><br><span class="line">#sonar.sourceEncoding=UTF-8</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Run <code>sonar-scanner</code></li>
+</ul>
+<h2 id="Install-swift-plugin"><a href="#Install-swift-plugin" class="headerlink" title="Install swift plugin"></a>Install swift plugin</h2><p><a href="https://github.com/Backelite/sonar-swift" target="_blank" rel="noopener">https://github.com/Backelite/sonar-swift</a></p>
+<ul>
+<li>Download jar file <a href="https://github.com/Backelite/sonar-swift/releases" target="_blank" rel="noopener">https://github.com/Backelite/sonar-swift/releases</a></li>
+<li>Follow <a href="https://docs.sonarqube.org/latest/setup/install-plugin/" target="_blank" rel="noopener">https://docs.sonarqube.org/latest/setup/install-plugin/</a></li>
+<li>Put jar file into <code>~/sonarqube/extensions/plugins</code></li>
+<li>Restart server</li>
+<li>Copy run-sonar-swift.sh <a href="https://github.com/Backelite/sonar-swift/blob/develop/sonar-swift-plugin/src/main/shell/run-sonar-swift.sh" target="_blank" rel="noopener">https://github.com/Backelite/sonar-swift/blob/develop/sonar-swift-plugin/src/main/shell/run-sonar-swift.sh</a> to project folder</li>
+<li>Go to Quality Profile <a href="http://localhost:9000/profiles?language=swift" target="_blank" rel="noopener">http://localhost:9000/profiles?language=swift</a></li>
+</ul>
+<img width="979" alt="a" src="https://user-images.githubusercontent.com/2284279/56885533-ed320000-6a6c-11e9-8550-7b24487a0a45.png">
+
+<h2 id="Skip-some-tools"><a href="#Skip-some-tools" class="headerlink" title="Skip some tools"></a>Skip some tools</h2><p>Modify <code>run-sonar-swift.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">vflag=&quot;&quot;</span><br><span class="line">nflag=&quot;&quot;</span><br><span class="line">unittests=&quot;on&quot;</span><br><span class="line">swiftlint=&quot;on&quot;</span><br><span class="line">tailor=&quot;off&quot;</span><br><span class="line">lizard=&quot;on&quot;</span><br><span class="line">oclint=&quot;off&quot;</span><br><span class="line">fauxpas=&quot;off&quot;</span><br><span class="line">sonarscanner=&quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Git-ignore"><a href="#Git-ignore" class="headerlink" title="Git ignore"></a>Git ignore</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.scannerwork/</span><br><span class="line">sonar-reports/</span><br><span class="line">compile_commands.json</span><br></pre></td></tr></table></figure>
+
+<h2 id="run-sonar-swift-sh"><a href="#run-sonar-swift-sh" class="headerlink" title="run-sonar-swift.sh"></a>run-sonar-swift.sh</h2><ul>
+<li>Update sonar-project.properties</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sonar.swift.appScheme=MyApp Staging</span><br><span class="line">sonar.swift.project=MyApp.xcodeproj</span><br><span class="line">sonar.swift.workspace=MyApp.xcworkspace</span><br><span class="line">sonar.swift.simulator=platform=iOS Simulator,name=iPhone Xʀ</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Run <code>chmod +x run-sonar-swift.sh</code></li>
+<li>Run <code>./run-sonar-swift.sh</code></li>
+</ul>
+<h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><h3 id="failed-with-error-code-64-https-github-com-Backelite-sonar-swift-issues-222"><a href="#failed-with-error-code-64-https-github-com-Backelite-sonar-swift-issues-222" class="headerlink" title="failed with error code: 64 https://github.com/Backelite/sonar-swift/issues/222"></a>failed with error code: 64 <a href="https://github.com/Backelite/sonar-swift/issues/222" target="_blank" rel="noopener">https://github.com/Backelite/sonar-swift/issues/222</a></h3><p>When run <code>./run-sonar-swift.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild: error: &apos;&apos;MyApp.xcodeproj&apos;&apos; does not exist.</span><br><span class="line">2019-04-29 12:10:17.486 defaults[4134:569992]</span><br><span class="line">Domain CFBundleShortVersionString does not exist</span><br><span class="line">.Extracting Xcode project informationxcodebuild: error: option &apos;Destination&apos; requires at least one parameter of the form &apos;key=value&apos;</span><br></pre></td></tr></table></figure>
+
+<p>👉 Remove quotes in <code>sonar-project.properties</code><br>👉 Modify run-sonar-swift.sh, add these before <code>Check for mandatory parameters</code> section</p>
+<p>Surround by double quotes</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">projectFile=&quot;\&quot;$projectFile\&quot;&quot;</span><br><span class="line">workspaceFile=&quot;\&quot;$workspaceFile\&quot;&quot;</span><br><span class="line">appScheme=&quot;\&quot;$appScheme\&quot;&quot;</span><br><span class="line">destinationSimulator=&quot;\&quot;$destinationSimulator\&quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>😢 Does not work<br>👉 Need to create a scheme name without space</p>
+<h3 id="Error-code-65"><a href="#Error-code-65" class="headerlink" title="Error code 65"></a>Error code 65</h3><p>👉Specify team in Xcode project</p>
+<h3 id="destination"><a href="#destination" class="headerlink" title="destination"></a>destination</h3><p>Need double quotes</p>
+<p><code>destinationSimulator=&quot;\&quot;$destinationSimulator\&quot;&quot;</code></p>
+<p>Use equal sign <code>=</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-destination=&quot;$destinationSimulator&quot;</span><br></pre></td></tr></table></figure>
+
+<p>instead of space ‘ ‘</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-destination &quot;$destinationSimulator&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Metric-‘files’-should-not-be-computed-by-a-Sensor"><a href="#Metric-‘files’-should-not-be-computed-by-a-Sensor" class="headerlink" title="Metric ‘files’ should not be computed by a Sensor"></a>Metric ‘files’ should not be computed by a Sensor</h3><p>When run <code>sonar-scanner</code> <a href="https://github.com/Backelite/sonar-swift/issues/212" target="_blank" rel="noopener">https://github.com/Backelite/sonar-swift/issues/212</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">11:01:14.406 INFO: Sensor JaCoCo XML Report Importer [jacoco]</span><br><span class="line">11:01:14.409 DEBUG: No reports found</span><br><span class="line">11:01:14.409 INFO: Sensor JaCoCo XML Report Importer [jacoco] (done) | time=3ms</span><br><span class="line">11:01:14.409 INFO: Sensor SwiftLint [backelitesonarswiftplugin]</span><br><span class="line">11:01:14.417 INFO: Sensor SwiftLint [backelitesonarswiftplugin] (done) | time=8ms</span><br><span class="line">11:01:14.417 INFO: Sensor Tailor [backelitesonarswiftplugin]</span><br><span class="line">11:01:14.418 INFO: Sensor Tailor [backelitesonarswiftplugin] (done) | time=1ms</span><br><span class="line">11:01:14.418 INFO: Sensor OCLint [backelitesonarswiftplugin]</span><br><span class="line">11:01:14.419 INFO: Sensor OCLint [backelitesonarswiftplugin] (done) | time=1ms</span><br><span class="line">11:01:14.419 INFO: Sensor FauxPas [backelitesonarswiftplugin]</span><br><span class="line">11:01:14.419 INFO: Sensor FauxPas [backelitesonarswiftplugin] (done) | time=0ms</span><br><span class="line">11:01:14.419 INFO: Sensor Swift Squid [backelitesonarswiftplugin]</span><br><span class="line">11:01:14.526 INFO: ------------------------------------------------------------------------</span><br><span class="line">11:01:14.526 INFO: EXECUTION FAILURE</span><br><span class="line">11:01:14.526 INFO: ------------------------------------------------------------------------</span><br><span class="line">11:01:14.527 INFO: Total time: 6.180s</span><br><span class="line">11:01:14.603 INFO: Final Memory: 25M/566M</span><br><span class="line">11:01:14.603 INFO: ------------------------------------------------------------------------</span><br><span class="line">11:01:14.603 ERROR: Error during SonarQube Scanner execution</span><br><span class="line">java.lang.UnsupportedOperationException: Metric &apos;files&apos; should not be computed by a Sensor</span><br><span class="line">	at org.sonar.scanner.sensor.DefaultSensorStorage.saveMeasure(DefaultSensorStorage.java:168)</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">👉Install maven https://maven.apache.org/download.cgi</span><br><span class="line">Edit `ObjectiveCSquidSensor.java` and `SwiftSquidSensor`, remove line with `CoreMetrics.FILES`</span><br><span class="line">Run `export PATH=$PATH:/Users/khoa/apache-maven/bin`</span><br><span class="line">Run `./build-and-deploy.sh`</span><br><span class="line">Or `~/apache-maven/bin/mvn clean install`</span><br><span class="line"></span><br><span class="line">🎉 Built jar is in `sonar-swift-plugin/target/backelite-sonar-swift-plugin-0.4.4.jar`, copy back to `extensions/plugins`</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### How to enable SwiftLint as default profile 🤔</span><br><span class="line"></span><br><span class="line">👉 Need to close current Sonar tab and restart server</span><br><span class="line"></span><br><span class="line">### Testing failed: unable to attach DB</span><br><span class="line"></span><br><span class="line">Modify `run-sonar-swift.sh` to add `-UseModernBuildSystem=NO` to `buildCmd+=(-destination`</span><br><span class="line"></span><br><span class="line">### slather No coverage directory found</span><br><span class="line"></span><br><span class="line">Try running</span><br></pre></td></tr></table></figure>
+
+<p>slather coverage –input-format profdata –cobertura-xml –output-directory sonar-reports –workspace MyApp.xcworkspace –scheme MyAppStaging MyApp.xcodeproj</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">👉 Enable coverage option in scheme -&gt; Test</span><br><span class="line"></span><br><span class="line">![](https://github.com/SlatherOrg/slather/raw/master/README_Images/test_scheme.png)</span><br><span class="line"></span><br><span class="line">Optional: declare `.slather.yml` file https://github.com/SlatherOrg/slather</span><br><span class="line"></span><br><span class="line">### Unable to execute SonarQube</span><br></pre></td></tr></table></figure>
+
+<p>14:53:23.251 ERROR: Error during SonarQube Scanner execution<br>org.sonarsource.scanner.api.internal.ScannerException: Unable to execute SonarQube<br>    at org.sonarsource.scanner.api.internal.IsolatedLauncherFactory.lambda$createLauncher$0(IsolatedLauncherFactory.java:85)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">👉Start sonar server</span><br><span class="line"></span><br><span class="line">### LizardReportParser$SwiftFunction cannot be cast</span><br></pre></td></tr></table></figure>
+
+<p>Error during SonarQube Scanner execution<br>java.lang.ClassCastException: com.backelite.sonarqube.swift.complexity.LizardReportParser$SwiftFunction cannot be cast to org.sonar.api.batch.fs.internal.DefaultInputComponent</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">👉 Run [lizard](https://github.com/terryyin/lizard) manually</span><br></pre></td></tr></table></figure>
+
+<p>lizard –xml sonar-reports/lizard-report.xml<br>```</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-What-is-Personal-team-in-Xcode"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1761,6 +1883,55 @@ var themeMenus = {};
     
 
   
+    <article id="post-OSS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/OSS/">OSS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/OSS/" class="article-date">
+	  <time datetime="2019-03-25T07:19:13.000Z" itemprop="datePublished">March 25, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/189" target="_blank" rel="noopener">#189</a></strong></p>
+<ul>
+<li><a href="https://github.com/digipost/ios" target="_blank" rel="noopener">https://github.com/digipost/ios</a></li>
+<li><a href="https://github.com/wwdc/2019" target="_blank" rel="noopener">https://github.com/wwdc/2019</a></li>
+<li><a href="https://github.com/google/science-journal-ios" target="_blank" rel="noopener">https://github.com/google/science-journal-ios</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Links-for-OSS"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1800,55 +1971,6 @@ var themeMenus = {};
   <span class="ico-tags"></span>
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/links/">links</a></li></ul>
 
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-OSS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/OSS/">OSS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/OSS/" class="article-date">
-	  <time datetime="2019-03-25T07:19:13.000Z" itemprop="datePublished">March 25, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/189" target="_blank" rel="noopener">#189</a></strong></p>
-<ul>
-<li><a href="https://github.com/digipost/ios" target="_blank" rel="noopener">https://github.com/digipost/ios</a></li>
-<li><a href="https://github.com/wwdc/2019" target="_blank" rel="noopener">https://github.com/wwdc/2019</a></li>
-<li><a href="https://github.com/google/science-journal-ios" target="_blank" rel="noopener">https://github.com/google/science-journal-ios</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
       
             
       
@@ -1973,66 +2095,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-Getting-activity-name-through-HKWorkoutActivityType-in-HealthKit"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/Getting-activity-name-through-HKWorkoutActivityType-in-HealthKit/">Getting activity name through HKWorkoutActivityType in HealthKit</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/Getting-activity-name-through-HKWorkoutActivityType-in-HealthKit/" class="article-date">
-	  <time datetime="2019-03-24T20:08:58.000Z" itemprop="datePublished">March 24, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/186" target="_blank" rel="noopener">#186</a></strong></p>
-<p>After fetching workouts with HKObjectType.workoutType() , we get <a href="https://developer.apple.com/documentation/healthkit/hkworkoutactivitytype" target="_blank" rel="noopener">HKWorkoutActivityType</a> , which is an enum enum HKWorkoutActivityType : <a href="https://developer.apple.com/documentation/swift/uint" target="_blank" rel="noopener">UInt</a> . As of Swift 4.2, there are no way to get enum case as String because this enum has type UInt .</p>
-<p>Though there will be some manual involved, we can build a generator to get all the enum case names. Here we will write code to generate code, and use that generated code to examine all the values.</p>
-<p>Execute this Swift code in our iOS app</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeCode</span><span class="params">(string: String)</span></span> &#123;</span><br><span class="line">   <span class="keyword">let</span> pattern = “<span class="keyword">case</span> \\w*”</span><br><span class="line">   <span class="keyword">let</span> range = <span class="type">NSMakeRange</span>(<span class="number">0</span>, string.<span class="built_in">count</span>-<span class="number">1</span>)</span><br><span class="line">   <span class="keyword">let</span> regex = <span class="keyword">try</span>! <span class="type">NSRegularExpression</span>(pattern: pattern, options: [])</span><br><span class="line">   regex</span><br><span class="line">   .matches(<span class="keyword">in</span>: string, options: [], range: range)</span><br><span class="line">   .forEach(&#123; result <span class="keyword">in</span></span><br><span class="line">   <span class="keyword">let</span> start = string.index(string.startIndex, offsetBy: result.range.lowerBound)</span><br><span class="line">   <span class="keyword">let</span> end = string.index(string.startIndex, offsetBy: result.range.upperBound)</span><br><span class="line">   <span class="keyword">let</span> substring = <span class="type">String</span>(string[start…end])</span><br><span class="line">   <span class="keyword">let</span> name = substring</span><br><span class="line">   .replacingOccurrences(of: “<span class="keyword">case</span>”, with: “”)</span><br><span class="line">   .replacingOccurrences(of: “ “, with: “”)</span><br><span class="line">   .replacingOccurrences(of: “\n”, with: “”</span><br><span class="line">  <span class="built_in">print</span>(“dictionary[<span class="type">HKWorkoutActivityType</span>.\(name).rawValue] = \”\(name)\””)</span><br><span class="line"> &#125;)</span><br></pre></td></tr></table></figure>
-
-<p>Where string is all the cases from <a href="https://developer.apple.com/documentation/healthkit/hkworkoutactivitytype" target="_blank" rel="noopener">HKWorkoutActivityType</a>, for example</p>
-<p><a href="https://developer.apple.com/documentation/healthkit/hkworkoutactivitytype/archery" target="_blank" rel="noopener">case archery</a><br>The constant for shooting archery.</p>
-<p><a href="https://developer.apple.com/documentation/healthkit/hkworkoutactivitytype/bowling" target="_blank" rel="noopener">case bowling</a><br>The constant for bowling</p>
-<p><a href="https://developer.apple.com/documentation/healthkit/hkworkoutactivitytype/fencing" target="_blank" rel="noopener">case fencing</a><br>The constant for fencing.</p>
-<p><a href="https://developer.apple.com/documentation/healthkit/hkworkoutactivitytype/gymnastics" target="_blank" rel="noopener">case gymnastics</a><br>Performing gymnastics.</p>
-<p><a href="https://developer.apple.com/documentation/healthkit/hkworkoutactivitytype/trackandfield" target="_blank" rel="noopener">case trackAndField</a><br>Participating in track and field events, including shot put, javelin, pole vaulting, and related sports.</p>
-<p>What the code does is to use regular expression to examine all the names after case , and build our code</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dictionary[<span class="type">HKWorkoutActivityType</span>.americanFootball.rawValue] = “americanFootball”</span><br><span class="line">dictionary[<span class="type">HKWorkoutActivityType</span>.archery.rawValue] = “archery”</span><br><span class="line">dictionary[<span class="type">HKWorkoutActivityType</span>.australianFootball.rawValue] = “australianFootball”</span><br><span class="line">dictionary[<span class="type">HKWorkoutActivityType</span>.badminton.rawValue] = “badminton”</span><br><span class="line">dictionary[<span class="type">HKWorkoutActivityType</span>.baseball.rawValue] = “baseball”</span><br></pre></td></tr></table></figure>
-
-<p>The above generated code with dictionary contains rawValue as key and the enum case name as value .</p>
-<p>Later when we get any HKWorkoutActivityType , we can compare with this dictionary to find the actual name. This is better than hardcode activity name with numbers because those rawValue are just implementation detail</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2137,6 +2199,18 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-declare-commands-in-Xcode-extenstions/">How to declare commands in Xcode extenstions</a></h6>
+              <span>April 13, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-disable-ring-type-in-TextField-in-SwiftUI/">How to disable ring type in TextField in SwiftUI</a></h6>
               <span>April 6, 2020</span>
             </div>
@@ -2191,18 +2265,6 @@ var themeMenus = {};
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-background-in-iOS/">How to use background in iOS</a></h6>
-              <span>March 25, 2020</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2225,7 +2287,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2235,7 +2297,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-data/">core data</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">158</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">97</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">264</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">49</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work/">work</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">22</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-data/">core data</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">158</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">97</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">265</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">49</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work/">work</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">23</span></li></ul>
     </div>
   </div>
 

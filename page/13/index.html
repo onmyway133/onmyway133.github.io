@@ -181,6 +181,311 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-position-element-at-the-bottom-of-the-screen-using-Flexbox-in-React-Native"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-position-element-at-the-bottom-of-the-screen-using-Flexbox-in-React-Native/">How to position element at the bottom of the screen using Flexbox in React Native</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-position-element-at-the-bottom-of-the-screen-using-Flexbox-in-React-Native/" class="article-date">
+	  <time datetime="2019-05-23T14:47:40.000Z" itemprop="datePublished">May 23, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/259" target="_blank" rel="noopener">#259</a></strong></p>
+<p>Original post <a href="https://medium.com/react-native-training/position-element-at-the-bottom-of-the-screen-using-flexbox-in-react-native-a00b3790ca42" target="_blank" rel="noopener">https://medium.com/react-native-training/position-element-at-the-bottom-of-the-screen-using-flexbox-in-react-native-a00b3790ca42</a></p>
+<hr>
+<p>React Native uses <a href="https://github.com/facebook/yoga" target="_blank" rel="noopener">Yoga</a> to achieve <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox" target="_blank" rel="noopener">Flexbox</a> style layout, which helps us set up layout in a declarative and easy way.</p>
+<blockquote>
+<p>The Flexible Box Module, usually referred to as flexbox, was designed as a one-dimensional layout model, and as a method that could offer space distribution between items in an interface and powerful alignment capabilities</p>
+</blockquote>
+<p>As someone who worked with Auto Layout in iOS and Constrain Layout in Android, I sometimes find it difficult to work with Flexbox in React Native. One of them is how to position certain element at the top or the bottom of the screen. This is the scenario when one element does not follow the rule i the container.</p>
+<h2 id="A-traditional-layout"><a href="#A-traditional-layout" class="headerlink" title="A traditional layout"></a>A traditional layout</h2><p>Consider this traditional welcome screen, where we have some texts and a login button.</p>
+<p><img src="https://cdn-images-1.medium.com/max/2000/1*mYxO00FDyT91dNaFHeCvIA.png" alt></p>
+<p>Which is easily achieved with</p>
+<pre><code>import React from &apos;react&apos;
+import { View, StyleSheet, Image, Text, Button } from &apos;react-native&apos;
+import strings from &apos;res/strings&apos;
+import palette from &apos;res/palette&apos;
+import images from &apos;res/images&apos;
+import ImageButton from &apos;library/components/ImageButton&apos;
+
+export default class Welcome extends React.Component {
+  render() {
+    return (
+      &lt;View style={styles.container}&gt;
+        &lt;Image
+          style={styles.image}
+          source={images.placeholder} /&gt;
+        &lt;Text style={styles.heading}&gt;{strings.onboarding.welcome.heading.toUpperCase()}&lt;/Text&gt;
+        &lt;Text style={styles.text}&gt;{strings.onboarding.welcome.text1}&lt;/Text&gt;
+        &lt;Text style={styles.text}&gt;{strings.onboarding.welcome.text2}&lt;/Text&gt;
+        &lt;ImageButton
+          style={styles.button}
+          title={strings.onboarding.welcome.button} /&gt;
+      &lt;/View&gt;
+    )
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: &apos;center&apos;
+  },
+  image: {
+    marginTop: 50
+  },
+  heading: {
+    ...palette.heading, ...{
+      marginTop: 40
+    }
+  },
+  text: {
+    ...palette.text, ...{
+      marginHorizontal: 8,
+      marginVertical: 10
+    }
+  }
+})</code></pre><p>Pay attention to styles . Unlike in web, Flexbox in React Native defaults main axis to be vertical, so elements are laid out from top to bottom. alignItems makes sure all elements are centered in the horizontal axis, which is the cross axis according to Flexbox terminology.</p>
+<h2 id="Position-button-at-the-bottom"><a href="#Position-button-at-the-bottom" class="headerlink" title="Position button at the bottom"></a>Position button at the bottom</h2><p>According to design, the button should be positioned at the bottom of the screen. A dark though might suggest us to use position: ‘absolute’ , something like</p>
+<pre><code>button: {
+  position: &apos;absolute&apos;,
+  bottom:0
+}</code></pre><p>It workaround could work, but it’s like opting out of Flexbox. We like Flexbox and we like to embrace it. The solution is to use add a container for the button, and use flex-end inside so that the button moves to the bottom.</p>
+<p>Let’s add a container</p>
+<pre><code>&lt;View style={styles.bottom}&gt;
+  &lt;ImageButton
+    style={styles.button}
+    title={strings.onboarding.welcome.button} /&gt;
+&lt;/View&gt;</code></pre><p>and styles</p>
+<pre><code>bottom: {
+  flex: 1,
+  justifyContent: &apos;flex-end&apos;,
+  marginBottom: 36
+}</code></pre><p>The flex tells the bottom view to take the remaining space. And inside this space, the bottom is laid out from the bottom, that’s what the flex-end means.</p>
+<p>Here is how the result looks like</p>
+<p><img src="https://cdn-images-1.medium.com/max/2000/1*J2SIgsqzREyRz-GSsgoKIA.png" alt></p>
+<p>And there is the full code</p>
+<pre><code>import React from &apos;react&apos;
+import { View, StyleSheet, Image, Text, Button } from &apos;react-native&apos;
+import strings from &apos;res/strings&apos;
+import palette from &apos;res/palette&apos;
+import images from &apos;res/images&apos;
+import ImageButton from &apos;library/components/ImageButton&apos;
+
+export default class Welcome extends React.Component {
+  render() {
+    return (
+      &lt;View style={styles.container}&gt;
+        &lt;Image
+          style={styles.image}
+          source={images.placeholder} /&gt;
+        &lt;Text style={styles.heading}&gt;{strings.onboarding.welcome.heading.toUpperCase()}&lt;/Text&gt;
+        &lt;Text style={styles.text}&gt;{strings.onboarding.welcome.text1}&lt;/Text&gt;
+        &lt;Text style={styles.text}&gt;{strings.onboarding.welcome.text2}&lt;/Text&gt;
+        &lt;View style={styles.bottom}&gt;
+          &lt;ImageButton
+            style={styles.button}
+            title={strings.onboarding.welcome.button} /&gt;
+        &lt;/View&gt;
+      &lt;/View&gt;
+    )
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: &apos;center&apos;
+  },
+  image: {
+    marginTop: 50
+  },
+  heading: {
+    ...palette.heading, ...{
+      marginTop: 40
+    }
+  },
+  text: {
+    ...palette.text, ...{
+      marginHorizontal: 8,
+      marginVertical: 10
+    }
+  },
+  bottom: {
+    flex: 1,
+    justifyContent: &apos;flex-end&apos;,
+    marginBottom: 36
+  }
+})</code></pre><h2 id="What-is-flex-1"><a href="#What-is-flex-1" class="headerlink" title="What is flex: 1"></a>What is flex: 1</h2><p>According to <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox" target="_blank" rel="noopener">Basic concepts of flexbox</a></p>
+<blockquote>
+<p>The <strong>flex</strong> <a href="https://developer.mozilla.org/en-US/docs/CSS" target="_blank" rel="noopener">CSS</a> property specifies how a flex item will grow or shrink so as to fit the space available in its flex container. This is a <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties" target="_blank" rel="noopener">shorthand</a> property that sets <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/flex-grow" target="_blank" rel="noopener">flex-grow</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/flex-shrink" target="_blank" rel="noopener">flex-shrink</a>, and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/flex-basis" target="_blank" rel="noopener">flex-basis</a>.</p>
+</blockquote>
+<p>and <a href="https://www.w3.org/TR/css-flexbox-1/#flex-common" target="_blank" rel="noopener">w3</a></p>
+<blockquote>
+<p><a href="https://www.w3.org/TR/css-flexbox-1/#propdef-flex" target="_blank" rel="noopener">flex: <positive-number></positive-number></a> Equivalent to <a href="https://www.w3.org/TR/css-flexbox-1/#propdef-flex" target="_blank" rel="noopener">flex: <positive-number> 1 0</positive-number></a>. Makes the flex item flexible and sets the <a href="https://www.w3.org/TR/css-flexbox-1/#flex-flex-basis" target="_blank" rel="noopener">flex basis</a> to zero, resulting in an item that receives the specified proportion of the free space in the flex container. If all items in the flex container use this pattern, their sizes will be proportional to the specified flex factor.</p>
+</blockquote>
+<p>In most browsers, flex: 1 equals 1 1 0 , which means flex-grow: 1, flex-shrink:1, flex-basis: 0 . The flex-grow and flex-shrink specifies how much the item will grow or shrink relative to the rest of the flexible items inside the same container. And the flex-basis specifies the initial length of a flexible item. In this case the bottom View will take up the remaining space. And in that space, we can have whatever flow we want. To move the button to the bottom, we use justifyContent to lay out items in the main axis, with flex-end , which aligns the flex items at the end of the container.</p>
+<h2 id="A-compositional-approach"><a href="#A-compositional-approach" class="headerlink" title="A compositional approach"></a>A compositional approach</h2><p>While this works, code can be duplicated quickly as we need to do this in a lot of screens. All we need is to wrap this ImageButton inside a container . Let’s encapsulate this with a a utility function. Add this utils/moveToBottom.js</p>
+<pre><code>import React from &apos;react&apos;
+import { View, StyleSheet } from &apos;react-native&apos;
+
+function moveToBottom(component) {
+  return (
+    &lt;View style={styles.container}&gt;
+      {component}
+    &lt;/View&gt;
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: &apos;flex-end&apos;,
+    marginBottom: 36
+  }
+})
+
+export default moveToBottom</code></pre><p>Now in our screen, we just need to import</p>
+<pre><code>import moveToBottom from &apos;library/utils/moveToBottom&apos;</code></pre><p>and wrap our button</p>
+<pre><code>{
+  moveToBottom(
+    &lt;ImageButton
+      style={styles.button}
+      title={strings.onboarding.welcome.button}
+      onPress={() =&gt; {
+        this.props.navigation.navigate(&apos;Term&apos;)
+      }} /&gt;
+  )
+}</code></pre><p>This time, we have the same screen as before, but with more reusable code. Since the styles are inside our moveToBottom module, we don’t need to specify styles in our screen any more. Here is the full code</p>
+<pre><code>import React from &apos;react&apos;
+import { View, StyleSheet, Image, Text, Button } from &apos;react-native&apos;
+import strings from &apos;res/strings&apos;
+import palette from &apos;res/palette&apos;
+import images from &apos;res/images&apos;
+import ImageButton from &apos;library/components/ImageButton&apos;
+import moveToBottom from &apos;library/utils/moveToBottom&apos;
+
+export default class Welcome extends React.Component {
+  render() {
+    return (
+      &lt;View style={styles.container}&gt;
+        &lt;Image
+          style={styles.logo}
+          source={images.logo} /&gt;
+        &lt;Image
+          style={styles.image}
+          source={images.placeholder} /&gt;
+        &lt;Text style={styles.heading}&gt;{strings.onboarding.welcome.heading.toUpperCase()}&lt;/Text&gt;
+        &lt;Text style={styles.text}&gt;{strings.onboarding.welcome.text1}&lt;/Text&gt;
+        &lt;Text style={styles.text}&gt;{strings.onboarding.welcome.text2}&lt;/Text&gt;
+        {
+          moveToBottom(
+            &lt;ImageButton
+              style={styles.button}
+              title={strings.onboarding.welcome.button}
+              onPress={() =&gt; {
+                this.props.navigation.navigate(&apos;Term&apos;)
+              }} /&gt;
+          )
+        }
+      &lt;/View&gt;
+    )
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: &apos;center&apos;
+  },
+  logo: {
+    marginTop: 70,
+    marginBottom: 42,
+  },
+  image: {
+
+},
+  heading: {
+    ...palette.heading, ...{
+      marginTop: 40
+    }
+  },
+  text: {
+    ...palette.text, ...{
+      marginHorizontal: 8,
+      marginVertical: 10
+    }
+  }
+})</code></pre><h2 id="How-to-pass-component-as-parameter"><a href="#How-to-pass-component-as-parameter" class="headerlink" title="How to pass component as parameter"></a>How to pass component as parameter</h2><p>I have to admit that I initially implement moveToBottom using Component (we need uppercase since React has a convention of using initial uppercase for components) to embed the Component inside View</p>
+<pre><code>function moveToBottom(Component) {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Component /&gt;
+    &lt;/View&gt;
+  )
+}</code></pre><p>But this results in bundling error</p>
+<pre><code>ExceptionsManager.js:84 Warning: React.createElement: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: &lt;ImageButton /&gt;. Did you accidentally export a JSX literal instead of a component?</code></pre><p>and</p>
+<pre><code>ExceptionsManager.js:76 Invariant Violation: Invariant Violation: Invariant Violation: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object.</code></pre><p>As this moment I release that the thing I pass in is actually an object, not a class , so I treat it as an object and it works</p>
+<pre><code>function moveToBottom(component) {
+  return (
+    &lt;View style={styles.container}&gt;
+      {component}
+    &lt;/View&gt;
+  )
+}</code></pre><h2 id="marginBottom-on-Android"><a href="#marginBottom-on-Android" class="headerlink" title="marginBottom on Android"></a>marginBottom on Android</h2><p>In the above moveToBottom function, I use marginBottom to have some margin from the bottom. This works on iOS but somehow does not have any effect in Android, and I use react-native 0.57.0 at the moment. This inconsistence can happen often in React Native development. A quick workaround is to perform platform check, we can make it into a nifty function in src/library/utils/check</p>
+<pre><code>import { Platform } from &apos;react-native&apos;
+
+const check = {
+  isAndroid: () =&gt; {
+    return Platform.OS === &apos;android&apos;
+  }
+}
+
+export default check</code></pre><p>Then in moveToBottom , let ‘s use paddingBottom in case of app running in Android</p>
+<pre><code>const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: &apos;flex-end&apos;,
+    paddingBottom: check.isAndroid ? 14 : 0
+  }
+})</code></pre><h2 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h2><p>In this post, we go from absolute position to another container, get to know flex , how to add reusable function and how to correctly pass component as parameter. Hope you find it useful. You can also check out this post <a href="https://medium.com/react-native-training/facebook-sdk-with-login-for-react-native-apps-in-2018-196601804f66" target="_blank" rel="noopener">React Native Login Using the Facebook SDK</a> where I shows more tips for React Native developments and recommended links to learn about Flexbox.</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/layout/">layout</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/react-native/">react native</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-setup-Android-projects"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -2492,128 +2797,6 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
     
 
   
-    <article id="post-How-to-use-Sonarqube-in-Swift-projects"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-Sonarqube-in-Swift-projects/">How to use Sonarqube in Swift projects</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-Sonarqube-in-Swift-projects/" class="article-date">
-	  <time datetime="2019-04-29T06:20:52.000Z" itemprop="datePublished">April 29, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/216" target="_blank" rel="noopener">#216</a></strong></p>
-<h2 id="Install-Sonarqube"><a href="#Install-Sonarqube" class="headerlink" title="Install Sonarqube"></a>Install Sonarqube</h2><p><a href="https://docs.sonarqube.org/latest/setup/get-started-2-minutes/" target="_blank" rel="noopener">https://docs.sonarqube.org/latest/setup/get-started-2-minutes/</a></p>
-<ul>
-<li>Download Sonarqube for macOS <a href="https://www.sonarqube.org/downloads/" target="_blank" rel="noopener">https://www.sonarqube.org/downloads/</a></li>
-<li>Put it in <code>~/sonarqube</code></li>
-<li>Run localhost server <code>~/sonarqube/bin/macosx-universal-64/sonar.sh console</code></li>
-<li>Login <code>http://localhost:9000</code> with <code>admin/admin</code></li>
-<li>Create new project</li>
-</ul>
-<h2 id="Install-Sonar-scanner"><a href="#Install-Sonar-scanner" class="headerlink" title="Install Sonar scanner"></a>Install Sonar scanner</h2><p><a href="https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner" target="_blank" rel="noopener">https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner</a></p>
-<ul>
-<li>Download for macOS 64 bit</li>
-<li>Put it in <code>~/sonarscanner</code></li>
-<li>export <code>PATH=$PATH:/Users/khoa/sonarscanner/bin</code></li>
-<li>Go to project, create <code>sonar-project.properties</code></li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># must be unique in a given SonarQube instance</span><br><span class="line">sonar.projectKey=my-app</span><br><span class="line"># this is the name and version displayed in the SonarQube UI. Was mandatory prior to SonarQube 6.1.</span><br><span class="line">sonar.projectName=My App</span><br><span class="line">sonar.projectVersion=1.0</span><br><span class="line"> </span><br><span class="line"># Path is relative to the sonar-project.properties file. Replace &quot;\&quot; by &quot;/&quot; on Windows.</span><br><span class="line"># This property is optional if sonar.modules is set. </span><br><span class="line">sonar.sources=.</span><br><span class="line"> </span><br><span class="line"># Encoding of the source code. Default is default system encoding</span><br><span class="line">#sonar.sourceEncoding=UTF-8</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Run <code>sonar-scanner</code></li>
-</ul>
-<h2 id="Install-swift-plugin"><a href="#Install-swift-plugin" class="headerlink" title="Install swift plugin"></a>Install swift plugin</h2><p><a href="https://github.com/Backelite/sonar-swift" target="_blank" rel="noopener">https://github.com/Backelite/sonar-swift</a></p>
-<ul>
-<li>Download jar file <a href="https://github.com/Backelite/sonar-swift/releases" target="_blank" rel="noopener">https://github.com/Backelite/sonar-swift/releases</a></li>
-<li>Follow <a href="https://docs.sonarqube.org/latest/setup/install-plugin/" target="_blank" rel="noopener">https://docs.sonarqube.org/latest/setup/install-plugin/</a></li>
-<li>Put jar file into <code>~/sonarqube/extensions/plugins</code></li>
-<li>Restart server</li>
-<li>Copy run-sonar-swift.sh <a href="https://github.com/Backelite/sonar-swift/blob/develop/sonar-swift-plugin/src/main/shell/run-sonar-swift.sh" target="_blank" rel="noopener">https://github.com/Backelite/sonar-swift/blob/develop/sonar-swift-plugin/src/main/shell/run-sonar-swift.sh</a> to project folder</li>
-<li>Go to Quality Profile <a href="http://localhost:9000/profiles?language=swift" target="_blank" rel="noopener">http://localhost:9000/profiles?language=swift</a></li>
-</ul>
-<img width="979" alt="a" src="https://user-images.githubusercontent.com/2284279/56885533-ed320000-6a6c-11e9-8550-7b24487a0a45.png">
-
-<h2 id="Skip-some-tools"><a href="#Skip-some-tools" class="headerlink" title="Skip some tools"></a>Skip some tools</h2><p>Modify <code>run-sonar-swift.sh</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">vflag=&quot;&quot;</span><br><span class="line">nflag=&quot;&quot;</span><br><span class="line">unittests=&quot;on&quot;</span><br><span class="line">swiftlint=&quot;on&quot;</span><br><span class="line">tailor=&quot;off&quot;</span><br><span class="line">lizard=&quot;on&quot;</span><br><span class="line">oclint=&quot;off&quot;</span><br><span class="line">fauxpas=&quot;off&quot;</span><br><span class="line">sonarscanner=&quot;&quot;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Git-ignore"><a href="#Git-ignore" class="headerlink" title="Git ignore"></a>Git ignore</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.scannerwork/</span><br><span class="line">sonar-reports/</span><br><span class="line">compile_commands.json</span><br></pre></td></tr></table></figure>
-
-<h2 id="run-sonar-swift-sh"><a href="#run-sonar-swift-sh" class="headerlink" title="run-sonar-swift.sh"></a>run-sonar-swift.sh</h2><ul>
-<li>Update sonar-project.properties</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sonar.swift.appScheme=MyApp Staging</span><br><span class="line">sonar.swift.project=MyApp.xcodeproj</span><br><span class="line">sonar.swift.workspace=MyApp.xcworkspace</span><br><span class="line">sonar.swift.simulator=platform=iOS Simulator,name=iPhone Xʀ</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Run <code>chmod +x run-sonar-swift.sh</code></li>
-<li>Run <code>./run-sonar-swift.sh</code></li>
-</ul>
-<h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><h3 id="failed-with-error-code-64-https-github-com-Backelite-sonar-swift-issues-222"><a href="#failed-with-error-code-64-https-github-com-Backelite-sonar-swift-issues-222" class="headerlink" title="failed with error code: 64 https://github.com/Backelite/sonar-swift/issues/222"></a>failed with error code: 64 <a href="https://github.com/Backelite/sonar-swift/issues/222" target="_blank" rel="noopener">https://github.com/Backelite/sonar-swift/issues/222</a></h3><p>When run <code>./run-sonar-swift.sh</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild: error: &apos;&apos;MyApp.xcodeproj&apos;&apos; does not exist.</span><br><span class="line">2019-04-29 12:10:17.486 defaults[4134:569992]</span><br><span class="line">Domain CFBundleShortVersionString does not exist</span><br><span class="line">.Extracting Xcode project informationxcodebuild: error: option &apos;Destination&apos; requires at least one parameter of the form &apos;key=value&apos;</span><br></pre></td></tr></table></figure>
-
-<p>👉 Remove quotes in <code>sonar-project.properties</code><br>👉 Modify run-sonar-swift.sh, add these before <code>Check for mandatory parameters</code> section</p>
-<p>Surround by double quotes</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">projectFile=&quot;\&quot;$projectFile\&quot;&quot;</span><br><span class="line">workspaceFile=&quot;\&quot;$workspaceFile\&quot;&quot;</span><br><span class="line">appScheme=&quot;\&quot;$appScheme\&quot;&quot;</span><br><span class="line">destinationSimulator=&quot;\&quot;$destinationSimulator\&quot;&quot;</span><br></pre></td></tr></table></figure>
-
-<p>😢 Does not work<br>👉 Need to create a scheme name without space</p>
-<h3 id="Error-code-65"><a href="#Error-code-65" class="headerlink" title="Error code 65"></a>Error code 65</h3><p>👉Specify team in Xcode project</p>
-<h3 id="destination"><a href="#destination" class="headerlink" title="destination"></a>destination</h3><p>Need double quotes</p>
-<p><code>destinationSimulator=&quot;\&quot;$destinationSimulator\&quot;&quot;</code></p>
-<p>Use equal sign <code>=</code> </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-destination=&quot;$destinationSimulator&quot;</span><br></pre></td></tr></table></figure>
-
-<p>instead of space ‘ ‘</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-destination &quot;$destinationSimulator&quot;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Metric-‘files’-should-not-be-computed-by-a-Sensor"><a href="#Metric-‘files’-should-not-be-computed-by-a-Sensor" class="headerlink" title="Metric ‘files’ should not be computed by a Sensor"></a>Metric ‘files’ should not be computed by a Sensor</h3><p>When run <code>sonar-scanner</code> <a href="https://github.com/Backelite/sonar-swift/issues/212" target="_blank" rel="noopener">https://github.com/Backelite/sonar-swift/issues/212</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">11:01:14.406 INFO: Sensor JaCoCo XML Report Importer [jacoco]</span><br><span class="line">11:01:14.409 DEBUG: No reports found</span><br><span class="line">11:01:14.409 INFO: Sensor JaCoCo XML Report Importer [jacoco] (done) | time=3ms</span><br><span class="line">11:01:14.409 INFO: Sensor SwiftLint [backelitesonarswiftplugin]</span><br><span class="line">11:01:14.417 INFO: Sensor SwiftLint [backelitesonarswiftplugin] (done) | time=8ms</span><br><span class="line">11:01:14.417 INFO: Sensor Tailor [backelitesonarswiftplugin]</span><br><span class="line">11:01:14.418 INFO: Sensor Tailor [backelitesonarswiftplugin] (done) | time=1ms</span><br><span class="line">11:01:14.418 INFO: Sensor OCLint [backelitesonarswiftplugin]</span><br><span class="line">11:01:14.419 INFO: Sensor OCLint [backelitesonarswiftplugin] (done) | time=1ms</span><br><span class="line">11:01:14.419 INFO: Sensor FauxPas [backelitesonarswiftplugin]</span><br><span class="line">11:01:14.419 INFO: Sensor FauxPas [backelitesonarswiftplugin] (done) | time=0ms</span><br><span class="line">11:01:14.419 INFO: Sensor Swift Squid [backelitesonarswiftplugin]</span><br><span class="line">11:01:14.526 INFO: ------------------------------------------------------------------------</span><br><span class="line">11:01:14.526 INFO: EXECUTION FAILURE</span><br><span class="line">11:01:14.526 INFO: ------------------------------------------------------------------------</span><br><span class="line">11:01:14.527 INFO: Total time: 6.180s</span><br><span class="line">11:01:14.603 INFO: Final Memory: 25M/566M</span><br><span class="line">11:01:14.603 INFO: ------------------------------------------------------------------------</span><br><span class="line">11:01:14.603 ERROR: Error during SonarQube Scanner execution</span><br><span class="line">java.lang.UnsupportedOperationException: Metric &apos;files&apos; should not be computed by a Sensor</span><br><span class="line">	at org.sonar.scanner.sensor.DefaultSensorStorage.saveMeasure(DefaultSensorStorage.java:168)</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">👉Install maven https://maven.apache.org/download.cgi</span><br><span class="line">Edit `ObjectiveCSquidSensor.java` and `SwiftSquidSensor`, remove line with `CoreMetrics.FILES`</span><br><span class="line">Run `export PATH=$PATH:/Users/khoa/apache-maven/bin`</span><br><span class="line">Run `./build-and-deploy.sh`</span><br><span class="line">Or `~/apache-maven/bin/mvn clean install`</span><br><span class="line"></span><br><span class="line">🎉 Built jar is in `sonar-swift-plugin/target/backelite-sonar-swift-plugin-0.4.4.jar`, copy back to `extensions/plugins`</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### How to enable SwiftLint as default profile 🤔</span><br><span class="line"></span><br><span class="line">👉 Need to close current Sonar tab and restart server</span><br><span class="line"></span><br><span class="line">### Testing failed: unable to attach DB</span><br><span class="line"></span><br><span class="line">Modify `run-sonar-swift.sh` to add `-UseModernBuildSystem=NO` to `buildCmd+=(-destination`</span><br><span class="line"></span><br><span class="line">### slather No coverage directory found</span><br><span class="line"></span><br><span class="line">Try running</span><br></pre></td></tr></table></figure>
-
-<p>slather coverage –input-format profdata –cobertura-xml –output-directory sonar-reports –workspace MyApp.xcworkspace –scheme MyAppStaging MyApp.xcodeproj</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">👉 Enable coverage option in scheme -&gt; Test</span><br><span class="line"></span><br><span class="line">![](https://github.com/SlatherOrg/slather/raw/master/README_Images/test_scheme.png)</span><br><span class="line"></span><br><span class="line">Optional: declare `.slather.yml` file https://github.com/SlatherOrg/slather</span><br><span class="line"></span><br><span class="line">### Unable to execute SonarQube</span><br></pre></td></tr></table></figure>
-
-<p>14:53:23.251 ERROR: Error during SonarQube Scanner execution<br>org.sonarsource.scanner.api.internal.ScannerException: Unable to execute SonarQube<br>    at org.sonarsource.scanner.api.internal.IsolatedLauncherFactory.lambda$createLauncher$0(IsolatedLauncherFactory.java:85)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">👉Start sonar server</span><br><span class="line"></span><br><span class="line">### LizardReportParser$SwiftFunction cannot be cast</span><br></pre></td></tr></table></figure>
-
-<p>Error during SonarQube Scanner execution<br>java.lang.ClassCastException: com.backelite.sonarqube.swift.complexity.LizardReportParser$SwiftFunction cannot be cast to org.sonar.api.batch.fs.internal.DefaultInputComponent</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">👉 Run [lizard](https://github.com/terryyin/lizard) manually</span><br></pre></td></tr></table></figure>
-
-<p>lizard –xml sonar-reports/lizard-report.xml<br>```</p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2718,6 +2901,18 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-declare-commands-in-Xcode-extenstions/">How to declare commands in Xcode extenstions</a></h6>
+              <span>April 13, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-disable-ring-type-in-TextField-in-SwiftUI/">How to disable ring type in TextField in SwiftUI</a></h6>
               <span>April 6, 2020</span>
             </div>
@@ -2772,18 +2967,6 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-use-background-in-iOS/">How to use background in iOS</a></h6>
-              <span>March 25, 2020</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2806,7 +2989,7 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2816,7 +2999,7 @@ git bisect bad</code></pre><h2 id="Git-alias"><a href="#Git-alias" class="header
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-data/">core data</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">158</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">97</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">264</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">49</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work/">work</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">22</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-data/">core data</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">158</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">97</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">265</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">49</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work/">work</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">23</span></li></ul>
     </div>
   </div>
 
