@@ -181,6 +181,156 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-How-to-show-image-picker-in-SwiftUI"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-show-image-picker-in-SwiftUI/">How to show image picker in SwiftUI</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-show-image-picker-in-SwiftUI/" class="article-date">
+	  <time datetime="2019-11-02T20:41:52.000Z" itemprop="datePublished">November 2, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/485" target="_blank" rel="noopener">#485</a></strong></p>
+<p>The easiest way to show image picker in iOS is to use <code>UIImagePickerController</code>, and we can bridge that to SwiftUI via <code>UIViewControllerRepresentable</code></p>
+<h2 id="First-attempt-use-Environment"><a href="#First-attempt-use-Environment" class="headerlink" title="First attempt, use Environment"></a>First attempt, use Environment</h2><p>We conform to <code>UIViewControllerRepresentable</code> and make a Coordinator, which is the recommended way to manage the bridging with <code>UIViewController</code>.</p>
+<p>There’s some built in environment property we can use, one of those is <code>presentationMode</code> where we can call <code>dismiss</code> to dismiss the modal.</p>
+<p>My first attempt looks like below</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">ImagePicker</span>: <span class="title">UIViewControllerRepresentable</span> </span>&#123;</span><br><span class="line">    @<span class="type">Environment</span>(\.presentationMode) <span class="keyword">private</span> <span class="keyword">var</span> presentationMode</span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> image: <span class="type">UIImage?</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">makeCoordinator</span><span class="params">()</span></span> -&gt; <span class="type">ImagePicker</span>.<span class="type">Coordinator</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">ImagePicker</span>.<span class="type">Coordinator</span>(</span><br><span class="line">            presentationMode: presentationMode,</span><br><span class="line">            image: $image</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">makeUIViewController</span><span class="params">(context: UIViewControllerRepresentableContext&lt;ImagePicker&gt;)</span></span> -&gt; <span class="type">UIImagePickerController</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> controller = <span class="type">UIImagePickerController</span>()</span><br><span class="line">        controller.delegate = context.coordinator</span><br><span class="line">        <span class="keyword">return</span> controller</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">updateUIViewController</span><span class="params">(<span class="number">_</span> uiViewController: UIImagePickerController, context: UIViewControllerRepresentableContext&lt;ImagePicker&gt;)</span></span> &#123;</span><br><span class="line">        <span class="comment">// No op</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">extension</span> <span class="title">ImagePicker</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Coordinator</span>: <span class="title">NSObject</span>, <span class="title">UINavigationControllerDelegate</span> </span>&#123;</span><br><span class="line">        @<span class="type">Binding</span> <span class="keyword">var</span> presentationMode: <span class="type">PresentationMode</span></span><br><span class="line">        @<span class="type">Binding</span> <span class="keyword">var</span> image: <span class="type">UIImage?</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">init</span>(presentationMode: <span class="type">Binding</span>&lt;<span class="type">PresentationMode</span>&gt;, image: <span class="type">Binding</span>&lt;<span class="type">UIImage?</span>&gt;) &#123;</span><br><span class="line">            <span class="keyword">self</span>._presentationMode = presentationMode</span><br><span class="line">            <span class="keyword">self</span>._image = image</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ImagePicker</span>.<span class="title">Coordinator</span>: <span class="title">UIImagePickerControllerDelegate</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">imagePickerController</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="number">_</span> picker: UIImagePickerController,</span></span></span><br><span class="line"><span class="function"><span class="params">        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: <span class="keyword">Any</span>])</span></span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.image = info[<span class="type">UIImagePickerController</span>.<span class="type">InfoKey</span>.originalImage] <span class="keyword">as</span>? <span class="type">UIImage</span></span><br><span class="line">        presentationMode.dismiss()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">imagePickerControllerDidCancel</span><span class="params">(<span class="number">_</span> picker: UIImagePickerController)</span></span> &#123;</span><br><span class="line">        presentationMode.dismiss()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Signatures"><a href="#Signatures" class="headerlink" title="Signatures"></a>Signatures</h3><p>We need to be aware of the types of these property wrappers</p>
+<p>Where we declare environment, <code>presentationMode</code> is of type <code>Binding&lt;PresentationMode&gt;</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@<span class="type">Environment</span>(\.presentationMode) <span class="keyword">private</span> <span class="keyword">var</span> presentationMode</span><br></pre></td></tr></table></figure>
+
+<p>Given a Binding declaration, for example <code>@Binding var image: UIImage?</code>, <code>image</code> is of type <code>UIImage?</code> but <code>$image</code> is <code>Binding&lt;UIImage?&gt;</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">makeCoordinator</span><span class="params">()</span></span> -&gt; <span class="type">ImagePicker</span>.<span class="type">Coordinator</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">ImagePicker</span>.<span class="type">Coordinator</span>(</span><br><span class="line">        image: $image,</span><br><span class="line">        isPresented: $isPresented</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>When we want to assign to variables in <code>init</code>, we use <code>_image</code> to use mutable <code>Binding&lt;UIImage?&gt;</code> because <code>self.$image</code> gives us immutable <code>Binding&lt;UIImage?&gt;</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Coordinator</span>: <span class="title">NSObject</span>, <span class="title">UINavigationControllerDelegate</span> </span>&#123;</span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> presentationMode: <span class="type">PresentationMode</span></span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> image: <span class="type">UIImage?</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">init</span>(presentationMode: <span class="type">Binding</span>&lt;<span class="type">PresentationMode</span>&gt;, image: <span class="type">Binding</span>&lt;<span class="type">UIImage?</span>&gt;) &#123;</span><br><span class="line">        <span class="keyword">self</span>._presentationMode = presentationMode</span><br><span class="line">        <span class="keyword">self</span>._image = image</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="How-to-use"><a href="#How-to-use" class="headerlink" title="How to use"></a>How to use</h3><p>To show modal, we use <code>sheet</code> and use a state <code>@State var showImagePicker: Bool = false</code> to control its  presentation</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Button</span>(action: &#123;</span><br><span class="line">    <span class="keyword">self</span>.showImagePicker.toggle()</span><br><span class="line">&#125;, label: &#123;</span><br><span class="line">    <span class="type">Text</span>(<span class="string">"Choose image"</span>)</span><br><span class="line">&#125;)</span><br><span class="line">.sheet(isPresented: $showImagePicker, content: &#123;</span><br><span class="line">    <span class="type">ImagePicker</span>(image: <span class="keyword">self</span>.$image)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Environment-outside-body"><a href="#Environment-outside-body" class="headerlink" title="Environment outside body"></a>Environment outside body</h3><p>If we run the above code, it will crash because of we access environment value <code>presentationMode</code> in <code>makeCoordinator</code> and this is outside <code>body</code></p>
+<blockquote>
+<p>Fatal error: Reading Environment&lt;Binding<presentationmode>&gt; outside View.body</presentationmode></p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">makeCoordinator</span><span class="params">()</span></span> -&gt; <span class="type">ImagePicker</span>.<span class="type">Coordinator</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">ImagePicker</span>.<span class="type">Coordinator</span>(</span><br><span class="line">        presentationMode: presentationMode,</span><br><span class="line">        image: $image</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Second-attempt-pass-closure"><a href="#Second-attempt-pass-closure" class="headerlink" title="Second attempt, pass closure"></a>Second attempt, pass closure</h2><p>So instead of passing environment <code>presentationMode</code>, we can pass closure, just like in React where we pass functions to child component.</p>
+<p>So <code>ImagePicker</code> can just accept a closure called <code>onDone</code>, and the component that uses it can do the dismissal.</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Button</span>(action: &#123;</span><br><span class="line">    <span class="keyword">self</span>.showImagePicker.toggle()</span><br><span class="line">&#125;, label: &#123;</span><br><span class="line">    <span class="type">Text</span>(<span class="string">"Choose image"</span>)</span><br><span class="line">&#125;)</span><br><span class="line">.sheet(isPresented: $showImagePicker, content: &#123;</span><br><span class="line">    <span class="type">ImagePicker</span>(image: <span class="keyword">self</span>.$image, onDone: &#123;</span><br><span class="line">        <span class="keyword">self</span>.presentationMode.wrappedValue.dismiss()</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>Unfortunately, although the <code>onDone</code> gets called, the modal is not dismissed.</p>
+<h2 id="Use-Binding-instead-of-Environment"><a href="#Use-Binding-instead-of-Environment" class="headerlink" title="Use Binding instead of Environment"></a>Use Binding instead of Environment</h2><p>Maybe there are betters way, but we can use Binding to replace usage of Environment.</p>
+<p>We can do that by accepting <code>Binding</code> and change the <code>isPresented</code> state</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">ImagePicker</span>: <span class="title">UIViewControllerRepresentable</span> </span>&#123;</span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> image: <span class="type">UIImage?</span></span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> isPresented: <span class="type">Bool</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">makeCoordinator</span><span class="params">()</span></span> -&gt; <span class="type">ImagePicker</span>.<span class="type">Coordinator</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">ImagePicker</span>.<span class="type">Coordinator</span>(</span><br><span class="line">            image: $image,</span><br><span class="line">            isPresented: $isPresented</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">makeUIViewController</span><span class="params">(context: UIViewControllerRepresentableContext&lt;ImagePicker&gt;)</span></span> -&gt; <span class="type">UIImagePickerController</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> controller = <span class="type">UIImagePickerController</span>()</span><br><span class="line">        controller.delegate = context.coordinator</span><br><span class="line">        <span class="keyword">return</span> controller</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">updateUIViewController</span><span class="params">(<span class="number">_</span> uiViewController: UIImagePickerController, context: UIViewControllerRepresentableContext&lt;ImagePicker&gt;)</span></span> &#123;</span><br><span class="line">        <span class="comment">// No op</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">extension</span> <span class="title">ImagePicker</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Coordinator</span>: <span class="title">NSObject</span>, <span class="title">UINavigationControllerDelegate</span> </span>&#123;</span><br><span class="line">        @<span class="type">Binding</span> <span class="keyword">var</span> isPresented: <span class="type">Bool</span></span><br><span class="line">        @<span class="type">Binding</span> <span class="keyword">var</span> image: <span class="type">UIImage?</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">init</span>(image: <span class="type">Binding</span>&lt;<span class="type">UIImage?</span>&gt;, isPresented: <span class="type">Binding</span>&lt;<span class="type">Bool</span>&gt;) &#123;</span><br><span class="line">            <span class="keyword">self</span>._image = image</span><br><span class="line">            <span class="keyword">self</span>._isPresented = isPresented</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ImagePicker</span>.<span class="title">Coordinator</span>: <span class="title">UIImagePickerControllerDelegate</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">imagePickerController</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="number">_</span> picker: UIImagePickerController,</span></span></span><br><span class="line"><span class="function"><span class="params">        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: <span class="keyword">Any</span>])</span></span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.image = info[<span class="type">UIImagePickerController</span>.<span class="type">InfoKey</span>.originalImage] <span class="keyword">as</span>? <span class="type">UIImage</span></span><br><span class="line">        isPresented = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">imagePickerControllerDidCancel</span><span class="params">(<span class="number">_</span> picker: UIImagePickerController)</span></span> &#123;</span><br><span class="line">        isPresented = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>How to use it</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Button</span>(action: &#123;</span><br><span class="line">    <span class="keyword">self</span>.showImagePicker.toggle()</span><br><span class="line">&#125;, label: &#123;</span><br><span class="line">    <span class="type">Text</span>(<span class="string">"Choose image"</span>)</span><br><span class="line">&#125;)</span><br><span class="line">.sheet(isPresented: $showImagePicker, content: &#123;</span><br><span class="line">    <span class="type">ImagePicker</span>(image: <span class="keyword">self</span>.$image, isPresented: <span class="keyword">self</span>.$showImagePicker)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Pass-ImagePicker-to-Coordinator"><a href="#Pass-ImagePicker-to-Coordinator" class="headerlink" title="Pass ImagePicker to Coordinator"></a>Pass ImagePicker to Coordinator</h2><ul>
+<li><a href="https://www.youtube.com/watch?v=Ek_r-7aRp3A" target="_blank" rel="noopener">Using coordinators to manage SwiftUI view controllers</a></li>
+</ul>
+<p>So that we can call <code>parent.presentationMode.wrappedValue.dismiss()</code></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swiftUI/">swiftUI</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-add-monkey-test-to-iOS-apps"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-add-monkey-test-to-iOS-apps/">How to add monkey test to iOS apps</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-add-monkey-test-to-iOS-apps/" class="article-date">
+	  <time datetime="2019-11-01T08:48:43.000Z" itemprop="datePublished">November 1, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/484" target="_blank" rel="noopener">#484</a></strong></p>
+<p>Use <a href="https://github.com/zalando/SwiftMonkey" target="_blank" rel="noopener">SwiftMonkey</a> which adds random UITests gestures</p>
+<p>Add to UITests target</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">target <span class="string">'MyAppUITests'</span> <span class="keyword">do</span></span><br><span class="line">  pod <span class="string">'R.swift'</span>, <span class="string">'~&gt; 5.0'</span></span><br><span class="line">  pod <span class="string">'SwiftMonkey'</span>, <span class="string">'~&gt; 2.1.0'</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><h3 id="Failed-to-determine-hittability-of-Button"><a href="#Failed-to-determine-hittability-of-Button" class="headerlink" title="Failed to determine hittability of Button"></a>Failed to determine hittability of Button</h3><blockquote>
+<p>Failed to determine hittability of Button: Unable to fetch parameterized attribute XC_kAXXCParameterizedAttributeConvertHostedViewPositionFromContext, remote interface does not have this capability.</p>
+</blockquote>
+<p>This happens when using SwiftMonkey and somewhere in our code uses <code>isHittable</code>, so best to avoid that by having isolated monkey test only</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> XCTest</span><br><span class="line"><span class="keyword">import</span> SwiftMonkey</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MonkeyTests</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> app: <span class="type">XCUIApplication!</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">setUp</span><span class="params">()</span></span> &#123;</span><br><span class="line">        continueAfterFailure = <span class="literal">false</span></span><br><span class="line">        app = <span class="type">XCUIApplication</span>()</span><br><span class="line">        app.launch()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testMonkey</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> monkey = <span class="type">Monkey</span>(frame: app.frame)</span><br><span class="line">        monkey.addDefaultUIAutomationActions()</span><br><span class="line">        monkey.addXCTestTapAlertAction(interval: <span class="number">100</span>, application: app)</span><br><span class="line">        monkey.monkeyAround()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Another workaround is possibly use <code>addDefaultXCTestPublicActions</code> other than <code>addDefaultUIAutomationActions</code></p>
+<h3 id="UI-Test-Activity"><a href="#UI-Test-Activity" class="headerlink" title="UI Test Activity:"></a>UI Test Activity:</h3><blockquote>
+<p>Assertion Failure: MonkeyXCTest.swift:33: Failed to get matching snapshots: Timed out while evaluating UI query.</p>
+</blockquote>
+<p>This seems related to SwiftMonkey trying to snapshot. Workaround is to remove</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">monkey.addXCTestTapAlertAction(interval: <span class="number">100</span>, application: app)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/testing/">testing</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-How-to-use-array-of-strings-in-ForEach-in-SwiftUI"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1968,124 +2118,6 @@ end</code></pre></li>
     
 
   
-    <article id="post-How-to-check-if-push-notification-is-actually-enabled-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-check-if-push-notification-is-actually-enabled-in-iOS/">How to check if push notification is actually enabled in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-check-if-push-notification-is-actually-enabled-in-iOS/" class="article-date">
-	  <time datetime="2019-10-10T10:50:26.000Z" itemprop="datePublished">October 10, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/455" target="_blank" rel="noopener">#455</a></strong></p>
-<p>There are times we want to log if user can receive push notification. We may be tempted to merely use <code>isRegisteredForRemoteNotifications</code> but that is not enough. From a user ‘s point of view, they can either receive push notification or not. But behind the scene, many factors are in the game. It can be that user has disabled push notification in app settings or in iOS Settings. It can also be that user enables push notification but disables all sound or banner display mechanism.</p>
-<p><code>isRegisteredForRemoteNotifications</code> is that your app has connected to APNS and get device token, this can be for silent push notification<br><code>currentUserNotificationSettings</code> is for user permissions, without this, there is no alert, banner or sound push notification delivered to the app<br>Here is the check</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">var</span> isPushNotificationEnabled: <span class="type">Bool</span> &#123;</span><br><span class="line">  <span class="keyword">guard</span> <span class="keyword">let</span> settings = <span class="type">UIApplication</span>.shared.currentUserNotificationSettings</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="type">UIApplication</span>.shared.isRegisteredForRemoteNotifications</span><br><span class="line">    &amp;&amp; !settings.types.isEmpty</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>For iOS 10, with the introduction of <code>UserNotifications</code> framework, instead of checking for <code>currentUserNotificationSettings</code>, you should use UserNotifications framework</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">center.getNotificationSettings(completionHandler: &#123; settings <span class="keyword">in</span></span><br><span class="line">  <span class="keyword">switch</span> settings.authorizationStatus &#123;</span><br><span class="line">  <span class="keyword">case</span> .authorized, .provisional:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"authorized"</span>)</span><br><span class="line">  <span class="keyword">case</span> .denied:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"denied"</span>)</span><br><span class="line">  <span class="keyword">case</span> .notDetermined:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"not determined, ask user for permission now"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<p>Push notification can be delivered to our apps in many ways, and we can ask for that</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">UNUserNotificationCenter</span>.current()</span><br><span class="line">  .requestAuthorization(options: [.alert, .sound, .badge])</span><br></pre></td></tr></table></figure>
-
-<p>User can go to Settings app and turn off any of those at any time, so it’s best to check for that in the settings object</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">UNNotificationSettings</span> : <span class="title">NSObject</span>, <span class="title">NSCopying</span>, <span class="title">NSSecureCoding</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">var</span> authorizationStatus: <span class="type">UNAuthorizationStatus</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">var</span> soundSetting: <span class="type">UNNotificationSetting</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">var</span> badgeSetting: <span class="type">UNNotificationSetting</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">var</span> alertSetting: <span class="type">UNNotificationSetting</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">var</span> notificationCenterSetting: <span class="type">UNNotificationSetting</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Original answer <a href="https://stackoverflow.com/a/44407710/1418457" target="_blank" rel="noopener">https://stackoverflow.com/a/44407710/1418457</a></p>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-use-UserNotificationsUI-in-iOS"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-use-UserNotificationsUI-in-iOS/">How to use UserNotificationsUI in iOS</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-use-UserNotificationsUI-in-iOS/" class="article-date">
-	  <time datetime="2019-10-10T10:45:29.000Z" itemprop="datePublished">October 10, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/454" target="_blank" rel="noopener">#454</a></strong></p>
-<p>From documentation <a href="https://developer.apple.com/documentation/usernotificationsui" target="_blank" rel="noopener">https://developer.apple.com/documentation/usernotificationsui</a></p>
-<blockquote>
-<p>Customize how local and remote notifications appear on the user’s device by adding a notification content app extension to the bundle of your iOS app. Your extension manages a custom view controller, which you use to present the content from incoming notifications. When a notification arrives, the system displays your view controller in addition to, or in place of, the default system interface.</p>
-</blockquote>
-<p><a href="https://developer.apple.com/documentation/usernotificationsui/customizing_the_appearance_of_notifications" target="_blank" rel="noopener">https://developer.apple.com/documentation/usernotificationsui/customizing_the_appearance_of_notifications</a></p>
-<blockquote>
-<p>When an iOS device receives a notification containing an alert, the system displays the contents of the alert in two stages. Initially, it displays an abbreviated banner with the title, subtitle, and two to four lines of body text from the notification. If the user presses the abbreviated banner, iOS displays the full notification interface, including any notification-related actions. The system provides the interface for the abbreviated banner, but you can customize the full interface using a notification content app extension.</p>
-</blockquote>
-<p><img src="https://docs-assets.developer.apple.com/published/ff99a71282/b6f2b1aa-fb42-4517-b5b8-9e955c6455da.png" alt></p>
-<p>Use <code>Notification Content Extension</code></p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">didReceive</span><span class="params">(<span class="number">_</span> notification: UNNotification)</span></span> &#123;</span><br><span class="line">   <span class="keyword">self</span>.bodyText?.text = notification.request.content.body</span><br><span class="line">   <span class="keyword">self</span>.headlineText?.text = notification.request.content.title</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -2190,6 +2222,30 @@ end</code></pre></li>
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/blog/How-to-format-percent-in-Swift/">How to format percent in Swift</a></h6>
+              <span>April 16, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/blog/How-to-declare-commands-in-Xcode-extensions/">How to declare commands in Xcode extensions</a></h6>
+              <span>April 13, 2020</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/blog/How-to-declare-commands-in-Xcode-extenstions/">How to declare commands in Xcode extenstions</a></h6>
               <span>April 13, 2020</span>
             </div>
@@ -2232,30 +2288,6 @@ end</code></pre></li>
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-conditionally-apply-modifier-in-SwiftUI/">How to conditionally apply modifier in SwiftUI</a></h6>
-              <span>March 30, 2020</span>
-            </div>
-
-          </li>
-        
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/blog/How-to-toggle-with-animation-in-SwiftUI/">How to toggle with animation in SwiftUI</a></h6>
-              <span>March 30, 2020</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2278,7 +2310,7 @@ end</code></pre></li>
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2288,7 +2320,7 @@ end</code></pre></li>
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-data/">core data</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">158</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">97</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">265</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">49</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work/">work</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">23</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-data/">core data</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">158</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">97</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">267</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">49</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work/">work</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">24</span></li></ul>
     </div>
   </div>
 
