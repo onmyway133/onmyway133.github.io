@@ -72,6 +72,8 @@ var themeMenus = {};
 
   themeMenus["/about/"] = "About"; 
 
+  themeMenus["/apps/"] = "apps"; 
+
   themeMenus["/writing/"] = "writing"; 
 
   themeMenus["/archives"] = "Archives"; 
@@ -118,6 +120,8 @@ var themeMenus = {};
                       <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">Home</a> </li>
                     
                       <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">About</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/apps/">apps</a> </li>
                     
                       <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/writing/">writing</a> </li>
                     
@@ -180,6 +184,408 @@ var themeMenus = {};
       <div id="content" class="outer">
         
           <section id="main">
+  
+    <article id="post-How-to-add-AdMob-to-Android-app"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-add-AdMob-to-Android-app/">How to add AdMob to Android app</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-add-AdMob-to-Android-app/" class="article-date">
+	  <time datetime="2019-09-27T07:33:49.000Z" itemprop="datePublished">September 27, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/431" target="_blank" rel="noopener">#431</a></strong></p>
+<h2 id="Use-AdMob-with-Firebase"><a href="#Use-AdMob-with-Firebase" class="headerlink" title="Use AdMob with Firebase"></a>Use AdMob with Firebase</h2><ul>
+<li><a href="https://firebase.google.com/docs/admob/android/quick-start" target="_blank" rel="noopener">https://firebase.google.com/docs/admob/android/quick-start</a></li>
+</ul>
+<p><code>build.gradle</code></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.google.gms:google-services:4.3.2'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>app/build.gradle</code></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Version</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Firebase</span> &#123;</span></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">def</span> analytics = <span class="string">"17.2.0"</span></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">def</span> ads = <span class="string">"18.2.0"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation <span class="string">"com.google.firebase:firebase-analytics:$Version.Firebase.analytics"</span></span><br><span class="line">    implementation <span class="string">"com.google.firebase:firebase-ads:$Version.Firebase.ads"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.google.gms.google-services'</span></span><br></pre></td></tr></table></figure>
+
+<p><code>Manifest.xml</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">manifest</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">application</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:name</span>=<span class="string">"com.google.android.gms.ads.APPLICATION_ID"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:value</span>=<span class="string">"[ADMOB_APP_ID]"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">manifest</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>MyApplication.kt</code></p>
+<figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyApplication</span>: <span class="type">Application</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate()</span><br><span class="line"></span><br><span class="line">        MobileAds.initialize(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="AdView"><a href="#AdView" class="headerlink" title="AdView"></a>AdView</h2><p><code>fragment.xml</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">com.google.android.gms.ads.AdView</span></span></span><br><span class="line"><span class="tag">        <span class="attr">xmlns:ads</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/adView"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">ads:adSize</span>=<span class="string">"BANNER"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">ads:adUnitId</span>=<span class="string">"ca-app-pub-123456/123456"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">ads:layout_constraintBottom_toBottomOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">ads:layout_constraintLeft_toLeftOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">ads:layout_constraintRight_toRightOf</span>=<span class="string">"parent"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>Fragment.kt</code></p>
+<figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.google.android.gms.ads.AdRequest</span><br><span class="line"><span class="keyword">import</span> com.google.android.gms.ads.AdView</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> request = AdRequest.Builder().build()</span><br><span class="line">adView.loadAd(request)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><h3 id="Link-your-app-to-Firebase-option-not-showing"><a href="#Link-your-app-to-Firebase-option-not-showing" class="headerlink" title="Link your app to Firebase option not showing"></a>Link your app to Firebase option not showing</h3><ul>
+<li><a href="https://support.google.com/admob/answer/6383165?authuser=0" target="_blank" rel="noopener">https://support.google.com/admob/answer/6383165?authuser=0</a></li>
+<li>Use standalone AdMob <a href="https://developers.google.com/admob/android/quick-start" target="_blank" rel="noopener">https://developers.google.com/admob/android/quick-start</a></li>
+</ul>
+<p><code>app/build.gradle</code></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation <span class="string">'com.google.android.gms:play-services-ads:18.2.0'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Cannot-fit-requested-classes-in-a-single-dex-file"><a href="#Cannot-fit-requested-classes-in-a-single-dex-file" class="headerlink" title="Cannot fit requested classes in a single dex file"></a>Cannot fit requested classes in a single dex file</h3><ul>
+<li><a href="https://stackoverflow.com/questions/48249633/errorcannot-fit-requested-classes-in-a-single-dex-file-try-supplying-a-main-dex" target="_blank" rel="noopener">https://stackoverflow.com/questions/48249633/errorcannot-fit-requested-classes-in-a-single-dex-file-try-supplying-a-main-dex</a></li>
+</ul>
+<p><code>app/build.gradle</code></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        multiDexEnabled <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation <span class="string">'com.android.support:multidex:1.0.3'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="http://thetechnocafe.com/a-complete-guide-to-integrating-admob-in-your-android-app/" target="_blank" rel="noopener">http://thetechnocafe.com/a-complete-guide-to-integrating-admob-in-your-android-app/</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kotlin/">kotlin</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-notarize-electron-app"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-notarize-electron-app/">How to notarize electron app</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-notarize-electron-app/" class="article-date">
+	  <time datetime="2019-09-26T11:08:57.000Z" itemprop="datePublished">September 26, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/430" target="_blank" rel="noopener">#430</a></strong></p>
+<h2 id="Use-electron-builder"><a href="#Use-electron-builder" class="headerlink" title="Use electron builder"></a>Use electron builder</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install electron-builder@latest --save-dev</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Prefer electron-builder over electron-packager</li>
+<li>Configuration <a href="https://www.electron.build/configuration/configuration" target="_blank" rel="noopener">https://www.electron.build/configuration/configuration</a></li>
+</ul>
+<p><code>package.json</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"icon_generator"</span>,</span><br><span class="line">  <span class="string">"version"</span>: <span class="string">"1.3.0"</span>,</span><br><span class="line">  <span class="string">"description"</span>: <span class="string">"A macOS app to generate app icons"</span>,</span><br><span class="line">  <span class="string">"main"</span>: <span class="string">"babel/main.js"</span>,</span><br><span class="line">  <span class="string">"repository"</span>: <span class="string">"https://github.com/onmyway133/IconGenerator"</span>,</span><br><span class="line">  <span class="string">"author"</span>: <span class="string">"Khoa Pham"</span>,</span><br><span class="line">  <span class="string">"license"</span>: <span class="string">"MIT"</span>,</span><br><span class="line">  <span class="string">"scripts"</span>: &#123;</span><br><span class="line">    <span class="string">"start"</span>: <span class="string">"npm run babel &amp;&amp; electron ."</span>,</span><br><span class="line">    <span class="string">"babel"</span>: <span class="string">"babel ./src --out-dir ./babel --copy-files"</span>,</span><br><span class="line">    <span class="string">"dist"</span>: <span class="string">"npm run babel &amp;&amp; electron-builder"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"build"</span>: &#123;</span><br><span class="line">    <span class="string">"appId"</span>: <span class="string">"com.onmyway133.IconGenerator"</span>,</span><br><span class="line">    <span class="string">"buildVersion"</span>: <span class="string">"20"</span>,</span><br><span class="line">    <span class="string">"productName"</span>: <span class="string">"Icon Generator"</span>,</span><br><span class="line">    <span class="string">"icon"</span>: <span class="string">"./Icon/Icon.icns"</span>,</span><br><span class="line">    <span class="string">"mac"</span>: &#123;</span><br><span class="line">      <span class="string">"category"</span>: <span class="string">"public.app-category.productivity"</span>,</span><br><span class="line">      <span class="string">"hardenedRuntime"</span>: <span class="literal">true</span>,</span><br><span class="line">      <span class="string">"gatekeeperAssess"</span>: <span class="literal">false</span>,</span><br><span class="line">      <span class="string">"entitlements"</span>: <span class="string">"./entitlements.plist"</span>,</span><br><span class="line">      <span class="string">"entitlementsInherit"</span>: <span class="string">"./entitlements.plist"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"win"</span>: &#123;</span><br><span class="line">      <span class="string">"target"</span>: <span class="string">"msi"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"linux"</span>: &#123;</span><br><span class="line">      <span class="string">"target"</span>: [</span><br><span class="line">        <span class="string">"AppImage"</span>,</span><br><span class="line">        <span class="string">"deb"</span></span><br><span class="line">      ]</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"afterSign"</span>: <span class="string">"./afterSignHook.js"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Declare-entitlements"><a href="#Declare-entitlements" class="headerlink" title="Declare entitlements"></a>Declare entitlements</h2><p><code>entitlements.plist</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plist</span> <span class="attr">version</span>=<span class="string">"1.0"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>com.apple.security.cs.allow-jit<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>com.apple.security.cs.allow-unsigned-executable-memory<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>com.apple.security.cs.allow-dyld-environment-variables<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plist</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Use-electron-notarize"><a href="#Use-electron-notarize" class="headerlink" title="Use electron-notarize"></a>Use electron-notarize</h2><ul>
+<li><a href="https://github.com/electron/electron-notarize" target="_blank" rel="noopener">https://github.com/electron/electron-notarize</a></li>
+</ul>
+<p><code>afterSignHook.js</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br><span class="line"><span class="keyword">var</span> electron_notarize = <span class="built_in">require</span>(<span class="string">'electron-notarize'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> (<span class="params">params</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Only notarize the app on Mac OS only.</span></span><br><span class="line">    <span class="keyword">if</span> (process.platform !== <span class="string">'darwin'</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'afterSign hook triggered'</span>, params);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Same appId in electron-builder.</span></span><br><span class="line">    <span class="keyword">let</span> appId = <span class="string">'com.onmyway133.IconGenerator'</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> appPath = path.join(params.appOutDir, <span class="string">`<span class="subst">$&#123;params.packager.appInfo.productFilename&#125;</span>.app`</span>);</span><br><span class="line">    <span class="keyword">if</span> (!fs.existsSync(appPath)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">`Cannot find application at: <span class="subst">$&#123;appPath&#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`Notarizing <span class="subst">$&#123;appId&#125;</span> found at <span class="subst">$&#123;appPath&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">await</span> electron_notarize.notarize(&#123;</span><br><span class="line">            appBundleId: appId,</span><br><span class="line">            appPath: appPath,</span><br><span class="line">            appleId: process.env.appleId,</span><br><span class="line">            appleIdPassword: process.env.appleIdPassword,</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="built_in">console</span>.error(error);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`Done notarizing <span class="subst">$&#123;appId&#125;</span>`</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Run"><a href="#Run" class="headerlink" title="Run"></a>Run</h2><p>Generate password for Apple Id because of 2FA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export appleId=onmyway133@gmail.com</span><br><span class="line">export appleIdPassword=1234-abcd-efgh-7890</span><br><span class="line">npm run dist</span><br></pre></td></tr></table></figure>
+
+<h2 id="Check"><a href="#Check" class="headerlink" title="Check"></a>Check</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spctl --assess --verbose Icon\ Generator.app</span><br></pre></td></tr></table></figure>
+
+<h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><h3 id="babel"><a href="#babel" class="headerlink" title="babel"></a>babel</h3><ul>
+<li>Since electron-builder create <code>dist</code> folder for distribution, for example <code>dist/mac/Icon Generator</code>, I’ve renamed babel generated code to <code>babel</code> directory</li>
+</ul>
+<h3 id="babel-6-regeneratorRuntime-is-not-defined"><a href="#babel-6-regeneratorRuntime-is-not-defined" class="headerlink" title="babel 6 regeneratorRuntime is not defined"></a>babel 6 regeneratorRuntime is not defined</h3><p>It is because of afterSignHook. Ignore in <code>.babelrc</code> not work</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;plugins&quot;: [</span><br><span class="line">    &quot;transform-react-jsx-source&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;presets&quot;: [&quot;env&quot;, &quot;react&quot;],</span><br><span class="line">  &quot;ignore&quot;: [</span><br><span class="line">    &quot;afterSignHook.js&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Should use babel 7 with <code>babel.config.js</code></p>
+<ul>
+<li><a href="https://babeljs.io/docs/en/config-files#project-wide-configuration" target="_blank" rel="noopener">https://babeljs.io/docs/en/config-files#project-wide-configuration</a></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install --save @babel/runtime </span><br><span class="line">npm install --save-dev @babel/plugin-transform-runtime</span><br></pre></td></tr></table></figure>
+
+<h2 id="Use-electron-forge"><a href="#Use-electron-forge" class="headerlink" title="Use electron-forge"></a>Use electron-forge</h2><p><a href="https://httptoolkit.tech/blog/notarizing-electron-apps-with-electron-forge/" target="_blank" rel="noopener">https://httptoolkit.tech/blog/notarizing-electron-apps-with-electron-forge/</a></p>
+<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
+<li><a href="https://medium.com/@TwitterArchiveEraser/notarize-electron-apps-7a5f988406db" target="_blank" rel="noopener">https://medium.com/@TwitterArchiveEraser/notarize-electron-apps-7a5f988406db</a></li>
+<li><a href="https://kilianvalkhof.com/2019/electron/notarizing-your-electron-application/" target="_blank" rel="noopener">https://kilianvalkhof.com/2019/electron/notarizing-your-electron-application/</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/electron/">electron</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/node/">node</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-use-marked-in-WKWebView-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-marked-in-WKWebView-in-AppKit/">How to use marked in WKWebView in AppKit</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-marked-in-WKWebView-in-AppKit/" class="article-date">
+	  <time datetime="2019-09-26T07:07:11.000Z" itemprop="datePublished">September 26, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/429" target="_blank" rel="noopener">#429</a></strong></p>
+<p>Use <a href="https://github.com/markedjs/marked" target="_blank" rel="noopener">https://github.com/markedjs/marked</a></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;!doctype html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">  &lt;meta charset=<span class="string">"utf-8"</span>/&gt;</span><br><span class="line">  &lt;title&gt;Marked <span class="keyword">in</span> the browser&lt;<span class="regexp">/title&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">  &lt;div id=<span class="string">"content"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  &lt;script src=<span class="string">"https://cdn.jsdelivr.net/npm/marked/marked.min.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">  &lt;script&gt;</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'content'</span>).innerHTML =</span><br><span class="line">      marked(<span class="string">`# Marked in the browser\n\nRendered by **marked**.`</span>);</span><br><span class="line">  &lt;<span class="regexp">/script&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>body&gt;</span><br><span class="line">&lt;<span class="regexp">/html&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Should use back tick instead of <code>&#39;</code> to deal with multiline string, and escape back tick</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> markdown = markdown.replacingOccurrences(of: <span class="string">"`"</span>, with: <span class="string">"\\`"</span>)</span><br><span class="line">marked(`\(markdown)`);</span><br><span class="line"></span><br><span class="line">webView.loadHTMLString(string, baseURL: <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure>
+
+<p>For WKWebView to load even local content, need to enable <code>Outgoing connections</code>, and maybe <code>Incoming connections</code> in Sandbox</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-enable-NSMenuItem-in-AppKit"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-enable-NSMenuItem-in-AppKit/">How to enable NSMenuItem in AppKit</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-enable-NSMenuItem-in-AppKit/" class="article-date">
+	  <time datetime="2019-09-25T08:26:20.000Z" itemprop="datePublished">September 25, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/428" target="_blank" rel="noopener">#428</a></strong></p>
+<p>Need to set target</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> item = <span class="type">NSMenuItem</span>(</span><br><span class="line">    title: title,</span><br><span class="line">    action: #selector(onMenuItemClicked(<span class="number">_</span>:)),</span><br><span class="line">    keyEquivalent: <span class="string">""</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">item.target = <span class="keyword">self</span></span><br></pre></td></tr></table></figure>
+
+<p>Sometimes, need to check <code>autoenablesItems</code></p>
+<blockquote>
+<p>Indicates whether the menu automatically enables and disables its menu items.</p>
+</blockquote>
+<blockquote>
+<p>This property contains a Boolean value, indicating whether the menu automatically enables and disables its menu items. If set to true, menu items of the menu are automatically enabled and disabled according to rules computed by the NSMenuValidation informal protocol. By default, NSMenu objects autoenable their menu items.</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-use-generic-NSCollectionView-in-macOS"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-generic-NSCollectionView-in-macOS/">How to use generic NSCollectionView in macOS</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-generic-NSCollectionView-in-macOS/" class="article-date">
+	  <time datetime="2019-09-24T11:49:34.000Z" itemprop="datePublished">September 24, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/427" target="_blank" rel="noopener">#427</a></strong></p>
+<p>See <a href="https://github.com/onmyway133/Omnia/blob/master/Sources/macOS/CollectionViewHandler.swift" target="_blank" rel="noopener">CollectionViewHandler</a></p>
+<p>Use <code>ClickedCollectionView</code> to detect clicked index for context menu.<br>Embed <code>NSCollectionView</code> inside <code>NSScrollView</code> to enable scrolling</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CollectionViewHandler</span>&lt;<span class="title">Item</span>: <span class="title">Equatable</span>, <span class="title">Cell</span>: <span class="title">NSCollectionViewItem</span>&gt;</span></span><br><span class="line"><span class="class">: <span class="title">NSObject</span>, <span class="title">NSCollectionViewDataSource</span>, <span class="title">NSCollectionViewDelegateFlowLayout</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">let</span> layout = <span class="type">NSCollectionViewFlowLayout</span>()</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">let</span> scrollView = <span class="type">NSScrollView</span>()</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">let</span> collectionView = <span class="type">ClickedCollectionView</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> items = [<span class="type">Item</span>]()</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> itemSize: () -&gt; <span class="type">CGSize</span> = &#123; .zero &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> configure: (<span class="type">Item</span>, <span class="type">Cell</span>) -&gt; <span class="type">Void</span> = &#123; <span class="number">_</span>, <span class="number">_</span> <span class="keyword">in</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>()</span><br><span class="line"></span><br><span class="line">        layout.minimumLineSpacing = <span class="number">4</span></span><br><span class="line">        layout.sectionInset = <span class="type">NSEdgeInsets</span>(top: <span class="number">4</span>, <span class="keyword">left</span>: <span class="number">4</span>, bottom: <span class="number">4</span>, <span class="keyword">right</span>: <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">        collectionView.dataSource = <span class="keyword">self</span></span><br><span class="line">        collectionView.delegate = <span class="keyword">self</span></span><br><span class="line">        collectionView.collectionViewLayout = layout</span><br><span class="line">        collectionView.allowsMultipleSelection = <span class="literal">false</span></span><br><span class="line">        collectionView.backgroundColors = [.clear]</span><br><span class="line">        collectionView.isSelectable = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">        collectionView.register(<span class="type">Cell</span>.<span class="keyword">self</span>, forItemWithIdentifier: <span class="type">Cell</span>.itemId)</span><br><span class="line"></span><br><span class="line">        scrollView.documentView = collectionView</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// MARK: - Items</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(item: Item)</span></span> &#123;</span><br><span class="line">        items.insert(item, at: <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">let</span> indexPath = <span class="type">IndexPath</span>(item: <span class="number">0</span>, section: <span class="number">0</span>)</span><br><span class="line">        collectionView.animator().insertItems(at: <span class="type">Set</span>(arrayLiteral: indexPath))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">remove</span><span class="params">(item: Item)</span></span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> index = items.firstIndex(<span class="keyword">where</span>: &#123; $<span class="number">0</span> == item &#125;) <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        remove(index: index)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">remove</span><span class="params">(index: Int)</span></span> &#123;</span><br><span class="line">        items.remove(at: index)</span><br><span class="line">        <span class="keyword">let</span> indexPath = <span class="type">IndexPath</span>(item: index, section: <span class="number">0</span>)</span><br><span class="line">        collectionView.animator().deleteItems(at: <span class="type">Set</span>(arrayLiteral: indexPath))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// MARK: - NSCollectionViewDataSource</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">numberOfSections</span><span class="params">(<span class="keyword">in</span> collectionView: NSCollectionView)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, numberOfItemsInSection section: Int)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> items.<span class="built_in">count</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath)</span></span> -&gt; <span class="type">NSCollectionViewItem</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> cell = collectionView.makeItem(withIdentifier: <span class="type">Cell</span>.itemId, <span class="keyword">for</span>: indexPath) <span class="keyword">as</span>! <span class="type">Cell</span></span><br><span class="line">        <span class="keyword">let</span> item = items[indexPath.item]</span><br><span class="line">        configure(item, cell)</span><br><span class="line">        <span class="keyword">return</span> cell</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// MARK: - NSCollectionViewDelegateFlowLayout</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">collectionView</span><span class="params">(<span class="number">_</span> collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, sizeForItemAt indexPath: IndexPath)</span></span> -&gt; <span class="type">NSSize</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> itemSize()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-How-to-use-throttle-and-debounce-in-RxSwift"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/blog/How-to-use-throttle-and-debounce-in-RxSwift/">How to use throttle and debounce in RxSwift</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/blog/How-to-use-throttle-and-debounce-in-RxSwift/" class="article-date">
+	  <time datetime="2019-09-19T06:13:56.000Z" itemprop="datePublished">September 19, 2019</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/426" target="_blank" rel="noopener">#426</a></strong></p>
+<h2 id="throttle"><a href="#throttle" class="headerlink" title="throttle"></a>throttle</h2><p><a href="https://rxmarbles.com/#throttle" target="_blank" rel="noopener">https://rxmarbles.com/#throttle</a></p>
+<img width="846" alt="throttle" src="https://user-images.githubusercontent.com/2284279/65225775-fe37e800-dac5-11e9-8d07-864d80a25ead.png">
+
+<blockquote>
+<p>Returns an Observable that emits the first and the latest item emitted by the source Observable during sequential time windows of a specified duration.<br>This operator makes sure that no two elements are emitted in less then dueTime.</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.throttle(.milliseconds(<span class="number">500</span>), scheduler: <span class="type">MainScheduler</span>.instance)</span><br></pre></td></tr></table></figure>
+
+<p>In a time window, only the first item gets emitted. </p>
+<p>💡 In other words, in a time window, take first and discard following.</p>
+<p>For example, when failure, we show error message but don’t want to show error messages consecutively. We can use throttle to discard consecutive errors.</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">viewModel.fetchBooksFail</span><br><span class="line">     .observeOn(<span class="type">MainScheduler</span>.instance)</span><br><span class="line">     .throttle(.seconds(<span class="number">2</span>), scheduler: <span class="type">MainScheduler</span>.instance)</span><br></pre></td></tr></table></figure>
+
+<h2 id="debounce"><a href="#debounce" class="headerlink" title="debounce"></a>debounce</h2><p><a href="https://rxmarbles.com/#debounce" target="_blank" rel="noopener">https://rxmarbles.com/#debounce</a></p>
+<img width="838" alt="debounce" src="https://user-images.githubusercontent.com/2284279/65225784-0132d880-dac6-11e9-85fe-891a5b316115.png">
+
+<blockquote>
+<p>Ignores elements from an observable sequence which are followed by another element within a specified relative time duration, using the specified scheduler to run throttling timers.</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.debounce(.milliseconds(<span class="number">500</span>), scheduler: <span class="type">MainScheduler</span>.instance)</span><br></pre></td></tr></table></figure>
+
+<p>If an element is about to get emitted, wait for a time window to see if there are other elements emitted. If yes, start the waiting again.</p>
+<p>💡 In other words, in a time window, wait and take last</p>
+<p>For example, when receiving data, we may need to wait for the final data if there are many data events emitted consecutively</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">viewModel.fetchBooks</span><br><span class="line">    .<span class="built_in">filter</span>(&#123; !$<span class="number">0</span>.isEmpty &#125;)</span><br><span class="line">    .debounce(.milliseconds(<span class="number">500</span>), scheduler: <span class="type">MainScheduler</span>.instance)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swift/">swift</a></li></ul>
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
   
     <article id="post-How-to-use-flatMap-and-compactMap-in-Swift"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
@@ -1493,343 +1899,6 @@ var themeMenus = {};
     
 
   
-    <article id="post-How-to-sign-executable-for-sandbox"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-sign-executable-for-sandbox/">How to sign executable for sandbox</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-sign-executable-for-sandbox/" class="article-date">
-	  <time datetime="2019-09-05T10:04:10.000Z" itemprop="datePublished">September 5, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/401" target="_blank" rel="noopener">#401</a></strong></p>
-<p>Find identity</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">security find-identity</span><br></pre></td></tr></table></figure>
-
-<p>Sign with entitlements and identity. For macOS, use <code>3rd Party Mac Developer Application</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codesign -f -s &quot;3rd Party Mac Developer Application: Khoa Pham (123DK123F2)&quot; --entitlements &quot;MyApp.entitlements&quot; &quot;tool/mytool&quot;</span><br></pre></td></tr></table></figure>
-
-<p>To enable harden runtime</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codesign --verbose --force --deep -o runtime --sign</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/">macOS</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-make-simple-traffic-simulation-in-Javascript"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-make-simple-traffic-simulation-in-Javascript/">How to make simple traffic simulation in Javascript</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-make-simple-traffic-simulation-in-Javascript/" class="article-date">
-	  <time datetime="2019-09-05T07:14:24.000Z" itemprop="datePublished">September 5, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/400" target="_blank" rel="noopener">#400</a></strong></p>
-<ul>
-<li>Use prototype.js for inheritance</li>
-<li>Use enchant.js for 2d game logic</li>
-<li>Code <a href="https://github.com/onmyway133/traffic_simulator" target="_blank" rel="noopener">https://github.com/onmyway133/traffic_simulator</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-make-collaborative-drawing-canvas-with-socketio-and-node"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-make-collaborative-drawing-canvas-with-socketio-and-node/">How to make collaborative drawing canvas with socketio and node</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-make-collaborative-drawing-canvas-with-socketio-and-node/" class="article-date">
-	  <time datetime="2019-09-05T07:10:35.000Z" itemprop="datePublished">September 5, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/399" target="_blank" rel="noopener">#399</a></strong></p>
-<h2 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h2><ul>
-<li>Use <a href="https://github.com/facebook/create-react-app" target="_blank" rel="noopener">https://github.com/facebook/create-react-app</a></li>
-</ul>
-<p><code>App.js</code></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> logo <span class="keyword">from</span> <span class="string">'./logo.svg'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'./App.css'</span>;</span><br><span class="line"><span class="keyword">import</span> Main <span class="keyword">from</span> <span class="string">'./Main'</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Main</span> /&gt;</span></span></span><br><span class="line"><span class="xml">  &#125;</span></span><br><span class="line"><span class="xml">&#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">export default App;</span></span><br></pre></td></tr></table></figure>
-
-<p><code>Main.js</code></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @flow</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> PropTypes <span class="keyword">from</span> <span class="string">'prop-types'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; withStyles &#125; <span class="keyword">from</span> <span class="string">'@material-ui/core/styles'</span>;</span><br><span class="line"><span class="keyword">import</span> AppBar <span class="keyword">from</span> <span class="string">'@material-ui/core/AppBar'</span>;</span><br><span class="line"><span class="keyword">import</span> Toolbar <span class="keyword">from</span> <span class="string">'@material-ui/core/Toolbar'</span>;</span><br><span class="line"><span class="keyword">import</span> Typography <span class="keyword">from</span> <span class="string">'@material-ui/core/Typography'</span>;</span><br><span class="line"><span class="keyword">import</span> Button <span class="keyword">from</span> <span class="string">'@material-ui/core/Button'</span>;</span><br><span class="line"><span class="keyword">import</span> IconButton <span class="keyword">from</span> <span class="string">'@material-ui/core/IconButton'</span>;</span><br><span class="line"><span class="keyword">import</span> MenuIcon <span class="keyword">from</span> <span class="string">'@material-ui/icons/Menu'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> Manager <span class="keyword">from</span> <span class="string">'./Manager'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> styles = &#123;</span><br><span class="line">    root: &#123;</span><br><span class="line">      flexGrow: <span class="number">1</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    grow: &#123;</span><br><span class="line">      flexGrow: <span class="number">1</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    menuButton: &#123;</span><br><span class="line">      marginLeft: <span class="number">-12</span>,</span><br><span class="line">      marginRight: <span class="number">20</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Main</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> propTypes = &#123;</span><br><span class="line">        classes: PropTypes.object.isRequired,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    render() &#123;</span><br><span class="line">        <span class="keyword">const</span> &#123; classes &#125; = <span class="keyword">this</span>.props;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            &lt;div className=&#123;classes.root&#125;&gt;</span><br><span class="line">              &lt;AppBar position=<span class="string">"static"</span>&gt;</span><br><span class="line">                &lt;Toolbar&gt;</span><br><span class="line">                  &lt;IconButton className=&#123;classes.menuButton&#125; color=<span class="string">"inherit"</span> aria-label=<span class="string">"Menu"</span>&gt;</span><br><span class="line">                    &lt;MenuIcon /&gt;</span><br><span class="line">                  &lt;<span class="regexp">/IconButton&gt;</span></span><br><span class="line"><span class="regexp">                  &lt;Typography variant="h6" color="inherit" className=&#123;classes.grow&#125;&gt;</span></span><br><span class="line"><span class="regexp">                    Collaborate Canvas</span></span><br><span class="line"><span class="regexp">                  &lt;/</span>Typography&gt;</span><br><span class="line">                  &lt;Button color=<span class="string">"inherit"</span> onClick=&#123;<span class="keyword">this</span>.onImagePress&#125; &gt;Image&lt;<span class="regexp">/Button&gt;</span></span><br><span class="line"><span class="regexp">                  &lt;Button color="inherit" onClick=&#123;this.onClearPress&#125; &gt;Clear&lt;/</span>Button&gt;</span><br><span class="line">                  &lt;input ref=<span class="string">"fileInput"</span> type=<span class="string">"file"</span> id=<span class="string">"myFile"</span> multiple accept=<span class="string">"image/*"</span> style=&#123;&#123;<span class="attr">display</span>: <span class="string">'none'</span>&#125;&#125; onChange=&#123;<span class="keyword">this</span>.handleFiles&#125;&gt;<span class="xml"><span class="tag">&lt;/<span class="name">input</span>&gt;</span></span></span><br><span class="line">                &lt;<span class="regexp">/Toolbar&gt;</span></span><br><span class="line"><span class="regexp">              &lt;/</span>AppBar&gt;</span><br><span class="line">              &lt;canvas ref=<span class="string">"canvas"</span> <span class="keyword">with</span>=<span class="string">"1000"</span> height=<span class="string">"1000"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span></span><br><span class="line">            &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">        )</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">    componentDidMount() &#123;</span></span><br><span class="line"><span class="regexp">      const canvas = this.refs.canvas</span></span><br><span class="line"><span class="regexp">      this.manager = new Manager(canvas)</span></span><br><span class="line"><span class="regexp">      this.manager.connect()</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">    onImagePress = () =&gt; &#123;</span></span><br><span class="line"><span class="regexp">      const fileInput = this.refs.fileInput</span></span><br><span class="line"><span class="regexp">      fileInput.click()</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">    onClearPress = () =&gt; &#123;</span></span><br><span class="line"><span class="regexp">      this.manager.clear()</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">    handleFiles = (e) =&gt; &#123;</span></span><br><span class="line"><span class="regexp">      e.persist()</span></span><br><span class="line"><span class="regexp">      const canvas = this.refs.canvas</span></span><br><span class="line"><span class="regexp">      const context = canvas.getContext('2d')</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">      const file = e.target.files[0]</span></span><br><span class="line"><span class="regexp">      var image = new Image()</span></span><br><span class="line"><span class="regexp">      image.onload = function() &#123;</span></span><br><span class="line"><span class="regexp">          context.drawImage(image, 0, 0, window.innerWidth, window.innerHeight)</span></span><br><span class="line"><span class="regexp">      &#125;</span></span><br><span class="line"><span class="regexp">      image.src = URL.createObjectURL(file)</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">export default withStyles(styles)(Main);</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h2><p>Use <code>express</code> and <code>socket.io</code></p>
-<p><code>index.js</code></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @flow</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>)</span><br><span class="line"><span class="keyword">const</span> app = express()</span><br><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>)</span><br><span class="line"><span class="keyword">const</span> socketIO = <span class="built_in">require</span>(<span class="string">'socket.io'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> server = http.createServer(app)</span><br><span class="line"><span class="keyword">const</span> io = socketIO.listen(server)</span><br><span class="line">server.listen(<span class="number">3001</span>)</span><br><span class="line">app.use(express.static(__dirname + <span class="string">'/public'</span>))</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"Server running on 127.0.0.1:8080"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> lines = []</span><br><span class="line">io.on(<span class="string">'connection'</span>, (socket) =&gt; &#123;</span><br><span class="line">    lines.forEach(<span class="function">(<span class="params">line</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> data = &#123; line &#125;</span><br><span class="line">        socket.emit(<span class="string">'draw_line'</span>, data) </span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    socket.on(<span class="string">'draw_line'</span>, (data) =&gt; &#123;</span><br><span class="line">        <span class="keyword">const</span> &#123; line &#125; = data</span><br><span class="line">        lines.push(line)</span><br><span class="line"></span><br><span class="line">        io.emit(<span class="string">'draw_line'</span>, data)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    socket.on(<span class="string">'clear'</span>, () =&gt; &#123;</span><br><span class="line">        lines = []</span><br><span class="line">        io.emit(<span class="string">'clear'</span>)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    socket.on(<span class="string">'draw_image'</span>, (data) =&gt; &#123;</span><br><span class="line">        io.emit(<span class="string">'draw_image'</span>, data)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/node/">node</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-generate-changelog-for-GitHub-releases-with-rxjs-and-node"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-generate-changelog-for-GitHub-releases-with-rxjs-and-node/">How to generate changelog for GitHub releases with rxjs and node</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-generate-changelog-for-GitHub-releases-with-rxjs-and-node/" class="article-date">
-	  <time datetime="2019-09-05T07:03:12.000Z" itemprop="datePublished">September 5, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/398" target="_blank" rel="noopener">#398</a></strong></p>
-<h2 id="How-to"><a href="#How-to" class="headerlink" title="How to"></a>How to</h2><ul>
-<li>Use <a href="https://github.com/onmyway133/github-changelogs-maker" target="_blank" rel="noopener">https://github.com/onmyway133/github-changelogs-maker</a></li>
-<li>Generate personal access token <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">https://github.com/settings/tokens</a></li>
-</ul>
-<h2 id="Technical"><a href="#Technical" class="headerlink" title="Technical"></a>Technical</h2><p>Dependencies</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Rx = <span class="built_in">require</span>(<span class="string">'rxjs/Rx'</span>)</span><br><span class="line"><span class="keyword">const</span> Fetch = <span class="built_in">require</span>(<span class="string">'node-fetch'</span>)</span><br><span class="line"><span class="keyword">const</span> Minimist = <span class="built_in">require</span>(<span class="string">'minimist'</span>)</span><br><span class="line"><span class="keyword">const</span> Fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</span><br></pre></td></tr></table></figure>
-
-<p>Use GraphQL</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">makeOptions(query, token) &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    method: <span class="string">'POST'</span>,</span><br><span class="line">    headers: &#123;</span><br><span class="line">      <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>,</span><br><span class="line">      <span class="string">'Authorization'</span>: <span class="string">`bearer <span class="subst">$&#123;token&#125;</span>`</span></span><br><span class="line">    &#125;,</span><br><span class="line">    body: <span class="built_in">JSON</span>.stringify(&#123;</span><br><span class="line">      query: <span class="string">`</span></span><br><span class="line"><span class="string">      query &#123;</span></span><br><span class="line"><span class="string">        repository(owner: "<span class="subst">$&#123;<span class="keyword">this</span>.owner&#125;</span>", name: "<span class="subst">$&#123;<span class="keyword">this</span>.repo&#125;</span>") &#123;</span></span><br><span class="line"><span class="string">          <span class="subst">$&#123;query&#125;</span></span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">      `</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Use orderBy</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">fetchPRsAndIssues(dates) &#123;</span><br><span class="line">    <span class="keyword">const</span> query = <span class="string">`</span></span><br><span class="line"><span class="string">    pullRequests(last: 100, orderBy: &#123;field: UPDATED_AT, direction: ASC&#125;) &#123;</span></span><br><span class="line"><span class="string">      edges &#123;</span></span><br><span class="line"><span class="string">        node &#123;</span></span><br><span class="line"><span class="string">          title</span></span><br><span class="line"><span class="string">          merged</span></span><br><span class="line"><span class="string">          mergedAt</span></span><br><span class="line"><span class="string">          url</span></span><br><span class="line"><span class="string">          author &#123;</span></span><br><span class="line"><span class="string">            login</span></span><br><span class="line"><span class="string">            url</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    issues(last: 100, orderBy: &#123;field: UPDATED_AT, direction: ASC&#125;) &#123;</span></span><br><span class="line"><span class="string">      edges &#123;</span></span><br><span class="line"><span class="string">        node &#123;</span></span><br><span class="line"><span class="string">          title</span></span><br><span class="line"><span class="string">          closed</span></span><br><span class="line"><span class="string">          updatedAt</span></span><br><span class="line"><span class="string">          url</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/node/">node</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-do-launch-screen-in-Android"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-do-launch-screen-in-Android/">How to do launch screen in Android</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-do-launch-screen-in-Android/" class="article-date">
-	  <time datetime="2019-09-04T18:24:36.000Z" itemprop="datePublished">September 4, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/397" target="_blank" rel="noopener">#397</a></strong></p>
-<blockquote>
-<p>We recommend that, rather than disabling the preview window, you follow the common Material Design patterns. You can use the activity’s windowBackground theme attribute to provide a simple custom drawable for the starting activity.</p>
-</blockquote>
-<p><code>styles.xml</code></p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">name</span>=<span class="string">"LaunchTheme"</span> <span class="attr">parent</span>=<span class="string">"Theme.AppCompat.NoActionBar"</span>&gt;</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:windowBackground"</span>&gt;</span>@drawable/launch_background<span class="tag">&lt;/<span class="name">item</span>&gt;</span></span></span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>Set <code>android:theme=&quot;@style/LaunchTheme&quot;</code> to <code>activity</code> element</p>
-<p><code>AndroidManifest.xml</code></p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">manifest</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">          <span class="attr">package</span>=<span class="string">"com.onmyway133.whatsupintech"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.INTERNET"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">application</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:name</span>=<span class="string">".MyApplication"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:allowBackup</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:icon</span>=<span class="string">"@mipmap/ic_launcher"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:label</span>=<span class="string">"@string/app_name"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:roundIcon</span>=<span class="string">"@mipmap/ic_launcher_round"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:supportsRtl</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:theme</span>=<span class="string">"@style/AppTheme"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:name</span>=<span class="string">".features.main.MainActivity"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:label</span>=<span class="string">"@string/app_name"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:theme</span>=<span class="string">"@style/LaunchTheme"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"android.intent.action.MAIN"</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">"android.intent.category.LAUNCHER"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">manifest</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><code>MainActivity.kt</code></p>
-<figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        setTheme(R.style.AppTheme_NoActionBar)</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.main_activity)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul>
-<li><a href="https://android.jlelse.eu/the-complete-android-splash-screen-guide-c7db82bce565" target="_blank" rel="noopener">The Complete Android Splash Screen Guide</a></li>
-<li><a href="https://developer.android.com/topic/performance/vitals/launch-time#themed" target="_blank" rel="noopener">Themed launch screens</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-How-to-add-header-to-NavigationView-in-Android"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/blog/How-to-add-header-to-NavigationView-in-Android/">How to add header to NavigationView in Android</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/blog/How-to-add-header-to-NavigationView-in-Android/" class="article-date">
-	  <time datetime="2019-09-04T18:07:02.000Z" itemprop="datePublished">September 4, 2019</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/396" target="_blank" rel="noopener">#396</a></strong></p>
-<p>Use <code>app:headerLayout</code></p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">com.google.android.material.navigation.NavigationView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">"@+id/navigationView"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:fitsSystemWindows</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_gravity</span>=<span class="string">"start"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:menu</span>=<span class="string">"@menu/drawer_menu"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:itemIconTint</span>=<span class="string">"@color/title"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:itemTextColor</span>=<span class="string">"@color/title"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:headerLayout</span>=<span class="string">"@layout/navigation_header"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><code>navigation_header.xml</code></p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">androidx.constraintlayout.widget.ConstraintLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">androidx.appcompat.widget.AppCompatImageView</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"0dp"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:src</span>=<span class="string">"@drawable/icon"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintLeft_toLeftOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintRight_toRightOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">app:layout_constraintBottom_toBottomOf</span>=<span class="string">"parent"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">androidx.constraintlayout.widget.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
 
 
   <nav id="page-nav">
@@ -1934,8 +2003,8 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
-              <h6 style="margin: 0;"><a href="/blog/How-to-format-percent-in-Swift/">How to format percent in Swift</a></h6>
-              <span>April 16, 2020</span>
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-webpack-to-bundle-html-css-js/">How to use webpack to bundle html css js</a></h6>
+              <span>April 28, 2020</span>
             </div>
 
           </li>
@@ -1946,8 +2015,8 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
-              <h6 style="margin: 0;"><a href="/blog/How-to-declare-commands-in-Xcode-extensions/">How to declare commands in Xcode extensions</a></h6>
-              <span>April 13, 2020</span>
+              <h6 style="margin: 0;"><a href="/blog/How-to-assert-asynchronously-in-XCTest/">How to assert asynchronously in XCTest</a></h6>
+              <span>April 28, 2020</span>
             </div>
 
           </li>
@@ -1958,8 +2027,8 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
-              <h6 style="margin: 0;"><a href="/blog/How-to-declare-commands-in-Xcode-extenstions/">How to declare commands in Xcode extenstions</a></h6>
-              <span>April 13, 2020</span>
+              <h6 style="margin: 0;"><a href="/blog/How-to-make-simple-filter-menu-in-css/">How to make simple filter menu in css</a></h6>
+              <span>April 27, 2020</span>
             </div>
 
           </li>
@@ -1970,8 +2039,8 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
-              <h6 style="margin: 0;"><a href="/blog/How-to-disable-ring-type-in-TextField-in-SwiftUI/">How to disable ring type in TextField in SwiftUI</a></h6>
-              <span>April 6, 2020</span>
+              <h6 style="margin: 0;"><a href="/blog/How-to-make-simple-grid-gallery-in-css/">How to make simple grid gallery in css</a></h6>
+              <span>April 26, 2020</span>
             </div>
 
           </li>
@@ -1982,8 +2051,8 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
-              <h6 style="margin: 0;"><a href="/blog/How-to-handle-enter-key-in-NSTextField/">How to handle enter key in NSTextField</a></h6>
-              <span>April 3, 2020</span>
+              <h6 style="margin: 0;"><a href="/blog/How-to-add-independent-page-in-hexo/">How to add independent page in hexo</a></h6>
+              <span>April 26, 2020</span>
             </div>
 
           </li>
@@ -1994,8 +2063,8 @@ var themeMenus = {};
               <div class="widget-entry-summary" style="margin: 0;">
             
 
-              <h6 style="margin: 0;"><a href="/blog/How-to-decode-with-default-case-for-enum-in-Swift/">How to decode with default case for enum in Swift</a></h6>
-              <span>April 2, 2020</span>
+              <h6 style="margin: 0;"><a href="/blog/How-to-use-async-function-as-parameter-in-TypeScript/">How to use async function as parameter in TypeScript</a></h6>
+              <span>April 21, 2020</span>
             </div>
 
           </li>
@@ -2012,7 +2081,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.22px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.11px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.11px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.56px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.67px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 12.22px;">combine</a> <a href="/tags/core-data/" style="font-size: 10.56px;">core data</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 10.56px;">css</a> <a href="/tags/dart/" style="font-size: 11.67px;">dart</a> <a href="/tags/database/" style="font-size: 10.56px;">database</a> <a href="/tags/design/" style="font-size: 10.56px;">design</a> <a href="/tags/electron/" style="font-size: 11.67px;">electron</a> <a href="/tags/firebase/" style="font-size: 12.22px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.67px;">flutter</a> <a href="/tags/git/" style="font-size: 11.11px;">git</a> <a href="/tags/github/" style="font-size: 12.22px;">github</a> <a href="/tags/go/" style="font-size: 10.56px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.44px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.78px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.67px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.67px;">layout</a> <a href="/tags/life/" style="font-size: 13.33px;">life</a> <a href="/tags/links/" style="font-size: 14.44px;">links</a> <a href="/tags/macOS/" style="font-size: 18.89px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.56px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.67px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 12.78px;">node</a> <a href="/tags/objc/" style="font-size: 10.56px;">objc</a> <a href="/tags/react/" style="font-size: 11.11px;">react</a> <a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.11px;">rx</a> <a href="/tags/script/" style="font-size: 10.56px;">script</a> <a href="/tags/spm/" style="font-size: 12.22px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 18.33px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.56px;">tech</a> <a href="/tags/terminal/" style="font-size: 13.33px;">terminal</a> <a href="/tags/testing/" style="font-size: 14.44px;">testing</a> <a href="/tags/tool/" style="font-size: 10px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.67px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.89px;">watchOS</a> <a href="/tags/web/" style="font-size: 10.56px;">web</a> <a href="/tags/work/" style="font-size: 10px;">work</a> <a href="/tags/wwdc/" style="font-size: 10px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 16.11px;">xcode</a>
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/android/" style="font-size: 17.37px;">android</a> <a href="/tags/apple-script/" style="font-size: 11.05px;">apple script</a> <a href="/tags/catalyst/" style="font-size: 10px;">catalyst</a> <a href="/tags/ci/" style="font-size: 11.05px;">ci</a> <a href="/tags/cloud/" style="font-size: 10.53px;">cloud</a> <a href="/tags/cocoapods/" style="font-size: 11.58px;">cocoapods</a> <a href="/tags/combine/" style="font-size: 12.11px;">combine</a> <a href="/tags/core-data/" style="font-size: 10.53px;">core data</a> <a href="/tags/csharp/" style="font-size: 10px;">csharp</a> <a href="/tags/css/" style="font-size: 11.58px;">css</a> <a href="/tags/dart/" style="font-size: 11.58px;">dart</a> <a href="/tags/database/" style="font-size: 10.53px;">database</a> <a href="/tags/design/" style="font-size: 10.53px;">design</a> <a href="/tags/electron/" style="font-size: 11.58px;">electron</a> <a href="/tags/firebase/" style="font-size: 12.11px;">firebase</a> <a href="/tags/flutter/" style="font-size: 11.58px;">flutter</a> <a href="/tags/git/" style="font-size: 11.05px;">git</a> <a href="/tags/github/" style="font-size: 12.11px;">github</a> <a href="/tags/go/" style="font-size: 10.53px;">go</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/iOS/" style="font-size: 19.47px;">iOS</a> <a href="/tags/javascript/" style="font-size: 17.89px;">javascript</a> <a href="/tags/kotlin/" style="font-size: 16.84px;">kotlin</a> <a href="/tags/layout/" style="font-size: 11.58px;">layout</a> <a href="/tags/life/" style="font-size: 13.16px;">life</a> <a href="/tags/links/" style="font-size: 14.21px;">links</a> <a href="/tags/macOS/" style="font-size: 18.95px;">macOS</a> <a href="/tags/machine-learning/" style="font-size: 10.53px;">machine learning</a> <a href="/tags/maps/" style="font-size: 11.58px;">maps</a> <a href="/tags/networking/" style="font-size: 10px;">networking</a> <a href="/tags/node/" style="font-size: 12.63px;">node</a> <a href="/tags/objc/" style="font-size: 10.53px;">objc</a> <a href="/tags/react/" style="font-size: 11.05px;">react</a> <a href="/tags/react-native/" style="font-size: 15.26px;">react native</a> <a href="/tags/realm/" style="font-size: 10px;">realm</a> <a href="/tags/rx/" style="font-size: 11.05px;">rx</a> <a href="/tags/script/" style="font-size: 10.53px;">script</a> <a href="/tags/spm/" style="font-size: 12.11px;">spm</a> <a href="/tags/swift/" style="font-size: 20px;">swift</a> <a href="/tags/swiftUI/" style="font-size: 18.42px;">swiftUI</a> <a href="/tags/tech/" style="font-size: 15.79px;">tech</a> <a href="/tags/terminal/" style="font-size: 13.16px;">terminal</a> <a href="/tags/testing/" style="font-size: 14.74px;">testing</a> <a href="/tags/tool/" style="font-size: 10px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a> <a href="/tags/voip/" style="font-size: 11.58px;">voip</a> <a href="/tags/watchOS/" style="font-size: 13.68px;">watchOS</a> <a href="/tags/web/" style="font-size: 11.58px;">web</a> <a href="/tags/work/" style="font-size: 10px;">work</a> <a href="/tags/wwdc/" style="font-size: 10px;">wwdc</a> <a href="/tags/xcode/" style="font-size: 16.32px;">xcode</a>
     </div>
   </div>
 
@@ -2022,7 +2091,7 @@ var themeMenus = {};
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">30</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">49</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">50</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">48</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -2032,7 +2101,7 @@ var themeMenus = {};
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-data/">core data</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">158</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">37</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">97</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">267</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">49</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work/">work</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">24</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a><span class="tag-list-count">35</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apple-script/">apple script</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/catalyst/">catalyst</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ci/">ci</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud/">cloud</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocoapods/">cocoapods</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/combine/">combine</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-data/">core data</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csharp/">csharp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dart/">dart</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/database/">database</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/electron/">electron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firebase/">firebase</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flutter/">flutter</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/">go</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/">google</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">158</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a><span class="tag-list-count">40</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kotlin/">kotlin</a><span class="tag-list-count">25</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/layout/">layout</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/links/">links</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/">macOS</a><span class="tag-list-count">97</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/machine-learning/">machine learning</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maps/">maps</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/networking/">networking</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/">node</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/objc/">objc</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-native/">react native</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/realm/">realm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rx/">rx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/script/">script</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spm/">spm</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swift/">swift</a><span class="tag-list-count">268</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/swiftUI/">swiftUI</a><span class="tag-list-count">49</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tech/">tech</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/terminal/">terminal</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/testing/">testing</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tool/">tool</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/">unity</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/voip/">voip</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/watchOS/">watchOS</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work/">work</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wwdc/">wwdc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xcode/">xcode</a><span class="tag-list-count">24</span></li></ul>
     </div>
   </div>
 
@@ -2072,6 +2141,8 @@ var themeMenus = {};
     <a href="/" class="mobile-nav-link">Home</a>
   
     <a href="/about/" class="mobile-nav-link">About</a>
+  
+    <a href="/apps/" class="mobile-nav-link">Apps</a>
   
     <a href="/writing/" class="mobile-nav-link">Writing</a>
   

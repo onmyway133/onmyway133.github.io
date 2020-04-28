@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-04-16T07:34:05.000Z</updated>
+  <updated>2020-04-28T11:18:40.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,180 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to use webpack to bundle html css js</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-webpack-to-bundle-html-css-js/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-webpack-to-bundle-html-css-js/</id>
+    <published>2020-04-28T10:56:09.000Z</published>
+    <updated>2020-04-28T11:18:40.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/645" target="_blank" rel="noopener">#645</a></strong></p><h3 id="Install-webpack"><a href="#Install-webpack" class="headerlink" title="Install webpack"></a>Install webpack</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm init</span><br><span class="line">npm install webpack webpack-cli --save-dev</span><br><span class="line">vim webpack.config.js</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">module.exports = &#123;</span><br><span class="line">    entry: &quot;./index.js&quot;,</span><br><span class="line">    mode: &apos;production&apos;,</span><br><span class="line">    output: &#123;</span><br><span class="line">        filename: &quot;./index.js&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>To invoke webpack, run below. Your output is <code>dist/index.js</code></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx webpack</span><br></pre></td></tr></table></figure><h3 id="Minify-js"><a href="#Minify-js" class="headerlink" title="Minify js"></a>Minify js</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install babel-minify-webpack-plugin --save-dev</span><br></pre></td></tr></table></figure><h3 id="Minify-html"><a href="#Minify-html" class="headerlink" title="Minify html"></a>Minify html</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install html-webpack-plugin --save-dev</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">const MinifyPlugin = require(&apos;babel-minify-webpack-plugin&apos;);</span><br><span class="line">const HtmlWebpackPlugin = require(&apos;html-webpack-plugin&apos;)</span><br><span class="line"></span><br><span class="line">module.exports = &#123;</span><br><span class="line">    entry: &quot;./index.js&quot;,</span><br><span class="line">    mode: &apos;production&apos;,</span><br><span class="line">    output: &#123;</span><br><span class="line">        filename: &quot;./index.js&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    plugins: [</span><br><span class="line">        new MinifyPlugin(),</span><br><span class="line">        new HtmlWebpackPlugin(&#123;</span><br><span class="line">            template: &apos;index.html&apos;,</span><br><span class="line">            filename: &apos;index.html&apos;,</span><br><span class="line">            minify: &#123;</span><br><span class="line">                collapseWhitespace: true</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="Minify-css"><a href="#Minify-css" class="headerlink" title="Minify css"></a>Minify css</h3><p>TBD</p><h3 id="Copy-files"><a href="#Copy-files" class="headerlink" title="Copy files"></a>Copy files</h3><p>Copy files from <code>dist</code> to public folder so we can use</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install copyfiles -g</span><br></pre></td></tr></table></figure><p>Then in <code>package.json</code></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;scripts&quot;: &#123;</span><br><span class="line">    &quot;copy&quot;: &quot;copyfiles -u 1 dist/* ../apps/ &amp;&amp; copyfiles *.css ../apps&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Then run <code>npm run copy</code></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/645&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#645&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h3
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="web" scheme="https://onmyway133.github.io/tags/web/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to assert asynchronously in XCTest</title>
+    <link href="https://onmyway133.github.io/blog/How-to-assert-asynchronously-in-XCTest/"/>
+    <id>https://onmyway133.github.io/blog/How-to-assert-asynchronously-in-XCTest/</id>
+    <published>2020-04-28T07:23:52.000Z</published>
+    <updated>2020-04-28T07:23:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/644" target="_blank" rel="noopener">#644</a></strong></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> XCTest</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    <span class="comment">/// Asynchronously assertion</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">XCTAssertWait</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        timeout: TimeInterval = <span class="number">1</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="number">_</span> expression: @escaping <span class="params">()</span></span></span> -&gt; <span class="type">Void</span>,</span><br><span class="line">        <span class="number">_</span>: <span class="type">String</span> = <span class="string">""</span>,</span><br><span class="line">        file <span class="number">_</span>: <span class="type">StaticString</span> = #file,</span><br><span class="line">        line <span class="number">_</span>: <span class="type">UInt</span> = #line</span><br><span class="line">    ) &#123;</span><br><span class="line">        <span class="keyword">let</span> expectation = <span class="keyword">self</span>.expectation(description: #function)</span><br><span class="line">        <span class="type">DispatchQueue</span>.main.asyncAfter(deadline: .now() + timeout) &#123;</span><br><span class="line">            expression()</span><br><span class="line">            expectation.fulfill()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> waiter = <span class="type">XCTWaiter</span>()</span><br><span class="line">        <span class="type">XCTAssertTrue</span>(waiter.wait(<span class="keyword">for</span>: [expectation], timeout: timeout + <span class="number">1</span>) == .completed)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/644&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#644&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;figure
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="testing" scheme="https://onmyway133.github.io/tags/testing/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to make simple filter menu in css</title>
+    <link href="https://onmyway133.github.io/blog/How-to-make-simple-filter-menu-in-css/"/>
+    <id>https://onmyway133.github.io/blog/How-to-make-simple-filter-menu-in-css/</id>
+    <published>2020-04-27T20:01:47.000Z</published>
+    <updated>2020-04-27T20:03:13.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/643" target="_blank" rel="noopener">#643</a></strong></p><p>Use material icons</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"https://fonts.googleapis.com/icon?family=Material+Icons"</span>&gt;</span></span><br></pre></td></tr></table></figure><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">div</span><span class="selector-id">#filter-container</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: flex;</span><br><span class="line">    <span class="attribute">align-items</span>: center;</span><br><span class="line">    <span class="attribute">justify-content</span>: center;</span><br><span class="line">    <span class="attribute">margin-top</span>: <span class="number">10%</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">60px</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">div</span><span class="selector-id">#filter-items</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: inline-flex;</span><br><span class="line">    </span><br><span class="line">    <span class="attribute">background-color</span>: <span class="number">#fff</span>;</span><br><span class="line">    <span class="attribute">box-shadow</span>: <span class="number">0</span> <span class="number">0</span> <span class="number">1px</span> <span class="number">0</span> <span class="built_in">rgba</span>(52, 46, 173, 0.25), <span class="number">0</span> <span class="number">15px</span> <span class="number">30px</span> <span class="number">0</span> <span class="built_in">rgba</span>(52, 46, 173, 0.1);</span><br><span class="line">    <span class="attribute">border-radius</span>: <span class="number">12px</span>;</span><br><span class="line">    <span class="attribute">overflow</span>: hidden;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">10px</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">a</span><span class="selector-class">.filter-item</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: flex;</span><br><span class="line">    <span class="attribute">flex-direction</span>: column;</span><br><span class="line">    <span class="attribute">justify-content</span>: center;</span><br><span class="line">    <span class="attribute">align-items</span>: center;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">    <span class="attribute">text-decoration</span>: none;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">10px</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">a</span><span class="selector-class">.filter-item</span><span class="selector-pseudo">:hover</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: <span class="built_in">rgb</span>(239, 240, 241);</span><br><span class="line">    <span class="attribute">border-radius</span>: <span class="number">10px</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">a</span><span class="selector-class">.filter-item</span><span class="selector-pseudo">:active</span> &#123;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(0.9);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">a</span><span class="selector-class">.filter-item</span><span class="selector-class">.selected</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: <span class="built_in">rgb</span>(239, 240, 241);</span><br><span class="line">    <span class="attribute">border-radius</span>: <span class="number">10px</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">span</span><span class="selector-class">.material-icons</span> &#123;</span><br><span class="line"><span class="attribute">font-family</span>: <span class="string">"Material Icons"</span>;</span><br><span class="line"><span class="attribute">display</span>: block;</span><br><span class="line"><span class="attribute">margin-bottom</span>: <span class="number">4px</span>;</span><br><span class="line"><span class="attribute">font-size</span>: <span class="number">26px</span>;</span><br><span class="line"><span class="attribute">color</span>: <span class="built_in">mix</span>(#fff, #342ead, 60%);</span><br><span class="line"><span class="attribute">transition</span>: <span class="number">0.25s</span> ease;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">span</span><span class="selector-class">.name</span> &#123;</span><br><span class="line"><span class="attribute">display</span>: block;</span><br><span class="line"><span class="attribute">font-size</span>: <span class="number">13px</span>;</span><br><span class="line"><span class="attribute">color</span>: <span class="built_in">mix</span>(#fff, #342ead, 70%);</span><br><span class="line">    <span class="attribute">transition</span>: <span class="number">0.25s</span> ease;</span><br><span class="line">    <span class="attribute">font-family</span>: <span class="string">'Open Sans'</span>, sans-serif;</span><br><span class="line">    <span class="attribute">font-weight</span>: <span class="number">500</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">filters.forEach(<span class="function">(<span class="params">filter</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> item = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>)</span><br><span class="line">    item.href = <span class="string">'#'</span></span><br><span class="line">    item.className = <span class="string">'filter-item'</span></span><br><span class="line">    container.appendChild(item)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> icon = <span class="built_in">document</span>.createElement(<span class="string">'span'</span>)</span><br><span class="line">    icon.className = <span class="string">'material-icons'</span></span><br><span class="line">    icon.innerText = filter.icon</span><br><span class="line">    item.appendChild(icon)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> name = <span class="built_in">document</span>.createElement(<span class="string">'span'</span>)</span><br><span class="line">    name.className = <span class="string">'name'</span></span><br><span class="line">    name.innerText = filter.name</span><br><span class="line">    item.appendChild(name)</span><br><span class="line"></span><br><span class="line">    item.onclick = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        handleFilterClick(item, filter)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/643&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#643&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Use
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="css" scheme="https://onmyway133.github.io/tags/css/"/>
+    
+      <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to make simple grid gallery in css</title>
+    <link href="https://onmyway133.github.io/blog/How-to-make-simple-grid-gallery-in-css/"/>
+    <id>https://onmyway133.github.io/blog/How-to-make-simple-grid-gallery-in-css/</id>
+    <published>2020-04-26T16:53:52.000Z</published>
+    <updated>2020-04-26T16:54:27.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/642" target="_blank" rel="noopener">#642</a></strong></p><p>Specify container with <code>flex-wrap</code> and <code>justify-content</code>, and item with <code>float: left</code></p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">div</span><span class="selector-class">.cards</span> &#123;</span><br><span class="line">  <span class="attribute">display</span>: flex;</span><br><span class="line">  <span class="attribute">justify-content</span>: center;</span><br><span class="line">  <span class="attribute">flex-direction</span>: row;</span><br><span class="line">  <span class="attribute">flex-wrap</span>: wrap;</span><br><span class="line">  <span class="attribute">margin-top</span>: <span class="number">10%</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">div</span><span class="selector-class">.card</span> &#123;</span><br><span class="line">  <span class="attribute">overflow</span>: hidden;</span><br><span class="line">  <span class="attribute">float</span>: left;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">220px</span>;</span><br><span class="line">  <span class="attribute">color</span>: <span class="number">#232330</span>;</span><br><span class="line">  <span class="attribute">text-align</span>: center;</span><br><span class="line">  <span class="attribute">border-radius</span>: <span class="number">10px</span>;</span><br><span class="line">  <span class="attribute">border-color</span>: silver;</span><br><span class="line">  <span class="attribute">box-shadow</span>: <span class="number">1px</span> <span class="number">8px</span> <span class="number">8px</span> <span class="built_in">rgba</span>(10, 10, 10, 0.2);</span><br><span class="line">  <span class="attribute">font-family</span>: <span class="string">'Open Sans'</span>, sans-serif;</span><br><span class="line">  <span class="attribute">margin</span>: <span class="number">16px</span>;</span><br><span class="line">  <span class="attribute">transition</span>: all .<span class="number">2s</span> ease-in-out;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">div</span><span class="selector-class">.card</span><span class="selector-pseudo">:hover</span> &#123;</span><br><span class="line">  <span class="attribute">transform</span>: <span class="built_in">scale</span>(1.2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/642&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#642&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Specify
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="css" scheme="https://onmyway133.github.io/tags/css/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to add independent page in hexo</title>
+    <link href="https://onmyway133.github.io/blog/How-to-add-independent-page-in-hexo/"/>
+    <id>https://onmyway133.github.io/blog/How-to-add-independent-page-in-hexo/</id>
+    <published>2020-04-26T02:57:51.000Z</published>
+    <updated>2020-04-26T02:58:03.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/641" target="_blank" rel="noopener">#641</a></strong></p><p>Create a new page</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo <span class="keyword">new</span> page mydemo</span><br></pre></td></tr></table></figure><p>Remove <code>index.md</code> and create <code>index.html</code>, you can reference external css and js in this <code>index.html</code>. Hexo has <code>hexo new page mydemo --slug</code> but it does not support page hierarchy</p><p>Specify no layout so it is independent page.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">layout: false</span><br><span class="line">---</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/641&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#641&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Create a
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="web" scheme="https://onmyway133.github.io/tags/web/"/>
+    
+      <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to use async function as parameter in TypeScript</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-async-function-as-parameter-in-TypeScript/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-async-function-as-parameter-in-TypeScript/</id>
+    <published>2020-04-21T07:31:27.000Z</published>
+    <updated>2020-04-21T07:32:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/640" target="_blank" rel="noopener">#640</a></strong></p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">useCache</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">    collectionName: string, </span></span></span><br><span class="line"><span class="function"><span class="params">    key: string, </span></span></span><br><span class="line"><span class="function"><span class="params">    response: functions.Response&lt;any&gt;, </span></span></span><br><span class="line"><span class="function"><span class="params">    fetch: (</span>) =&gt; <span class="title">Promise</span>&lt;<span class="title">any</span>&gt;</span></span><br><span class="line"><span class="function">): <span class="title">Promise</span>&lt;<span class="title">any</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> existing = <span class="keyword">await</span> db.collection(collectionName).doc(key).get() </span><br><span class="line">    <span class="keyword">if</span> (existing.exists) &#123;</span><br><span class="line">        response.send(existing.data())</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> object = <span class="keyword">await</span> fetch()</span><br><span class="line">    <span class="keyword">const</span> json = <span class="built_in">Object</span>.assign(&#123;&#125;, object)</span><br><span class="line">    <span class="keyword">await</span> db.collection(collectionName).doc(key).set(json)</span><br><span class="line">    response.send(object)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">useCache(</span><br><span class="line">     <span class="string">"books"</span>,</span><br><span class="line">     key,</span><br><span class="line">     response,</span><br><span class="line">     <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">         <span class="keyword">const</span> service = <span class="keyword">new</span> Service()</span><br><span class="line">         <span class="keyword">return</span> <span class="keyword">await</span> service.doSomething(key)</span><br><span class="line">     &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/640&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#640&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;figure
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
+    
+  </entry>
   
   <entry>
     <title>How to format percent in Swift</title>
@@ -423,189 +597,6 @@
         
           &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/626&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#626&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;SwiftUI
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to force refresh in ForEach in SwiftUI for macOS</title>
-    <link href="https://onmyway133.github.io/blog/How-to-force-refresh-in-ForEach-in-SwiftUI-for-macOS/"/>
-    <id>https://onmyway133.github.io/blog/How-to-force-refresh-in-ForEach-in-SwiftUI-for-macOS/</id>
-    <published>2020-03-17T21:50:00.000Z</published>
-    <updated>2020-03-17T21:50:09.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/625" target="_blank" rel="noopener">#625</a></strong></p><p>For some strange reasons, content inside ForEach does not update with changes in Core Data NSManagedObject. The workaround is to introduce salt, like UUID just to make state change</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">NoteRow</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> note: <span class="type">Note</span></span><br><span class="line">    <span class="keyword">let</span> id: <span class="type">UUID</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">List</span> &#123;</span><br><span class="line">    <span class="type">ForEach</span>(notes) &#123; note <span class="keyword">in</span></span><br><span class="line">        <span class="type">NoteRow</span>(note: note, id: <span class="type">UUID</span>())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/625&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#625&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;For some
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to access bookmark url in macOS</title>
-    <link href="https://onmyway133.github.io/blog/How-to-access-bookmark-url-in-macOS/"/>
-    <id>https://onmyway133.github.io/blog/How-to-access-bookmark-url-in-macOS/</id>
-    <published>2020-03-17T04:48:44.000Z</published>
-    <updated>2020-03-17T19:30:29.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/624" target="_blank" rel="noopener">#624</a></strong></p><blockquote><p>By default the approaches above grant you access while the app remains open. When you quit the app, any folder access you had is lost.</p></blockquote><blockquote><p>To gain persistent access to a folder even on subsequent launches, we’ll have to take advantage of a system called Security-Scoped Bookmarks.</p></blockquote><p>Add entitlements</p><blockquote><p>Use of app-scoped bookmarks and URLs</p></blockquote><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>com.apple.security.files.user-selected.read-only<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>com.apple.security.files.bookmarks.app-scope<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br></pre></td></tr></table></figure><p><a href="https://developer.apple.com/library/archive/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW18" target="_blank" rel="noopener">Enabling Security-Scoped Bookmark and URL Access</a></p><blockquote><p>If you want to provide your sandboxed app with persistent access to file system resources, you must enable security-scoped bookmark and URL access. Security-scoped bookmarks are available starting in macOS v10.7.3.</p></blockquote><blockquote><p>To add the bookmarks.app-scope or bookmarks.document-scope entitlement, edit the target’s .entitlements property list file using the Xcode property list editor. Use the entitlement keys shown in Table 4-4, depending on which type of access you want. Use a value of <true> for each entitlement you want to enable. You can enable either or both entitlements.</true></p></blockquote><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">saveBookmark</span><span class="params">(item: ShortcutItem)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> url = item.fileUrl <span class="keyword">else</span> &#123; <span class="keyword">return</span>  &#125;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> bookmarkData = <span class="keyword">try</span> url.bookmarkData(</span><br><span class="line">            options: .withSecurityScope,</span><br><span class="line">            includingResourceValuesForKeys: <span class="literal">nil</span>,</span><br><span class="line">            relativeTo: <span class="literal">nil</span></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        item.bookmark = bookmarkData</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"Failed to save bookmark data for \(url)"</span>, error)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">loadBookmark</span><span class="params">(item: ShortcutItem)</span></span> -&gt; <span class="type">URL?</span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> data = item.bookmark <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> isStale = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">let</span> url = <span class="keyword">try</span> <span class="type">URL</span>(</span><br><span class="line">            resolvingBookmarkData: data,</span><br><span class="line">            options: .withSecurityScope,</span><br><span class="line">            relativeTo: <span class="literal">nil</span>,</span><br><span class="line">            bookmarkDataIsStale: &amp;isStale</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">if</span> isStale &#123;</span><br><span class="line">            saveBookmark(item: item)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> url</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"Error resolving bookmark:"</span>, error)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">_</span> = url.startAccessingSecurityScopedResource()</span><br><span class="line"><span class="type">NSWorkspace</span>.shared.<span class="keyword">open</span>(url)</span><br><span class="line">url.stopAccessingSecurityScopedResource()</span><br></pre></td></tr></table></figure><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">_</span> = url.startAccessingSecurityScopedResource()</span><br><span class="line"><span class="type">NSWorkspace</span>.shared.selectFile(</span><br><span class="line">    url.path,</span><br><span class="line">    inFileViewerRootedAtPath: url.deletingLastPathComponent().path</span><br><span class="line">)</span><br><span class="line">url.stopAccessingSecurityScopedResource()</span><br></pre></td></tr></table></figure><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://benscheirman.com/2019/10/troubleshooting-appkit-file-permissions/" target="_blank" rel="noopener">Modern AppKit File Permissions</a></li><li><a href="https://stackoverflow.com/questions/42179567/what-does-startaccessingsecurityscopedresource-actually-do" target="_blank" rel="noopener">https://stackoverflow.com/questions/42179567/what-does-startaccessingsecurityscopedresource-actually-do</a></li><li><a href="https://developer.apple.com/library/archive/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html" target="_blank" rel="noopener">Enabling App Sandbox</a></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/624&quot; target=&quot;_blank&quot;
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to force FetchRequest update in SwiftUI</title>
-    <link href="https://onmyway133.github.io/blog/How-to-force-FetchRequest-update-in-SwiftUI/"/>
-    <id>https://onmyway133.github.io/blog/How-to-force-FetchRequest-update-in-SwiftUI/</id>
-    <published>2020-03-16T13:25:52.000Z</published>
-    <updated>2020-03-17T21:00:10.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/623" target="_blank" rel="noopener">#623</a></strong></p><p>Listen to context changes notification and change SwiftUI View state</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> changes = [<span class="type">NSDeletedObjectsKey</span>: ids]</span><br><span class="line"><span class="type">NSManagedObjectContext</span>.mergeChanges(</span><br><span class="line">    fromRemoteContextSave: changes,</span><br><span class="line">    into: [context]</span><br><span class="line">)</span><br><span class="line"><span class="keyword">try</span> context.save()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ListView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">Environment</span>(\.managedObjectContext)</span><br><span class="line">    <span class="keyword">var</span> context</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> didSave = <span class="type">NotificationCenter</span>.<span class="keyword">default</span>.publisher(<span class="keyword">for</span>: .<span class="type">NSManagedObjectContextDidSave</span>)</span><br><span class="line">    @<span class="type">State</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> refreshing: <span class="type">Bool</span> = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        makeContent()</span><br><span class="line">            .onReceive(didSave) &#123; <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">                <span class="keyword">self</span>.refreshing.toggle()</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>We need to actually use that State variable for it to have effect</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> refreshing &#123;</span><br><span class="line">    <span class="type">Text</span>(<span class="string">""</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="type">Text</span>(<span class="string">""</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/623&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#623&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Listen to
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-      <category term="core data" scheme="https://onmyway133.github.io/tags/core-data/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to batch delete in Core Data</title>
-    <link href="https://onmyway133.github.io/blog/How-to-batch-delete-in-Core-Data/"/>
-    <id>https://onmyway133.github.io/blog/How-to-batch-delete-in-Core-Data/</id>
-    <published>2020-03-15T05:14:58.000Z</published>
-    <updated>2020-03-15T05:15:28.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/622" target="_blank" rel="noopener">#622</a></strong></p><p>Read <a href="https://developer.apple.com/library/archive/featuredarticles/CoreData_Batch_Guide/BatchDeletes/BatchDeletes.html" target="_blank" rel="noopener">Implementing Batch Deletes</a></p><blockquote><p>If the entities that are being deleted are not loaded into memory, there is no need to update your application after the NSBatchDeleteRequest has been executed. However, if you are deleting objects in the persistence layer and those entities are also in memory, it is important that you notify the application that the objects in memory are stale and need to be refreshed.</p></blockquote><blockquote><p>To do this, first make sure the resultType of the NSBatchDeleteRequest is set to NSBatchDeleteRequestResultType.resultTypeObjectIDs before the request is executed. When the request has completed successfully, the resulting NSPersistentStoreResult instance that is returned will have an array of NSManagedObjectID instances referenced in the result property. That array of NSManagedObjectID instances can then be used to update one or more NSManagedObjectContext instances.</p></blockquote><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> fetchRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">NSFetchRequestResult</span>&gt; = <span class="type">Book</span>.fetchRequest()</span><br><span class="line"><span class="keyword">let</span> deleteRequest = <span class="type">NSBatchDeleteRequest</span>(fetchRequest: fetchRequest)</span><br><span class="line">deleteRequest.resultType = .resultTypeObjectIDs</span><br><span class="line"></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> context = <span class="type">CoreDataManager</span>.shared.container.viewContext</span><br><span class="line">    <span class="keyword">let</span> result = <span class="keyword">try</span> context.execute(</span><br><span class="line">        deleteRequest</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">guard</span></span><br><span class="line">        <span class="keyword">let</span> deleteResult = result <span class="keyword">as</span>? <span class="type">NSBatchDeleteResult</span>,</span><br><span class="line">        <span class="keyword">let</span> ids = deleteResult.result <span class="keyword">as</span>? [<span class="type">NSManagedObjectID</span>]</span><br><span class="line">    <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> changes = [<span class="type">NSDeletedObjectsKey</span>: ids]</span><br><span class="line">    <span class="type">NSManagedObjectContext</span>.mergeChanges(</span><br><span class="line">        fromRemoteContextSave: changes,</span><br><span class="line">        into: [context]</span><br><span class="line">    )</span><br><span class="line">&#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(error <span class="keyword">as</span> <span class="type">Any</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/622&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#622&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Read &lt;a
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-      <category term="core data" scheme="https://onmyway133.github.io/tags/core-data/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to update FetchRequest with predicate in SwiftUI</title>
-    <link href="https://onmyway133.github.io/blog/How-to-update-FetchRequest-with-predicate-in-SwiftUI/"/>
-    <id>https://onmyway133.github.io/blog/How-to-update-FetchRequest-with-predicate-in-SwiftUI/</id>
-    <published>2020-03-14T21:21:14.000Z</published>
-    <updated>2020-03-14T21:22:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/621" target="_blank" rel="noopener">#621</a></strong></p><p>Make subview that accepts <code>FetchRequest</code>. Trigger search by setting property</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SideView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">Environment</span>(\.managedObjectContext)</span><br><span class="line">    <span class="keyword">var</span> context</span><br><span class="line"></span><br><span class="line">    @<span class="type">State</span> <span class="keyword">var</span> search: <span class="type">Search?</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span>(alignment: .leading) &#123;</span><br><span class="line">            <span class="type">SearchView</span>(</span><br><span class="line">                onSearch: <span class="keyword">self</span>.onSearch</span><br><span class="line">            )</span><br><span class="line">            <span class="type">InsideListView</span>(fetchRequest: makeFetchRequest())</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">makeFetchRequest</span><span class="params">()</span></span> -&gt; <span class="type">FetchRequest</span>&lt;<span class="type">Book</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> predicate: <span class="type">NSPredicate?</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> search = search &#123;</span><br><span class="line">            <span class="keyword">let</span> textPredicate = <span class="type">NSPredicate</span>(format: <span class="string">"string CONTAINS[cd] %@"</span>, search.text)</span><br><span class="line">            <span class="keyword">let</span> appPredicate = <span class="type">NSPredicate</span>(format: <span class="string">"appName == %@"</span>, search.app)</span><br><span class="line">            <span class="keyword">let</span> typePredicate = <span class="type">NSPredicate</span>(format: <span class="string">"type == %@"</span>, search.type)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> predicates: [<span class="type">NSPredicate</span>] = []</span><br><span class="line">            <span class="keyword">if</span> search.text.<span class="built_in">count</span> &gt;= <span class="number">3</span> &#123;</span><br><span class="line">                predicates.append(textPredicate)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> search.app != <span class="type">Constants</span>.all &#123;</span><br><span class="line">                predicates.append(appPredicate)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> search.type != <span class="type">Constants</span>.all &#123;</span><br><span class="line">                predicates.append(typePredicate)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            predicate = <span class="type">NSCompoundPredicate</span>(andPredicateWithSubpredicates: predicates)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            predicate = <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="type">FetchRequest</span>&lt;<span class="type">Book</span>&gt;(</span><br><span class="line">            entity: <span class="type">Book</span>.entity(),</span><br><span class="line">            sortDescriptors: [</span><br><span class="line">                <span class="type">NSSortDescriptor</span>(keyPath: \<span class="type">Book</span>.date, ascending: <span class="literal">false</span>)</span><br><span class="line">            ],</span><br><span class="line">            predicate: predicate</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">onSearch</span><span class="params">(<span class="number">_</span> search: Search)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> search.text.<span class="built_in">count</span> &lt; <span class="number">3</span> &amp;&amp; search.type != <span class="type">Constants</span>.all &amp;&amp; search.app != <span class="type">Constants</span>.all &#123;</span><br><span class="line">            <span class="keyword">self</span>.search = <span class="literal">nil</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.search = search</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">struct</span> <span class="title">InsideListView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">Environment</span>(\.managedObjectContext)</span><br><span class="line">    <span class="keyword">var</span> context</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> fetchRequest: <span class="type">FetchRequest</span>&lt;<span class="type">Book</span>&gt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">List</span>(items) &#123;</span><br><span class="line">            <span class="type">ForEach</span></span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> items: <span class="type">FetchedResults</span>&lt;<span class="type">Book</span>&gt; &#123;</span><br><span class="line">        fetchRequest.wrappedValue</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/621&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#621&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Make
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to make TextField focus in SwiftUI for macOS</title>
-    <link href="https://onmyway133.github.io/blog/How-to-make-TextField-focus-in-SwiftUI-for-macOS/"/>
-    <id>https://onmyway133.github.io/blog/How-to-make-TextField-focus-in-SwiftUI-for-macOS/</id>
-    <published>2020-03-13T05:39:49.000Z</published>
-    <updated>2020-03-15T21:06:47.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/620" target="_blank" rel="noopener">#620</a></strong></p><p>For <code>NSWindow</code> having <code>level</code>other than <code>.normal</code>, need  to override key and main  property to allow TextField to be focusable</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FocusWindow</span>: <span class="title">NSWindow</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> canBecomeKey: <span class="type">Bool</span>  &#123; <span class="literal">true</span> &#125;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> canBecomeMain: <span class="type">Bool</span> &#123; <span class="literal">true</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Furthermore to customize TextField, consider  using custom</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyTextField</span>: <span class="title">NSViewRepresentable</span> </span>&#123;</span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> text: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeNSView</span><span class="params">(context: NSViewRepresentableContext&lt;MyTextField&gt;)</span></span> -&gt; <span class="type">NSTextField</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> tf = <span class="type">NSTextField</span>()</span><br><span class="line">        tf.focusRingType = .<span class="keyword">none</span></span><br><span class="line">        tf.isBordered = <span class="literal">false</span></span><br><span class="line">        tf.drawsBackground = <span class="literal">false</span></span><br><span class="line">        tf.delegate = context.coordinator</span><br><span class="line">        <span class="keyword">return</span> tf</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateNSView</span><span class="params">(<span class="number">_</span> nsView: NSTextField, context: NSViewRepresentableContext&lt;MyTextField&gt;)</span></span> &#123;</span><br><span class="line">        nsView.stringValue = text</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeCoordinator</span><span class="params">()</span></span> -&gt; <span class="type">MyTextField</span>.<span class="type">Coordinator</span> &#123;</span><br><span class="line">        <span class="type">Coordinator</span>(parent: <span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Coordinator</span>: <span class="title">NSObject</span>, <span class="title">NSTextFieldDelegate</span>  </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> parent: <span class="type">MyTextField</span></span><br><span class="line">        <span class="keyword">init</span>(parent: <span class="type">MyTextField</span>) &#123;</span><br><span class="line">            <span class="keyword">self</span>.parent = parent</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">func</span> <span class="title">controlTextDidChange</span><span class="params">(<span class="number">_</span> obj: Notification)</span></span> &#123;</span><br><span class="line">            <span class="keyword">let</span> textField = obj.object <span class="keyword">as</span>! <span class="type">NSTextField</span></span><br><span class="line">            parent.text = textField.stringValue</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/620&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;#620&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;For
         
       
     
