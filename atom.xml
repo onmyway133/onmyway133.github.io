@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-09-15T10:18:11.000Z</updated>
+  <updated>2020-09-25T02:01:53.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,68 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to use Binding in function in Swift</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-Binding-in-function-in-Swift/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-Binding-in-function-in-Swift/</id>
+    <published>2020-09-25T02:01:53.000Z</published>
+    <updated>2020-09-25T02:01:53.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/675">#675</a></strong></p><p>Use <code>wrappedValue</code> to get the underlying value that Binding contains</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">addOverlay</span><span class="params">(shows: Binding&lt;Bool&gt;)</span></span> -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            <span class="keyword">self</span></span><br><span class="line">            <span class="type">Spacer</span>()</span><br><span class="line">        &#125;</span><br><span class="line">        .overlay(</span><br><span class="line">            <span class="type">HStack</span> &#123;</span><br><span class="line">                <span class="type">Spacer</span>()</span><br><span class="line">                <span class="type">SmallButton</span>(</span><br><span class="line">                    imageName: <span class="string">"downArrow"</span>,</span><br><span class="line">                    tooltip: shows.wrappedValue ? <span class="string">"Collapse"</span> : <span class="string">"Expand"</span>,</span><br><span class="line">                    action: &#123;</span><br><span class="line">                        shows.wrappedValue.toggle()</span><br><span class="line">                    &#125;</span><br><span class="line">                )</span><br><span class="line">                .rotationEffect(.radians(shows.wrappedValue ? .pi : <span class="number">0</span>))</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/675&quot;&gt;#675&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Use &lt;code&gt;wrappedValue&lt;/code&gt; to get the
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to use HSplitView to define 3 panes view in SwiftUI for macOS</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-HSplitView-to-define-3-panes-view-in-SwiftUI-for-macOS/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-HSplitView-to-define-3-panes-view-in-SwiftUI-for-macOS/</id>
+    <published>2020-09-23T02:32:58.000Z</published>
+    <updated>2020-09-23T06:42:29.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/674">#674</a></strong></p><p>Specify <code>minWidth</code> to ensure miminum width, and use <code>.layoutPriority(1)</code> for the most important pane.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MainView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">Store</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HSplitView</span> &#123;</span><br><span class="line">            <span class="type">LeftPane</span>()</span><br><span class="line">                .padding()</span><br><span class="line">                .frame(minWidth: <span class="number">200</span>, maxWidth: <span class="number">500</span>)</span><br><span class="line">            <span class="type">MiddlePane</span>(store: store)</span><br><span class="line">                .padding()</span><br><span class="line">                .frame(minWidth: <span class="number">500</span>)</span><br><span class="line">                .layoutPriority(<span class="number">1</span>)</span><br><span class="line">            <span class="type">RightPane</span>()</span><br><span class="line">                .padding()</span><br><span class="line">                .frame(minWidth: <span class="number">300</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .background(<span class="type">R</span>.color.background)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/674&quot;&gt;#674&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Specify &lt;code&gt;minWidth&lt;/code&gt; to ensure
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
   
   <entry>
     <title>How to draw arc corner using Bezier Path</title>
@@ -540,64 +602,6 @@
     
     
       <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
-    
-      <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to make switch statement in SwiftUI</title>
-    <link href="https://onmyway133.github.io/blog/How-to-make-switch-statement-in-SwiftUI/"/>
-    <id>https://onmyway133.github.io/blog/How-to-make-switch-statement-in-SwiftUI/</id>
-    <published>2020-05-22T18:41:10.000Z</published>
-    <updated>2020-05-22T18:42:14.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/656">#656</a></strong></p><p>Lately I’ve been challenging myself to declare switch statement in SwiftUI, or in a more generalized way, execute any anonymous function that can return a View</p><h2 id="Use-Switch-and-Case-views"><a href="#Use-Switch-and-Case-views" class="headerlink" title="Use Switch and Case views"></a>Use Switch and Case views</h2><p>Note that this approach does not work yet, as <code>TupeView</code> should support variadic number of contents, and also T.RawValue needs to conform to Equatable in order to check the cases.</p><p>Also in Switch statement, Content can’t be inferred</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Case</span>&lt;<span class="title">T</span>: <span class="title">RawRepresentable</span>, <span class="title">Content</span>: <span class="title">View</span>&gt;: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> value: <span class="type">T</span></span><br><span class="line">    <span class="keyword">let</span> content: <span class="type">Content</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>(<span class="number">_</span> value: <span class="type">T</span>, @<span class="type">ViewBuilder</span> content: () -&gt; <span class="type">Content</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.value = value</span><br><span class="line">        <span class="keyword">self</span>.content = content()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        content</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Switch</span>&lt;<span class="title">T</span>: <span class="title">RawRepresentable</span>, <span class="title">Content</span>: <span class="title">View</span>&gt;: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> value: <span class="type">T</span></span><br><span class="line">    <span class="keyword">let</span> cases: <span class="type">TupleView</span>&lt;<span class="type">Case</span>&lt;<span class="type">T</span>, <span class="type">Content</span>&gt;&gt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>(<span class="number">_</span> value: <span class="type">T</span>, @<span class="type">ViewBuilder</span> cases: () -&gt; <span class="type">TupleView</span>&lt;<span class="type">Case</span>&lt;<span class="type">T</span>, <span class="type">Content</span>&gt;&gt;) &#123;</span><br><span class="line">        <span class="keyword">self</span>.value = value</span><br><span class="line">        <span class="keyword">self</span>.cases = cases()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        makeBody()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">makeBody</span><span class="params">()</span></span> -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> Logic here</span></span><br><span class="line">        cases</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">UseSwitchStatement</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> animal: <span class="type">Animal</span> = .cat</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            <span class="type">Switch</span>(animal) &#123;</span><br><span class="line">                <span class="type">Case</span>(<span class="type">Animal</span>.cat) &#123;</span><br><span class="line">                    <span class="type">Text</span>(<span class="string">"cat"</span>)</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="type">Case</span>(<span class="type">Animal</span>.dog) &#123;</span><br><span class="line">                    <span class="type">Text</span>(<span class="string">"dog"</span>)</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="type">Case</span>(<span class="type">Animal</span>.mouse) &#123;</span><br><span class="line">                    <span class="type">Text</span>(<span class="string">"mouse"</span>)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="Use-MakeView"><a href="#Use-MakeView" class="headerlink" title="Use MakeView"></a>Use MakeView</h2><p>Another solution is to use a <code>MakeView</code> view, this is more generic as it can execute any functions</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Animal</span>: <span class="title">String</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> cat</span><br><span class="line">    <span class="keyword">case</span> dog</span><br><span class="line">    <span class="keyword">case</span> mouse</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MakeView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> make: () -&gt; <span class="type">AnyView</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        make()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">UseMakeView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> animal: <span class="type">Animal</span> = .cat</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">MakeView</span> &#123;</span><br><span class="line">            <span class="keyword">switch</span> <span class="keyword">self</span>.animal &#123;</span><br><span class="line">            <span class="keyword">case</span> .cat:</span><br><span class="line">                <span class="keyword">return</span> <span class="type">Text</span>(<span class="string">"cat"</span>).erase()</span><br><span class="line">            <span class="keyword">case</span> .dog:</span><br><span class="line">                <span class="keyword">return</span> <span class="type">Text</span>(<span class="string">"dog"</span>).erase()</span><br><span class="line">            <span class="keyword">case</span> .mouse:</span><br><span class="line">                <span class="keyword">return</span> <span class="type">Text</span>(<span class="string">"mouse"</span>).erase()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/656&quot;&gt;#656&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Lately I’ve been challenging myself to
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to update multiple state properties with React hooks</title>
-    <link href="https://onmyway133.github.io/blog/How-to-update-multiple-state-properties-with-React-hooks/"/>
-    <id>https://onmyway133.github.io/blog/How-to-update-multiple-state-properties-with-React-hooks/</id>
-    <published>2020-05-08T20:19:31.000Z</published>
-    <updated>2020-05-08T20:19:31.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/655">#655</a></strong></p><p>Declare <code>state</code> and <code>setState</code></p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">Showcase</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> factory = props.factory</span><br><span class="line">    <span class="keyword">const</span> [state, setState] = useState(</span><br><span class="line">        &#123;</span><br><span class="line">            factory,</span><br><span class="line">            selectedFilter: &#123; <span class="attr">name</span>: <span class="string">''</span> &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> onFilterClick = <span class="function">(<span class="params">filter</span>) =&gt;</span> &#123;</span><br><span class="line">        setState(&#123;</span><br><span class="line">            selectedFilter: filter,</span><br><span class="line">            factory: factory.filter(<span class="function">(<span class="params">app</span>) =&gt;</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> app.showcase.platforms.includes(filter.name)</span><br><span class="line">            &#125;) </span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> cards = state.factory.map(<span class="function">(<span class="params">app, index</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            &lt;Card app=&#123;app&#125; key=&#123;app.slug&#125; /&gt;</span><br><span class="line">        )</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;FilterBar onClick=&#123;onFilterClick&#125; /&gt;</span><br><span class="line">            &lt;div css=&#123;css`<span class="css"></span></span><br><span class="line"><span class="css">                <span class="selector-tag">display</span>: <span class="selector-tag">flex</span>;</span></span><br><span class="line"><span class="css">                <span class="selector-tag">flex-direction</span>: <span class="selector-tag">row</span>;</span></span><br><span class="line"><span class="css">                <span class="selector-tag">flex-wrap</span>: <span class="selector-tag">wrap</span>;</span></span><br><span class="line"><span class="css">                <span class="selector-tag">justify-content</span>: <span class="selector-tag">flex-start</span>;</span></span><br><span class="line"><span class="css">                <span class="selector-tag">margin</span>: 0 <span class="selector-tag">auto</span>;</span></span><br><span class="line"><span class="css">                <span class="selector-tag">padding</span>: 0 8<span class="selector-tag">vw</span>;</span></span><br><span class="line"><span class="css">            `</span>&#125;&gt;</span><br><span class="line">                &#123;cards&#125;</span><br><span class="line">            &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">        &lt;/</span>div&gt;</span><br><span class="line"></span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/655&quot;&gt;#655&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Declare &lt;code&gt;state&lt;/code&gt; and
-        
-      
-    
-    </summary>
-    
-    
     
       <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
     
