@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-09-25T02:01:53.000Z</updated>
+  <updated>2020-09-29T03:01:46.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,68 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to unwrap Binding with Optional in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-unwrap-Binding-with-Optional-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-unwrap-Binding-with-Optional-in-SwiftUI/</id>
+    <published>2020-09-29T03:01:46.000Z</published>
+    <updated>2020-09-29T03:01:46.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/677">#677</a></strong></p><p>The quick way to add new properties without breaking current saved Codable is to declare them as optional. For example if you use  <a href="https://github.com/onmyway133/EasyStash">EasyStash</a> library to save and load Codable models.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Input</span>: <span class="title">Codable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> bundleId: <span class="type">String</span> = <span class="string">""</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// New props</span></span><br><span class="line">    <span class="keyword">var</span> notificationId: <span class="type">String?</span></span><br></pre></td></tr></table></figure><p>This new property when using dollar syntax <code>$input.notificationId</code> turn into Binding with optional <code>Binding&lt;Strting?&gt;</code> which is incompatible in SwiftUI when we use Binding.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MaterialTextField</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> placeholder: <span class="type">String</span></span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> text: <span class="type">String</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>The solution here is write an extension that converts <code>Binding&lt;String?&gt;</code> to <code>Binding&lt;String&gt;</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Binding</span> <span class="title">where</span> <span class="title">Value</span> == <span class="title">String</span>? </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">toNonOptional</span><span class="params">()</span></span> -&gt; <span class="type">Binding</span>&lt;<span class="type">String</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Binding</span>&lt;<span class="type">String</span>&gt;(</span><br><span class="line">            <span class="keyword">get</span>: &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">self</span>.wrappedValue ?? <span class="string">""</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="keyword">set</span>: &#123;</span><br><span class="line">                <span class="keyword">self</span>.wrappedValue = $<span class="number">0</span></span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>so we can use them as normal</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">MaterialTextField</span>(text: $input.notificationId.toNonOptional())</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/677&quot;&gt;#677&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The quick way to add new properties
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to make custom toggle in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-make-custom-toggle-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-make-custom-toggle-in-SwiftUI/</id>
+    <published>2020-09-29T02:55:04.000Z</published>
+    <updated>2020-09-29T02:55:14.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/676">#676</a></strong></p><p>I’ve used the default <code>SwiftUI</code> to achieve the 2 tab views in SwiftUI. It adds a default box around the content and also opinionated paddings. For now on light mode on macOS, the unselected tab has wrong colors.</p><p>The way to solve this is to come up with a custom toggle, that we can style and align the way we want. Here is how I did for my app <a href="https://onmyway133.com/pushhero">Push Hero</a></p><p>Using a Text instead of Button here gives me default static text look.</p><img width="752" alt="Screenshot 2020-09-29 at 06 52 33" src="https://user-images.githubusercontent.com/2284279/94513986-5bf62880-0220-11eb-9b29-bca0de5de64b.png"><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AuthenticationView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">Binding</span> <span class="keyword">var</span> input: <span class="type">Input</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        toggle</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> toggle: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span>(alignment: .leading) &#123;</span><br><span class="line">            <span class="type">HStack</span> &#123;</span><br><span class="line">                <span class="type">HStack</span>(spacing: <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="type">Text</span>(<span class="string">"🔑 Key"</span>)</span><br><span class="line">                        .style(selected: input.authentication == .key)</span><br><span class="line">                        .onTapGesture &#123;</span><br><span class="line">                            <span class="keyword">self</span>.input.authentication = .key</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="type">Text</span>(<span class="string">"📰 Certificate"</span>)</span><br><span class="line">                        .style(selected: input.authentication == .certificate)</span><br><span class="line">                        .onTapGesture &#123;</span><br><span class="line">                            <span class="keyword">self</span>.input.authentication = .certificate</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                .padding(<span class="number">3</span>)</span><br><span class="line">                .background(<span class="type">Color</span>.white.opacity(<span class="number">0.2</span>))</span><br><span class="line">                .cornerRadius(<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">                <span class="type">Spacer</span>()</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            choose</span><br><span class="line">            <span class="type">Spacer</span>()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> choose: <span class="type">AnyView</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> input.authentication &#123;</span><br><span class="line">        <span class="keyword">case</span> .key:</span><br><span class="line">            <span class="keyword">return</span> <span class="type">KeyAuthenticationView</span>().erase()</span><br><span class="line">        <span class="keyword">case</span> .certificate:</span><br><span class="line">            <span class="keyword">return</span> <span class="type">CertificateAuthenticationView</span>().erase()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">extension</span> <span class="title">Text</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">style</span><span class="params">(selected: Bool)</span></span> -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">self</span></span><br><span class="line">            .padding(.vertical, <span class="number">3</span>)</span><br><span class="line">            .padding(.horizontal, <span class="number">4</span>)</span><br><span class="line">            .background(selected ? <span class="type">Color</span>.white.opacity(<span class="number">0.5</span>) : <span class="type">Color</span>.clear)</span><br><span class="line">            .cornerRadius(<span class="number">6</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/676&quot;&gt;#676&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I’ve used the default
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
   
   <entry>
     <title>How to use Binding in function in Swift</title>
@@ -426,11 +488,11 @@
   </entry>
   
   <entry>
-    <title>How to handle evens in put with React</title>
-    <link href="https://onmyway133.github.io/blog/How-to-handle-evens-in-put-with-React/"/>
-    <id>https://onmyway133.github.io/blog/How-to-handle-evens-in-put-with-React/</id>
+    <title>How to handle events for input with React</title>
+    <link href="https://onmyway133.github.io/blog/How-to-handle-events-for-input-with-React/"/>
+    <id>https://onmyway133.github.io/blog/How-to-handle-events-for-input-with-React/</id>
     <published>2020-06-12T19:17:05.000Z</published>
-    <updated>2020-06-12T19:17:05.000Z</updated>
+    <updated>2020-06-16T05:30:52.000Z</updated>
     
     <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/661">#661</a></strong></p><p>Use Bulma css</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;input</span><br><span class="line">    <span class="class"><span class="keyword">class</span></span>=<span class="string">"input is-rounded"</span></span><br><span class="line">    type=<span class="string">"text"</span></span><br><span class="line">    placeholder=<span class="string">"Say something"</span></span><br><span class="line">    value=&#123;value&#125;</span><br><span class="line">    onChange=&#123;(e) =&gt; &#123; onValueChange(e.target.value) &#125;&#125;</span><br><span class="line">    onKeyDown=&#123;(e) =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.key === <span class="string">'Enter'</span>) &#123;</span><br><span class="line">            onSend(e)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;&#125;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>]]></content>
     
@@ -457,11 +519,11 @@
   </entry>
   
   <entry>
-    <title>How to handle events for input with React</title>
-    <link href="https://onmyway133.github.io/blog/How-to-handle-events-for-input-with-React/"/>
-    <id>https://onmyway133.github.io/blog/How-to-handle-events-for-input-with-React/</id>
+    <title>How to handle evens in put with React</title>
+    <link href="https://onmyway133.github.io/blog/How-to-handle-evens-in-put-with-React/"/>
+    <id>https://onmyway133.github.io/blog/How-to-handle-evens-in-put-with-React/</id>
     <published>2020-06-12T19:17:05.000Z</published>
-    <updated>2020-06-16T05:30:52.000Z</updated>
+    <updated>2020-06-12T19:17:05.000Z</updated>
     
     <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/661">#661</a></strong></p><p>Use Bulma css</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;input</span><br><span class="line">    <span class="class"><span class="keyword">class</span></span>=<span class="string">"input is-rounded"</span></span><br><span class="line">    type=<span class="string">"text"</span></span><br><span class="line">    placeholder=<span class="string">"Say something"</span></span><br><span class="line">    value=&#123;value&#125;</span><br><span class="line">    onChange=&#123;(e) =&gt; &#123; onValueChange(e.target.value) &#125;&#125;</span><br><span class="line">    onKeyDown=&#123;(e) =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.key === <span class="string">'Enter'</span>) &#123;</span><br><span class="line">            onSend(e)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;&#125;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>]]></content>
     
@@ -534,66 +596,6 @@
         
           &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/659&quot;&gt;#659&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Use &lt;code&gt;useLocation&lt;/code&gt; &lt;a
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
-    
-      <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to use dynamic route in react router 5</title>
-    <link href="https://onmyway133.github.io/blog/How-to-use-dynamic-route-in-react-router-5/"/>
-    <id>https://onmyway133.github.io/blog/How-to-use-dynamic-route-in-react-router-5/</id>
-    <published>2020-06-03T02:41:26.000Z</published>
-    <updated>2020-06-03T03:07:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/658">#658</a></strong></p><p>Declare routes, use <code>exact</code> to match exact path as finding route is from top to bottom. For dynamic route, I find that we need to use render and pass the props manually.</p><p>Declare <code>Router</code> as the rooter with Header, Content and Footer. Inside Content there is the <code>Switch</code>, so header and footer stay the same across pages</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;</span><br><span class="line">    BrowserRouter <span class="keyword">as</span> Router,</span><br><span class="line">    Switch,</span><br><span class="line">    Route,</span><br><span class="line">    Link</span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">'react-router-dom'</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Content</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">            &lt;Switch&gt;</span><br><span class="line">                &lt;Route exact path=<span class="string">"/about"</span>&gt;</span><br><span class="line">                    &lt;About /&gt;</span><br><span class="line">                &lt;<span class="regexp">/Route&gt;</span></span><br><span class="line"><span class="regexp">                &lt;Route exact path="/</span><span class="string">"&gt;</span></span><br><span class="line"><span class="string">                    &lt;Home /&gt;</span></span><br><span class="line"><span class="string">                &lt;/Route&gt;</span></span><br><span class="line"><span class="string">                &lt;Route path='/book/:id' render=&#123;(props) =&gt; &#123;</span></span><br><span class="line"><span class="string">                    return ( &lt;BookDetail &#123;...props &#125; /&gt; )</span></span><br><span class="line"><span class="string">                &#125;&#125; /&gt;</span></span><br><span class="line"><span class="string">                &lt;Route&gt;</span></span><br><span class="line"><span class="string">                    &lt;NotFound /&gt;</span></span><br><span class="line"><span class="string">                &lt;/Route&gt;</span></span><br><span class="line"><span class="string">            &lt;/Switch&gt;</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">function App() &#123;</span></span><br><span class="line"><span class="string">    return (</span></span><br><span class="line"><span class="string">        &lt;div&gt;</span></span><br><span class="line"><span class="string">            &lt;Router&gt;</span></span><br><span class="line"><span class="string">                &lt;Header /&gt;</span></span><br><span class="line"><span class="string">                &lt;Content /&gt;</span></span><br><span class="line"><span class="string">                &lt;Footer /&gt;</span></span><br><span class="line"><span class="string">            &lt;/Router&gt;</span></span><br><span class="line"><span class="string">        &lt;/div&gt;</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure><p>To trigger route request, use <code>useHistory</code> hook. Note that we need to declare variable, and not use <code>useHistory().push</code> directly</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useHistory &#125; <span class="keyword">from</span> <span class="string">'react-router-dom'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> history = useHistory()</span><br><span class="line"></span><br><span class="line">&lt;a onClick=&#123;() =&gt; &#123;</span><br><span class="line">    history.push(<span class="string">`/book/<span class="subst">$&#123;uuid&#125;</span>`</span>)</span><br><span class="line">&#125;&#125; &gt;</span><br></pre></td></tr></table></figure><p>To get parameters, use <code>match</code></p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">BookDetail</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> [ state, setState ] = useState(&#123;</span><br><span class="line">        book: <span class="literal">null</span></span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> &#123; match &#125; = props</span><br><span class="line">   <span class="comment">// match.params.id</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/658&quot;&gt;#658&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Declare routes, use &lt;code&gt;exact&lt;/code&gt; to
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
-    
-      <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to use folder as local npm package</title>
-    <link href="https://onmyway133.github.io/blog/How-to-use-folder-as-local-npm-package/"/>
-    <id>https://onmyway133.github.io/blog/How-to-use-folder-as-local-npm-package/</id>
-    <published>2020-06-01T03:00:36.000Z</published>
-    <updated>2020-06-01T03:00:36.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/657">#657</a></strong></p><p>Add library folder <code>src/library</code></p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">src</span><br><span class="line">    library</span><br><span class="line">        res.js</span><br><span class="line">    screens</span><br><span class="line">        Home</span><br><span class="line">            index.js</span><br><span class="line">package.json</span><br></pre></td></tr></table></figure><p>Declare package.json in <code>library</code> folder</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">"name"</span>: <span class="string">"library"</span>,</span><br><span class="line">    <span class="string">"version"</span>: <span class="string">"0.0.1"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Declare library as dependency in root package.json</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"dependencies": &#123;</span><br><span class="line">    "library": "file:src/library"</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure><p>Now import like normal, for example in <code>src/screens/Home/index.js</code></p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> res <span class="keyword">from</span> <span class="string">'library/res'</span></span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/657&quot;&gt;#657&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Add library folder
         
       
     
