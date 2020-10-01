@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-09-29T03:01:46.000Z</updated>
+  <updated>2020-10-01T03:05:30.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,68 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to avoid reduced opacity when hiding view with animation in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-avoid-reduced-opacity-when-hiding-view-with-animation-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-avoid-reduced-opacity-when-hiding-view-with-animation-in-SwiftUI/</id>
+    <published>2020-10-01T03:05:30.000Z</published>
+    <updated>2020-10-01T03:05:30.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/679">#679</a></strong></p><p>While redesigning UI for my app <a href="https://onmyway133.com/pushhero/">Push Hero</a>, I ended up with an accordion style to toggle section.</p><img width="588" alt="Screenshot 2020-10-01 at 06 58 33" src="https://user-images.githubusercontent.com/2284279/94769940-86c4b600-03b3-11eb-87da-fbba61f13ace.png"><p>It worked great so far, but after 1 collapsing, all image and text views have reduced opacity. This does not happen for other elements like dropdown button or text.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">extension View &#123;</span><br><span class="line">    func sectionBackground(_ title: String, _ shows: Binding&lt;Bool&gt;) -&gt; some View &#123;</span><br><span class="line">        VStack(alignment: .leading) &#123;</span><br><span class="line">            HStack &#123;</span><br><span class="line">                Text(title.uppercased())</span><br><span class="line">                Spacer()</span><br><span class="line">                if shows !&#x3D; nil &#123;</span><br><span class="line">                    SmallButton(</span><br><span class="line">                        imageName: &quot;downArrow&quot;,</span><br><span class="line">                        tooltip: shows!.wrappedValue ? &quot;Collapse&quot; : &quot;Expand&quot;,</span><br><span class="line">                        action: &#123;</span><br><span class="line">                           withAnimation(.easeInOut) &#123;</span><br><span class="line">                                shows!.wrappedValue.toggle()</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    )</span><br><span class="line">                    .rotationEffect(.radians(shows!.wrappedValue ? .pi : 0))</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if shows.wrappedValue &#123;</span><br><span class="line">                self</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>The culprit is that <code>withAnimation</code>, it seems to apply opacity effect. So the workaround is to disable animation <code>wrappedValue</code>, or to tweak transition so that there’s no opacity adjustment.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> shows.wrappedValue &#123;</span><br><span class="line">    <span class="keyword">self</span>.transition(<span class="type">AnyTransition</span>.identity)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/679&quot;&gt;#679&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;While redesigning UI for my app &lt;a
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to dynamically add items to VStack from list in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-dynamically-add-items-to-VStack-from-list-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-dynamically-add-items-to-VStack-from-list-in-SwiftUI/</id>
+    <published>2020-10-01T02:24:15.000Z</published>
+    <updated>2020-10-01T02:24:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/678">#678</a></strong></p><p>Use <code>enumerated</code> to get <code>index</code> so we can assign to item in list. Here is how I show list of device tokens in my app <a href="https://onmyway133.com/pushhero">Push Hero</a></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> textViews: some <span class="type">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> withIndex = input.deviceTokens.enumerated().<span class="built_in">map</span>(&#123; $<span class="number">0</span> &#125;)</span><br><span class="line">    <span class="keyword">let</span> binding: (<span class="type">Int</span>, <span class="type">Input</span>.<span class="type">DeviceToken</span>) -&gt; <span class="type">Binding</span>&lt;<span class="type">String</span>&gt; = &#123; index, token <span class="keyword">in</span></span><br><span class="line">        <span class="type">Binding</span>&lt;<span class="type">String</span>&gt;(</span><br><span class="line">            <span class="keyword">get</span>: &#123; token.token &#125;,</span><br><span class="line">            <span class="keyword">set</span>: &#123; <span class="keyword">self</span>.input.deviceTokens[index].token = $<span class="number">0</span> &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="type">VStack</span> &#123;</span><br><span class="line">        <span class="type">ForEach</span>(withIndex, id: \.element.id) &#123; index, token <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">return</span> <span class="type">DeviceTokenTextView</span>(text: binding(index, token))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/678&quot;&gt;#678&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Use &lt;code&gt;enumerated&lt;/code&gt; to get
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
   
   <entry>
     <title>How to unwrap Binding with Optional in SwiftUI</title>
@@ -488,37 +550,6 @@
   </entry>
   
   <entry>
-    <title>How to handle events for input with React</title>
-    <link href="https://onmyway133.github.io/blog/How-to-handle-events-for-input-with-React/"/>
-    <id>https://onmyway133.github.io/blog/How-to-handle-events-for-input-with-React/</id>
-    <published>2020-06-12T19:17:05.000Z</published>
-    <updated>2020-06-16T05:30:52.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/661">#661</a></strong></p><p>Use Bulma css</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;input</span><br><span class="line">    <span class="class"><span class="keyword">class</span></span>=<span class="string">"input is-rounded"</span></span><br><span class="line">    type=<span class="string">"text"</span></span><br><span class="line">    placeholder=<span class="string">"Say something"</span></span><br><span class="line">    value=&#123;value&#125;</span><br><span class="line">    onChange=&#123;(e) =&gt; &#123; onValueChange(e.target.value) &#125;&#125;</span><br><span class="line">    onKeyDown=&#123;(e) =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.key === <span class="string">'Enter'</span>) &#123;</span><br><span class="line">            onSend(e)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;&#125;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/661&quot;&gt;#661&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use Bulma css&lt;/p&gt;
-&lt;figure
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
-    
-      <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
-    
-  </entry>
-  
-  <entry>
     <title>How to handle evens in put with React</title>
     <link href="https://onmyway133.github.io/blog/How-to-handle-evens-in-put-with-React/"/>
     <id>https://onmyway133.github.io/blog/How-to-handle-evens-in-put-with-React/</id>
@@ -550,43 +581,13 @@
   </entry>
   
   <entry>
-    <title>How to set text color for UIDatePicker</title>
-    <link href="https://onmyway133.github.io/blog/How-to-set-text-color-for-UIDatePicker/"/>
-    <id>https://onmyway133.github.io/blog/How-to-set-text-color-for-UIDatePicker/</id>
-    <published>2020-06-10T17:14:17.000Z</published>
-    <updated>2020-06-10T17:15:21.000Z</updated>
+    <title>How to handle events for input with React</title>
+    <link href="https://onmyway133.github.io/blog/How-to-handle-events-for-input-with-React/"/>
+    <id>https://onmyway133.github.io/blog/How-to-handle-events-for-input-with-React/</id>
+    <published>2020-06-12T19:17:05.000Z</published>
+    <updated>2020-06-16T05:30:52.000Z</updated>
     
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/660">#660</a></strong></p><p>Apply <code>tintColor</code> does not seem to have effect.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">datePicker.setValue(<span class="type">UIColor</span>.label, forKeyPath: <span class="string">"textColor"</span>)</span><br><span class="line">datePicker.setValue(<span class="literal">false</span>, forKey: <span class="string">"highlightsToday"</span>)</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/660&quot;&gt;#660&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Apply &lt;code&gt;tintColor&lt;/code&gt; does not
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to auto scroll to top in react router 5</title>
-    <link href="https://onmyway133.github.io/blog/How-to-auto-scroll-to-top-in-react-router-5/"/>
-    <id>https://onmyway133.github.io/blog/How-to-auto-scroll-to-top-in-react-router-5/</id>
-    <published>2020-06-04T03:58:39.000Z</published>
-    <updated>2020-06-04T03:58:47.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/659">#659</a></strong></p><p>Use <code>useLocation</code> <a href="https://reacttraining.com/react-router/web/guides/scroll-restoration">https://reacttraining.com/react-router/web/guides/scroll-restoration</a></p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useEffect &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;</span><br><span class="line">    BrowserRouter <span class="keyword">as</span> Router,</span><br><span class="line">    Switch,</span><br><span class="line">    Route,</span><br><span class="line">    Link,</span><br><span class="line">    useLocation,</span><br><span class="line">    withRouter</span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">'react-router-dom'</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">_ScrollToTop</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; pathname &#125; = useLocation();</span><br><span class="line"></span><br><span class="line">    useEffect(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">window</span>.scrollTo(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;, [pathname]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> props.children</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> ScrollToTop = withRouter(_ScrollToTop)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">App</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;Router&gt;</span><br><span class="line">                &lt;ScrollToTop&gt;</span><br><span class="line">                    &lt;Header /&gt;</span><br><span class="line">                     &lt;Content /&gt;</span><br><span class="line">                    &lt;Footer /&gt;</span><br><span class="line">                &lt;<span class="regexp">/ScrollToTop&gt;</span></span><br><span class="line"><span class="regexp">            &lt;/</span>Router&gt;</span><br><span class="line">        &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    )</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>]]></content>
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/661">#661</a></strong></p><p>Use Bulma css</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;input</span><br><span class="line">    <span class="class"><span class="keyword">class</span></span>=<span class="string">"input is-rounded"</span></span><br><span class="line">    type=<span class="string">"text"</span></span><br><span class="line">    placeholder=<span class="string">"Say something"</span></span><br><span class="line">    value=&#123;value&#125;</span><br><span class="line">    onChange=&#123;(e) =&gt; &#123; onValueChange(e.target.value) &#125;&#125;</span><br><span class="line">    onKeyDown=&#123;(e) =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.key === <span class="string">'Enter'</span>) &#123;</span><br><span class="line">            onSend(e)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;&#125;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>]]></content>
     
     <summary type="html">
     
@@ -594,8 +595,9 @@
       
         
         
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/659&quot;&gt;#659&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use &lt;code&gt;useLocation&lt;/code&gt; &lt;a
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/661&quot;&gt;#661&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Use Bulma css&lt;/p&gt;
+&lt;figure
         
       
     
