@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-10-01T03:05:30.000Z</updated>
+  <updated>2020-10-07T03:02:01.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,70 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to style multiline Text in SwiftUI for macOS</title>
+    <link href="https://onmyway133.github.io/blog/How-to-style-multiline-Text-in-SwiftUI-for-macOS/"/>
+    <id>https://onmyway133.github.io/blog/How-to-style-multiline-Text-in-SwiftUI-for-macOS/</id>
+    <published>2020-10-07T03:01:55.000Z</published>
+    <updated>2020-10-07T03:02:01.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/681">#681</a></strong></p><p>Only need to specify <code>fixedSize</code> on text to preserve ideal height.</p><blockquote><p>The maximum number of lines is 1 if the value is less than 1. If the value is nil, the text uses as many lines as required. The default is nil.</p></blockquote><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Text</span>(longText)</span><br><span class="line">    .lineLimit(<span class="literal">nil</span>) <span class="comment">// No need</span></span><br><span class="line">    .fixedSize(horizontal: <span class="literal">false</span>, vertical: <span class="literal">true</span>)</span><br></pre></td></tr></table></figure><p>If the Text is inside a row in a <code>List</code>, <code>fixedSize</code> causes the row to be in middle of the <code>List</code>, workaround is to use <code>ScrollView</code> and vertical <code>StackView</code>.</p><p>Sometimes for Text to properly size itself, specify an explicit frame width</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/681&quot;&gt;#681&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Only need to specify
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to clear List background color in SwiftUI for macOS</title>
+    <link href="https://onmyway133.github.io/blog/How-to-clear-List-background-color-in-SwiftUI-for-macOS/"/>
+    <id>https://onmyway133.github.io/blog/How-to-clear-List-background-color-in-SwiftUI-for-macOS/</id>
+    <published>2020-10-04T03:14:08.000Z</published>
+    <updated>2020-10-09T01:49:39.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/680">#680</a></strong></p><p>For <code>List</code> in SwiftUI for macOS, it has default background color because of the enclosing <code>NSScrollView</code> via <code>NSTableView</code> that <code>List</code> uses under the hood. Using <code>listRowBackground</code> also gives no effect</p><p>The solution is to use a library like <a href="https://github.com/siteline/SwiftUI-Introspect">SwiftUI-Introspect</a></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Introspect</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">List</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">removeBackground</span><span class="params">()</span></span> -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> introspectTableView &#123; tableView <span class="keyword">in</span></span><br><span class="line">            tableView.backgroundColor = .clear</span><br><span class="line">            tableView.enclosingScrollView!.drawsBackground = <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>then</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">List</span> &#123;</span><br><span class="line">    <span class="type">ForEach</span>(items) &#123; item <span class="keyword">in</span></span><br><span class="line">        <span class="comment">// view here</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">.removeBackground()</span><br></pre></td></tr></table></figure><p>Or we can add extension on <code>NSTableView</code> to alter its content when it moves to superview</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">NSTableView</span> </span>&#123;</span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidMoveToWindow</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidMoveToWindow()</span><br><span class="line"></span><br><span class="line">        backgroundColor = <span class="type">NSColor</span>.clear</span><br><span class="line">        enclosingScrollView!.drawsBackground = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>This works OK for me on macOS 10.15.5, 10.15.7 and macOS 10.11 beta. But it was reported crash during review on macOS 10.15.6</p><blockquote><p>The app launches briefly and then quits without error message.</p></blockquote><p>After inspecting crash log, it is because of <code>viewDidMoveToWindow</code>. So it’s wise not to mess with NSTableView for now</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Thread 0 Crashed:: Dispatch queue: com.apple.main-thread</span><br><span class="line">0   com.onmyway133.PushHero       0x0000000104770b0a @objc NSTableView.viewDidMoveToWindow() (in Push Hero) (&lt;compiler-generated&gt;:296)</span><br><span class="line">1   com.apple.AppKit              0x00007fff2d8638ea -[NSView _setWindow:] + 2416</span><br><span class="line">2   com.apple.AppKit              0x00007fff2d8844ea -[NSControl _setWindow:] + 158</span><br><span class="line">3   com.apple.AppKit              0x00007fff2d946ace -[NSTableView _setWindow:] + 306</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/680&quot;&gt;#680&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;For &lt;code&gt;List&lt;/code&gt; in SwiftUI for
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
   
   <entry>
     <title>How to avoid reduced opacity when hiding view with animation in SwiftUI</title>
@@ -544,68 +608,6 @@
     </summary>
     
     
-    
-      <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to handle evens in put with React</title>
-    <link href="https://onmyway133.github.io/blog/How-to-handle-evens-in-put-with-React/"/>
-    <id>https://onmyway133.github.io/blog/How-to-handle-evens-in-put-with-React/</id>
-    <published>2020-06-12T19:17:05.000Z</published>
-    <updated>2020-06-12T19:17:05.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/661">#661</a></strong></p><p>Use Bulma css</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;input</span><br><span class="line">    <span class="class"><span class="keyword">class</span></span>=<span class="string">"input is-rounded"</span></span><br><span class="line">    type=<span class="string">"text"</span></span><br><span class="line">    placeholder=<span class="string">"Say something"</span></span><br><span class="line">    value=&#123;value&#125;</span><br><span class="line">    onChange=&#123;(e) =&gt; &#123; onValueChange(e.target.value) &#125;&#125;</span><br><span class="line">    onKeyDown=&#123;(e) =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.key === <span class="string">'Enter'</span>) &#123;</span><br><span class="line">            onSend(e)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;&#125;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/661&quot;&gt;#661&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use Bulma css&lt;/p&gt;
-&lt;figure
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
-    
-      <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to handle events for input with React</title>
-    <link href="https://onmyway133.github.io/blog/How-to-handle-events-for-input-with-React/"/>
-    <id>https://onmyway133.github.io/blog/How-to-handle-events-for-input-with-React/</id>
-    <published>2020-06-12T19:17:05.000Z</published>
-    <updated>2020-06-16T05:30:52.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/661">#661</a></strong></p><p>Use Bulma css</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;input</span><br><span class="line">    <span class="class"><span class="keyword">class</span></span>=<span class="string">"input is-rounded"</span></span><br><span class="line">    type=<span class="string">"text"</span></span><br><span class="line">    placeholder=<span class="string">"Say something"</span></span><br><span class="line">    value=&#123;value&#125;</span><br><span class="line">    onChange=&#123;(e) =&gt; &#123; onValueChange(e.target.value) &#125;&#125;</span><br><span class="line">    onKeyDown=&#123;(e) =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.key === <span class="string">'Enter'</span>) &#123;</span><br><span class="line">            onSend(e)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;&#125;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/661&quot;&gt;#661&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use Bulma css&lt;/p&gt;
-&lt;figure
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
     
       <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
     
