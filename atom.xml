@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-10-24T02:45:15.000Z</updated>
+  <updated>2020-10-25T19:55:33.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to use CoreData safely</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-CoreData-safely/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-CoreData-safely/</id>
+    <published>2020-10-25T19:55:33.000Z</published>
+    <updated>2020-10-25T19:55:33.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/686">#686</a></strong></p><p>I now use Core Data more often now. Here is how I usually use it, for example in <a href="https://onmyway133.com/pushhero/">Push Hero</a></p><p>From iOS 10 and macOS 10.12, <a href="https://developer.apple.com/documentation/coredata/nspersistentcontainer">NSPersistentContainer</a> that simplifies Core Data setup quite a lot. I usually use 1 <code>NSPersistentContainer</code> and its <code>viewContext</code> together with <code>newBackgroundContext</code> attached to that <code>NSPersistentContainer</code></p><p>In Core Data, each context has a queue, except for <code>viewContext</code> using the <code>DispatchQueue.main</code>, and each <code>NSManagedObject</code> retrieved from 1 context is supposed to use within that context queue only, except for <code>objectId</code> property.</p><p>Although <code>NSManagedObject</code> subclasses from <code>NSObject</code>, it has a lot of other constraints that we need to be aware of. So it’s safe to treat Core Data as a cache layer, and use our own model on top of it. I usually perform operations on background context to avoid main thread blocking, and <code>automaticallyMergesChangesFromParent</code> handles merge changes automatically for us.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">SendHistoryItem</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">toCoreData</span><span class="params">(context: NSManagedObjectContext)</span></span> &#123;</span><br><span class="line">        context.perform &#123;</span><br><span class="line">            <span class="keyword">let</span> cd = <span class="type">CDSendHistoryItem</span>(context: context)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">CDSendHistoryItem</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">toModel</span><span class="params">()</span></span> <span class="keyword">throws</span> -&gt; <span class="type">SendHistoryItem</span> &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">CoreDataManager</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> backgroundContext: <span class="type">NSManagedObjectContext?</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>() &#123;</span><br><span class="line">        <span class="keyword">self</span>.backgroundContext = <span class="keyword">self</span>.persistentContainer.newBackgroundContext()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> persistentContainer: <span class="type">NSPersistentContainer</span> = &#123;</span><br><span class="line">        <span class="keyword">let</span> container = <span class="type">NSPersistentContainer</span>(name: <span class="string">"PushHero"</span>)</span><br><span class="line">        container.loadPersistentStores(completionHandler: &#123; (storeDescription, error) <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">let</span> error = error &#123;</span><br><span class="line">                <span class="built_in">print</span>(error)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="keyword">return</span> container</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">load</span><span class="params">(request: NSFetchRequest&lt;CDSendHistoryItem&gt;, completion: @escaping <span class="params">([SendHistoryItem])</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> context = <span class="type">CoreDataManager</span>.shared.backgroundContext <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line">        context.perform &#123;</span><br><span class="line">            <span class="keyword">do</span> &#123;</span><br><span class="line">                <span class="keyword">let</span> cdItems = <span class="keyword">try</span> request.execute()</span><br><span class="line">                <span class="keyword">let</span> items = cdItems.compactMap(&#123; <span class="keyword">try</span>? $<span class="number">0</span>.toModel() &#125;)</span><br><span class="line">                completion(items)</span><br><span class="line">            &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">                completion([])</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">save</span><span class="params">(items: [SendHistoryItem])</span></span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> context = backgroundContext <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        context.perform &#123;</span><br><span class="line">            items.forEach &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="number">_</span> = $<span class="number">0</span>.toCoreData(context: context)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">do</span> &#123;</span><br><span class="line">                <span class="keyword">try</span> context.save()</span><br><span class="line">            &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">                <span class="built_in">print</span>(error)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/686&quot;&gt;#686&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I now use Core Data more often now. Here
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+      <category term="core data" scheme="https://onmyway133.github.io/tags/core-data/"/>
+    
+  </entry>
   
   <entry>
     <title>How to pass ObservedObject as parameter in SwiftUI</title>
@@ -587,32 +619,6 @@
     
     
       <category term="firebase" scheme="https://onmyway133.github.io/tags/firebase/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to deploy with create react app</title>
-    <link href="https://onmyway133.github.io/blog/How-to-deploy-with-create-react-app/"/>
-    <id>https://onmyway133.github.io/blog/How-to-deploy-with-create-react-app/</id>
-    <published>2020-06-14T17:40:15.000Z</published>
-    <updated>2020-06-14T17:48:16.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/666">#666</a></strong></p><h3 id="Direct-url"><a href="#Direct-url" class="headerlink" title="Direct url"></a>Direct url</h3><p><code>200.html</code></p><p><a href="https://stackoverflow.com/questions/44491184/react-router-does-not-work-in-production-and-surge-deployments">https://stackoverflow.com/questions/44491184/react-router-does-not-work-in-production-and-surge-deployments</a></p><p>Support for client-side routing:</p><p><a href="https://create-react-app.dev/docs/deployment/#netlify">https://create-react-app.dev/docs/deployment/#netlify</a></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*  &#x2F;index.html  200</span><br></pre></td></tr></table></figure><h3 id="Serving-the-Same-Build-from-Different-Paths"><a href="#Serving-the-Same-Build-from-Different-Paths" class="headerlink" title="Serving the Same Build from Different Paths"></a>Serving the Same Build from Different Paths</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">"homepage": ".",</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/666&quot;&gt;#666&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;h3 id=&quot;Direct-url&quot;&gt;&lt;a href=&quot;#Direct-url&quot;
-        
-      
-    
-    </summary>
-    
-    
     
   </entry>
   
