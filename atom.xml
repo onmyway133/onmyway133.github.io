@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-10-27T08:56:38.000Z</updated>
+  <updated>2020-11-01T03:57:11.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to override styles in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-override-styles-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-override-styles-in-SwiftUI/</id>
+    <published>2020-10-31T04:53:31.000Z</published>
+    <updated>2020-11-01T03:57:11.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/688">#688</a></strong></p><p>In the app I’m working on <a href="https://onmyway133.com/elegantconverter/">Elegant Converter</a>, I usually like preset theme with a custom background color and a matching foreground color.</p><p>Thanks to SwiftUI style cascading, I can just declare in root <code>MainView</code> and it will be inherited down the view hierachy.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MainView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HSplitView</span> &#123;</span><br><span class="line">            <span class="type">ListView</span>()</span><br><span class="line">            <span class="type">RightView</span>()</span><br><span class="line">        &#125;</span><br><span class="line">        .foregroundColor(<span class="type">R</span>.color.text)</span><br><span class="line">        .background(<span class="type">R</span>.color.background)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>This works great regardless of system light or dark mode, but in light mode it does not look good, as my designed theme is similar to dark mode. Here the color is pale for default Picker and Button.</p><img width="665" alt="Screenshot 2020-10-31 at 06 49 55" src="https://user-images.githubusercontent.com/2284279/97772225-4b99dc00-1b45-11eb-821f-7797e39d1da6.png"><p>The way to fix that is to reset the <code>foregroundColor</code>, take a look at the documentation for <a href="https://developer.apple.com/documentation/swiftui/view/foregroundcolor(_:)">foregroundColor</a></p><blockquote><p>The foreground color to use when displaying this view. Pass nil to remove any custom foreground color and to allow the system or the container to provide its own foreground color. If a container-specific override doesn’t exist, the system uses the primary color.</p></blockquote><p>So we can pass <code>nil</code> and the controls will pick the correct color based on system preferences.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Picker</span>(selection: intent.fileType, label: <span class="type">EmptyView</span>()) &#123;</span><br><span class="line">    <span class="type">ForEach</span>(filtered, id: \.<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="type">Text</span>($<span class="number">0</span>.dropdownName)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">.foregroundColor(<span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line"><span class="type">Button</span>(action: convert) &#123;</span><br><span class="line">    <span class="type">Text</span>(<span class="string">"Convert"</span>)</span><br><span class="line">&#125;</span><br><span class="line">.foregroundColor(<span class="literal">nil</span>)</span><br></pre></td></tr></table></figure><p>Now Picker and Button look nice in both dark and light mode</p><img width="613" alt="Screenshot 2020-10-31 at 06 52 53" src="https://user-images.githubusercontent.com/2284279/97772260-b5b28100-1b45-11eb-8a24-367fef910ce3.png"><img width="601" alt="Screenshot 2020-10-31 at 06 53 10" src="https://user-images.githubusercontent.com/2284279/97772265-c06d1600-1b45-11eb-88c9-340b045ba815.png">]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/688&quot;&gt;#688&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In the app I’m working on &lt;a
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
   
   <entry>
     <title>When to use function vs property in Swift</title>
@@ -591,36 +621,6 @@
       <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
     
       <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to sign in with apple for web with firebase</title>
-    <link href="https://onmyway133.github.io/blog/How-to-sign-in-with-apple-for-web-with-firebase/"/>
-    <id>https://onmyway133.github.io/blog/How-to-sign-in-with-apple-for-web-with-firebase/</id>
-    <published>2020-06-16T05:27:12.000Z</published>
-    <updated>2020-06-16T05:27:18.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/668">#668</a></strong></p><h3 id="Authenticate-Using-Apple-with-JavaScript"><a href="#Authenticate-Using-Apple-with-JavaScript" class="headerlink" title="Authenticate Using Apple with JavaScript"></a>Authenticate Using Apple with JavaScript</h3><p>Use Firebase JS SDK</p><ul><li><a href="https://firebase.google.com/docs/auth/web/apple">https://firebase.google.com/docs/auth/web/apple</a></li></ul><h3 id="Configure-Sign-in-with-Apple-for-the-web"><a href="#Configure-Sign-in-with-Apple-for-the-web" class="headerlink" title="Configure Sign in with Apple for the web"></a>Configure Sign in with Apple for the web</h3><ul><li><a href="https://help.apple.com/developer-account/#/dev1c0e25352">https://help.apple.com/developer-account/#/dev1c0e25352</a></li></ul><p>Go to <a href="https://developer.apple.com/account/resources/identifiers/list">Certificates, Identifiers &amp; Profiles -&gt; Identifier</a> create 2 ids: App ID and Service ID</p><p>For example: I have App ID com.onmyway133.myapp and Service ID com.onmyway133.myweb</p><img width="1218" alt="Screenshot 2020-06-16 at 09 20 34" src="https://user-images.githubusercontent.com/2284279/84743751-ab3a8500-afb2-11ea-90b6-e399c05c7741.png"><p>Remember that to view App ID or Service ID, there’s dropdown menu on the right</p><img width="296" alt="Screenshot 2020-06-16 at 09 21 20" src="https://user-images.githubusercontent.com/2284279/84743826-c2797280-afb2-11ea-820c-5b405a787eb3.png"><p> For App ID,  enable</p><ul><li>Associated Domains</li><li>Sign In with Apple: Enable it as Primary App ID</li></ul><p>For Service ID, use firebase callback url</p><ul><li><a href="https://myweb.firebaseapp.com/__/auth/handler">https://myweb.firebaseapp.com/__/auth/handler</a></li></ul><h3 id="Associate-domain"><a href="#Associate-domain" class="headerlink" title="Associate domain"></a>Associate domain</h3><p>Add <code>apple-app-site-association</code> in <code>public</code> folder</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;applinks&quot;: &#123;</span><br><span class="line">      &quot;details&quot;: [</span><br><span class="line">           &#123;</span><br><span class="line">             &quot;appIDs&quot;: [&quot;T78DK947F2.com.onmyway133.myapp&quot;],</span><br><span class="line">             &quot;components&quot;: [</span><br><span class="line">               &#123;</span><br><span class="line">                  &quot;#&quot;: &quot;no_universal_links&quot;,</span><br><span class="line">                  &quot;exclude&quot;: true,</span><br><span class="line">                  &quot;comment&quot;: &quot;Matches any URL whose fragment equals no_universal_links and instructs the system not to open it as a universal link&quot;</span><br><span class="line">               &#125;</span><br><span class="line">             ]</span><br><span class="line">           &#125;</span><br><span class="line">       ]</span><br><span class="line">   &#125;,</span><br><span class="line">   &quot;webcredentials&quot;: &#123;</span><br><span class="line">      &quot;apps&quot;: [ &quot;T78DK947F2.com.onmyway133.myweb&quot; ]</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="Private-key"><a href="#Private-key" class="headerlink" title="Private key"></a>Private key</h2><p>Go to <a href="https://developer.apple.com/account/resources/authkeys/list">Keys</a> and create new auth key. Configure that key with the primary App ID above</p><img width="1261" alt="Screenshot 2020-06-16 at 09 24 05" src="https://user-images.githubusercontent.com/2284279/84744141-2308af80-afb3-11ea-98ce-8b32c1c300d1.png"><h2 id="Configure-in-Firebase"><a href="#Configure-in-Firebase" class="headerlink" title="Configure in Firebase"></a>Configure in Firebase</h2><p>Go to <a href="https://console.firebase.google.com/u/0/project/wwdc-together/authentication/providers">Sign in providers</a> and enable Apple sign in.</p><p>Fill in </p><ul><li>Service ID identifier (com.onmyway133.myweb)</li><li>OAuth code flow configuration: fill in your team id, key id and key secret content.</li></ul><img width="973" alt="Screenshot 2020-06-16 at 09 25 23" src="https://user-images.githubusercontent.com/2284279/84744287-50edf400-afb3-11ea-8802-a388b48b97ec.png">]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/668&quot;&gt;#668&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;h3
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="web" scheme="https://onmyway133.github.io/tags/web/"/>
-    
-      <category term="firebase" scheme="https://onmyway133.github.io/tags/firebase/"/>
     
   </entry>
   
