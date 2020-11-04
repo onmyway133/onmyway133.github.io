@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-11-01T03:57:11.000Z</updated>
+  <updated>2020-11-04T09:02:29.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,100 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to avoid multiple match elements in UITests from iOS 13</title>
+    <link href="https://onmyway133.github.io/blog/How-to-avoid-multiple-match-elements-in-UITests-from-iOS-13/"/>
+    <id>https://onmyway133.github.io/blog/How-to-avoid-multiple-match-elements-in-UITests-from-iOS-13/</id>
+    <published>2020-11-04T09:02:01.000Z</published>
+    <updated>2020-11-04T09:02:29.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/691">#691</a></strong></p><p>Supposed we want to present a ViewController, and there exist both <code>UIToolbar</code> in both the presenting and presented view controllers.</p><p>From iOS 13, the model style is not full screen and interactive. From UITests perspective there are 2 UIToolbar, we need to specify the correct one to avoid multiple match errors</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> editButton = app.toolbars[<span class="string">"EditArticle.Toolbar"</span>].buttons[<span class="string">"Edit"</span>]</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/691&quot;&gt;#691&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Supposed we want to present a
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
+    
+      <category term="testing" scheme="https://onmyway133.github.io/tags/testing/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to use accessibility container in UITests</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-accessibility-container-in-UITests/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-accessibility-container-in-UITests/</id>
+    <published>2020-11-04T08:28:50.000Z</published>
+    <updated>2020-11-04T08:42:05.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/690">#690</a></strong></p><p>Use <code>accessibilityElements</code> to specify containment for <code>contentView</code> and buttons. You can use Accessibility Inspector from Xcode to verify.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleCell</span>: <span class="title">UICollectionViewCell</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> authorLabel: <span class="type">UILabel</span></span><br><span class="line">    <span class="keyword">let</span> dateLabel: <span class="type">UILabel</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> viewLabel: <span class="type">UILabel</span></span><br><span class="line">    <span class="keyword">let</span> deleteButton: <span class="type">UIButton</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setupAccessibility</span><span class="params">()</span></span> &#123;</span><br><span class="line">        contentView.isAccessibilityElement = <span class="literal">true</span></span><br><span class="line">        contentView.accessibilityLabel = <span class="string">"This article is written by Nobita on Dec 4th 2020"</span></span><br><span class="line"></span><br><span class="line">        viewLabel.isAccessibilityElement = <span class="literal">true</span> <span class="comment">// Default is false</span></span><br><span class="line">        viewLabel.accessibilityTraits.insert(.button) <span class="comment">// Treat UILabel as button to VoiceOver</span></span><br><span class="line"></span><br><span class="line">        accessibilityElements = [contentView, viewLabel, deleteButton]</span><br><span class="line">        isAccessibilityElement = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>This works OK under Voice Over and Accessibility Inspector. However in iOS 14 UITests, only the contentView is recognizable. The workaround is to use <code>XCUICoordinate</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> deleteButton = cell.buttons[<span class="string">"Delete article"</span>]</span><br><span class="line"><span class="keyword">if</span> deleteButton.waitForExistence(timeout: <span class="number">1</span>) &#123;</span><br><span class="line">    deleteButton.tap()</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> coordinate = cell.coordinate(</span><br><span class="line">        withNormalizedOffset: <span class="type">CGVector</span>(dx: <span class="number">0.9</span>, dy: <span class="number">0.9</span>)</span><br><span class="line">    )</span><br><span class="line">    coordinate.tap()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/690&quot;&gt;#690&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Use &lt;code&gt;accessibilityElements&lt;/code&gt; to
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="testing" scheme="https://onmyway133.github.io/tags/testing/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to make full size content view in SwiftUI for macOS</title>
+    <link href="https://onmyway133.github.io/blog/How-to-make-full-size-content-view-in-SwiftUI-for-macOS/"/>
+    <id>https://onmyway133.github.io/blog/How-to-make-full-size-content-view-in-SwiftUI-for-macOS/</id>
+    <published>2020-11-03T04:19:35.000Z</published>
+    <updated>2020-11-03T04:21:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/689">#689</a></strong></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">applicationDidFinishLaunching</span><span class="params">(<span class="number">_</span> aNotification: Notification)</span></span> &#123;</span><br><span class="line">    <span class="comment">// extend to title bar</span></span><br><span class="line">    <span class="keyword">let</span> contentView = <span class="type">ContentView</span>()</span><br><span class="line">        <span class="comment">// .padding(.top, 24) // can padding to give some space</span></span><br><span class="line">        .edgesIgnoringSafeArea(.top)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// specify fullSizeContentView</span></span><br><span class="line">    window = <span class="type">NSWindow</span>(</span><br><span class="line">        contentRect: <span class="type">NSRect</span>(x: <span class="number">0</span>, y: <span class="number">0</span>, width: <span class="number">800</span>, height: <span class="number">600</span>),</span><br><span class="line">        styleMask: [.titled, .closable, .miniaturizable, .texturedBackground, .resizable, .fullSizeContentView],</span><br><span class="line">        backing: .buffered, </span><br><span class="line">       <span class="keyword">defer</span>: <span class="literal">false</span></span><br><span class="line">    )</span><br><span class="line">    window.center()</span><br><span class="line">    window.setFrameAutosaveName(<span class="string">"My App"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// window.title = ... // no title</span></span><br><span class="line">    <span class="comment">// window.toolbar = NSToolbar() // use toolbar if wanted. This triggers .unifiedTitleAndToolbar styleMask</span></span><br><span class="line">    window.titlebarAppearsTransparent = <span class="literal">true</span></span><br><span class="line">    window.titleVisibility = .hidden <span class="comment">// hide title</span></span><br><span class="line">    window.backgroundColor = <span class="type">R</span>.color.myBackgroundColor <span class="comment">// set our preferred background color</span></span><br><span class="line"></span><br><span class="line">    window.contentView = <span class="type">NSHostingView</span>(rootView: contentView)</span><br><span class="line">    window.makeKeyAndOrderFront(<span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>I have an issue where if I use <code>HSplitView</code>, some Button are not clickable until I drag the split view handle. The workaround is to use HStack with a Divider</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/689&quot;&gt;#689&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&quot;highlight
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
   
   <entry>
     <title>How to override styles in SwiftUI</title>
@@ -531,96 +625,6 @@
     
     
       <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to make dynamic font size for UIButton</title>
-    <link href="https://onmyway133.github.io/blog/How-to-make-dynamic-font-size-for-UIButton/"/>
-    <id>https://onmyway133.github.io/blog/How-to-make-dynamic-font-size-for-UIButton/</id>
-    <published>2020-08-14T05:29:45.000Z</published>
-    <updated>2020-08-14T05:29:45.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/671">#671</a></strong></p><p>Use <a href="https://developer.apple.com/documentation/uikit/uicontentsizecategoryadjusting/1771731-adjustsfontforcontentsizecategor?language=objc">adjustsFontForContentSizeCategory</a></p><blockquote><p>A Boolean that indicates whether the object automatically updates its font when the device’s content size category changes.</p></blockquote><blockquote><p>If you set this property to YES, the element adjusts for a new content size category on a UIContentSizeCategoryDidChangeNotification.</p></blockquote><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">button.titleLabel?.adjustsFontForContentSizeCategory = <span class="literal">true</span></span><br><span class="line">button.backgroundColor = <span class="type">UIColor</span>.green</span><br><span class="line">button.titleLabel?.font = <span class="type">UIFont</span>.preferredFont(forTextStyle: .title1)</span><br><span class="line"></span><br><span class="line">label.adjustsFontForContentSizeCategory = <span class="literal">true</span></span><br><span class="line">label.backgroundColor = <span class="type">UIColor</span>.yellow</span><br><span class="line">label.font = <span class="type">UIFont</span>.preferredFont(forTextStyle: .title1)</span><br></pre></td></tr></table></figure><p>However it seems view (UIButton or UILabel) size is the same, just the inner text increases in size. A workaround is to put view inside <code>UIStackView</code> so UIButton or UILabel can automatically changes size.</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/671&quot;&gt;#671&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use &lt;a
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to test for view disappear in navigation controller</title>
-    <link href="https://onmyway133.github.io/blog/How-to-test-for-view-disappear-in-navigation-controller/"/>
-    <id>https://onmyway133.github.io/blog/How-to-test-for-view-disappear-in-navigation-controller/</id>
-    <published>2020-08-06T09:39:42.000Z</published>
-    <updated>2020-08-14T05:30:07.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/670">#670</a></strong></p><p>To test for <code>viewWillDisappear</code> during <code>UINavigationController</code> <code>popViewController</code> in unit test, we need to simulate <code>UIWindow</code> so view appearance works.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">PopTests</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testPop</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> window = <span class="type">UIWindow</span>(frame: <span class="type">UIScreen</span>.main.bounds)</span><br><span class="line">        <span class="keyword">let</span> navigationController = <span class="type">UINavigationController</span>()</span><br><span class="line">        window.rootViewController = navigationController</span><br><span class="line">        <span class="keyword">let</span> viewController = <span class="type">DetailViewController</span>()</span><br><span class="line"></span><br><span class="line">        navigationController.viewControllers = [</span><br><span class="line">            <span class="type">UIViewController</span>(),</span><br><span class="line">            viewController</span><br><span class="line">        ]</span><br><span class="line"></span><br><span class="line">        window.makeKeyAndVisible()</span><br><span class="line">        <span class="keyword">let</span> expectation = <span class="type">XCTestExpectation</span>()</span><br><span class="line">        navigationController.popViewController(animated: <span class="literal">false</span>)</span><br><span class="line">        <span class="type">DispatchQueue</span>.main.asyncAfter(deadline: .now() + <span class="number">0.1</span>) &#123;</span><br><span class="line">            <span class="type">XCTAssertTrue</span>(viewController.wasDismissed)</span><br><span class="line">            expectation.fulfill()</span><br><span class="line">        &#125;</span><br><span class="line">        wait(<span class="keyword">for</span>: [expectation], timeout: <span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DetailViewController</span>: <span class="title">UIViewController</span> </span>&#123;</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewWillDisappear</span><span class="params">(<span class="number">_</span> animated: Bool)</span></span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.viewWillDisappear(animated)</span><br><span class="line">            <span class="keyword">if</span> isMovingFromParent &#123;</span><br><span class="line">                wasDismissed = <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/670&quot;&gt;#670&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;To test for
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to use useEffect in React hook</title>
-    <link href="https://onmyway133.github.io/blog/How-to-use-useEffect-in-React-hook/"/>
-    <id>https://onmyway133.github.io/blog/How-to-use-useEffect-in-React-hook/</id>
-    <published>2020-06-17T04:18:06.000Z</published>
-    <updated>2020-06-17T04:21:08.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/669">#669</a></strong></p><p>Specify params as array <code>[year, id]</code>, not object <code>{year, id}</code></p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; year, id &#125; = props</span><br><span class="line">useEffect(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> loadData = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                </span><br><span class="line">            &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(error)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        listenChats()</span><br><span class="line">    &#125;, [year, id])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="Hooks-effect"><a href="#Hooks-effect" class="headerlink" title="Hooks effect"></a>Hooks effect</h2><ul><li><a href="https://reactjs.org/docs/hooks-effect.html">https://reactjs.org/docs/hooks-effect.html</a></li><li><a href="https://reactjs.org/docs/hooks-reference.html#useeffect">https://reactjs.org/docs/hooks-reference.html#useeffect</a></li></ul><blockquote><p>By default, it runs both after the first render and after every update.</p></blockquote><blockquote><p>This requirement is common enough that it is built into the useEffect Hook API. You can tell React to skip applying an effect if certain values haven’t changed between re-renders. To do so, pass an array as an optional second argument to useEffect:</p></blockquote><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">useEffect(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">document</span>.title = <span class="string">`You clicked <span class="subst">$&#123;count&#125;</span> times`</span>;</span><br><span class="line">&#125;, [count]); <span class="comment">// Only re-run the effect if count changes</span></span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/669&quot;&gt;#669&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Specify params as array &lt;code&gt;[year,
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
-    
-      <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
     
   </entry>
   
