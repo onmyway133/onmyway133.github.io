@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-11-04T09:02:29.000Z</updated>
+  <updated>2020-11-10T04:52:33.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,64 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to check dark mode in AppKit for macOS apps</title>
+    <link href="https://onmyway133.github.io/blog/How-to-check-dark-mode-in-AppKit-for-macOS-apps/"/>
+    <id>https://onmyway133.github.io/blog/How-to-check-dark-mode-in-AppKit-for-macOS-apps/</id>
+    <published>2020-11-10T04:18:34.000Z</published>
+    <updated>2020-11-10T04:52:33.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/693">#693</a></strong></p><p><code>AppKit</code> app has its theme information stored in UserDefaults key <code>AppleInterfaceStyle</code>, if is dark, it contains String <code>Dark</code>.</p><p>Another way is to detect appearance via <code>NSView</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">R</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> dark = <span class="type">DarkTheme</span>()</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> light = <span class="type">LightTheme</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> theme: <span class="type">Theme</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> isDark = <span class="type">UserDefaults</span>.standard.string(forKey: <span class="string">"AppleInterfaceStyle"</span>) == <span class="string">"Dark"</span></span><br><span class="line">        <span class="keyword">return</span> isDark ? dark : light</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Another way is to rely on <code>appearance</code> on NSView. You can quickly check via <code>NSApp.keyWindow?.effectiveAppearance</code> but notice that <code>keyWindow</code> can be nil when the app is not active since no window is focused for keyboard events. You should use <code>NSApp.windows.first</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> isDark = <span class="type">NSApp</span>.windows.first?.effectiveAppearance.bestMatch(from: [.darkAqua, .vibrantDark]) == .darkAqua</span><br></pre></td></tr></table></figure><p>Then build a simple Theme system</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> EasySwiftUI</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Theme</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> primaryColor: <span class="type">Color</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">    <span class="keyword">var</span> textColor: <span class="type">Color</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">    <span class="keyword">var</span> text2Color: <span class="type">Color</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">    <span class="keyword">var</span> backgroundColor: <span class="type">Color</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">    <span class="keyword">var</span> background2Color: <span class="type">Color</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Theme</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> primaryColor: <span class="type">Color</span> &#123; <span class="type">Color</span>(hex: <span class="number">0x1</span>) &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">DarkTheme</span>: <span class="title">Theme</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">LightTheme</span>: <span class="title">Theme</span> </span>&#123;</span><br><span class="line">    ....   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>For SwiftUI, you can <code>colorScheme</code> environment, then use modifier <code>.id(colorScheme)</code> to force SwiftUI to update when color scheme changes</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MainView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">Environment</span>(\.colorScheme)</span><br><span class="line">    <span class="keyword">var</span> colorScheme</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;&#125;</span><br><span class="line">        .id(colorScheme)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/693&quot;&gt;#693&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;AppKit&lt;/code&gt; app has its theme
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to check dark mode with color scheme in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-check-dark-mode-with-color-scheme-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-check-dark-mode-with-color-scheme-in-SwiftUI/</id>
+    <published>2020-11-10T03:48:21.000Z</published>
+    <updated>2020-11-10T03:48:21.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/692">#692</a></strong></p><p>Use <a href="https://developer.apple.com/documentation/swiftui/colorscheme">colorScheme</a> environment, for now it has 2 cases <code>dark</code> and <code>light</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MainView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">Environment</span>(\.colorScheme) <span class="keyword">var</span> colorScheme</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">Text</span>(colorScheme == .dark ? <span class="string">"Dark Mode"</span> : <span class="string">"Light Mode"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/692&quot;&gt;#692&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Use &lt;a
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
   
   <entry>
     <title>How to avoid multiple match elements in UITests from iOS 13</title>
@@ -567,64 +625,6 @@
       <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
     
       <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to draw arc corner using Bezier Path</title>
-    <link href="https://onmyway133.github.io/blog/How-to-draw-arc-corner-using-Bezier-Path/"/>
-    <id>https://onmyway133.github.io/blog/How-to-draw-arc-corner-using-Bezier-Path/</id>
-    <published>2020-09-15T10:16:47.000Z</published>
-    <updated>2020-09-15T10:18:11.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/673">#673</a></strong></p><p>To draw rounded 2 corners at top left and top right, let’s start from bottom left</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> path = <span class="type">UIBezierPath</span>()</span><br><span class="line"><span class="comment">// bottom left</span></span><br><span class="line">path.move(to: <span class="type">CGPoint</span>(x: <span class="number">0</span>, y: bounds.height))</span><br><span class="line"><span class="comment">// top left corner</span></span><br><span class="line">path.addArc(withCenter: <span class="type">CGPoint</span>(x: radius, y: radius), radius: radius, startAngle: <span class="type">CGFloat</span>.pi, endAngle: <span class="type">CGFloat</span>.pi * <span class="number">3</span> / <span class="number">2</span>, clockwise: <span class="literal">true</span>)</span><br><span class="line"><span class="comment">// top right corner</span></span><br><span class="line">path.addArc(withCenter: <span class="type">CGPoint</span>(x: bounds.width - radius, y: radius), radius: radius, startAngle: <span class="type">CGFloat</span>.pi * <span class="number">3</span> / <span class="number">2</span>, endAngle: <span class="number">0</span>, clockwise: <span class="literal">true</span>)</span><br><span class="line"><span class="comment">// bottom right</span></span><br><span class="line">path.addLine(to: <span class="type">CGPoint</span>(x: bounds.width, y: bounds.height))</span><br><span class="line">path.close()</span><br></pre></td></tr></table></figure><img width="598" alt="Screenshot 2020-09-15 at 14 16 01" src="https://user-images.githubusercontent.com/2284279/93209165-fdc84080-f75d-11ea-9e95-ed39d749b7d6.png"><p><img src="https://user-images.githubusercontent.com/2284279/93209263-27816780-f75e-11ea-9de8-d50d72798313.png" alt="cc"></p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="http://ronnqvi.st/thinking-like-a-bzier-path">http://ronnqvi.st/thinking-like-a-bzier-path</a> </li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/673&quot;&gt;#673&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;To draw rounded 2 corners at top left and
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to stitch and sort array in Swift</title>
-    <link href="https://onmyway133.github.io/blog/How-to-stitch-and-sort-array-in-Swift/"/>
-    <id>https://onmyway133.github.io/blog/How-to-stitch-and-sort-array-in-Swift/</id>
-    <published>2020-08-28T05:32:01.000Z</published>
-    <updated>2020-08-31T10:19:33.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/672">#672</a></strong></p><p>Supposed we want to stitch magazines array into books array. The requirement is to sort them by <code>publishedDate</code>, but must keep <code>preferredOrder</code> of books. One way to solve this is to declare an enum to hold all possible cases, and then do a sort that check every possible combination </p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Book</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> preferredOrder: <span class="type">Int</span></span><br><span class="line">    <span class="keyword">let</span> publishedDate: <span class="type">Date</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Magazine</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> publishedDate: <span class="type">Date</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">StitchItem</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> book(<span class="type">Book</span>)</span><br><span class="line">    <span class="keyword">case</span> magazine(<span class="type">Magazine</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stitch</span><span class="params">(<span class="number">_</span> books: [Book], magazines: [Magazine])</span></span> -&gt; [<span class="type">StitchItem</span>] &#123;</span><br><span class="line">    <span class="keyword">let</span> items = books.<span class="built_in">map</span>(&#123; <span class="type">StitchItem</span>.book($<span class="number">0</span>) &#125;) + magazines.<span class="built_in">map</span>(&#123; <span class="type">StitchItem</span>.magazine($<span class="number">0</span>) &#125;)</span><br><span class="line">    <span class="keyword">return</span> items.sorted(by: &#123; book, magazine <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">switch</span> (book, magazine) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> (.book(b1), .book(b2)):</span><br><span class="line">            <span class="keyword">return</span> b1.preferredOrder &lt; b2.preferredOrder</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> (.book(book), .magazine(magazine)):</span><br><span class="line">            <span class="keyword">if</span> book.publishedDate == magazine.publishedDate &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> book.publishedDate &lt; magazine.publishedDate</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> (.magazine(magazine), .book(book)):</span><br><span class="line">            <span class="keyword">if</span> book.publishedDate == magazine.publishedDate &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> book.publishedDate &lt; magazine.publishedDate</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> (.magazine(m1), .magazine(m2)):</span><br><span class="line">            <span class="keyword">return</span> m1.publishedDate &lt; m2.publishedDate</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>The above sort function declares the intention but Swift just <code>sort</code> instead of trying to fully meet our requirements. </p><p>A manual solution is to sort each array first then use while loop to insert.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stitch</span><span class="params">(<span class="number">_</span> books: [Book], magazines: [Magazine])</span></span> -&gt; [<span class="type">StitchItem</span>] &#123;</span><br><span class="line">    <span class="keyword">let</span> books = books</span><br><span class="line">        .sorted(by: &#123; $<span class="number">0</span>.preferredOrder &lt; $<span class="number">1</span>.preferredOrder &#125;)</span><br><span class="line">    <span class="keyword">let</span> magazines = magazines</span><br><span class="line">        .sorted(by: sortmagazines)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> bookIndex = <span class="number">0</span></span><br><span class="line">    <span class="keyword">var</span> magazineIndex = <span class="number">0</span></span><br><span class="line">    <span class="keyword">var</span> results: [<span class="type">StitchItem</span>] = []</span><br><span class="line">    <span class="keyword">while</span> (bookIndex &lt; books.<span class="built_in">count</span> &amp;&amp; magazineIndex &lt; magazines.<span class="built_in">count</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> book = books[bookIndex]</span><br><span class="line">        <span class="keyword">let</span> magazine = magazines[magazineIndex]</span><br><span class="line">        <span class="keyword">if</span> book.publishedDate &lt; magazine.publishedDate &#123;</span><br><span class="line">            results.append(<span class="type">StitchItem</span>.book(book))</span><br><span class="line">            bookIndex += <span class="number">1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            results.append(<span class="type">StitchItem</span>.magazine(magazine))</span><br><span class="line">            magazineIndex += <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (bookIndex &lt; books.<span class="built_in">count</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> book = books[bookIndex]</span><br><span class="line">        results.append(<span class="type">StitchItem</span>.book(book))</span><br><span class="line">        bookIndex += <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (magazineIndex &lt; magazines.<span class="built_in">count</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> magazine = magazines[magazineIndex]</span><br><span class="line">        results.append(<span class="type">StitchItem</span>.magazine(magazine))</span><br><span class="line">        magazineIndex += <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> results</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/672&quot;&gt;#672&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Supposed we want to stitch magazines
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
     
   </entry>
   
