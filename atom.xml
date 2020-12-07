@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-12-06T04:54:53.000Z</updated>
+  <updated>2020-12-07T05:05:04.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to convert struct to Core Data NSManagedObject</title>
+    <link href="https://onmyway133.github.io/blog/How-to-convert-struct-to-Core-Data-NSManagedObject/"/>
+    <id>https://onmyway133.github.io/blog/How-to-convert-struct-to-Core-Data-NSManagedObject/</id>
+    <published>2020-12-07T05:05:04.000Z</published>
+    <updated>2020-12-07T05:05:04.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/706">#706</a></strong></p><p>Use <code>Mirror</code> and set key value as <code>NSManagedObject</code> subclasses from <code>NSObject</code> </p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> CoreData</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ManagedObjectConverter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">convert</span>&lt;M&gt;<span class="params">(m: M, context: NSManagedObjectContext)</span></span> <span class="keyword">throws</span> -&gt; <span class="type">NSManagedObject</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> entityName = <span class="type">String</span>(describing: m)</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> entityDescription = <span class="type">NSEntityDescription</span>.entity(</span><br><span class="line">            forEntityName: entityName,</span><br><span class="line">            <span class="keyword">in</span>: context</span><br><span class="line">        ) <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="type">AppError</span>.parsing</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> managedObject = <span class="type">NSManagedObject</span>(</span><br><span class="line">            entity: entityDescription,</span><br><span class="line">            insertInto: context</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> mirror = <span class="type">Mirror</span>(reflecting: m)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> mirror.displayStyle == .<span class="keyword">struct</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="type">AppError</span>.parsing</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> <span class="keyword">case</span> <span class="keyword">let</span> (label?, anyValue) <span class="keyword">in</span> mirror.children &#123;</span><br><span class="line">            managedObject.setValue(anyValue, forKey: label)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> managedObject</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/706&quot;&gt;#706&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Use &lt;code&gt;Mirror&lt;/code&gt; and set key value
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="core data" scheme="https://onmyway133.github.io/tags/core-data/"/>
+    
+  </entry>
   
   <entry>
     <title>How to hack iOS apps</title>
@@ -566,36 +596,6 @@
     
     
       <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to use nested ObservableObject in SwiftUI</title>
-    <link href="https://onmyway133.github.io/blog/How-to-use-nested-ObservableObject-in-SwiftUI/"/>
-    <id>https://onmyway133.github.io/blog/How-to-use-nested-ObservableObject-in-SwiftUI/</id>
-    <published>2020-11-14T03:49:39.000Z</published>
-    <updated>2020-11-14T03:49:39.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/694">#694</a></strong></p><p>I usually structure my app to have 1 main <code>ObservableObject</code> called <code>Store</code> with multiple properties in it.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Store</span>: <span class="title">ObservableObject</span> </span>&#123;</span><br><span class="line">    @<span class="type">Published</span> <span class="keyword">var</span> pricingPlan: <span class="type">PricingPlan</span>()</span><br><span class="line">    @<span class="type">Published</span> <span class="keyword">var</span> preferences: <span class="type">Preferences</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Preferences</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> opensAtLogin: <span class="type">Bool</span> = <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">PricingPlan</span>: <span class="title">ObservableObject</span> </span>&#123;</span><br><span class="line">    @<span class="type">Published</span> <span class="keyword">var</span> isPro: <span class="type">Bool</span> = <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>SwiftUI for now does not work with nested <code>ObservableObject</code>, so if I pass <code>Store</code> to PricingView, changes in <code>PricingPlan</code> does not trigger view update in PricingView.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MainView</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    @<span class="type">ObservedObject</span></span><br><span class="line">    <span class="keyword">var</span> store: <span class="type">Store</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123; geo <span class="keyword">in</span></span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">        .sheet(isPresented: $showsPricing) &#123;</span><br><span class="line">            <span class="type">PricingView</span>(</span><br><span class="line">                isPresented: $showsPricing,</span><br><span class="line">                store: store</span><br><span class="line">            )</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>There are some workarounds</p><h3 id="Pass-nested-ObservableObject"><a href="#Pass-nested-ObservableObject" class="headerlink" title="Pass nested ObservableObject"></a>Pass nested ObservableObject</h3><p>So that View observes both parent and nested objects.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">PricingView</span>(</span><br><span class="line">    store: store,</span><br><span class="line">    pricingPlan: store.pricingPlan</span><br><span class="line">)</span><br></pre></td></tr></table></figure><h3 id="Use-struct"><a href="#Use-struct" class="headerlink" title="Use struct"></a>Use struct</h3><p>This forces us to deal with immutability also, as with reference type PricingPlan, someone could just save a reference to it and alter it at some point.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PricingPlan</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure><h3 id="Listen-to-nested-objects-changes"><a href="#Listen-to-nested-objects-changes" class="headerlink" title="Listen to nested objects changes"></a>Listen to nested objects changes</h3><p>Every <code>ObservableObject</code> has a synthesized property <code>objectWillChange</code> that triggers when any <code>@Publisshed</code> property changes</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Store</span>: <span class="title">ObservableObject</span> </span>&#123;</span><br><span class="line">    @<span class="type">Published</span> <span class="keyword">var</span> pricingPlan = <span class="type">PricingPlan</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> anyCancellable: <span class="type">AnyCancellable?</span> = <span class="literal">nil</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>() &#123;</span><br><span class="line">        anyCancellable = pricingPlan.objectWillChange.sink &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">self</span>?.objectWillChange.send()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/694&quot;&gt;#694&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;I usually structure my app to have 1 main
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
     
   </entry>
   
