@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-12-07T05:05:04.000Z</updated>
+  <updated>2020-12-07T05:17:25.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to support right click menu to NSStatusItem</title>
+    <link href="https://onmyway133.github.io/blog/How-to-support-right-click-menu-to-NSStatusItem/"/>
+    <id>https://onmyway133.github.io/blog/How-to-support-right-click-menu-to-NSStatusItem/</id>
+    <published>2020-12-07T05:17:25.000Z</published>
+    <updated>2020-12-07T05:17:25.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/707">#707</a></strong></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Omnia</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> statusItem = <span class="type">NSStatusBar</span>.system.statusItem(withLength: <span class="type">NSStatusItem</span>.squareLength)</span><br><span class="line"><span class="keyword">let</span> menuHandler = <span class="type">MenuHandler</span>()</span><br><span class="line">menuHandler.add(title: <span class="string">"About"</span>, action: &#123;</span><br><span class="line">    <span class="type">NSWorkspace</span>.shared.<span class="keyword">open</span>(<span class="type">URL</span>(string: <span class="string">"https://onmyway133.com/pushhero"</span>)!)</span><br><span class="line">&#125;)</span><br><span class="line">statusItem.menu = menuHandler.menu</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/707&quot;&gt;#707&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&quot;highlight
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+  </entry>
   
   <entry>
     <title>How to convert struct to Core Data NSManagedObject</title>
@@ -560,34 +588,6 @@
         
           &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/696&quot;&gt;#696&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Which methods do you think are used
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to check IAP Transaction error</title>
-    <link href="https://onmyway133.github.io/blog/How-to-check-IAP-Transaction-error/"/>
-    <id>https://onmyway133.github.io/blog/How-to-check-IAP-Transaction-error/</id>
-    <published>2020-11-14T04:32:19.000Z</published>
-    <updated>2020-11-14T04:32:19.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/695">#695</a></strong></p><p>Inspect <code>SKPaymentTransaction</code> for <code>error</code>. In Swift, any <code>Error</code> can be safely bridged into <code>NSError</code> there you can check <code>errorDomain</code> and <code>code</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">handleFailure</span><span class="params">(<span class="number">_</span> transaction: SKPaymentTransaction)</span></span> &#123;</span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> error = transaction.error <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line">    <span class="keyword">let</span> nsError = error <span class="keyword">as</span> <span class="type">NSError</span></span><br><span class="line">    <span class="keyword">guard</span> nsError.domain == <span class="type">SKError</span>.errorDomain <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> nsError.code &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">SKError</span>.clientInvalid.rawValue, <span class="type">SKError</span>.paymentNotAllowed.rawValue:</span><br><span class="line">        showAlert(text: <span class="string">"You are not allowed to make payment."</span>)</span><br><span class="line">    <span class="keyword">case</span> <span class="type">SKError</span>.paymentCancelled.rawValue:</span><br><span class="line">        showAlert(text: <span class="string">"Payment has been cancelled."</span>)</span><br><span class="line">    <span class="keyword">case</span> <span class="type">SKError</span>.unknown.rawValue, <span class="type">SKError</span>.paymentInvalid.rawValue:</span><br><span class="line">        <span class="keyword">fallthrough</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        showAlert(text: <span class="string">"Something went wrong making payment."</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/695&quot;&gt;#695&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Inspect &lt;code&gt;SKPaymentTransaction&lt;/code&gt;
         
       
     
