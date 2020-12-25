@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2020-12-23T05:17:48.000Z</updated>
+  <updated>2020-12-25T22:06:34.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -17,13 +17,101 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>How to instrument SwiftUI app</title>
+    <link href="https://onmyway133.github.io/blog/How-to-instrument-SwiftUI-app/"/>
+    <id>https://onmyway133.github.io/blog/How-to-instrument-SwiftUI-app/</id>
+    <published>2020-12-25T22:06:34.000Z</published>
+    <updated>2020-12-25T22:06:34.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/722">#722</a></strong></p><p>With Xcode 12, we can fire up Instrument to profile our app. Select <code>SwiftUI template</code></p><img width="836" alt="Screenshot 2020-12-26 at 00 02 03" src="https://user-images.githubusercontent.com/2284279/103142980-a0a13b00-470d-11eb-81bc-632a08b8084b.png"><p>There are many profiles in that template, I find SwiftUI and Time Profile very useful. Here’s the profile I run for my app <a href="https://onmyway133.com/pastepal">PastePal</a></p><p>Taking a look at SwiftUI profile, it shows that <code>ClipboardCell</code> is taking most of the time, here over 7 seconds</p><img width="1396" alt="Screenshot 2020-12-25 at 23 59 12" src="https://user-images.githubusercontent.com/2284279/103142965-7bacc800-470d-11eb-8b0e-5d598f6e082b.png"><p>Then we drill down to Time Profiler, it shows that <code>NSSharingService.submenu</code> accounts for 75% of performance issue</p><img width="1396" alt="Screenshot 2020-12-25 at 23 59 57" src="https://user-images.githubusercontent.com/2284279/103142966-7f404f00-470d-11eb-85b7-3e813ff5476c.png"><p>With these instruments, I found out that the <a href="https://onmyway133.com/blog/how-to-make-sharing-menu-in-swiftui-for-macos/">NSSharingService context menu I added</a> has pure performance. A quick fix is to cache the items using <code>static</code> variable.</p><p>There are more to optimize in my case, for example calculation of image and dominant colors. But we should only optimize when seeing real performance issue and after proper instruments</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/722&quot;&gt;#722&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;With Xcode 12, we can fire up Instrument
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to force set frame explicitly for NSWindow</title>
+    <link href="https://onmyway133.github.io/blog/How-to-force-set-frame-explicitly-for-NSWindow/"/>
+    <id>https://onmyway133.github.io/blog/How-to-force-set-frame-explicitly-for-NSWindow/</id>
+    <published>2020-12-25T21:29:23.000Z</published>
+    <updated>2020-12-25T21:29:23.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/721">#721</a></strong></p><p>For <code>setFrame</code> to take effect</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mainWindow.setFrame(rect, display: <span class="literal">true</span>)</span><br></pre></td></tr></table></figure><p>we can remove auto save frame flag</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mainWindow.setFrameAutosaveName(<span class="string">"MyApp.MainWindow"</span>)</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/721&quot;&gt;#721&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;For &lt;code&gt;setFrame&lt;/code&gt; to take
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to rotate NSStatusItem</title>
+    <link href="https://onmyway133.github.io/blog/How-to-rotate-NSStatusItem/"/>
+    <id>https://onmyway133.github.io/blog/How-to-rotate-NSStatusItem/</id>
+    <published>2020-12-23T08:01:34.000Z</published>
+    <updated>2020-12-23T08:01:34.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/720">#720</a></strong></p><p><code>NSStatusItem</code> is backed by <code>NSButton</code>, we can animate this inner button. We need to specify <code>position</code> and <code>anchorPoint</code> for button’s layer so it rotates around its center point</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">guard</span><br><span class="line">    let button &#x3D; statusItem.button</span><br><span class="line">else &#123; return &#125;</span><br><span class="line"></span><br><span class="line">let animation &#x3D; CABasicAnimation(keyPath: &quot;transform.rotation.z&quot;)</span><br><span class="line">animation.fromValue &#x3D; 0</span><br><span class="line">animation.toValue &#x3D; CGFloat.pi * 2</span><br><span class="line">animation.duration &#x3D; 0.25</span><br><span class="line">animation.repeatCount &#x3D; 1</span><br><span class="line">button.layer?.position &#x3D; NSPoint(x: NSMidX(button.frame), y: NSMidY(button.frame))</span><br><span class="line">button.layer?.anchorPoint &#x3D; NSPoint(x: 0.5, y: 0.5)</span><br><span class="line">button.layer?.add(animation, forKey: &quot;rotate&quot;)</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/720&quot;&gt;#720&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;NSStatusItem&lt;/code&gt; is backed by
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+  </entry>
+  
+  <entry>
     <title>How to show image and text in menu item in SwiftUI for macOS</title>
     <link href="https://onmyway133.github.io/blog/How-to-show-image-and-text-in-menu-item-in-SwiftUI-for-macOS/"/>
     <id>https://onmyway133.github.io/blog/How-to-show-image-and-text-in-menu-item-in-SwiftUI-for-macOS/</id>
     <published>2020-12-23T05:17:48.000Z</published>
-    <updated>2020-12-23T05:17:48.000Z</updated>
+    <updated>2020-12-23T05:35:31.000Z</updated>
     
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/719">#719</a></strong></p><p>From SwiftUI 2 for macOS 11.0, we have access to <code>Menu</code> for creating menu and submenu. Usually we use <code>Button</code> for interactive menu items and <code>Text</code> for disabled menu items.</p><p>The easy way to customize menu with image is to call <code>Menu</code> with <code>content</code> and <code>label</code>. Pay attention to how we use <code>Button</code> and <code>Label</code> inside <code>Content</code> to create interactive menu items</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Menu</span>(</span><br><span class="line">    content: &#123;</span><br><span class="line">        <span class="type">ForEach</span>(collections) &#123; collection <span class="keyword">in</span></span><br><span class="line">            <span class="type">Button</span>(action: &#123;) &#123;</span><br><span class="line">                <span class="type">Label</span>(collection.name, systemImage: <span class="type">SFSymbol</span>.star.rawValue)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    label: &#123;</span><br><span class="line">        <span class="type">Image</span>(systemName: <span class="type">SFSymbol</span>.bookmarkFill.rawValue)</span><br><span class="line">        <span class="type">Text</span>(<span class="string">"Add to collection"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure><p>We can also use <code>Image</code> and <code>Text</code> separately. By default SwiftUI wraps these inside <code>HStack</code> automatically for us. For now, color has no effect in <code>Menu</code>, but it works on <code>Text</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Image</span>(systemName: <span class="type">SFSymbol</span>.bookmarkFill.rawValue)</span><br><span class="line">     .foregroundColor(<span class="type">Color</span>.red)</span><br><span class="line"><span class="type">Text</span>(collection.name)</span><br><span class="line">    .foregroundColor(<span class="type">Color</span>.green)</span><br></pre></td></tr></table></figure><p>One way to mitigate this is to use Text with icon font. Here I use my <a href="https://github.com/onmyway133/FontAwesomeSwiftUI">FontAwesomeSwiftUI</a></p><p>There’s a problem that only the first <code>Text</code> is shown</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Text</span>(collection.icon)</span><br><span class="line">    .font(.awesome(style: .solid, size: <span class="number">18</span>))</span><br><span class="line">    .foregroundColor(<span class="type">Color</span>.red)</span><br><span class="line"><span class="type">Text</span>(collection.name)</span><br></pre></td></tr></table></figure><p>The solution is to concatenate <code>Text</code>. In SwiftUI, <code>Text</code> has <code>+</code> operator that allows us to make cool attributed strings</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Text</span>(collection.icon)</span><br><span class="line">    .font(.awesome(style: .solid, size: <span class="number">18</span>))</span><br><span class="line">    .foregroundColor(<span class="type">Color</span>.red)</span><br><span class="line">+ <span class="type">Text</span>(collection.name)</span><br></pre></td></tr></table></figure>]]></content>
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/719">#719</a></strong></p><p>From SwiftUI 2 for macOS 11.0, we have access to <code>Menu</code> for creating menu and submenu. Usually we use <code>Button</code> for interactive menu items and <code>Text</code> for disabled menu items.</p><p>The easy way to customize menu with image is to call <code>Menu</code> with <code>content</code> and <code>label</code>. Pay attention to how we use <code>Button</code> and <code>Label</code> inside <code>Content</code> to create interactive menu items</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Menu</span>(</span><br><span class="line">    content: &#123;</span><br><span class="line">        <span class="type">ForEach</span>(collections) &#123; collection <span class="keyword">in</span></span><br><span class="line">            <span class="type">Button</span>(action: &#123;) &#123;</span><br><span class="line">                <span class="type">Label</span>(collection.name, systemImage: <span class="type">SFSymbol</span>.star.rawValue)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    label: &#123;</span><br><span class="line">        <span class="type">Image</span>(systemName: <span class="type">SFSymbol</span>.bookmarkFill.rawValue)</span><br><span class="line">        <span class="type">Text</span>(<span class="string">"Add to collection"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure><p>We can also use <code>Image</code> and <code>Text</code> separately. By default SwiftUI wraps these inside <code>HStack</code> automatically for us. For now, color has no effect in <code>Menu</code>, but it works on <code>Text</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Image</span>(systemName: <span class="type">SFSymbol</span>.bookmarkFill.rawValue)</span><br><span class="line">     .foregroundColor(<span class="type">Color</span>.red)</span><br><span class="line"><span class="type">Text</span>(collection.name)</span><br><span class="line">    .foregroundColor(<span class="type">Color</span>.green)</span><br></pre></td></tr></table></figure><p>One way to mitigate this is to use Text with icon font. Here I use my <a href="https://github.com/onmyway133/FontAwesomeSwiftUI">FontAwesomeSwiftUI</a></p><p>There’s a problem that only the first <code>Text</code> is shown</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Text</span>(collection.icon)</span><br><span class="line">    .font(.awesome(style: .solid, size: <span class="number">18</span>))</span><br><span class="line">    .foregroundColor(<span class="type">Color</span>.red)</span><br><span class="line"><span class="type">Text</span>(collection.name)</span><br></pre></td></tr></table></figure><p>The solution is to concatenate <code>Text</code>. In SwiftUI, <code>Text</code> has <code>+</code> operator that allows us to make cool attributed texts</p><img width="409" alt="Screenshot 2020-12-23 at 07 34 40" src="https://user-images.githubusercontent.com/2284279/102967039-652a2500-44f1-11eb-826c-ce69f10468b7.png"><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Text</span>(collection.icon)</span><br><span class="line">    .font(.awesome(style: .solid, size: <span class="number">18</span>))</span><br><span class="line">    .foregroundColor(<span class="type">Color</span>.red)</span><br><span class="line">+ <span class="type">Text</span>(collection.name)</span><br></pre></td></tr></table></figure><p><strong>Updated at</strong> 2020-12-23 06:35:31</p>]]></content>
     
     <summary type="html">
     
@@ -51,9 +139,9 @@
     <link href="https://onmyway133.github.io/blog/How-to-make-sharing-menu-in-SwiftUI-for-macOS/"/>
     <id>https://onmyway133.github.io/blog/How-to-make-sharing-menu-in-SwiftUI-for-macOS/</id>
     <published>2020-12-23T04:19:17.000Z</published>
-    <updated>2020-12-23T04:37:29.000Z</updated>
+    <updated>2020-12-25T21:57:57.000Z</updated>
     
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/718">#718</a></strong></p><p>Use <code>NSSharingService.sharingServices(forItems:)</code> with an array of one empty string gives a list of sharing items. There we show <code>image</code> and <code>title</code> of each menu item</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"><span class="keyword">import</span> EasySwiftUI</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">NSSharingService</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">submenu</span><span class="params">(text: String)</span></span> -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Menu</span>(</span><br><span class="line">            content: &#123;</span><br><span class="line">                <span class="type">ForEach</span>(<span class="type">NSSharingService</span>.sharingServices(forItems: [<span class="string">""</span>]), id: \.title) &#123; item <span class="keyword">in</span></span><br><span class="line">                    <span class="type">Button</span>(action: &#123; item.perform(withItems: [string]) &#125;) &#123;</span><br><span class="line">                        <span class="type">Image</span>(nsImage: item.image)</span><br><span class="line">                        <span class="type">Text</span>(item.title)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            label: &#123;</span><br><span class="line">                <span class="type">Text</span>(<span class="string">"Share"</span>)</span><br><span class="line">                <span class="type">Image</span>(systemName: <span class="type">SFSymbol</span>.squareAndArrowUp.rawValue)</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Alternative, you can trigger <code>NSSharingServicePicker</code> from a button, it shows a context menu with sharing options</p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://stackoverflow.com/questions/60952334/swiftui-using-nssharingservicepicker-in-macos">https://stackoverflow.com/questions/60952334/swiftui-using-nssharingservicepicker-in-macos</a></li></ul><p><strong>Updated at</strong> 2020-12-23 05:37:29</p>]]></content>
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/718">#718</a></strong></p><p>Use <code>NSSharingService.sharingServices(forItems:)</code> with an array of one empty string gives a list of sharing items. There we show <code>image</code> and <code>title</code> of each menu item.</p><p>We should cache sharing items as that can cause performance issue</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"><span class="keyword">import</span> EasySwiftUI</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">NSSharingService</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">let</span> items = <span class="type">NSSharingService</span>.sharingServices(forItems: [<span class="string">""</span>])</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">submenu</span><span class="params">(text: String)</span></span> -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Menu</span>(</span><br><span class="line">            content: &#123;</span><br><span class="line">                <span class="type">ForEach</span>(items, id: \.title) &#123; item <span class="keyword">in</span></span><br><span class="line">                    <span class="type">Button</span>(action: &#123; item.perform(withItems: [string]) &#125;) &#123;</span><br><span class="line">                        <span class="type">Image</span>(nsImage: item.image)</span><br><span class="line">                        <span class="type">Text</span>(item.title)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            label: &#123;</span><br><span class="line">                <span class="type">Text</span>(<span class="string">"Share"</span>)</span><br><span class="line">                <span class="type">Image</span>(systemName: <span class="type">SFSymbol</span>.squareAndArrowUp.rawValue)</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Alternative, you can trigger <code>NSSharingServicePicker</code> from a button, it shows a context menu with sharing options</p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://stackoverflow.com/questions/60952334/swiftui-using-nssharingservicepicker-in-macos">https://stackoverflow.com/questions/60952334/swiftui-using-nssharingservicepicker-in-macos</a></li></ul><p><strong>Updated at</strong> 2020-12-25 22:57:57</p>]]></content>
     
     <summary type="html">
     
@@ -517,93 +605,6 @@
       <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
     
       <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to add under highlight to text in css</title>
-    <link href="https://onmyway133.github.io/blog/How-to-add-under-highlight-to-text-in-css/"/>
-    <id>https://onmyway133.github.io/blog/How-to-add-under-highlight-to-text-in-css/</id>
-    <published>2020-11-20T04:22:58.000Z</published>
-    <updated>2020-11-20T04:23:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/701">#701</a></strong></p><p>Use mark. This does not work for multiline</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="selector-tag">p</span>&gt;</span><br><span class="line">    &lt;mark css=&#123;css`</span><br><span class="line">        <span class="selector-tag">display</span>: <span class="selector-tag">inline-block</span>;</span><br><span class="line">        <span class="selector-tag">line-height</span>: 0<span class="selector-tag">em</span>;</span><br><span class="line">        <span class="selector-tag">padding-bottom</span>: 0<span class="selector-class">.5em</span>;</span><br><span class="line">        `&#125;&gt;&#123;feature.title&#125;</span><br><span class="line">    &lt;/mark&gt;</span><br><span class="line">&lt;/p&gt;</span><br></pre></td></tr></table></figure><p>Another way is to use background</p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.highlight</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">linear-gradient</span>(180deg,rgba(255,255,255,0) <span class="number">50%</span>, <span class="number">#FFD0AE</span> <span class="number">50%</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://beatrizcaraballo.com/blog/low-highlight-heading-links-squarespace">https://beatrizcaraballo.com/blog/low-highlight-heading-links-squarespace</a></li><li><a href="https://stackoverflow.com/questions/43683187/how-can-i-create-custom-underline-or-highlight-for-text-in-html-or-css">https://stackoverflow.com/questions/43683187/how-can-i-create-custom-underline-or-highlight-for-text-in-html-or-css</a></li><li><a href="https://medium.com/@codingdudecom/highlight-text-css-97331a5b71b5">https://medium.com/@codingdudecom/highlight-text-css-97331a5b71b5</a></li></ul><p><strong>Updated at</strong> 2020-11-20 05:23:59</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/701&quot;&gt;#701&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use mark. This does not work for
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="css" scheme="https://onmyway133.github.io/tags/css/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to use default system fonts in React apps</title>
-    <link href="https://onmyway133.github.io/blog/How-to-use-default-system-fonts-in-React-apps/"/>
-    <id>https://onmyway133.github.io/blog/How-to-use-default-system-fonts-in-React-apps/</id>
-    <published>2020-11-18T05:29:22.000Z</published>
-    <updated>2020-11-18T05:29:29.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/700">#700</a></strong></p><p>In <code>index.css</code></p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">font-family</span>: -apple-system, BlinkMacSystemFont, <span class="string">'Segoe UI'</span>, <span class="string">'Roboto'</span>, <span class="string">'Oxygen'</span>, <span class="string">'Ubuntu'</span>, <span class="string">'Cantarell'</span>, <span class="string">'Fira Sans'</span>, <span class="string">'Droid Sans'</span>, <span class="string">'Helvetica Neue'</span>, sans-serif;</span><br><span class="line">    <span class="attribute">-webkit-font-smoothing</span>: antialiased;</span><br><span class="line">    <span class="attribute">-moz-osx-font-smoothing</span>: grayscale;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">code</span> &#123;</span><br><span class="line">    <span class="attribute">font-family</span>: source-code-pro, Menlo, Monaco, Consolas, <span class="string">'Courier New'</span>, monospace;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><strong>Updated at</strong> 2020-11-18 06:29:29</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/700&quot;&gt;#700&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;In &lt;code&gt;index.css&lt;/code&gt;&lt;/p&gt;
-&lt;figure
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to make simple overlay container in React</title>
-    <link href="https://onmyway133.github.io/blog/How-to-make-simple-overlay-container-in-React/"/>
-    <id>https://onmyway133.github.io/blog/How-to-make-simple-overlay-container-in-React/</id>
-    <published>2020-11-18T05:13:03.000Z</published>
-    <updated>2020-11-18T05:22:50.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/699">#699</a></strong></p><p>Use term <code>ZStack</code> like in SwiftUI, we declare container as relative position. For now it uses only 2 items from <code>props.children</code> but can be tweaked to support mutiple</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    render() &#123;</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            &lt;ZStack&gt;</span><br><span class="line">                &lt;Header /&gt;</span><br><span class="line">                &lt;div css=&#123;css`<span class="css"></span></span><br><span class="line"><span class="css">                    <span class="selector-tag">padding-top</span>: 50<span class="selector-tag">px</span>;</span></span><br><span class="line"><span class="css">                `</span>&#125;&gt;</span><br><span class="line">                    &lt;Showcase factory=&#123;factory&#125; /&gt;</span><br><span class="line">                    &lt;Footer /&gt;</span><br><span class="line">                &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">            &lt;/</span>ZStack&gt;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @jsx jsx */</span></span><br><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; css, jsx &#125; <span class="keyword">from</span> <span class="string">'@emotion/core'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">ZStack</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;div css=&#123;css`<span class="css"></span></span><br><span class="line"><span class="css">            <span class="selector-tag">position</span>: <span class="selector-tag">relative</span>;</span></span><br><span class="line"><span class="css">        `</span>&#125;&gt;</span><br><span class="line">            &lt;div &gt;</span><br><span class="line">                &#123;props.children[<span class="number">0</span>]&#125;</span><br><span class="line">            &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">            &lt;div css=&#123;css`</span></span><br><span class="line"><span class="regexp">                position: absolute;</span></span><br><span class="line"><span class="regexp">                top: 0;</span></span><br><span class="line"><span class="regexp">                left: 0;</span></span><br><span class="line"><span class="regexp">                width: 100%;</span></span><br><span class="line"><span class="regexp">            `&#125;&gt;</span></span><br><span class="line"><span class="regexp">                &#123;props.children[1]&#125;</span></span><br><span class="line"><span class="regexp">            &lt;/</span>div&gt;</span><br><span class="line">        &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    )</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure><p><strong>Updated at</strong> 2020-11-18 06:22:50</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/699&quot;&gt;#699&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use term &lt;code&gt;ZStack&lt;/code&gt; like in
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="javascript" scheme="https://onmyway133.github.io/tags/javascript/"/>
-    
-      <category term="react" scheme="https://onmyway133.github.io/tags/react/"/>
     
   </entry>
   
