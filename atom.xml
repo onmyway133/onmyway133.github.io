@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2021-01-01T22:42:34.000Z</updated>
+  <updated>2021-01-05T06:07:59.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,217 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to make Auto Layout more convenient in iOS</title>
+    <link href="https://onmyway133.github.io/blog/How-to-make-Auto-Layout-more-convenient-in-iOS/"/>
+    <id>https://onmyway133.github.io/blog/How-to-make-Auto-Layout-more-convenient-in-iOS/</id>
+    <published>2021-01-05T06:07:53.000Z</published>
+    <updated>2021-01-05T06:07:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/742">#742</a></strong></p><p>Auto Layout has been around since macOS 10.7 and iOS 6.0 as a nicer way to do layouts over the old resizing masks. Besides some rare cases when we need to manually specify origins and sizes, Auto Layout is the preferred way to do declarative layouts whether we choose to do UI in code or Storyboard. The Auto Layout APIs have some improvements over the years, there are also some sugar libraries that add easy syntaxes, so more choices for developers.</p><p>In this article, let’s take a review of how layout has improved over the years, from manual layout, autoresizing masks and finally to Auto Layout. I will mention a few takes on some libraries and how to abstract Auto Layout using the builder pattern. There are also some notes about the view life cycle and APIs improvements that might be overlooked. These are of course based on my experience and varies because of personal tastes but I hope you‘ll find something useful.</p><p>Although the article mention iOS, the same learning applies to watchOS, tvOS and macOS too. Here is a sneak peek in what we’ll learn today:</p><ul><li><p><a href="https://medium.com/p/df3b42fed37f#f309">Positioning a view before Auto Layout</a> (Manual layout using CGRect, Why is view size correct in viewDidLoad, Autoresizing masks)</p></li><li><p><a href="https://medium.com/p/df3b42fed37f#735c">Auto Layout to the rescue</a> (A constraint-based layout system, translatesAutoresizingMaskIntoConstraints, Visual Format Language, addConstraint and activate, NSLayoutAnchor &amp; error message)</p></li><li><p><a href="https://medium.com/p/df3b42fed37f#37d4">Abstractions over Auto Layout</a> (Cartography, SnapKit, The many overloading functions)</p></li><li><p><a href="https://medium.com/p/df3b42fed37f#25e8">Embracing Auto Layout</a></p></li><li><p><a href="https://medium.com/p/df3b42fed37f#4867">Making Auto Layout more convenient with the builder pattern</a> (Which objects can interact with Auto Layout? Which properties are needed in a layout constraint? Inferring &amp; Retrieving constraints)</p></li><li><p><a href="https://medium.com/p/df3b42fed37f#4cb3">Where to go from here</a> (aka Summary).</p></li></ul><h2 id="Positioning-a-view-before-Auto-Layout"><a href="#Positioning-a-view-before-Auto-Layout" class="headerlink" title="Positioning a view before Auto Layout"></a>Positioning a view before Auto Layout</h2><p>When I first started iOS programming in early 2014, I read a book about Auto Layout and that book detailed lots of scenarios that completely confused me. It didn’t take long until I tried Auto Layout in an app and I realized it w as so simple. In its simplest sense, a view needs a position and a size to be correctly shown on the screen, everything else is just extra. In Auto Layout’s term, we need to specify enough constraints to position and size the view.</p><h3 id="Manual-layout-using-CGRect"><a href="#Manual-layout-using-CGRect" class="headerlink" title="Manual layout using CGRect"></a>Manual layout using CGRect</h3><p>If we take a look back at the way we do a manual layout with the frame, there are origins and sizes. For example, here is how to position a red box that stretches accordingly with the width of the view controller.</p><p><img src="https://cdn-images-1.medium.com/max/2336/1*ScTtKYui6Ml0z0ocYR9uDA.png" alt=""></p><iframe src="https://medium.com/media/236ffdaa5d126ea6ce0b277ac74fc095" frameborder=0></iframe><p>viewDidLoad is called when the view property of view controller is loaded, we need to wait until viewDidLayoutSubviews so that we have access to the final bounds. When the bounds change for a view controller’s view, the view adjusts the positions of its subviews and then the system calls this method.</p><h3 id="Why-is-view-size-correct-in-viewDidLoad"><a href="#Why-is-view-size-correct-in-viewDidLoad" class="headerlink" title="Why is view size correct in viewDidLoad"></a>Why is view size correct in viewDidLoad</h3><p>viewDidLoad is definitely not the recommended way to do manual layout but there are times we still see that its view is correctly sized and fills the screen. This is when we need to read <a href="https://developer.apple.com/documentation/uikit/uiviewcontroller">View Management</a> in UIViewController more thoroughly:</p><blockquote><p>Each view controller manages a view hierarchy, the root view of which is stored in the <a href="https://developer.apple.com/documentation/uikit/uiviewcontroller/1621460-view">*view</a>*property of this class. The root view acts primarily as a container for the rest of the view hierarchy. The size and position of the root view is determined by the object that owns it, which is either a parent view controller or the app’s window. The view controller that is owned by the window is the app’s root view controller and its view is sized to fill the window.<br>A view controller’s root view is always sized to fit its assigned space.</p></blockquote><p>It can also be that the view has fixed size in xib or storyboard but we should control the size explicitly and do that in the right view controller method to avoid unexpected behaviors.</p><h3 id="Autoresizing-masks"><a href="#Autoresizing-masks" class="headerlink" title="Autoresizing masks"></a>Autoresizing masks</h3><p><img src="https://cdn-images-1.medium.com/max/2000/1*yn3czZbudyVVlr-a3J1l9A.png" alt=""></p><p>Autoresizing mask was the old way to make layout a bit more declarative, also called <em>springs and struts</em> layout system. It is integer bit mask that determines how the receiver resizes itself when its superview’s bounds change. Combining these constants lets you specify which dimensions of the view should grow or shrink relative to the superview. The default value of this property is none, which indicates that the view should not be resized at all.</p><p>While we can specify which edges we want to fix and which should be flexible, it is confusing in the ways we do in xib and in code.</p><p>In the above screenshot, we pin the top of the red box to the top of the screen, and that is fixed distance. When the view changes size, the width and height of the red box changes proportionally, but the top spacing remains fixed.</p><p>In code, instead of specifying autoresizing in terms of fixed distance, we use flexible terms to specify which edges should be flexible.</p><p>To achieve the same red box on the top of the screen, we need to specify a flexible width and a flexible bottom margin. This means the left, right and top edges are fixed.</p><pre><code>box.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]</code></pre><p>Here are a few more scenarios</p><ul><li><p>Horizontally fixed distance from the left: [.flexibleRightMargin]</p></li><li><p>Center horizontally [.flexibleLeftMargin, .flexibleRightMargin]</p></li><li><p>Vertically fixed distance from the top: [.flexibleBottomMargin]</p></li><li><p>Center vertically [.flexibleTopMargin, .flexibleBottomMargin]</p></li></ul><p>These are not very intuitive and the way these are scaled proportionally may not fit our expectation. Also, note that multiple options can be done on the same axis.</p><blockquote><p>When more than one option along the same axis is set, the default behavior is to distribute the size difference proportionally among the flexible portions. The larger the flexible portion, relative to the other flexible portions, the more it is likely to grow. For example, suppose this property includes the <a href="apple-reference-documentation://hsNSe_v1m3">flexibleWidth</a> and <a href="apple-reference-documentation://hsW_P6WgME">flexibleRightMargin</a>constants but does not include the <em>flexibleLeftMargin</em> constant, thus indicating that the width of the view’s left margin is fixed but that the view’s width and right margin may change.</p></blockquote><p>Understanding of autoresizing masks won’t waste your time, we will come back to it in a few minutes 😉</p><h2 id="Auto-Layout-to-the-rescue"><a href="#Auto-Layout-to-the-rescue" class="headerlink" title="Auto Layout to the rescue"></a>Auto Layout to the rescue</h2><p>Auto Layout, together with dynamic text and size classes, are recommended ways to build <a href="https://developer.apple.com/design/adaptivity/">adaptive user interfaces</a> as there the number of iOS devices with different screen sizes grows.</p><h3 id="A-constraint-based-layout-system"><a href="#A-constraint-based-layout-system" class="headerlink" title="A constraint-based layout system"></a>A constraint-based layout system</h3><p>Auto Layout is described via <a href="https://developer.apple.com/documentation/uikit/nslayoutconstraint">NSLayoutConstraint</a> by defining constraints between 2 objects. Here is the simple formula to remember:</p><pre><code>item1.attribute1 = multiplier × item2.attribute2 + constant</code></pre><p>Here is how to replicate that red box with NSLayoutConstraint. We need to specify which property of which view should be connected to another property of another view. Auto Layout supports many attributes such ascenterX, centerY and topMargin.</p><iframe src="https://medium.com/media/0fe1a17a143c02157a3602ae02e47895" frameborder=0></iframe><h3 id="translatesAutoresizingMaskIntoConstraints"><a href="#translatesAutoresizingMaskIntoConstraints" class="headerlink" title="translatesAutoresizingMaskIntoConstraints"></a>translatesAutoresizingMaskIntoConstraints</h3><p>If we run the above code, we will get into the popular warning message regarding translatesAutoresizingMaskIntoConstraints</p><pre><code>[LayoutConstraints] Unable to simultaneously satisfy constraints. Probably at least one of the constraints in the following list is one you don&apos;t want.  Try this:   (1) look at each constraint and try to figure out which you don&apos;t expect;   (2) find the code that added the unwanted constraint or constraints and fix it.  (Note: If you&apos;re seeing NSAutoresizingMaskLayoutConstraints that you don&apos;t understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints) (    &quot;&lt;NSAutoresizingMaskLayoutConstraint:0x600003ef2300 h=--&amp; v=--&amp; UIView:0x7fb66c5059f0.midX == 0   (active)&gt;&quot;,    &quot;&lt;NSLayoutConstraint:0x600003e94b90 H:|-(20)-[UIView:0x7fb66c5059f0](LTR)   (active, names: &apos;|&apos;:UIView:0x7fb66c50bce0 )&gt;&quot;)</code></pre><p>If you need some help deciphering this, there is <a href="https://www.wtfautolayout.com/">wtfautolayout</a> that does a good job on explaining what’s really happening.</p><p><img src="https://cdn-images-1.medium.com/max/3884/1*6bzhDTPpCUhitq4GbTVAmw.png" alt=""></p><p>It is said that resizing masks has been reimplemented using Auto Layout under the hood, and there is always NSAutoresizingMaskLayoutConstraint added to the view, hence the midX constraint.</p><p>We should never mix resizing masks and Auto Layout to avoid unwanted behavior, the fix is simply to disable translatesAutoresizingMaskIntoConstraints</p><pre><code>box.translatesAutoresizingMaskIntoConstraints = false</code></pre><p>This property is false by default for views from xib or storyboard but holds true if we declare layout in code. The intention is for the system to create a set of constraints that duplicate the behavior specified by the view’s autoresizing mask. This also lets you modify the view’s size and location using the view’s frame, bounds, or center properties, allowing you to create a static, frame-based layout within Auto Layout.</p><h3 id="Visual-Format-Language"><a href="#Visual-Format-Language" class="headerlink" title="Visual Format Language"></a>Visual Format Language</h3><p>The Visual Format Language lets you use ASCII-art like strings to define your constraints. I see it is used in some code bases so it’s good to know it.</p><p>Here is how to recreate the red box using VFL. We need to specify constraints for both horizontal and vertical direction. Note that the same format string may result in multiple constraints:</p><iframe src="https://medium.com/media/aa5f25cc3cdaa6b7ebdf5c7d201168b2" frameborder=0></iframe><p>Visual Format Language is a bit nicer than the verbose NSLayoutConstraint initializer, but it encourages string format, which is error-prone.</p><h3 id="addConstraint-and-activate"><a href="#addConstraint-and-activate" class="headerlink" title="addConstraint and activate"></a>addConstraint and activate</h3><p>This may seem trivial but I see in modern code bases, there is still usage of addConstraint . This was old and hard to use, as we must find the nearest common ancestor view of the 2 views that envolve in Auto Layout.</p><p>Starting from iOS 8, there is isActive and the static activate functions that ease this adding constraints process a lot. Basically what it does is to activate or deactivate the constraint with calls to<a href="apple-reference-documentation://hs6gkFVJuz">addConstraint(_:)</a> and <a href="apple-reference-documentation://hsYzji4l8L">removeConstraint(_:)</a> on the view that is the closest common ancestor of the items managed by this constraint.</p><h3 id="NSLayoutAnchor"><a href="#NSLayoutAnchor" class="headerlink" title="NSLayoutAnchor"></a>NSLayoutAnchor</h3><p>Starting with macOS 10.11 and iOS 9, there was NSLayoutAnchor that simplifies Auto Layout a lot. Auto Layout was declarative, but a bit verbose, now it is simpler than ever with an anchoring system.</p><p>Here is how to achieve that same red box</p><pre><code>NSLayoutConstraint.activate([    box.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),    box.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),    box.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),    box.heightAnchor.constraint(equalToConstant: 100)])</code></pre><p>The cool thing about NSLayoutAnchor is its generic constrained API design. Constraints are divided into X-axis, Y-axis and dimension anchor type that makes it hard to make mistakes.</p><pre><code>open class NSLayoutXAxisAnchor : NSLayoutAnchor&lt;NSLayoutXAxisAnchor&gt;open class NSLayoutDimension : NSLayoutAnchor&lt;NSLayoutDimension&gt;</code></pre><p>For example, we can’t pin the top anchor to the left anchor as they are in different axis, and it makes no sense. Attempt to do the following results in compilation issue as Swift strong type system ensures correctness.</p><pre><code>box.topAnchor.constraint(equalTo: view.leftAnchor, constant: 50),</code></pre><h3 id="Ambiguous-error-message-with-NSLayoutAnchor"><a href="#Ambiguous-error-message-with-NSLayoutAnchor" class="headerlink" title="Ambiguous error message with NSLayoutAnchor"></a>Ambiguous error message with NSLayoutAnchor</h3><p>I’ve gone into a few cases where the error messages from NSLayoutAnchor don’t help. If we mistakenly connect topAnchor with centerXAnchor, which are not possible as they are from different axes.</p><pre><code>NSLayoutConstraint.activate([    box.topAnchor.constraint(equalTo: view.centerXAnchor, constant: 50)])</code></pre><p>Xcode complains of unwrapped UIView problem which may confuse us even more.</p><pre><code>Value of optional type &apos;UIView?&apos; must be unwrapped to refer to member &apos;centerXAnchor&apos; of wrapped base type &apos;UIView&apos;</code></pre><p>Another puzzle, regarding this code</p><pre><code>NSLayoutConstraint.activate([    imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),    imageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8),    imageView.heightAnchor.constraint(equalToConstant: view.heightAnchor, mult0.7),    imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 1.0)])</code></pre><p>Xcode is complaining about ‘Int’ is not convertible to ‘CGFloat’ which is very misleading. Can you spot the error?</p><p>The problem is that we are using equalToConstant , not equalTo . The generic constraints of NSLayoutAnchor is giving us misleading errors and can waste lots of time of us trying to figure out the subtle typos.</p><h2 id="Abstractions-over-Auto-Layout"><a href="#Abstractions-over-Auto-Layout" class="headerlink" title="Abstractions over Auto Layout"></a>Abstractions over Auto Layout</h2><p>NSLayoutAnchor is getting more popular now but it is not without any flaws. Depending on personal taste, there might be some other forms of abstractions over Auto Layout, namely Cartography and SnapKit, which I ‘ve used and loved. Here are a few of my takes on those.</p><h3 id="Cartography"><a href="#Cartography" class="headerlink" title="Cartography"></a>Cartography</h3><p><a href="https://github.com/robb/Cartography">Cartography</a> is one of the most popular ways to do Auto Layout in iOS. It uses operators which makes constraints very clear:</p><pre><code>constrain(button1, button2) { button1, button2 in    button1.right == button2.left - 12}</code></pre><p>What I don’t like about Cartography is that we have to repeat parameter names and that the parameters inside closure are just proxies, not real views and there is a limit on the number of constrain items.</p><p>Another huge con was that long compilation time issue due to excessive use of operators <a href="https://github.com/robb/Cartography/issues/215">Very long compile time in large functions</a>. Although Swift compilation time is getting better, this was a big problem. I even had to write a script to remove Cartography to use simple NSLayoutAnchor, so take a look at <a href="https://gist.github.com/onmyway133/c486939f82fc4d3a8ed4be21538fdd32">AutoLayoutConverter</a>, which converts Cartography code from</p><pre><code>constrain(logoImnageView, view1, view2) { logoImageView, view1, view2 in    logoImageView.with == 74    view1.left == view2.left + 20}</code></pre><p>to simple NSLayoutAnchor</p><pre><code>Constraint.on(  logoImageView.widthAnchor.constraint(equalToConstant: 74),  view1.leftAnchor.constraint(equalTo: view2.leftAnchor, constant: 20),)</code></pre><p>There are always tradeoffs but to reduce compilation time at the time was a top priority.</p><h3 id="SnapKit"><a href="#SnapKit" class="headerlink" title="SnapKit"></a>SnapKit</h3><p><a href="https://github.com/SnapKit/SnapKit">SnapKit</a>, originally Masonry, is perhaps the most popular Auto Layout wrapper</p><pre><code>box.snp.makeConstraints { (make) -&gt; Void in   make.width.height.equalTo(50)   make.center.equalTo(self.view)}</code></pre><p>The syntax is nice and with snp namespace to avoid extension name clashes, which I love.</p><p>The thing I don’t like about SnapKit is that limited closure. We can only work on 1 view at a time, and the make inside closure is just a proxy, which does not seem intuitive.</p><p>Imagine if we’re gonna make paging views or <a href="https://github.com/onmyway133/blog/issues/22">piano</a>, where each view is stacked side by side. We need a lot of SnapKit calls as we can only work on 1 view at a time. Also, there is no clear relationship where we connect with the other view.</p><p><img src="https://cdn-images-1.medium.com/max/3882/0*4zvVsKPnTaG5ZXgm.png" alt="[https://github.com/onmyway133/blog/issues/22](https://github.com/onmyway133/blog/issues/22)"><em><a href="https://github.com/onmyway133/blog/issues/22">https://github.com/onmyway133/blog/issues/22</a></em></p><pre><code>keyB.snp.makeConstraints { (make) -&gt; Void in   make.left.equalTo(self.keyA.right)}keyC.snp.makeConstraints { (make) -&gt; Void in   make.left.equalTo(self.keyB.right)}keyD.snp.makeConstraints { (make) -&gt; Void in   make.left.equalTo(self.keyC.right)}</code></pre><h3 id="The-many-overloading-functions"><a href="#The-many-overloading-functions" class="headerlink" title="The many overloading functions"></a>The many overloading functions</h3><p>There are also attempts to build simple Auto Layout wrapper functions but that escalates very quickly.</p><p>We might begin with an extension that pins edge constraints to superview.</p><pre><code>box.pinEdgesToSuperview()</code></pre><p>But a view does not always pin to its superview, it can be to another view, then we add another function</p><pre><code>box.pinEdgesToView(_ view: UIView)</code></pre><p>It would be nice if there is some padding, isn’t it? Let’s add insets options</p><pre><code>box.pinEdgesToView(_ view: UIView, insets: UIEdgeInsets)</code></pre><p>There might be cases where we only want to pin top, left, and right and not the bottom, let’s add another parameter</p><pre><code>box.pinEdgesToView(_ view: UIView, insets: UIEdgeInsets, exclude: NSLayoutConstraint.Attribute)</code></pre><p>Constraints are not always 1000 priorities, it can be lower. We need to support that</p><pre><code>box.pinEdgesToView(_ view: UIView, insets: UIEdgeInsets, exclude: NSLayoutConstraint.Attribute, priority: NSLayoutConstraint.Priority)</code></pre><p>We might exclude more than one properties or set different priority levels for each constraint. The simple wrapper with overloading functions and default parameters are just like building rigid abstraction based on premature assumptions. This just limits us in the long run and not scalable 😢</p><h2 id="Embracing-Auto-Layout"><a href="#Embracing-Auto-Layout" class="headerlink" title="Embracing Auto Layout"></a>Embracing Auto Layout</h2><p>All the Auto Layout frameworks out there are just convenient ways to build NSLayoutConstraint, in fact, these are what you normally need</p><ul><li><p>Call addSubview so that view is in the hierarchy</p></li><li><p>Set translatesAutoresizingMaskIntoConstraints = false</p></li><li><p>Set isActive = true to enable constraints</p></li></ul><p>Here is how to make an extension on NSLayoutConstraint that disables translatesAutoresizingMaskIntoConstraints for the involved views. Code is from <a href="https://github.com/onmyway133/Omnia/blob/master/Sources/iOS/NSLayoutConstraint.swift">Omnia</a></p><iframe src="https://medium.com/media/14fe7dd9f28dfa3c083d43af5d2d73bb" frameborder=0></iframe><p>Here before we activate constraints, we find the firstItem then disables translatesAutoresizingMaskIntoConstraints. From Swift 4.2 there is a separation between compactMap and flatMap so we can safely use flatMap to flatten an array of arrays. This is useful when we have an <a href="https://github.com/onmyway133/Omnia/blob/master/Sources/iOS/UIView.swift">array of arrays</a> of constraints.</p><iframe src="https://medium.com/media/df8c2b839f6636ee174f0f5c533b3d64" frameborder=0></iframe><p>With that, we can pin the red box with a certain size and to the center of the screen:</p><pre><code>NSLayoutConstraint.on([    box.pinCenter(view: view),    box.pin(size: CGSize(width: 100, height: 50))])</code></pre><p>This is a very thin but powerful wrapper over NSLayoutAnchor and we can expand it the way we need. It sadly has some problems, like we can’t easily change the priority, as we have to reference the constraint 😢</p><pre><code>let topConstraint = box.topAnchor.constraint(equalTo: view.topAnchor, constant: 50)topConstraint.priority = UILayoutPriority.defaultLowNSLayoutConstraint.on([    topConstraint])</code></pre><h2 id="Making-Auto-Layout-more-convenient-with-the-builder-pattern"><a href="#Making-Auto-Layout-more-convenient-with-the-builder-pattern" class="headerlink" title="Making Auto Layout more convenient with the builder pattern"></a>Making Auto Layout more convenient with the builder pattern</h2><p>The above extension on NSLayoutConstraint works well. However, if you’re like me who wants even more declarative and fast Auto Layout code, we can use the builder pattern to make Auto Layout even nicer. The builder pattern can be applied to many parts of the code but I find it very well suited for Auto Layout. The final code is <a href="https://github.com/onmyway133/Anchors">Anchors</a> on GitHub, and I will detail how to make it.</p><p>Here is what we want to achieve to quickly position 4 views:</p><p><img src="https://cdn-images-1.medium.com/max/2000/0*bH2VP8h2rWp0pgqm.gif" alt=""></p><pre><code>activate(  boxA.anchor.top.left,  boxB.anchor.top.right,  boxC.anchor.bottom.left,  boxD.anchor.bottom.right)</code></pre><p>Most of the times, we want to anchor to parent view, so that should be implicitly done for us. I like to have anchor namespace to avoid extension naming clashes and to make it the starting point for all our convenient Auto Layout code. Let’s identify a few core concepts</p><h3 id="Which-objects-can-interact-with-Auto-Layout"><a href="#Which-objects-can-interact-with-Auto-Layout" class="headerlink" title="Which objects can interact with Auto Layout?"></a>Which objects can interact with Auto Layout?</h3><p>Currently, there are 3 types of objects that can interact withAuto Layout</p><ul><li><p>UIView</p></li><li><p><a href="https://developer.apple.com/documentation/uikit/uilayoutsupport">UILayoutSupport</a>, from iOS 7, for UIViewController to get bottomLayoutGuide and topLayoutGuide . In iOS 11, we should use <a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide">safeAreaLayoutGuide</a> from UIView instead</p></li><li><p><a href="https://developer.apple.com/documentation/uikit/uilayoutguide">UILayoutGuide</a>: using invisible UIView to do Auto Layout is expensive, that’s why Apple introduced layout guides in iOS 9 to help.</p></li></ul><p>So to support these 3 with anchor namespace, we can make Anchor object that holds AnyObject as behind the scene, NSLayoutConstraint works with AnyObject:</p><pre><code>public class Anchor: ConstraintProducer {  let item: AnyObject/// Init with View  convenience init(view: View) {    self.init(item: view)  }/// Init with Layout Guide  convenience init(layoutGuide: LayoutGuide) {    self.init(item: layoutGuide)  }// Init with Item  public init(item: AnyObject) {    self.item = item  }}</code></pre><p>Now we can define anchor property</p><pre><code>public extension View {  var anchor: Anchor {    return Anchor(view: self)  }}public extension LayoutGuide {  var anchor: Anchor {    return Anchor(layoutGuide: self)  }}</code></pre><h3 id="Which-properties-are-needed-in-a-layout-constraint"><a href="#Which-properties-are-needed-in-a-layout-constraint" class="headerlink" title="Which properties are needed in a layout constraint?"></a>Which properties are needed in a layout constraint?</h3><p>The builder patterns make building things declaratively by holding temporary values. Besides from, to, priority, identifier, we need an array of pins to handle cases where there are multiple created constraints. A center constraint results in both centerX and centerY constraints, and an edge constraint results in top, left, bottom and right constraints.</p><iframe src="https://medium.com/media/3fdc255c8ce86978d9bba56849755336" frameborder=0></iframe><p>With this, we can also expand our convenient anchor to support more constraints, like spacing horizontally, which adds left and right constraints with correct constants. Because as you know, in Auto Layout, for right and bottom direction, we need to use negative values:</p><pre><code>func paddingHorizontally(_ value: CGFloat) -&gt; Anchor {  removeIfAny(.leading)  removeIfAny(.trailing  pins.append(Pin(.leading, constant: value))  pins.append(Pin(.trailing, constant: -value)  return self}</code></pre><h3 id="Inferring-constraints"><a href="#Inferring-constraints" class="headerlink" title="Inferring constraints"></a>Inferring constraints</h3><p>There are times we want to infer constraints, like if we want a view’s height to double its width. Since we already have width, declaring ratio should pair the height to the width.</p><pre><code>box.anchor.width.constant(10)box.anchor.height.ratio(2) // height==width*2</code></pre><p>This is easily achieved by checking our pins array</p><pre><code>if sourceAnchor.exists(.width) {  return Anchor(item: sourceAnchor.item).width    .equal    .to(Anchor(item: sourceAnchor.item).height)    .multiplier(ratio).constraints()} else if sourceAnchor.exists(.height) {  return Anchor(item: sourceAnchor.item).height    .equal    .to(Anchor(item: sourceAnchor.item).width)    .multiplier(ratio).constraints()} else {  return []}</code></pre><h3 id="Retrieving-a-constraint"><a href="#Retrieving-a-constraint" class="headerlink" title="Retrieving a constraint"></a>Retrieving a constraint</h3><p>I see we’re used to storing constraint property in order to change its constant later. The constraints property in UIView has enough info and it is the source of truth, so retrieving constraint from that is more preferable.</p><p>Here‘s how we find constraint and update that</p><pre><code>boxA.anchor.find(.height)?.constant = 100// laterboxB.anchor.find(.height)?.constant = 100// laterboxC.anchor.find(.height)?.constant = 100</code></pre><p><img src="https://cdn-images-1.medium.com/max/2000/0*1kvf_QjOnm66j8U0.gif" alt=""></p><p>The code to find constraint is very straightforward.</p><iframe src="https://medium.com/media/307accd23e99c21ea5b294f68f15d7d6" frameborder=0></iframe><h3 id="How-to-reset-constraints"><a href="#How-to-reset-constraints" class="headerlink" title="How to reset constraints"></a>How to reset constraints</h3><p>One of the patterns I see all over is resetting constraints in UITableViewCell or UICollectionViewCell. Depending on the state, the cell removes certain constraints and add new constraints. <a href="https://github.com/robb/Cartography">Cartography</a> does this well by using group.</p><pre><code>constrain(view, replace: group) { view in    view.top  == view.superview!.top    view.left == view.superview!.left}</code></pre><p>If we think about it, NSLayoutConstraint is just layout instructions. It can be activated or deactivated . So if we can group constraints, we can <a href="https://developer.apple.com/documentation/uikit/nslayoutconstraint/1526955-activate">activate</a> or <a href="https://developer.apple.com/documentation/uikit/nslayoutconstraint/1526066-deactivate">deactivate</a> them as a whole.</p><p>Here is how to declare 4 groups of constraints, the syntax is from <a href="https://github.com/onmyway133/Anchors">Anchors</a> but this applies to NSLayoutAnchor as well since those generateNSLayoutConstraint under the hood.</p><pre><code>let g1 = group(box.anchor.top.left)let g2 = group(box.anchor.top.right)let g3 = group(box.anchor.bottom.right)let g4 = group(box.anchor.bottom.left)</code></pre><h2 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h2><p>In this article, we step a bit in time into manual layout, autoresizing masks and then to the modern Auto Layout. The Auto Layout APIs have improvements over the years and are recommended way to do layout. Learning declarative layout also helps me a lot when I learn Constraint Layout in Android, flexbox in React Native or the widget layout in Flutter.</p><p>The post goes through the detailed implementation of how we can build more convenient Auto Layout like <a href="https://github.com/onmyway133/Anchors">Anchors</a> with the builder pattern. In the next article, let’s explore the many ways to debug Auto Layout and how to correctly do Auto Layout for different screen sizes.</p><p>In the meantime, let’s play <a href="https://github.com/onmyway133/Anchors">Tetris</a> in Auto Layout, because why not 😉</p><p><img src="https://cdn-images-1.medium.com/max/2000/0*4Uuc-FYvpYpeNSrT.gif" alt="[https://github.com/onmyway133/Anchors](https://github.com/onmyway133/Anchors)"><em><a href="https://github.com/onmyway133/Anchors">https://github.com/onmyway133/Anchors</a></em></p><pre><code>activate(  lineBlock.anchor.left.bottom)// lateractivate(  firstSquareBlock.anchor.left.equal.to(lineBlock.anchor.right),  firstSquareBlock.anchor.bottom)// lateractivate(  secondSquareBlock.anchor.right.bottom)</code></pre><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li>I originally published on Medium <a href="https://medium.com/flawless-app-stories/how-to-make-auto-layout-more-convenient-in-ios-df3b42fed37f">https://medium.com/flawless-app-stories/how-to-make-auto-layout-more-convenient-in-ios-df3b42fed37f</a></li></ul><hr><p><strong>Updated at</strong> 2021-01-05 07:07:59</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/742&quot;&gt;#742&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Auto Layout has been around since macOS
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to use Core Data</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-Core-Data/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-Core-Data/</id>
+    <published>2021-01-04T05:47:09.000Z</published>
+    <updated>2021-01-04T05:47:09.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/741">#741</a></strong></p><p>Whenever I do Core Data, the <a href="https://davedelong.com/blog/2018/05/09/the-laws-of-core-data/">Laws of Core Data</a> @davedelong is always my northern star</p><p>Below are some of take aways from that post</p><p>1) Core Data is more than just SQLite wrapper, it manages objects, relationships, fetching, faulting, …<br>2) Having 2 context: 1 main and 1 background that are both backed by the persistent coordinator. In modern Core Data stack, NSPersistentContainer has default viewContext already, we just need another newBackgroundContext<br>3) Never use a fetched NSManagedObject outside its context’s queue.<br>4) The viewContext is for fetching NSManagedObject on the main queue, and those objects are meant for read only. All mutating operation should be in the background context.<br>5) Better, like I usually do, is to treat CoreData as a cache, and use plain old struct for UI. This reduces dealing with faulting and optional<br>6) Using struct that mirrors Core Data NSManagedObject, it looks verbose (you can use code generator or Sourcery for this) but it’s safer<br>7) A nice trick to quickly convert struct to NSManagedObject is to use reflection with Mirror. NSManagedObject subclasses from NSObject so it is key value compliant</p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://twitter.com/onmyway133/status/1335815371446759424">https://twitter.com/onmyway133/status/1335815371446759424</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/741&quot;&gt;#741&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Whenever I do Core Data, the &lt;a
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="core data" scheme="https://onmyway133.github.io/tags/core-data/"/>
+    
+      <category term="tweet" scheme="https://onmyway133.github.io/tags/tweet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to form product idea</title>
+    <link href="https://onmyway133.github.io/blog/How-to-form-product-idea/"/>
+    <id>https://onmyway133.github.io/blog/How-to-form-product-idea/</id>
+    <published>2021-01-04T05:44:31.000Z</published>
+    <updated>2021-01-04T05:44:45.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/740">#740</a></strong></p><p>How to gain product ideas?</p><p>1) Scratch your own itch. If you don’t have any itch to scratch, stop here. This is awkward. Go travelling. Go exploring the world. The world always has problems and needs solution.<br>Image</p><p>2) Build any service, app or website. Along the way you’ll find tons of things you need that and unsolved by existing solutions, and tons of things you can improve upon. </p><p>3) Sign up for some paid newsletters to find ideas. This is the worst. This is like someone browsing through a tatoo catalog. You’re doing things for trend, for money, not for your self drive 👎 </p><p>4) Most product ideas are not that hard, and require little tech skill. There are simple things that many people struggle or can’t do or learn by themselves. They need your help. </p><p>5) Read enough to build the mindset. You don’t need to listen to all podcasts, read all the books, attend all the courses to get started. You’re just procrastinating. </p><p>6) The only constant is “change”. The best time is now. </p><p>7) Does it matter if what you’re about to make has been done by someone else?</p><p>Probably not. You’re the master of your own itch, you know how to solve it your way. Every solution is unique and will be developed in different directions</p><p>8) Idea is veryvery cheap.<br>If someone sherlock your idea, execute it better, provider better customer support, understand the domain better. Isn’t it fair to say they deserve better success than you? </p><p>9) Is this idea worth executing?</p><p>If you ask me, my answer will be NO. Those who are super passionate about their idea will just ignore my advice and do it anyway.</p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://twitter.com/onmyway133/status/1330399823921557507">https://twitter.com/onmyway133/status/1330399823921557507</a></li></ul><hr><p><strong>Updated at</strong> 2021-01-04 06:44:45</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/740&quot;&gt;#740&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;How to gain product ideas?&lt;/p&gt;
+&lt;p&gt;1)
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="life" scheme="https://onmyway133.github.io/tags/life/"/>
+    
+      <category term="tweet" scheme="https://onmyway133.github.io/tags/tweet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to join AppStore Small Business Program</title>
+    <link href="https://onmyway133.github.io/blog/How-to-join-AppStore-Small-Business-Program/"/>
+    <id>https://onmyway133.github.io/blog/How-to-join-AppStore-Small-Business-Program/</id>
+    <published>2021-01-04T05:43:09.000Z</published>
+    <updated>2021-01-04T05:43:09.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/739">#739</a></strong></p><p>New program reduces App Store commission to 15 percent for small businesses earning up to $1 million per year</p><p>1) “earning up to $1 million” means proceeds, not sales. This is what we get after Apple’s cut. “up to” means $999.999<br>2) “if they earned up to $1 million in proceeds during the previous calendar year”. This means that if $1M is surpassed, the standard rate (30%) kicks in for the rest of the year, and also next year.<br>3) If a developer’s business falls below the $1 million threshold in a future calendar year (e.g. 2021), they can requalify for the 15 percent commission the year after (e.g. 2022)<br>4) This is surprising new, follow Apple’s promise in WWDC about changes in Appstore policy. It should be credit to @dhh ‘s fight for hey.com, which somehow affects the decision.<br>5) Some may need to stop generating revenue, by removing from sale, giving away or moving their apps to different distributing platforms to remedy the threshold surpassing.<br>6) Now the question is, how to get to the first $1000 😂 </p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://twitter.com/onmyway133/status/1329406204217593856">https://twitter.com/onmyway133/status/1329406204217593856</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/739&quot;&gt;#739&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;New program reduces App Store commission
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="tweet" scheme="https://onmyway133.github.io/tags/tweet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to deep work</title>
+    <link href="https://onmyway133.github.io/blog/How-to-deep-work/"/>
+    <id>https://onmyway133.github.io/blog/How-to-deep-work/</id>
+    <published>2021-01-04T05:41:17.000Z</published>
+    <updated>2021-01-04T05:41:17.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/738">#738</a></strong></p><p>Just found out the book Deep Work by Cal Newport and it has some interesting guidelines<br>Here’s a very good summary of the book</p><p><a href="https://www.youtube.com/watch?v=gTaJhjQHcf8&amp;ab_channel=ProductivityGame">https://www.youtube.com/watch?v=gTaJhjQHcf8&amp;ab_channel=ProductivityGame</a></p><ol><li>Put a boundary on distraction. Allow yourself to be distracted at predefined time and with limit</li></ol><p><img src="https://user-images.githubusercontent.com/2284279/103507749-2a64ad00-4e60-11eb-9574-8147767afde7.jpeg" alt="a1"></p><ol start="2"><li>Develop a routine habit. Best is to focus in the early morning as there are no other requests</li></ol><p><img src="https://user-images.githubusercontent.com/2284279/103507768-318bbb00-4e60-11eb-8d26-80877a376360.jpeg" alt="a2"></p><ol start="3"><li>Sleep is crucial. Get enough sleep. Do a complete shutdown in the evening.</li></ol><p><img src="https://user-images.githubusercontent.com/2284279/103507781-37819c00-4e60-11eb-98ee-e68bf16c7db0.jpeg" alt="a3"></p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://twitter.com/onmyway133/status/1328795655217836034">https://twitter.com/onmyway133/status/1328795655217836034</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/738&quot;&gt;#738&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Just found out the book Deep Work by Cal
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="life" scheme="https://onmyway133.github.io/tags/life/"/>
+    
+      <category term="tweet" scheme="https://onmyway133.github.io/tags/tweet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to make tiled image in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-make-tiled-image-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-make-tiled-image-in-SwiftUI/</id>
+    <published>2021-01-02T21:47:52.000Z</published>
+    <updated>2021-01-02T21:47:57.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/737">#737</a></strong></p><p>Use <code>resizingMode</code> of <code>.tile</code> with a tile image from <a href="https://www.transparenttextures.com/">https://www.transparenttextures.com/</a></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Image</span>(<span class="string">"transparentTile"</span>)</span><br><span class="line">    .resizable(capInsets: .<span class="keyword">init</span>(), resizingMode: .tile)</span><br><span class="line">    .scaleEffect(<span class="number">2</span>)</span><br><span class="line">    .aspectRatio(contentMode: .fit)</span><br><span class="line">    .frame(maxWidth: .infinity, maxHeight: .infinity)</span><br><span class="line">    .clipped()</span><br></pre></td></tr></table></figure><hr><p><strong>Updated at</strong> 2021-01-02 22:47:57</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/737&quot;&gt;#737&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Use &lt;code&gt;resizingMode&lt;/code&gt; of
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to use WebView in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-WebView-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-WebView-in-SwiftUI/</id>
+    <published>2021-01-02T20:14:14.000Z</published>
+    <updated>2021-01-02T20:14:14.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/736">#736</a></strong></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyWebView</span>: <span class="title">NSViewRepresentable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> url: <span class="type">URL</span></span><br><span class="line">    @<span class="type">Binding</span></span><br><span class="line">    <span class="keyword">var</span> isLoading: <span class="type">Bool</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeCoordinator</span><span class="params">()</span></span> -&gt; <span class="type">Coordinator</span> &#123;</span><br><span class="line">        <span class="type">Coordinator</span>(parent: <span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeNSView</span><span class="params">(context: Context)</span></span> -&gt; <span class="type">WKWebView</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> view = <span class="type">WKWebView</span>()</span><br><span class="line">        view.navigationDelegate = context.coordinator</span><br><span class="line">        view.load(<span class="type">URLRequest</span>(url: url))</span><br><span class="line">        <span class="keyword">return</span> view</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateNSView</span><span class="params">(<span class="number">_</span> nsView: WKWebView, context: Context)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Coordinator</span>: <span class="title">NSObject</span>, <span class="title">WKNavigationDelegate</span> </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> parent: <span class="type">MyWebView</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">init</span>(parent: <span class="type">MyWebView</span>) &#123;</span><br><span class="line">            <span class="keyword">self</span>.parent = parent</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">func</span> <span class="title">webView</span><span class="params">(<span class="number">_</span> webView: WKWebView, didCommit navigation: WKNavigation!)</span></span> &#123;</span><br><span class="line">            parent.isLoading = <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">func</span> <span class="title">webView</span><span class="params">(<span class="number">_</span> webView: WKWebView, didFinish navigation: WKNavigation!)</span></span> &#123;</span><br><span class="line">            parent.isLoading = <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/736&quot;&gt;#736&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&quot;highlight
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
   
   <entry>
     <title>How to use GeometryReader in SwiftUI</title>
@@ -397,214 +608,6 @@
     
     
       <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to instrument SwiftUI app</title>
-    <link href="https://onmyway133.github.io/blog/How-to-instrument-SwiftUI-app/"/>
-    <id>https://onmyway133.github.io/blog/How-to-instrument-SwiftUI-app/</id>
-    <published>2020-12-25T22:06:34.000Z</published>
-    <updated>2020-12-30T05:37:53.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/722">#722</a></strong></p><p>With Xcode 12, we can fire up Instrument to profile our app. Select <code>SwiftUI template</code></p><img width="836" alt="Screenshot 2020-12-26 at 00 02 03" src="https://user-images.githubusercontent.com/2284279/103142980-a0a13b00-470d-11eb-81bc-632a08b8084b.png"><p>There are many profiles in that template, I find SwiftUI and Time Profile very useful. Here’s the profile I run for my app <a href="https://onmyway133.com/pastepal">PastePal</a></p><h2 id="SwiftUI-View-Body"><a href="#SwiftUI-View-Body" class="headerlink" title="SwiftUI View Body"></a>SwiftUI View Body</h2><p>This shows how many instance of View with body invocation are there, both for SwiftUI views and our app views</p><p>Taking a look at SwiftUI profile, it shows that <code>ClipboardCell</code> is taking most of the time, here over 7 seconds</p><img width="1396" alt="Screenshot 2020-12-25 at 23 59 12" src="https://user-images.githubusercontent.com/2284279/103142965-7bacc800-470d-11eb-8b0e-5d598f6e082b.png"><h2 id="Time-Profiler"><a href="#Time-Profiler" class="headerlink" title="Time Profiler"></a>Time Profiler</h2><p>This shows how much time was spent in each functions and call stack.</p><p>Then we drill down to Time Profiler, it shows that <code>NSSharingService.submenu</code> accounts for 75% of performance issue</p><img width="1396" alt="Screenshot 2020-12-25 at 23 59 57" src="https://user-images.githubusercontent.com/2284279/103142966-7f404f00-470d-11eb-85b7-3e813ff5476c.png"><p>With these instruments, I found out that the <a href="https://onmyway133.com/blog/how-to-make-sharing-menu-in-swiftui-for-macos/">NSSharingService context menu I added</a> has poor performance. </p><p>This below method is used every time <code>Menu</code> is asked, which causes a significant overload on main thread, resulting in noticeable laggy scrolling</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">NSSharingService</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">submenu</span><span class="params">(text: String)</span></span> -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Menu</span>(</span><br><span class="line">            content: &#123;</span><br><span class="line">                <span class="type">ForEach</span>(<span class="type">NSSharingService</span>.sharingServices(forItems: [<span class="string">""</span>])), id: \.title) &#123; item <span class="keyword">in</span></span><br><span class="line">                    <span class="type">Button</span>(action: &#123; item.perform(withItems: [string]) &#125;) &#123;</span><br><span class="line">                        <span class="type">Image</span>(nsImage: item.image)</span><br><span class="line">                        <span class="type">Text</span>(item.title)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            label: &#123;</span><br><span class="line">                <span class="type">Text</span>(<span class="string">"Share"</span>)</span><br><span class="line">                <span class="type">Image</span>(systemName: <span class="type">SFSymbol</span>.squareAndArrowUp.rawValue)</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>The reason is that <code>NSSharingService.sharingServices</code> requires quite some time to get sharing services. A quick fix is to cache the items using <code>static</code> variable. In Swift, static variable is like <code>lazy</code> attribute, it is computed only once on first asked</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">let</span> items = <span class="type">NSSharingService</span>.sharingServices(forItems: [<span class="string">""</span>])</span><br></pre></td></tr></table></figure><p>There are more to optimize in my case, for example calculation of image and dominant colors. But we should only optimize when seeing real performance issue and after proper instruments</p><h2 id="Fix-and-instrument-again"><a href="#Fix-and-instrument-again" class="headerlink" title="Fix and instrument again"></a>Fix and instrument again</h2><p>After the fix, the time reduces from over 7 seconds to just less than 200ms</p><img width="1396" alt="Screenshot 2020-12-26 at 00 09 51" src="https://user-images.githubusercontent.com/2284279/103143031-db57a300-470e-11eb-8953-c15f163fe364.png"><img width="1396" alt="Screenshot 2020-12-26 at 00 09 01" src="https://user-images.githubusercontent.com/2284279/103143033-deeb2a00-470e-11eb-980e-27c82136b1a8.png"><hr><p><strong>Updated at</strong> 2020-12-30 06:37:53</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/722&quot;&gt;#722&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;With Xcode 12, we can fire up Instrument
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to force set frame explicitly for NSWindow</title>
-    <link href="https://onmyway133.github.io/blog/How-to-force-set-frame-explicitly-for-NSWindow/"/>
-    <id>https://onmyway133.github.io/blog/How-to-force-set-frame-explicitly-for-NSWindow/</id>
-    <published>2020-12-25T21:29:23.000Z</published>
-    <updated>2020-12-25T21:29:23.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/721">#721</a></strong></p><p>For <code>setFrame</code> to take effect</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mainWindow.setFrame(rect, display: <span class="literal">true</span>)</span><br></pre></td></tr></table></figure><p>we can remove auto save frame flag</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mainWindow.setFrameAutosaveName(<span class="string">"MyApp.MainWindow"</span>)</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/721&quot;&gt;#721&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;For &lt;code&gt;setFrame&lt;/code&gt; to take
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to rotate NSStatusItem</title>
-    <link href="https://onmyway133.github.io/blog/How-to-rotate-NSStatusItem/"/>
-    <id>https://onmyway133.github.io/blog/How-to-rotate-NSStatusItem/</id>
-    <published>2020-12-23T08:01:34.000Z</published>
-    <updated>2020-12-26T20:21:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/720">#720</a></strong></p><p><code>NSStatusItem</code> is backed by <code>NSButton</code>, we can animate this inner button. We need to specify <code>position</code> and <code>anchorPoint</code> for button’s layer so it rotates around its center point</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">guard</span></span><br><span class="line">    <span class="keyword">let</span> button = statusItem.button</span><br><span class="line"><span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> animation = <span class="type">CABasicAnimation</span>(keyPath: <span class="string">"transform.rotation.z"</span>)</span><br><span class="line">animation.fromValue = <span class="number">0</span></span><br><span class="line">animation.toValue = <span class="type">CGFloat</span>.pi * <span class="number">2</span></span><br><span class="line">animation.duration = <span class="number">0.25</span></span><br><span class="line">animation.repeatCount = <span class="number">1</span></span><br><span class="line">button.layer?.position = <span class="type">NSPoint</span>(x: <span class="type">NSMidX</span>(button.frame), y: <span class="type">NSMidY</span>(button.frame))</span><br><span class="line">button.layer?.anchorPoint = <span class="type">NSPoint</span>(x: <span class="number">0.5</span>, y: <span class="number">0.5</span>)</span><br><span class="line">button.layer?.add(animation, forKey: <span class="string">"rotate"</span>)</span><br></pre></td></tr></table></figure><hr><p><strong>Updated at</strong> 2020-12-26 21:21:00</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/720&quot;&gt;#720&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;NSStatusItem&lt;/code&gt; is backed by
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to show image and text in menu item in SwiftUI for macOS</title>
-    <link href="https://onmyway133.github.io/blog/How-to-show-image-and-text-in-menu-item-in-SwiftUI-for-macOS/"/>
-    <id>https://onmyway133.github.io/blog/How-to-show-image-and-text-in-menu-item-in-SwiftUI-for-macOS/</id>
-    <published>2020-12-23T05:17:48.000Z</published>
-    <updated>2020-12-23T05:35:31.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/719">#719</a></strong></p><p>From SwiftUI 2 for macOS 11.0, we have access to <code>Menu</code> for creating menu and submenu. Usually we use <code>Button</code> for interactive menu items and <code>Text</code> for disabled menu items.</p><p>The easy way to customize menu with image is to call <code>Menu</code> with <code>content</code> and <code>label</code>. Pay attention to how we use <code>Button</code> and <code>Label</code> inside <code>Content</code> to create interactive menu items</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Menu</span>(</span><br><span class="line">    content: &#123;</span><br><span class="line">        <span class="type">ForEach</span>(collections) &#123; collection <span class="keyword">in</span></span><br><span class="line">            <span class="type">Button</span>(action: &#123;) &#123;</span><br><span class="line">                <span class="type">Label</span>(collection.name, systemImage: <span class="type">SFSymbol</span>.star.rawValue)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    label: &#123;</span><br><span class="line">        <span class="type">Image</span>(systemName: <span class="type">SFSymbol</span>.bookmarkFill.rawValue)</span><br><span class="line">        <span class="type">Text</span>(<span class="string">"Add to collection"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure><p>We can also use <code>Image</code> and <code>Text</code> separately. By default SwiftUI wraps these inside <code>HStack</code> automatically for us. For now, color has no effect in <code>Menu</code>, but it works on <code>Text</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Image</span>(systemName: <span class="type">SFSymbol</span>.bookmarkFill.rawValue)</span><br><span class="line">     .foregroundColor(<span class="type">Color</span>.red)</span><br><span class="line"><span class="type">Text</span>(collection.name)</span><br><span class="line">    .foregroundColor(<span class="type">Color</span>.green)</span><br></pre></td></tr></table></figure><p>One way to mitigate this is to use Text with icon font. Here I use my <a href="https://github.com/onmyway133/FontAwesomeSwiftUI">FontAwesomeSwiftUI</a></p><p>There’s a problem that only the first <code>Text</code> is shown</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Text</span>(collection.icon)</span><br><span class="line">    .font(.awesome(style: .solid, size: <span class="number">18</span>))</span><br><span class="line">    .foregroundColor(<span class="type">Color</span>.red)</span><br><span class="line"><span class="type">Text</span>(collection.name)</span><br></pre></td></tr></table></figure><p>The solution is to concatenate <code>Text</code>. In SwiftUI, <code>Text</code> has <code>+</code> operator that allows us to make cool attributed texts</p><img width="409" alt="Screenshot 2020-12-23 at 07 34 40" src="https://user-images.githubusercontent.com/2284279/102967039-652a2500-44f1-11eb-826c-ce69f10468b7.png"><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Text</span>(collection.icon)</span><br><span class="line">    .font(.awesome(style: .solid, size: <span class="number">18</span>))</span><br><span class="line">    .foregroundColor(<span class="type">Color</span>.red)</span><br><span class="line">+ <span class="type">Text</span>(collection.name)</span><br></pre></td></tr></table></figure><hr><p><strong>Updated at</strong> 2020-12-23 06:35:31</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/719&quot;&gt;#719&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;From SwiftUI 2 for macOS 11.0, we have
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to make sharing menu in SwiftUI for macOS</title>
-    <link href="https://onmyway133.github.io/blog/How-to-make-sharing-menu-in-SwiftUI-for-macOS/"/>
-    <id>https://onmyway133.github.io/blog/How-to-make-sharing-menu-in-SwiftUI-for-macOS/</id>
-    <published>2020-12-23T04:19:17.000Z</published>
-    <updated>2020-12-25T21:57:57.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/718">#718</a></strong></p><p>Use <code>NSSharingService.sharingServices(forItems:)</code> with an array of one empty string gives a list of sharing items. There we show <code>image</code> and <code>title</code> of each menu item.</p><p>We should cache sharing items as that can cause performance issue</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"><span class="keyword">import</span> EasySwiftUI</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">NSSharingService</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">let</span> items = <span class="type">NSSharingService</span>.sharingServices(forItems: [<span class="string">""</span>])</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">submenu</span><span class="params">(text: String)</span></span> -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Menu</span>(</span><br><span class="line">            content: &#123;</span><br><span class="line">                <span class="type">ForEach</span>(items, id: \.title) &#123; item <span class="keyword">in</span></span><br><span class="line">                    <span class="type">Button</span>(action: &#123; item.perform(withItems: [string]) &#125;) &#123;</span><br><span class="line">                        <span class="type">Image</span>(nsImage: item.image)</span><br><span class="line">                        <span class="type">Text</span>(item.title)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            label: &#123;</span><br><span class="line">                <span class="type">Text</span>(<span class="string">"Share"</span>)</span><br><span class="line">                <span class="type">Image</span>(systemName: <span class="type">SFSymbol</span>.squareAndArrowUp.rawValue)</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Alternative, you can trigger <code>NSSharingServicePicker</code> from a button, it shows a context menu with sharing options</p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://stackoverflow.com/questions/60952334/swiftui-using-nssharingservicepicker-in-macos">https://stackoverflow.com/questions/60952334/swiftui-using-nssharingservicepicker-in-macos</a></li></ul><hr><p><strong>Updated at</strong> 2020-12-25 22:57:57</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/718&quot;&gt;#718&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to make stepper with plus and minus buttons in SwiftUI for macOS</title>
-    <link href="https://onmyway133.github.io/blog/How-to-make-stepper-with-plus-and-minus-buttons-in-SwiftUI-for-macOS/"/>
-    <id>https://onmyway133.github.io/blog/How-to-make-stepper-with-plus-and-minus-buttons-in-SwiftUI-for-macOS/</id>
-    <published>2020-12-21T04:24:26.000Z</published>
-    <updated>2020-12-21T04:56:28.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/717">#717</a></strong></p><p>Try to use predefined system colors in <a href="https://developer.apple.com/design/human-interface-guidelines/macos/visual-design/color/">Human Interface Guidelines</a> for macOS</p><p>Here we use this color <code>unemphasizedSelectedTextBackgroundColor</code> for button background</p><img width="88" alt="Screenshot 2020-12-21 at 06 24 16" src="https://user-images.githubusercontent.com/2284279/102742430-29f2ef00-4355-11eb-9bdd-b5fe373677c5.png"><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">HStack</span>(spacing: <span class="number">1</span>) &#123;</span><br><span class="line">    makeUnderListButton(action: &#123;&#125;, icon: .plus)</span><br><span class="line">    makeUnderListButton(action: &#123;&#125;, icon: .minus)</span><br><span class="line">&#125;</span><br><span class="line">.background(<span class="type">Color</span>(<span class="type">NSColor</span>.unemphasizedSelectedTextBackgroundColor))</span><br><span class="line">.cornerRadius(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeUnderListButton</span><span class="params">(action: @escaping <span class="params">()</span></span></span> -&gt; <span class="type">Void</span>, icon: <span class="type">AwesomeIcon</span>) -&gt; some <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">Button</span>(action: action) &#123;</span><br><span class="line">        <span class="type">Text</span>(icon.rawValue)</span><br><span class="line">            .font(.awesome(style: .solid, size: <span class="number">14</span>))</span><br><span class="line">    &#125;</span><br><span class="line">    .buttonStyle(<span class="type">HighlightButtonStyle</span>(h: <span class="number">8</span>, v: <span class="number">6</span>, cornerRadius: <span class="number">4</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Another thing is List, where we have selected and alternative background colors. We should also use dynamic system colors <code>selectedContentBackgroundColor</code> and <code>alternatingContentBackgroundColors</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">VStack</span> &#123;</span><br><span class="line">    <span class="type">ForEach</span>(apps.enumerated().<span class="built_in">map</span>(&#123; $<span class="number">0</span> &#125;), id: \.element) &#123; index, app <span class="keyword">in</span></span><br><span class="line">        makeRow(app: app)</span><br><span class="line">            .onTapGesture &#123;</span><br><span class="line">                <span class="keyword">self</span>.selected = app</span><br><span class="line">            &#125;</span><br><span class="line">            .background(</span><br><span class="line">                <span class="keyword">self</span>.selected == app</span><br><span class="line">                    ? <span class="type">Color</span>(<span class="type">NSColor</span>.selectedContentBackgroundColor)</span><br><span class="line">                    : <span class="type">Color</span>(<span class="type">NSColor</span>.alternatingContentBackgroundColors[index % <span class="number">2</span>])</span><br><span class="line">            )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://blog.verslu.is/xamarin/ios-macos-dark-mode-dynamic-colors-overview/">iOS and macOS Dark Mode Dynamic Colors Overview</a></li></ul><hr><p><strong>Updated at</strong> 2020-12-21 05:56:28</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/717&quot;&gt;#717&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Try to use predefined system colors in &lt;a
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to fix Picker not showing selection in SwiftUI</title>
-    <link href="https://onmyway133.github.io/blog/How-to-fix-Picker-not-showing-selection-in-SwiftUI/"/>
-    <id>https://onmyway133.github.io/blog/How-to-fix-Picker-not-showing-selection-in-SwiftUI/</id>
-    <published>2020-12-20T05:18:26.000Z</published>
-    <updated>2020-12-23T05:05:08.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/716">#716</a></strong></p><p>I have an enum that conforms to <code>CaseIterable</code> that I want to show in <code>Picker</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Position</span>: <span class="title">String</span>, <span class="title">Codable</span>, <span class="title">CaseIterable</span>, <span class="title">Identifiable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> id: <span class="type">String</span> &#123; rawValue &#125;</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">left</span></span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">right</span></span><br><span class="line">    <span class="keyword">case</span> bottom</span><br><span class="line">    <span class="keyword">case</span> top</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">Picker</span>(selection: $preference.position, label: <span class="type">Text</span>(<span class="string">"Position"</span>)) &#123;</span><br><span class="line">    <span class="type">ForEach</span>(<span class="type">Preference</span>.<span class="type">Position</span>.allCases) &#123; position <span class="keyword">in</span></span><br><span class="line">        <span class="type">Text</span>(position.rawValue)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>It compiles and runs just fine, but Picker does not show current selection regardless of any Picker style I choose. It does not update <code>Binding</code> at all.</p><p>The fix is to specify <code>id</code>, it looks redundant because of enum conforms to <code>Identifiable</code>, but it fixes the problem</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Picker</span>(selection: $preference.position, label: <span class="type">Text</span>(<span class="string">"Position"</span>)) &#123;</span><br><span class="line">    <span class="type">ForEach</span>(<span class="type">Preference</span>.<span class="type">Position</span>.allCases, id: \.<span class="keyword">self</span>) &#123; position <span class="keyword">in</span></span><br><span class="line">        <span class="type">Text</span>(position.rawValue)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="Mismatch-between-rawValue-and-enum-case-itself"><a href="#Mismatch-between-rawValue-and-enum-case-itself" class="headerlink" title="Mismatch between rawValue and enum case itself"></a>Mismatch between rawValue and enum case itself</h3><p>Reading <a href="https://developer.apple.com/documentation/swiftui/foreach/init(_:content:)-6oy5i">ForEach</a> once again </p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">init</span>(<span class="number">_</span> data: <span class="type">Data</span>, content: @escaping (<span class="type">Data</span>.<span class="type">Element</span>) -&gt; <span class="type">Content</span>)</span><br></pre></td></tr></table></figure><blockquote><p>Available when Data conforms to RandomAccessCollection, ID is Data.Element.ID, Content conforms to View, and Data.Element conforms to Identifiable.</p></blockquote><p>So in our case, we use <code>rawValue</code> as <code>id</code> for <code>Identifiable</code>, so there’s mismatch between our <code>selection</code> being <code>enum case</code> and items in <code>ForEach</code>, which uses <code>rawValue</code> to uniquely identifies items. So our fix is to explicitly state that we want to use the enum case itself <code>\.self</code> as <code>id</code>for ForEach</p><p>What we can also do is to declare enum case itself as <code>id</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Position</span>: <span class="title">String</span>, <span class="title">Codable</span>, <span class="title">CaseIterable</span>, <span class="title">Identifiable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> id: <span class="type">Position</span> &#123; <span class="keyword">self</span> &#125;</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">left</span></span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">right</span></span><br><span class="line">    <span class="keyword">case</span> bottom</span><br><span class="line">    <span class="keyword">case</span> top</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="The-lesson-learned-here-is-we-need-to-ensure-the-underlying-type-of-selection-in-List-and-id-used-in-ForEach-are-the-same"><a href="#The-lesson-learned-here-is-we-need-to-ensure-the-underlying-type-of-selection-in-List-and-id-used-in-ForEach-are-the-same" class="headerlink" title="The lesson learned here is we need to ensure the underlying type of selection in List and id used  in ForEach are the same"></a>The lesson learned here is we need to ensure the underlying type of <code>selection</code> in <code>List</code> and <code>id</code> used  in <code>ForEach</code> are the same</h2><p><strong>Updated at</strong> 2020-12-23 06:05:08</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/716&quot;&gt;#716&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;I have an enum that conforms to
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
     
       <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
     
