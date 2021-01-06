@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2021-01-06T12:13:34.000Z</updated>
+  <updated>2021-01-06T20:04:59.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to use selection in List in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-selection-in-List-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-selection-in-List-in-SwiftUI/</id>
+    <published>2021-01-06T20:04:59.000Z</published>
+    <updated>2021-01-06T20:04:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/745">#745</a></strong></p><p>I used to use <code>selection</code> with Binding where wrappedValue is optional, together with tag in SwiftUI for macOS, and it shows current selection</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@<span class="type">Binding</span></span><br><span class="line"><span class="keyword">var</span> selection: <span class="type">Tag?</span> = .all</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(section: $selection) &#123;</span><br><span class="line">    <span class="type">Text</span>(<span class="string">"All"</span>)</span><br><span class="line">         .tag(<span class="type">Tag</span>.all)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>But it does not work in SwiftUI for iOS. Looking at <a href="https://developer.apple.com/documentation/swiftui/list">List</a> signature, I see that selection uses wrappedValue as <code>Set</code> <code>Binding&lt;Set&lt;SelectionValue&gt;&gt;?</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">init</span>&lt;<span class="type">Data</span>, <span class="type">ID</span>, <span class="type">RowContent</span>&gt;(<span class="type">Data</span>, id: <span class="type">KeyPath</span>&lt;<span class="type">Data</span>.<span class="type">Element</span>, <span class="type">ID</span>&gt;, selection: <span class="type">Binding</span>&lt;<span class="type">Set</span>&lt;<span class="type">SelectionValue</span>&gt;&gt;?, rowContent: (<span class="type">Data</span>.<span class="type">Element</span>) -&gt; <span class="type">RowContent</span>)</span><br></pre></td></tr></table></figure><p>So let’s use Set. It shows current selection and I don’t need to use <code>.tag</code> also</p><pre><code class="swift"><span class="keyword">let</span> selection: <span class="type">Binding</span>&lt;<span class="type">Set</span>&lt;<span class="type">SidebarTag</span>&gt;&gt; = <span class="type">Binding</span>&lt;<span class="type">Set</span>&lt;<span class="type">SidebarTag</span>&gt;&gt;(    <span class="keyword">get</span>: { <span class="type">Set</span>(arrayLiteral: store.sidebarTag) },    <span class="keyword">set</span>: { newValue <span class="keyword">in</span>        <span class="type">DispatchQueue</span>.main.async {            <span class="keyword">if</span> <span class="keyword">let</span> first = newValue.first {                store.sidebarTag = first            }        }    })<span class="type">List</span>(selection: selection) {    <span class="type">Text</span>(<span class="string">"All"</span>)}</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/745&quot;&gt;#745&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I used to use &lt;code&gt;selection&lt;/code&gt; with
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
   
   <entry>
     <title>How to simplify communication patterns with closure in Swift</title>
@@ -572,34 +602,6 @@
         
           &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/726&quot;&gt;#726&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;figure class=&quot;highlight
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to use Set to check for bool in Swift</title>
-    <link href="https://onmyway133.github.io/blog/How-to-use-Set-to-check-for-bool-in-Swift/"/>
-    <id>https://onmyway133.github.io/blog/How-to-use-Set-to-check-for-bool-in-Swift/</id>
-    <published>2020-12-26T20:09:15.000Z</published>
-    <updated>2020-12-26T20:09:15.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/725">#725</a></strong></p><p>When you want to check for existence using <code>Bool</code>, consider using <code>Set</code> over Dictionary with <code>Bool</code>, as <code>Set</code> guarantee uniqueness. If using <code>Dictionary</code> instead, the value for key is <code>Optional&lt;Bool&gt;</code> where we have to check for both optional and true false within.</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Book</span>: <span class="title">Hashable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> id: <span class="type">UUID</span></span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> book1 = <span class="type">Book</span>(id: <span class="type">UUID</span>(), name: <span class="string">"1"</span>)</span><br><span class="line"><span class="keyword">let</span> book2 = <span class="type">Book</span>(id: <span class="type">UUID</span>(), name: <span class="string">"2"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">useDictionary</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> hasChecked: [<span class="type">Book</span>: <span class="type">Bool</span>] = [:]</span><br><span class="line">    hasChecked[book1] = <span class="literal">true</span></span><br><span class="line">    <span class="built_in">print</span>(hasChecked[book1] == <span class="type">Optional</span>&lt;<span class="type">Bool</span>&gt;(<span class="literal">true</span>))</span><br><span class="line">    <span class="built_in">print</span>(hasChecked[book2] == <span class="type">Optional</span>&lt;<span class="type">Bool</span>&gt;.<span class="keyword">none</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">useSet</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> hasChecked: <span class="type">Set</span>&lt;<span class="type">Book</span>&gt; = <span class="type">Set</span>()</span><br><span class="line">    hasChecked.insert(book1)</span><br><span class="line">    <span class="built_in">print</span>(hasChecked.<span class="built_in">contains</span>(book1))</span><br><span class="line">    <span class="built_in">print</span>(hasChecked.<span class="built_in">contains</span>(book2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/725&quot;&gt;#725&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;When you want to check for existence
         
       
     
