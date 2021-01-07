@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2021-01-06T20:04:59.000Z</updated>
+  <updated>2021-01-07T08:25:52.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -17,13 +17,45 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>How to check app going to background in SwiftUI</title>
+    <link href="https://onmyway133.github.io/blog/How-to-check-app-going-to-background-in-SwiftUI/"/>
+    <id>https://onmyway133.github.io/blog/How-to-check-app-going-to-background-in-SwiftUI/</id>
+    <published>2021-01-07T08:25:52.000Z</published>
+    <updated>2021-01-07T08:25:52.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/746">#746</a></strong></p><p>From iOS 13, the default is to support multiple scene, so the the old UIApplicationDelegate lifecycle does not work. Double check your <code>Info.plist</code> for <code>UIApplicationSceneManifest</code> key</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>UIApplicationSceneManifest<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>UIApplicationSupportsMultipleScenes<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br></pre></td></tr></table></figure><p>One way to be notified about application life cycle is to use <code>UIApplicationDelegateAdaptor</code> and via <code>NotificationCenter</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> FontAwesomeSwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">AppDelegate</span>: <span class="title">NSObject</span>, <span class="title">UIApplicationDelegate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(<span class="number">_</span> application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : <span class="keyword">Any</span>]? = <span class="literal">nil</span>)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="type">FontAwesome</span>.register()</span><br><span class="line">        <span class="type">PreferenceManager</span>.shared.load()</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@main</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyAwesomeApp</span>: <span class="title">App</span> </span>&#123;</span><br><span class="line">    @<span class="type">UIApplicationDelegateAdaptor</span>(<span class="type">AppDelegate</span>.<span class="keyword">self</span>)</span><br><span class="line">    <span class="keyword">var</span> appDelegate</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">Scene</span> &#123;</span><br><span class="line">        <span class="type">WindowGroup</span> &#123;</span><br><span class="line">            <span class="type">MainView</span>(store: <span class="type">Store</span>.shared)</span><br><span class="line">                .onReceive(</span><br><span class="line">                    <span class="type">NotificationCenter</span>.<span class="keyword">default</span>.publisher(</span><br><span class="line">                        <span class="keyword">for</span>: <span class="type">UIApplication</span>.didEnterBackgroundNotification)) &#123; <span class="number">_</span> <span class="keyword">in</span></span><br><span class="line">                    <span class="type">PreferenceManager</span>.shared.save()</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/746&quot;&gt;#746&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;From iOS 13, the default is to support
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+  </entry>
+  
+  <entry>
     <title>How to use selection in List in SwiftUI</title>
     <link href="https://onmyway133.github.io/blog/How-to-use-selection-in-List-in-SwiftUI/"/>
     <id>https://onmyway133.github.io/blog/How-to-use-selection-in-List-in-SwiftUI/</id>
     <published>2021-01-06T20:04:59.000Z</published>
-    <updated>2021-01-06T20:04:59.000Z</updated>
+    <updated>2021-01-06T20:13:43.000Z</updated>
     
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/745">#745</a></strong></p><p>I used to use <code>selection</code> with Binding where wrappedValue is optional, together with tag in SwiftUI for macOS, and it shows current selection</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@<span class="type">Binding</span></span><br><span class="line"><span class="keyword">var</span> selection: <span class="type">Tag?</span> = .all</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(section: $selection) &#123;</span><br><span class="line">    <span class="type">Text</span>(<span class="string">"All"</span>)</span><br><span class="line">         .tag(<span class="type">Tag</span>.all)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>But it does not work in SwiftUI for iOS. Looking at <a href="https://developer.apple.com/documentation/swiftui/list">List</a> signature, I see that selection uses wrappedValue as <code>Set</code> <code>Binding&lt;Set&lt;SelectionValue&gt;&gt;?</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">init</span>&lt;<span class="type">Data</span>, <span class="type">ID</span>, <span class="type">RowContent</span>&gt;(<span class="type">Data</span>, id: <span class="type">KeyPath</span>&lt;<span class="type">Data</span>.<span class="type">Element</span>, <span class="type">ID</span>&gt;, selection: <span class="type">Binding</span>&lt;<span class="type">Set</span>&lt;<span class="type">SelectionValue</span>&gt;&gt;?, rowContent: (<span class="type">Data</span>.<span class="type">Element</span>) -&gt; <span class="type">RowContent</span>)</span><br></pre></td></tr></table></figure><p>So let’s use Set. It shows current selection and I don’t need to use <code>.tag</code> also</p><pre><code class="swift"><span class="keyword">let</span> selection: <span class="type">Binding</span>&lt;<span class="type">Set</span>&lt;<span class="type">SidebarTag</span>&gt;&gt; = <span class="type">Binding</span>&lt;<span class="type">Set</span>&lt;<span class="type">SidebarTag</span>&gt;&gt;(    <span class="keyword">get</span>: { <span class="type">Set</span>(arrayLiteral: store.sidebarTag) },    <span class="keyword">set</span>: { newValue <span class="keyword">in</span>        <span class="type">DispatchQueue</span>.main.async {            <span class="keyword">if</span> <span class="keyword">let</span> first = newValue.first {                store.sidebarTag = first            }        }    })<span class="type">List</span>(selection: selection) {    <span class="type">Text</span>(<span class="string">"All"</span>)}</code></pre>]]></content>
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/745">#745</a></strong></p><p>I used to use <code>selection</code> with Binding where wrappedValue is optional, together with tag in SwiftUI for macOS, and it shows current selection</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@<span class="type">Binding</span></span><br><span class="line"><span class="keyword">var</span> selection: <span class="type">Tag?</span> = .all</span><br><span class="line"></span><br><span class="line"><span class="type">List</span>(section: $selection) &#123;</span><br><span class="line">    <span class="type">Text</span>(<span class="string">"All"</span>)</span><br><span class="line">         .tag(<span class="type">Tag</span>.all)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>From the API, looks like <code>Binding&lt;Set&gt;</code> is for multiple selection, and <code>Binding&lt;Optional&gt;</code> is for single selection<br> Looking at <a href="https://developer.apple.com/documentation/swiftui/list">List</a> signature, I see that selection uses wrappedValue as <code>Set</code> for <code>Binding&lt;Set&lt;SelectionValue&gt;&gt;?</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">init</span>&lt;<span class="type">Data</span>, <span class="type">ID</span>, <span class="type">RowContent</span>&gt;(<span class="type">Data</span>, id: <span class="type">KeyPath</span>&lt;<span class="type">Data</span>.<span class="type">Element</span>, <span class="type">ID</span>&gt;, selection: <span class="type">Binding</span>&lt;<span class="type">Set</span>&lt;<span class="type">SelectionValue</span>&gt;&gt;?, rowContent: (<span class="type">Data</span>.<span class="type">Element</span>) -&gt; <span class="type">RowContent</span>)</span><br></pre></td></tr></table></figure><p>So let’s use Set. It shows current selection and I don’t need to use <code>.tag</code> also</p><pre><code class="swift"><span class="keyword">let</span> selection: <span class="type">Binding</span>&lt;<span class="type">Set</span>&lt;<span class="type">SidebarTag</span>&gt;&gt; = <span class="type">Binding</span>&lt;<span class="type">Set</span>&lt;<span class="type">SidebarTag</span>&gt;&gt;(    <span class="keyword">get</span>: { <span class="type">Set</span>(arrayLiteral: store.sidebarTag) },    <span class="keyword">set</span>: { newValue <span class="keyword">in</span>        <span class="type">DispatchQueue</span>.main.async {            <span class="keyword">if</span> <span class="keyword">let</span> first = newValue.first {                store.sidebarTag = first            }        }    })<span class="type">List</span>(selection: selection) {    <span class="type">Text</span>(<span class="string">"All"</span>)}</code></pre><hr><p><strong>Updated at</strong> 2021-01-06 21:13:43</p>]]></content>
     
     <summary type="html">
     
@@ -574,34 +606,6 @@
         
           &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/727&quot;&gt;#727&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Use &lt;code&gt;#&lt;/code&gt; in Swift 5 to specify
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to make UserDefaults property wrapper</title>
-    <link href="https://onmyway133.github.io/blog/How-to-make-UserDefaults-property-wrapper/"/>
-    <id>https://onmyway133.github.io/blog/How-to-make-UserDefaults-property-wrapper/</id>
-    <published>2020-12-26T20:42:53.000Z</published>
-    <updated>2020-12-26T20:42:53.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/726">#726</a></strong></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@propertyWrapper</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">UserDefault</span>&lt;<span class="title">Value</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> key: <span class="type">String</span></span><br><span class="line">    <span class="keyword">let</span> defaultValue: <span class="type">Value</span></span><br><span class="line">    <span class="keyword">let</span> container: <span class="type">UserDefaults</span> = .standard</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> wrappedValue: <span class="type">Value</span> &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> container.object(forKey: key) <span class="keyword">as</span>? <span class="type">Value</span> ?? defaultValue</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            container.<span class="keyword">set</span>(newValue, forKey: key)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Then we can use it as property and provide default value</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">KeepHistoryService</span> </span>&#123;</span><br><span class="line">    @<span class="type">UserDefault</span>(key: <span class="string">"keepHistoryCheckDate"</span>, defaultValue: <span class="literal">nil</span>)</span><br><span class="line">    <span class="keyword">var</span> checkDate: <span class="type">Date?</span></span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/726&quot;&gt;#726&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;figure class=&quot;highlight
         
       
     
