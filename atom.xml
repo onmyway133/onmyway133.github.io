@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2021-01-14T05:02:28.000Z</updated>
+  <updated>2021-01-15T08:31:23.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to open downloaded app from browser in Big Sur</title>
+    <link href="https://onmyway133.github.io/blog/How-to-open-downloaded-app-from-browser-in-Big-Sur/"/>
+    <id>https://onmyway133.github.io/blog/How-to-open-downloaded-app-from-browser-in-Big-Sur/</id>
+    <published>2021-01-15T08:31:16.000Z</published>
+    <updated>2021-01-15T08:31:23.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/750">#750</a></strong></p><p>Recently when distributing staging releases of my app <a href="https://onmyway133.com/pastepal/">PastePal</a> via GitHub release or Google Drive, people had hard time opening it</p><img width="454" alt="Screenshot 2021-01-15 at 10 26 26" src="https://user-images.githubusercontent.com/2284279/104707010-210af880-571c-11eb-8174-91efe296b886.png"><p>The displayed error is </p><blockquote><p>You do not have permission to open the application</p></blockquote><p>The more verbose error when using <code>open</code> command in Terminal is</p><blockquote><p>The application cannot be opened for an unexpected reason, error=Error Domain=NSOSStatusErrorDomain Code=-10826 “kLSNoLaunchPermissionErr: User doesn’t have permission to launch the app (managed networks)” UserInfo={_LSFunction=_LSLaunchWithRunningboard, _LSLine=2508, NSUnderlyingError=0x7fa9c750d850 {Error Domain=RBSRequestErrorDomain Code=5 “Launch failed.” UserInfo={NSLocalizedFailureReason=Launch failed., NSUnderlyingError=0x7fa9c750e010 {Error Domain=NSPOSIXErrorDomain Code=153 “Unknown error: 153” UserInfo={NSLocalizedDescription=Launchd job spawn failed with error: 153}}}}}</p></blockquote><p>From further investigation. This is restriction of Big Sur for downloaded zip file from browser</p><ul><li>When decompressing the .zip, the application contents didn’t retain the execute bits. Add it back with <code>sudo chmod -R 755 /path/to/app</code></li><li>Since the application was downloaded by a web browser the quarantine bits are set on the decompressed files. Remove that with <code>sudo xattr -dr com.apple.quarantine /path/to/app</code></li></ul><p>It still didn’t work despite the fact that I enabled apps from identified developers and that I also notarized my app.</p><img width="780" alt="Screenshot 2021-01-15 at 10 29 49" src="https://user-images.githubusercontent.com/2284279/104707376-9aa2e680-571c-11eb-8165-3b03ad9d0351.png"><p>The reason was I zip my <code>PastePal.app</code> before uploading to Google Drive. Now I just upload the bare <code>PastePal.app</code>, upon downloading Google Drive still zip the app but when I apply the <code>chmod</code> and <code>xattr</code> it works now 🎉 </p><h2 id="Read-more"><a href="#Read-more" class="headerlink" title="Read more"></a>Read more</h2><ul><li><a href="https://apple.stackexchange.com/questions/408752/the-message-you-do-not-have-permission-to-open-the-application-is-shown-when-t">https://apple.stackexchange.com/questions/408752/the-message-you-do-not-have-permission-to-open-the-application-is-shown-when-t</a></li></ul><hr><p><strong>Updated at</strong> 2021-01-15 09:31:23</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/750&quot;&gt;#750&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Recently when distributing staging
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+  </entry>
   
   <entry>
     <title>How to add alternative app icons for iOS</title>
@@ -588,38 +616,6 @@
     
     
       <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to make attributed string Text in SwiftUI for macOS</title>
-    <link href="https://onmyway133.github.io/blog/How-to-make-attributed-string-Text-in-SwiftUI-for-macOS/"/>
-    <id>https://onmyway133.github.io/blog/How-to-make-attributed-string-Text-in-SwiftUI-for-macOS/</id>
-    <published>2020-12-31T04:11:06.000Z</published>
-    <updated>2020-12-31T04:51:42.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/730">#730</a></strong></p><p>Use <code>NSTextField</code> with <code>maximumNumberOfLines</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> AppKit</span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AttributedText</span>: <span class="title">NSViewRepresentable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> attributedString: <span class="type">NSAttributedString</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>(<span class="number">_</span> attributedString: <span class="type">NSAttributedString</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.attributedString = attributedString</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeNSView</span><span class="params">(context: Context)</span></span> -&gt; <span class="type">NSTextField</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> textField = <span class="type">NSTextField</span>()</span><br><span class="line"></span><br><span class="line">        textField.lineBreakMode = .byClipping</span><br><span class="line">        textField.maximumNumberOfLines = <span class="number">0</span></span><br><span class="line">        textField.isBordered = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> textField</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateNSView</span><span class="params">(<span class="number">_</span> nsView: NSTextField, context: Context)</span></span> &#123;</span><br><span class="line">        nsView.attributedStringValue = attributedString</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>TextField has problem with wrapping, we can use TextView</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AttributedTextView</span>: <span class="title">NSViewRepresentable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">NSViewType</span> = <span class="type">NSScrollView</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> attributedText: <span class="type">NSAttributedString?</span></span><br><span class="line">    <span class="keyword">let</span> isSelectable: <span class="type">Bool</span></span><br><span class="line">    <span class="keyword">var</span> insetSize: <span class="type">CGSize</span> = .zero</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeNSView</span><span class="params">(context: Context)</span></span> -&gt; <span class="type">NSViewType</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> scrollView = <span class="type">NSTextView</span>.scrollableTextView()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> textView = scrollView.documentView <span class="keyword">as</span>! <span class="type">NSTextView</span></span><br><span class="line">        textView.drawsBackground = <span class="literal">false</span></span><br><span class="line">        textView.textColor = .controlTextColor</span><br><span class="line">        textView.textContainerInset = insetSize</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> scrollView</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateNSView</span><span class="params">(<span class="number">_</span> nsView: NSViewType, context: Context)</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> textView = (nsView.documentView <span class="keyword">as</span>! <span class="type">NSTextView</span>)</span><br><span class="line">        textView.isSelectable = isSelectable</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> attributedText = attributedText,</span><br><span class="line">            attributedText != textView.attributedString() &#123;</span><br><span class="line">            textView.textStorage?.setAttributedString(attributedText)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> lineLimit = context.environment.lineLimit &#123;</span><br><span class="line">            textView.textContainer?.maximumNumberOfLines = lineLimit</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><hr><p><strong>Updated at</strong> 2020-12-31 05:51:42</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/730&quot;&gt;#730&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use &lt;code&gt;NSTextField&lt;/code&gt; with
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
     
       <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
     
