@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://onmyway133.github.io/"/>
-  <updated>2021-02-25T21:42:37.000Z</updated>
+  <updated>2021-02-28T21:15:24.000Z</updated>
   <id>https://onmyway133.github.io/</id>
   
   <author>
@@ -15,6 +15,100 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to use with block configure in Swift</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-with-block-configure-in-Swift/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-with-block-configure-in-Swift/</id>
+    <published>2021-02-28T21:15:24.000Z</published>
+    <updated>2021-02-28T21:15:24.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/786">#786</a></strong></p><p>Sometimes we need to update some properties between objects, for example</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">book.name = updatedBook.name</span><br><span class="line">book.page = updatedBook.page</span><br><span class="line">book.publishedAt = updatedBook.publishedAt</span><br></pre></td></tr></table></figure><p>Repeating the caller <code>book</code> is tedious and error-prone. In Kotlin, there is <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/with.html">with</a> block which is handy to access the receiver properties and methods without referring to it.</p><figure class="highlight kt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">with(book) &#123;</span><br><span class="line">    name = updatedBook.name</span><br><span class="line">    page = updatedBook.page</span><br><span class="line">    publishedAt = updatedBook.publishedAt</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>In Swift, there are no such thing, we can write some extension like</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Book</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">update</span><span class="params">(with anotherBook: Book)</span></span> &#123;</span><br><span class="line">        name = anotherBook.name</span><br><span class="line">        page = anotherBook.page</span><br><span class="line">        publishedAt = anotherBook.publishedAt</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Or simply, we can just use <code>forEach</code> with just that book</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[book].forEach &#123;</span><br><span class="line">    $<span class="number">0</span>.name = updatedBook.name</span><br><span class="line">    $<span class="number">0</span>.page = updatedBook.page</span><br><span class="line">    $<span class="number">0</span>.publishedAt = updatedBook.publishedAt</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/786&quot;&gt;#786&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Sometimes we need to update some
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to use Core Data</title>
+    <link href="https://onmyway133.github.io/blog/How-to-use-Core-Data/"/>
+    <id>https://onmyway133.github.io/blog/How-to-use-Core-Data/</id>
+    <published>2021-02-26T12:14:41.000Z</published>
+    <updated>2021-02-28T06:58:23.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/785">#785</a></strong></p><h2 id="Some-links-to-learn"><a href="#Some-links-to-learn" class="headerlink" title="Some links to learn"></a>Some links to learn</h2><h3 id="Core-Data"><a href="#Core-Data" class="headerlink" title="Core Data"></a>Core Data</h3><ul><li><p><a href="https://www.donnywals.com/responding-to-changes-in-a-managed-object-context/">Responding to changes in a managed object context</a></p><blockquote><p>Calling mergeChanges on a managed object context will automatically refresh any managed objects that have changed. This ensures that your context always contains all the latest information. Note that you don’t have to call mergeChanges on a viewContext when you set its automaticallyMergesChangesFromParent property to true. In that case, Core Data will handle the merge on your behalf.</p></blockquote></li><li><p><a href="https://developer.apple.com/documentation/coredata/using_core_data_in_the_background">Using Core Data in the Background</a></p><blockquote><p>Managed objects retrieved from a context are bound to the same queue that the context is bound to.</p></blockquote></li><li><p><a href="https://davedelong.com/blog/2018/05/09/the-laws-of-core-data/">The Laws of Core Data</a></p><blockquote><p>The ability to have a child MOC is neat in some corner cases. Let’s review the core functionality of MOCs in order to understand those cases:</p></blockquote></li></ul><blockquote><ul><li>MOCs load objects from its source (a PSC or another MOC)</li><li>MOCs save objects to its source (a PSC or another MOC)</li><li>MOCs enforce graph integrity when they save</li></ul><p>Use Core Data as a local cache</p></blockquote><ul><li><p><a href="https://medium.com/ios-os-x-development/10-core-principles-to-use-coredata-without-blowing-your-head-off-5ed11c623c6b">10 core principles to use CoreData without blowing your head off</a></p></li><li><p><a href="https://www.avanderlee.com/swift/core-data-performance/">Core Data Performance: 6 tips you should know</a></p></li><li><p><a href="https://holko.pl/2016/06/23/core-data/">Core Data in iOS 10</a></p></li><li><p><a href="https://www.donnywals.com/fetching-objects-from-core-data-in-a-swiftui-project/">Fetching objects from Core Data in a SwiftUI project</a></p><blockquote><p>While you can fetch data from Core Data with @FetchRequest just fine, I tend to avoid it in my apps. The main reason for this is that I’ve always tried to separate my Core Data code from the rest of my application as much as possible.</p></blockquote></li><li><p><a href="https://developer.apple.com/documentation/coredata/nsmanagedobjectcontext/1845237-automaticallymergeschangesfrompa">automaticallyMergesChangesFromParent</a></p><blockquote><p>A Boolean value that indicates whether the context automatically merges changes saved to its persistent store coordinator or parent context.</p></blockquote></li><li><p><a href="https://developer.apple.com/documentation/coredata/nsfetchrequest">NSFetchRequest</a></p><blockquote><p>When you execute an instance of NSFetchRequest, it always accesses the underlying persistent stores to retrieve the latest results.</p></blockquote></li><li><p><a href="https://code-craftsman.fr/2015/08/04/saving-core-data-objects/">Saving CoreData objects</a></p><blockquote><p>This can be misleading. When one see parent store he can understand the parent persitent store of my context hierarchy. However, what is meant by parent store is either: the persistentStoreCoordinator or the parentContext<br>So, if your context was setup with a parent context, changes are commited to his parent but no further. To save it to the persistent store, you’ll need to call save() on contexts all the way up in the hierarchy until you reach the persistent store.</p></blockquote></li><li><p><a href="https://developer.apple.com/documentation/coredata/nsmanagedobjectcontext?language=objc#1653971">NSManagedObjectContext Parent Store</a></p></li></ul><blockquote><p>When you save changes in a context, the changes are only committed “one store up.” If you save a child context, changes are pushed to its parent. Changes are not saved to the persistent store until the root context is saved. (A root managed object context is one whose parent context is nil.)</p></blockquote><ul><li><p><a href="https://developer.apple.com/documentation/coredata/nsmanagedobjectcontext/1506672-fetch">NSManagedObjectContext fetch</a></p><blockquote><p>An object that meets the criteria specified by request (it is an instance of the entity specified by the request, and it matches the request’s predicate if there is one) and that has been inserted into a context but which is not yet saved to a persistent store, is retrieved if the fetch request is executed on that context.</p></blockquote></li><li><p><a href="https://stackoverflow.com/questions/33533750/core-data-nsbatchdeleterequest-appears-to-leave-objects-in-context">NSBatchDeleteRequest mergeChanges</a></p><blockquote><p>Changes are not reflected in the context”. So what you’re seeing is normal. Batch updates work directly on the persistent store file instead of going through the managed object context, so the context doesn’t know about them. When you delete the objects by fetching and then deleting, you’re working through the context, so it knows about the changes you’re making (in fact it’s performing those changes for you).</p></blockquote></li><li><p><a href="https://stackoverflow.com/questions/25172760/does-modifying-a-managed-object-in-a-parent-context-propagate-down-to-child-cont">Does modifying a managed object in a parent context propagate down to child contexts when performing a child fetch in Core Data?</a></p></li></ul><blockquote><p>mainContext would fetch all the way to the persistent store. Fetches and objectWithID: only go as many levels as they need to.<br>It’s important to remember that when a context is created it’s a “snapshot” of the state of it’s parent. Subsequent changes to the parent will not be visible in the child unless the child is somehow invalidated</p></blockquote><h3 id="CloudKit"><a href="#CloudKit" class="headerlink" title="CloudKit"></a>CloudKit</h3><ul><li><a href="https://developer.apple.com/documentation/coredata/consuming_relevant_store_changes">Consuming Relevant Store Changes</a></li><li><a href="https://fluffy.es/toggle-icloud-sync-nspersistentcloudkitcontainer/">Toggle iCloud sync on/off for NSPersistentCloudKitContainer</a></li></ul><h3 id="NSFetchedResultsController"><a href="#NSFetchedResultsController" class="headerlink" title="NSFetchedResultsController"></a>NSFetchedResultsController</h3><ul><li><a href="https://developer.apple.com/documentation/coredata/nsfetchedresultscontroller">NSFetchedResultsController</a></li><li><a href="https://stackoverflow.com/questions/40892147/update-nsfetchedresultscontroller-using-performbackgroundtask">Update NSFetchedResultsController using performBackgroundTask</a></li><li><a href="https://cocoacasts.com/exploring-the-fetched-results-controller-delegate-protocol/">Exploring the Fetched Results Controller Delegate Protocol</a></li></ul><h2 id="How-to-fetch-with-background-context"><a href="#How-to-fetch-with-background-context" class="headerlink" title="How to fetch with background context"></a>How to fetch with background context</h2><p>TLDR: Use  NSFetchedResultsController in backgroundContext</p><ul><li>If use Core Data as cache: convert to struct</li><li>If use NSManagedObject: use FetchRequest on viewContext</li></ul><h3 id="Approach-1-Treat-Core-Data-as-cache"><a href="#Approach-1-Treat-Core-Data-as-cache" class="headerlink" title="Approach 1: Treat Core Data as cache"></a>Approach 1: Treat Core Data as cache</h3><p>Pros</p><ul><li>backgroundContext.automaticallyMergesChangesFromParent</li><li>Use 1 shared background context to load and updates changes</li><li>Convert NSManagedObject to struct</li><li>Our struct can have additional logic and properties</li><li>Does not need to care about faulting</li></ul><p>Cons</p><ul><li>Need to update <code>objectId</code> When context.save, NSManagedObject ‘s <code>objecteId</code> is updated</li><li>Need to reload when underlying NSManagedObject changes</li><li>Need to handle relationship</li></ul><p>Instead of plain NSFetchRequest, can use NSFetchedResultsController on background context. In its <code>controllerDidChangeContent</code> convert to struct</p><h3 id="Approach-2-viewContext-to-persistent-coordinator"><a href="#Approach-2-viewContext-to-persistent-coordinator" class="headerlink" title="Approach 2: viewContext to persistent coordinator"></a>Approach 2: viewContext to persistent coordinator</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">viewContext -&gt; persistent coordinator &lt;- backgroundContext</span><br></pre></td></tr></table></figure><p>Pros</p><ul><li>viewContext.automaticallyMergesChangesFromParent</li><li>viewContext and background Context stems from persistent container</li><li>background context changes object</li><li>viewContext read only</li></ul><p>Cons</p><ul><li>viewContext blocks main thread</li></ul><h3 id="Approach-3-viewContext-to-background-context"><a href="#Approach-3-viewContext-to-background-context" class="headerlink" title="Approach 3: viewContext to background context"></a>Approach 3: viewContext to background context</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">viewContext -&gt; backgroundContext -&gt; persistent coordinator</span><br></pre></td></tr></table></figure><p>Pros</p><ul><li>viewContext.automaticallyMergesChangesFromParent</li><li>viewContext reads from backgroundContext, no main queue block</li><li>backgroundContext changes</li></ul><p>Cons</p><ul><li>???</li></ul><p>Read more</p><ul><li><a href="https://github.com/JohnEstropia/CoreStore#architecture">CoreStore architecture</a></li></ul><h3 id="Approach-4-background-context-gt-mainContext-gt-backgroundContext-gt-persistent-coordinator"><a href="#Approach-4-background-context-gt-mainContext-gt-backgroundContext-gt-persistent-coordinator" class="headerlink" title="Approach 4: background context -&gt; mainContext -&gt; backgroundContext -&gt; persistent coordinator"></a>Approach 4: background context -&gt; mainContext -&gt; backgroundContext -&gt; persistent coordinator</h3><p><a href="https://stackoverflow.com/questions/35961936/child-nsmanagedobjectcontext-update-from-parent">https://stackoverflow.com/questions/35961936/child-nsmanagedobjectcontext-update-from-parent</a></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RootContext (private queue) - saves to persistent store</span><br><span class="line">MainContext (main queue) child of RootContext - use for UI (FRC)</span><br><span class="line">WorkerContext (private queue) - child of MainContext - use for updates &amp; inserts</span><br></pre></td></tr></table></figure><hr><p><strong>Updated at</strong> 2021-02-28 07:58:23</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/785&quot;&gt;#785&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&quot;Some-links-to-learn&quot;&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
+    
+      <category term="iOS" scheme="https://onmyway133.github.io/tags/iOS/"/>
+    
+      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+      <category term="core data" scheme="https://onmyway133.github.io/tags/core-data/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to force resolve Swift Package in Xcode</title>
+    <link href="https://onmyway133.github.io/blog/How-to-force-resolve-Swift-Package-in-Xcode/"/>
+    <id>https://onmyway133.github.io/blog/How-to-force-resolve-Swift-Package-in-Xcode/</id>
+    <published>2021-02-26T08:09:09.000Z</published>
+    <updated>2021-02-26T08:09:09.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/784">#784</a></strong></p><p>Every time I switch git branches, SPM packages seem to be invalidated and Xcode does not fetch again, no matter how many times I reopen.  Running <code>xcodebuild -resolvePackageDependencies</code> does fetch but Xcode does not recognize the resolved packages and still reports missing packages.</p><p>The good thing is under menu <code>File -&gt; Swift Packages</code> there are options to reset and resolve packages</p><img width="574" alt="Screenshot 2021-02-26 at 10 08 38" src="https://user-images.githubusercontent.com/2284279/109279894-99d09a80-781a-11eb-9d50-10f46ba94105.png">]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/784&quot;&gt;#784&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Every time I switch git branches, SPM
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
+    
+      <category term="xcode" scheme="https://onmyway133.github.io/tags/xcode/"/>
+    
+  </entry>
   
   <entry>
     <title>How to listen to remote changes in CloudKit CoreData</title>
@@ -519,96 +613,6 @@
       <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
     
       <category term="featured" scheme="https://onmyway133.github.io/tags/featured/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to use custom Key for NSCache</title>
-    <link href="https://onmyway133.github.io/blog/How-to-use-custom-Key-for-NSCache/"/>
-    <id>https://onmyway133.github.io/blog/How-to-use-custom-Key-for-NSCache/</id>
-    <published>2021-01-30T04:37:41.000Z</published>
-    <updated>2021-01-30T04:37:41.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/766">#766</a></strong></p><p>Need to use a class, best is to subclass from <code>NSObject</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> cache = <span class="type">NSCache</span>&lt;<span class="type">Key</span>, <span class="type">UIImage</span>&gt;()</span><br></pre></td></tr></table></figure><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Key</span>: <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">isEqual</span><span class="params">(<span class="number">_</span> object: <span class="keyword">Any</span>?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> other = object <span class="keyword">as</span>? <span class="type">Key</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> url == other.url</span><br><span class="line">            &amp;&amp; size == other.size</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> hash: <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> url.hashValue ^ <span class="type">Int</span>(size.width) ^ <span class="type">Int</span>(size.height)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> url: <span class="type">URL</span></span><br><span class="line">    <span class="keyword">let</span> size: <span class="type">CGSize</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>(url: <span class="type">URL</span>, size: <span class="type">CGSize</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.url = url</span><br><span class="line">        <span class="keyword">self</span>.size = size</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/766&quot;&gt;#766&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Need to use a class, best is to subclass
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to show multiple popover in SwiftUI</title>
-    <link href="https://onmyway133.github.io/blog/How-to-show-multiple-popover-in-SwiftUI/"/>
-    <id>https://onmyway133.github.io/blog/How-to-show-multiple-popover-in-SwiftUI/</id>
-    <published>2021-01-29T21:33:04.000Z</published>
-    <updated>2021-01-29T21:33:04.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/765">#765</a></strong></p><p>In SwiftUI currently, it’s not possible to attach multiple <code>.popover</code> to the same View. But we can use condition to show different content</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ClipboardCell</span>: <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">enum</span> <span class="title">PopoverStyle</span> </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> raw</span><br><span class="line">        <span class="keyword">case</span> preview</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @<span class="type">Binding</span></span><br><span class="line">    <span class="keyword">var</span> showsPopover: <span class="type">Bool</span></span><br><span class="line">    @<span class="type">Binding</span></span><br><span class="line">    <span class="keyword">var</span> popoverStyle: <span class="type">PopoverStyle</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: some <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            header</span><br><span class="line">            content</span><br><span class="line">                .popover(isPresented: $showsPopover) &#123;</span><br><span class="line">                    <span class="keyword">switch</span> popoverStyle &#123;</span><br><span class="line">                    <span class="keyword">case</span> .raw:</span><br><span class="line">                        <span class="type">ViewRawView</span>(item: item)</span><br><span class="line">                    <span class="keyword">case</span> .preview:</span><br><span class="line">                        <span class="type">PreviewView</span>(item: item)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            footer</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/765&quot;&gt;#765&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;In SwiftUI currently, it’s not possible
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to handle keyDown in SwiftUI for macOS</title>
-    <link href="https://onmyway133.github.io/blog/How-to-handle-keyDown-in-SwiftUI-for-macOS/"/>
-    <id>https://onmyway133.github.io/blog/How-to-handle-keyDown-in-SwiftUI-for-macOS/</id>
-    <published>2021-01-29T19:44:48.000Z</published>
-    <updated>2021-01-29T19:55:39.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Issue <a href="https://github.com/onmyway133/blog/issues/764">#764</a></strong></p><p>Use a custom <code>KeyAwareView</code> that uses an <code>NSView</code> that checks for <code>keyDown</code> method. In case we can’t handle certain keys, call <code>super.keyDown(with: event)</code></p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> KeyboardShortcuts</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">KeyAwareView</span>: <span class="title">NSViewRepresentable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> onEvent: (<span class="type">Event</span>) -&gt; <span class="type">Void</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeNSView</span><span class="params">(context: Context)</span></span> -&gt; <span class="type">NSView</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> view = <span class="type">KeyView</span>()</span><br><span class="line">        view.onEvent = onEvent</span><br><span class="line">        <span class="type">DispatchQueue</span>.main.async &#123;</span><br><span class="line">            view.window?.makeFirstResponder(view)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> view</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">updateNSView</span><span class="params">(<span class="number">_</span> nsView: NSView, context: Context)</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">KeyAwareView</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">enum</span> <span class="title">Event</span> </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> upArrow</span><br><span class="line">        <span class="keyword">case</span> downArrow</span><br><span class="line">        <span class="keyword">case</span> leftArrow</span><br><span class="line">        <span class="keyword">case</span> rightArrow</span><br><span class="line">        <span class="keyword">case</span> space</span><br><span class="line">        <span class="keyword">case</span> delete</span><br><span class="line">        <span class="keyword">case</span> cmdC</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">KeyView</span>: <span class="title">NSView</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> onEvent: (<span class="type">KeyAwareView</span>.<span class="type">Event</span>) -&gt; <span class="type">Void</span> = &#123; <span class="number">_</span> <span class="keyword">in</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> acceptsFirstResponder: <span class="type">Bool</span> &#123; <span class="literal">true</span> &#125;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">keyDown</span><span class="params">(with event: NSEvent)</span></span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> <span class="type">Int</span>(event.keyCode) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="type">KeyboardShortcuts</span>.<span class="type">Key</span>.delete.rawValue:</span><br><span class="line">            onEvent(.delete)</span><br><span class="line">        <span class="keyword">case</span> <span class="type">KeyboardShortcuts</span>.<span class="type">Key</span>.upArrow.rawValue:</span><br><span class="line">            onEvent(.upArrow)</span><br><span class="line">        <span class="keyword">case</span> <span class="type">KeyboardShortcuts</span>.<span class="type">Key</span>.downArrow.rawValue:</span><br><span class="line">            onEvent(.downArrow)</span><br><span class="line">        <span class="keyword">case</span> <span class="type">KeyboardShortcuts</span>.<span class="type">Key</span>.leftArrow.rawValue:</span><br><span class="line">            onEvent(.leftArrow)</span><br><span class="line">        <span class="keyword">case</span> <span class="type">KeyboardShortcuts</span>.<span class="type">Key</span>.rightArrow.rawValue:</span><br><span class="line">            onEvent(.rightArrow)</span><br><span class="line">        <span class="keyword">case</span> <span class="type">KeyboardShortcuts</span>.<span class="type">Key</span>.space.rawValue:</span><br><span class="line">            onEvent(.space)</span><br><span class="line">        <span class="keyword">case</span> <span class="type">KeyboardShortcuts</span>.<span class="type">Key</span>.<span class="built_in">c</span>.rawValue <span class="keyword">where</span> event.modifierFlags.<span class="built_in">contains</span>(.command):</span><br><span class="line">            onEvent(.cmdC)</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">super</span>.keyDown(with: event)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Then we can place this as a background</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">LazyVStack</span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">.background(<span class="type">KeyAwareView</span>(onEvent: &#123;&#125;))</span><br></pre></td></tr></table></figure><hr><p><strong>Updated at</strong> 2021-01-29 20:55:39</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;Issue &lt;a href=&quot;https://github.com/onmyway133/blog/issues/764&quot;&gt;#764&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Use a custom &lt;code&gt;KeyAwareView&lt;/code&gt;
-        
-      
-    
-    </summary>
-    
-    
-    
-      <category term="swift" scheme="https://onmyway133.github.io/tags/swift/"/>
-    
-      <category term="macOS" scheme="https://onmyway133.github.io/tags/macOS/"/>
-    
-      <category term="swiftUI" scheme="https://onmyway133.github.io/tags/swiftUI/"/>
     
   </entry>
   
